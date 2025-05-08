@@ -8,7 +8,6 @@ import Filters from "./Filters";
 
 type Session = {
   subject: string;
-  level: string;
   tutor: string;
   centre: string;
   classroom: string;
@@ -21,11 +20,10 @@ type Session = {
 export default function CalendarPage() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [filters, setFilters] = useState({
-    subject: "",
-    topic: "-",
-    centre: "",
-    tutor: "",
-    level: "",
+    subject: [] as string[],
+    topic: [] as string[],
+    centre: [] as string[],
+    tutor: [] as string[],
   });
   const [calendarView, setCalendarView] = useState("timeGridWeek");
   const calendarRef = useRef<FullCalendar | null>(null);
@@ -79,11 +77,11 @@ export default function CalendarPage() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const unique = (field: keyof Session, subjectFilter?: string) => {
+  const unique = (field: keyof Session, subjectFilter?: string[]) => {
     return Array.from(
       new Set(
         sessions
-          .filter((s) => !subjectFilter || s.subject === subjectFilter)
+          .filter((s) => !subjectFilter || subjectFilter.includes(s.subject))
           .map((s) => s[field])
       )
     ).sort();
@@ -92,18 +90,10 @@ export default function CalendarPage() {
   const filteredSessions = useMemo(() => {
     return sessions.filter((s) => {
       return (
-        (!filters.subject || s.subject === filters.subject) &&
-        (!filters.topic ||
-          filters.topic === "All" ||
-          filters.topic === "-" ||
-          s.topic === filters.topic) &&
-        (!filters.centre ||
-          filters.centre === "All" ||
-          s.centre === filters.centre) &&
-        (!filters.tutor ||
-          filters.tutor === "All" ||
-          s.tutor === filters.tutor) &&
-        (!filters.level || filters.level === "All" || s.level === filters.level)
+        (filters.subject.length === 0 || filters.subject.includes(s.subject)) &&
+        (filters.topic.length === 0 || filters.topic.includes(s.topic)) &&
+        (filters.centre.length === 0 || filters.centre.includes(s.centre)) &&
+        (filters.tutor.length === 0 || filters.tutor.includes(s.tutor))
       );
     });
   }, [sessions, filters]);
@@ -111,16 +101,16 @@ export default function CalendarPage() {
   const events = filteredSessions.map((s) => {
     const start = new Date(`${s.date} 2025 ${s.startTime}`);
     const end = new Date(`${s.date} 2025 ${s.endTime}`);
-    const color = subjectColorMap[s.subject] || "#9ca3af"; // default gray
+    const color = subjectColorMap[s.subject] || "#9ca3af";
 
     return {
-      title: `${s.subject} (${s.level}) - ${s.tutor}`,
+      title: `${s.subject} - ${s.tutor}`,
       start,
       end,
       extendedProps: {
         ...s,
       },
-      backgroundColor: color, 
+      backgroundColor: color,
       textColor: "#ffffff",
     };
   });
@@ -132,7 +122,6 @@ export default function CalendarPage() {
         topics={unique("topic", filters.subject)}
         centres={unique("centre")}
         tutors={unique("tutor")}
-        levels={unique("level")}
         filters={filters}
         onFilterChange={setFilters}
       />
@@ -161,17 +150,19 @@ export default function CalendarPage() {
         slotMaxTime="22:00:00"
         allDaySlot={false}
         displayEventEnd={true}
-        eventClassNames={(arg) => {
-          const subject = arg.event.extendedProps.subject;
-          const bgClass = subjectColorMap[subject] || "bg-gray-400";
-          return [bgClass, "text-white", "rounded", "p-1"];
-        }}
         eventContent={(arg) => {
           const topic = arg.event.extendedProps.topic;
+          const centre = arg.event.extendedProps.centre;
+
           return (
             <div>
               <div className="font-semibold">{arg.event.title}</div>
-              {topic && topic !== "-" && <div className="text-s">{topic}</div>}
+              {topic && (
+                <div className="text-xs opacity-80">Topic: {topic}</div>
+              )}
+              {centre && (
+                <div className="text-xs opacity-80">Centre: {centre}</div>
+              )}
             </div>
           );
         }}

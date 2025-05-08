@@ -1,95 +1,121 @@
+"use client";
+
+import { Fragment } from "react";
+import { Listbox, Transition } from "@headlessui/react";
+
 type FiltersProps = {
-    subjects: string[];
-    topics: string[];
-    centres: string[];
-    tutors: string[];
-    levels: string[];
-    filters: {
-      subject: string;
-      topic: string;
-      centre: string;
-      tutor: string;
-      level: string;
-    };
-    onFilterChange: (filters: FiltersProps["filters"]) => void;
+  subjects: string[];
+  topics: string[];
+  centres: string[];
+  tutors: string[];
+  filters: {
+    subject: string[];
+    topic: string[];
+    centre: string[];
+    tutor: string[];
   };
-  
-  export default function Filters({
-    subjects,
-    topics,
-    centres,
-    tutors,
-    levels,
-    filters,
-    onFilterChange,
-  }: FiltersProps) {
-  
-    const renderSelect = (
-      label: string,
-      field: keyof FiltersProps["filters"],
-      options: string[],
-      disabled = false,
-    ) => (
-      <div className="flex flex-col">
-        <label className="text-sm font-semibold">{label}</label>
-        <select
-          className="border p-2 rounded disabled:bg-gray-100"
-          value={filters[field]}
-          onChange={(e) => onFilterChange({ ...filters, [field]: e.target.value })}
-          disabled={disabled}
-        >
-          {options.map((opt) => (
-            <option key={opt} value={opt}>
-              {opt}
-            </option>
-          ))}
-        </select>
-      </div>
-    );
-  
-    const subjectSelected = !!filters.subject;
-  
-    // Topic options
-    const topicOptions = subjectSelected ? ["All", ...topics] : ["-"];
-  
-    return (
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-        
-        {/* SUBJECT → special logic */}
-        <div className="flex flex-col">
-          <label className="text-sm font-semibold">Subject</label>
-          <select
-            className="border p-2 rounded disabled:bg-gray-100"
-            value={filters.subject}
-            onChange={(e) => {
-              const value = e.target.value;
-              const newFilters = { ...filters, subject: value };
-  
-              // Reset topic when subject is cleared
-              if (!value) {
-                newFilters.topic = "-";
-              } else if (filters.topic === "-") {
-                newFilters.topic = "";
-              }
-  
-              onFilterChange(newFilters);
-            }}
-          >
-            <option value="">All</option>
-            {subjects.map((opt) => (
-              <option key={opt} value={opt}>
-                {opt}
-              </option>
-            ))}
-          </select>
+  onFilterChange: (filters: FiltersProps["filters"]) => void;
+};
+
+function MultiSelect({
+  label,
+  selected,
+  options,
+  onChange,
+}: {
+  label: string;
+  selected: string[];
+  options: string[];
+  onChange: (newSelected: string[]) => void;
+}) {
+  const toggleOption = (option: string) => {
+    if (selected.includes(option)) {
+      onChange(selected.filter((o) => o !== option));
+    } else {
+      onChange([...selected, option]);
+    }
+  };
+
+  return (
+    <div className="flex flex-col">
+      <label className="text-sm font-semibold">{label}</label>
+      <Listbox value={selected} onChange={onChange} multiple>
+        <div className="relative mt-1">
+          <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white border p-2 text-left">
+            {selected.length > 0
+              ? selected.join(", ")
+              : `Select ${label}`}
+          </Listbox.Button>
+          <Transition as={Fragment}>
+            <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white border shadow-lg list-none">
+              {options.map((option) => (
+                <Listbox.Option key={option} value={option} as={Fragment}>
+                  {({ active }) => (
+                    <li
+                      onClick={() => toggleOption(option)}
+                      className={`cursor-pointer select-none p-2 ${
+                        active ? "bg-blue-100" : ""
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selected.includes(option)}
+                        readOnly
+                        className="mr-2"
+                      />
+                      {option}
+                    </li>
+                  )}
+                </Listbox.Option>
+              ))}
+            </Listbox.Options>
+          </Transition>
         </div>
-  
-        {/* Other filters */}
-        {renderSelect("Topic", "topic", topicOptions, !subjectSelected)}
-        {renderSelect("Centre", "centre", ["All", ...centres])}
-        {renderSelect("Tutor", "tutor", ["All", ...tutors])}
-        {renderSelect("Level", "level", ["All", ...levels])}
-      </div>
-    );
-  }
-  
+      </Listbox>
+    </div>
+  );
+}
+
+export default function Filters({
+  subjects,
+  topics,
+  centres,
+  tutors,
+  filters,
+  onFilterChange,
+}: FiltersProps) {
+
+  const setFilter = (field: keyof FiltersProps["filters"], value: string[]) => {
+    const newFilters = { ...filters, [field]: value };
+    onFilterChange(newFilters);
+  };
+
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+      <MultiSelect
+        label="Subject"
+        selected={filters.subject}
+        options={subjects}
+        onChange={(val) => setFilter("subject", val)}
+      />
+      <MultiSelect
+        label="Topic"
+        selected={filters.topic}
+        options={topics}
+        onChange={(val) => setFilter("topic", val)}
+      />
+      <MultiSelect
+        label="Centre"
+        selected={filters.centre}
+        options={centres}
+        onChange={(val) => setFilter("centre", val)}
+      />
+      <MultiSelect
+        label="Tutor"
+        selected={filters.tutor}
+        options={tutors}
+        onChange={(val) => setFilter("tutor", val)}
+      />
+    </div>
+  );
+}
