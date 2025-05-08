@@ -118,11 +118,9 @@ export default function CalendarPage() {
       start,
       end,
       extendedProps: {
-        topic: s.topic,
-        subject: s.subject,
         ...s,
       },
-      backgroundColor: color, // 👈 this overrides the blue
+      backgroundColor: color, 
       textColor: "#ffffff",
     };
   });
