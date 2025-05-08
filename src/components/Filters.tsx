@@ -42,12 +42,18 @@ function MultiSelect({
       <Listbox value={selected} onChange={onChange} multiple>
         <div className="relative mt-1">
           <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white border p-2 text-left">
-            {selected.length > 0
-              ? selected.join(", ")
-              : `Select ${label}`}
+            {selected.length > 0 ? selected.join(", ") : `Select ${label}`}
           </Listbox.Button>
           <Transition as={Fragment}>
-            <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white border shadow-lg list-none">
+            <Listbox.Options
+              className={`absolute z-10 mt-1 w-full rounded-md bg-white border shadow-lg list-none ${
+                label === "Centre" &&
+                typeof window !== "undefined" &&
+                window.innerWidth < 768
+                  ? ""
+                  : "max-h-60 overflow-auto"
+              }`}
+            >
               {options.map((option) => (
                 <Listbox.Option key={option} value={option} as={Fragment}>
                   {({ active }) => (
@@ -84,7 +90,6 @@ export default function Filters({
   filters,
   onFilterChange,
 }: FiltersProps) {
-
   const setFilter = (field: keyof FiltersProps["filters"], value: string[]) => {
     const newFilters = { ...filters, [field]: value };
     onFilterChange(newFilters);

@@ -3745,19 +3745,6 @@
   },
   {
     "purpose": "JC - JunCC",
-    "subject": "GP",
-    "level": "JC1",
-    "topic": "Education",
-    "tutor": "Joey Kang",
-    "centre": "Jurong East (CPF Building)",
-    "classroom": "JE-2",
-    "capacity": "25",
-    "date": "11 Jun",
-    "startTime": "1:30 PM",
-    "endTime": "4:30 PM"
-  },
-  {
-    "purpose": "JC - JunCC",
     "subject": "Econs",
     "level": "JC1",
     "topic": "Demand & Supply",
