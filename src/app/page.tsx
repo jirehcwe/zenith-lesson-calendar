@@ -5,6 +5,8 @@ import CalendarView from "../components/CalendarView";
 import ListView from "../components/ListView";
 import Filters from "../components/Filters";
 import { Session } from "../types";
+import SignupBanner from "../components/SignupBanner";
+import BottomBanner from "@/components/BottomBanner";
 
 export default function Page() {
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -88,44 +90,48 @@ export default function Page() {
   }, [calendarFilteredSessions, sessions]);
 
   return (
-    <div className="p-4 space-y-6 text-sm md:text-base">
-      <div className="flex items-center gap-4 mb-6">
-        <button
-          onClick={() => setViewMode("calendar")}
-          className={`px-4 py-2 rounded ${
-            viewMode === "calendar" ? "bg-blue-500 text-white" : "bg-gray-200"
-          }`}
-        >
-          Calendar View
-        </button>
-        <button
-          onClick={() => setViewMode("list")}
-          className={`px-4 py-2 rounded ${
-            viewMode === "list" ? "bg-blue-500 text-white" : "bg-gray-200"
-          }`}
-        >
-          List View
-        </button>
-      </div>
+    <div>
+      <SignupBanner />
+      <div className="p-4 space-y-6 text-sm md:text-base">
+        <div className="flex items-center gap-4 mb-6">
+          <button
+            onClick={() => setViewMode("calendar")}
+            className={`px-4 py-2 rounded ${
+              viewMode === "calendar" ? "bg-blue-500 text-white" : "bg-gray-200"
+            }`}
+          >
+            Calendar View
+          </button>
+          <button
+            onClick={() => setViewMode("list")}
+            className={`px-4 py-2 rounded ${
+              viewMode === "list" ? "bg-blue-500 text-white" : "bg-gray-200"
+            }`}
+          >
+            List View
+          </button>
+        </div>
 
-      <Filters
-        subjects={[...new Set(sessions.map((s) => s.subject))]}
-        topics={[...new Set(sessions.map((s) => s.topic))]}
-        centres={[...new Set(sessions.map((s) => s.centre))]}
-        tutors={[...new Set(sessions.map((s) => s.tutor))]}
-        filters={filters}
-        onFilterChange={setFilters}
-      />
-
-      {viewMode === "calendar" ? (
-        <CalendarView events={events} />
-      ) : (
-        <ListView
-          sessions={listFilteredSessions}
-          calendarFilter={calendarFilter}
-          onCalendarFilterChange={setCalendarFilter}
+        <Filters
+          subjects={[...new Set(sessions.map((s) => s.subject))]}
+          topics={[...new Set(sessions.map((s) => s.topic))]}
+          centres={[...new Set(sessions.map((s) => s.centre))]}
+          tutors={[...new Set(sessions.map((s) => s.tutor))]}
+          filters={filters}
+          onFilterChange={setFilters}
         />
-      )}
+
+        {viewMode === "calendar" ? (
+          <CalendarView events={events} />
+        ) : (
+          <ListView
+            sessions={listFilteredSessions}
+            calendarFilter={calendarFilter}
+            onCalendarFilterChange={setCalendarFilter}
+          />
+        )}
+      </div>
+      <BottomBanner />
     </div>
   );
 }
