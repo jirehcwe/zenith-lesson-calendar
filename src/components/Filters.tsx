@@ -86,7 +86,6 @@ export default function Filters({
   subjects,
   topics,
   centres,
-  tutors,
   filters,
   onFilterChange,
 }: FiltersProps) {
@@ -115,12 +114,12 @@ export default function Filters({
         options={centres}
         onChange={(val) => setFilter("centre", val)}
       />
-      <MultiSelect
+      {/* <MultiSelect
         label="Tutor"
         selected={filters.tutor}
         options={tutors}
         onChange={(val) => setFilter("tutor", val)}
-      />
+      /> */}
     </div>
   );
 }

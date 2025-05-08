@@ -36,7 +36,7 @@ export default function Page() {
     return sessions.filter((s) => {
       return (
         (filters.subject.length === 0 || filters.subject.includes(s.subject)) &&
-        (filters.topic.length === 0 || filters.topic.includes(s.topic)) &&
+        (filters.topic.length === 0 || filters.topic.includes(`[${s.subject}] ${s.topic}`)) &&
         (filters.centre.length === 0 || filters.centre.includes(s.centre)) &&
         (filters.tutor.length === 0 || filters.tutor.includes(s.tutor))
       );
@@ -80,7 +80,7 @@ export default function Page() {
     );
 
     return calendarFilteredSessions.map((s) => ({
-      title: `${s.subject} - ${s.tutor}`,
+      title: `${s.subject}`,
       start: new Date(`${s.date} 2025 ${s.startTime}`),
       end: new Date(`${s.date} 2025 ${s.endTime}`),
       extendedProps: { ...s },
@@ -88,6 +88,12 @@ export default function Page() {
       textColor: "#ffffff",
     }));
   }, [calendarFilteredSessions, sessions]);
+
+  // Grouped + Sorted Topics
+  const topicOptions = useMemo(() => {
+    const combined = sessions.map((s) => `[${s.subject}] ${s.topic}`);
+    return Array.from(new Set(combined)).sort((a, b) => a.localeCompare(b));
+  }, [sessions]);
 
   return (
     <div>
@@ -114,7 +120,7 @@ export default function Page() {
 
         <Filters
           subjects={[...new Set(sessions.map((s) => s.subject))]}
-          topics={[...new Set(sessions.map((s) => s.topic))]}
+          topics={topicOptions}
           centres={[...new Set(sessions.map((s) => s.centre))]}
           tutors={[...new Set(sessions.map((s) => s.tutor))]}
           filters={filters}

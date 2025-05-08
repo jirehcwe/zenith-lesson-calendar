@@ -3,7 +3,7 @@
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import { Session } from "../types";
+import { END_DATE, Session, START_DATE } from "../types";
 import { useEffect, useState } from "react";
 
 export default function CalendarView({
@@ -35,6 +35,7 @@ export default function CalendarView({
     <FullCalendar
       plugins={[timeGridPlugin, dayGridPlugin]}
       initialView="timeGridWeek"
+      validRange={{ start: START_DATE, end: END_DATE }}
       initialDate="2025-05-25"
       headerToolbar={{
         left: "prev,next today",

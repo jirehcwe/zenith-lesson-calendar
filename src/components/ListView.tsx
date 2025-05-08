@@ -47,6 +47,8 @@ export default function ListView({
           className="border p-2 rounded"
           dateFormat="yyyy-MM-dd"
           isClearable
+          minDate={new Date("2025-05-26")}
+          maxDate={new Date("2025-06-23")}
         />
       </div>
 
@@ -56,9 +58,7 @@ export default function ListView({
             key={`${s.date}-${s.startTime}-${s.tutor}`}
             className="p-4 border rounded shadow"
           >
-            <div className="font-semibold">
-              {s.subject} - {s.tutor}
-            </div>
+            <div className="font-semibold">{s.subject}</div>
             <div className="text-sm opacity-80">Topic: {s.topic}</div>
             <div className="text-sm opacity-80">Centre: {s.centre}</div>
             <div className="text-sm opacity-80">Date: {s.date}</div>
