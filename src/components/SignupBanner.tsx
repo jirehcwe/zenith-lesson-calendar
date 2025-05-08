@@ -9,9 +9,10 @@ export default function SignupBanner() {
         className="w-full object-cover rounded"
       />
       <div className="text-sm font-semibold">
-        📢 Ready to join?{" "}
+      This website will help you plan out the crash course slots you wish to attend <br/> <br/> Ready to lock in this June? {" "}
+
         <a
-          href="https://docs.google.com/forms/d/e/1FAIpQLSdqyeoGBF4DyUXQA3cUOaZee3DB5NFhTtqPRyN5wdkQcIgL0Q/viewform?usp=dialog"
+          href="https://docs.google.com/forms/d/e/1FAIpQLSdqyeoGBF4DyUXQA3cUOaZee3DB5NFhTtqPRyN5wdkQcIgL0Q/viewform?usp=pp_url&entry.1157532004=SCHEDULE"
           target="_blank"
           rel="noopener noreferrer"
           className="text-blue-600 underline"
