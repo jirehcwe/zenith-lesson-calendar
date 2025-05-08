@@ -46,7 +46,8 @@ export default function CalendarPage() {
 
     const map: Record<string, string> = {};
     subjects.forEach((subject, index) => {
-      map[subject] = colorMap[colorKeys[index % colorKeys.length]];
+      const key = colorKeys[index % colorKeys.length] as keyof typeof colorMap;
+      map[subject] = colorMap[key];
     });
 
     return map;
