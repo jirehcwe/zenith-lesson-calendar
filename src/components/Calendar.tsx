@@ -146,8 +146,8 @@ export default function CalendarPage() {
         events={events}
         nowIndicator={true}
         height="auto"
-        slotMinTime="07:00:00"
-        slotMaxTime="22:00:00"
+        slotMinTime="10:00:00"
+        slotMaxTime="20:00:00"
         allDaySlot={false}
         displayEventEnd={true}
         eventContent={(arg) => {
