@@ -51,8 +51,8 @@ export default function CalendarView({
       events={events}
       nowIndicator={true}
       height="auto"
-      slotMinTime="07:00:00"
-      slotMaxTime="22:00:00"
+      slotMinTime="09:00:00"
+      slotMaxTime="20:00:00"
       allDaySlot={false}
       displayEventEnd={true}
       eventContent={(arg) => {
