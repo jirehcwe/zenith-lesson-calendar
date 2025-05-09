@@ -40,7 +40,7 @@ export default function CalendarView({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  /* eslint-disable  @typescript-eslint/no-explicit-any */
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   const handleEventClick = (arg: any) => {
     setSelectedEvent(arg.event);
     setIsDialogOpen(true);
