@@ -1,5 +1,5 @@
 "use client";
-
+import { track } from "@vercel/analytics";
 export default function SignupBanner() {
   return (
     <div className="w-full p-4 bg-[rgb(245,244,236)] rounded flex flex-col items-center justify-center gap-4 text-center max-w-3xl mx-auto">
@@ -16,6 +16,9 @@ export default function SignupBanner() {
           target="_blank"
           rel="noopener noreferrer"
           className="text-blue-600 underline"
+          onClick={() => {
+            track("form_click");
+          }}
         >
           Click here to sign up!
         </a>
