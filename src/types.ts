@@ -7,6 +7,7 @@ export type Session = {
   date: string;
   startTime: string;
   endTime: string;
+  level: string;
 };
 
 export const START_DATE = new Date("2025-05-26");

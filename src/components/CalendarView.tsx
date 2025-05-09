@@ -20,7 +20,14 @@ export default function CalendarView({
   }[];
 }) {
   const [isMobile, setIsMobile] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState<any>(null);
+  const [selectedEvent, setSelectedEvent] = useState<{
+    title: string;
+    start: Date;
+    end: Date;
+    extendedProps: Session;
+    backgroundColor: string;
+    textColor: string;
+  } | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
