@@ -40,7 +40,16 @@ export default function CalendarView({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleEventClick = (arg: any) => {
+  const handleEventClick = (arg: {
+    event: {
+      title: string;
+      start: Date;
+      end: Date;
+      extendedProps: Session;
+      backgroundColor: string;
+      textColor: string;
+    };
+  }) => {
     setSelectedEvent(arg.event);
     setIsDialogOpen(true);
   };
