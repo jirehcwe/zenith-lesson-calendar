@@ -20,12 +20,6 @@ export default function Page() {
   const [calendarFilter, setCalendarFilter] = useState<string | null>(null);
 
   useEffect(() => {
-    if (window.innerWidth < 768) {
-      setViewMode("list");
-    }
-  }, []);
-
-  useEffect(() => {
     fetch("/sessions.json")
       .then((res) => res.json())
       .then((data: Session[]) => setSessions(data));
@@ -36,7 +30,8 @@ export default function Page() {
     return sessions.filter((s) => {
       return (
         (filters.subject.length === 0 || filters.subject.includes(s.subject)) &&
-        (filters.topic.length === 0 || filters.topic.includes(`[${s.subject}] ${s.topic}`)) &&
+        (filters.topic.length === 0 ||
+          filters.topic.includes(`[${s.subject}] ${s.topic}`)) &&
         (filters.centre.length === 0 || filters.centre.includes(s.centre)) &&
         (filters.tutor.length === 0 || filters.tutor.includes(s.tutor))
       );
