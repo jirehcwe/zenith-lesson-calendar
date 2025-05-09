@@ -86,9 +86,14 @@ export default function Page() {
 
   // Grouped + Sorted Topics
   const topicOptions = useMemo(() => {
-    const combined = sessions.map((s) => `[${s.subject}] ${s.topic}`);
+    // If subjects are selected, filter sessions to those subjects
+    const filteredSessions =
+      filters.subject.length === 0
+        ? sessions
+        : sessions.filter((s) => filters.subject.includes(s.subject));
+    const combined = filteredSessions.map((s) => `[${s.subject}] ${s.topic}`);
     return Array.from(new Set(combined)).sort((a, b) => a.localeCompare(b));
-  }, [sessions]);
+  }, [sessions, filters.subject]);
 
   return (
     <div>
