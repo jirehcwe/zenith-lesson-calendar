@@ -8,6 +8,8 @@ export type Session = {
   startTime: string;
   endTime: string;
   level: string;
+  prefill: string;
+  prefillField: string;
 };
 
 export const START_DATE = new Date("2025-05-26");
