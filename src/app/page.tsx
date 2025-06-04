@@ -1,140 +1,219 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import CalendarView from "../components/CalendarView";
-import ListView from "../components/ListView";
 import Filters from "../components/Filters";
-import { Session } from "../types";
 import SignupBanner from "../components/SignupBanner";
 import BottomBanner from "@/components/BottomBanner";
+import WeeklyClassCalendar, {
+  WeeklyClassSlot,
+} from "@/components/WeeklyClassCalendar";
+
+const CACHE_KEY = "weeklyClassData";
+const CACHE_TIME_KEY = "weeklyClassDataTimestamp";
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in ms
+
+function getCachedData() {
+  const data = localStorage.getItem(CACHE_KEY);
+  const timestamp = localStorage.getItem(CACHE_TIME_KEY);
+  if (data && timestamp && Date.now() - Number(timestamp) < CACHE_DURATION) {
+    return JSON.parse(data);
+  }
+  return null;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function setCachedData(data: any) {
+  localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+  localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
+}
+
+function levelToFilterMapper(
+  filter: string | null,
+  level: string,
+  stream: string
+): boolean {
+  if (filter === null) {
+    return false;
+  }
+  switch (filter) {
+    case "JC":
+      return level.includes("JC");
+    case "Secondary (Express)":
+      return level.includes("Sec") && stream.includes("EXP");
+    case "Secondary (IP)":
+      return level.includes("Sec") && stream.includes("IP");
+    default:
+      return false;
+  }
+}
 
 export default function Page() {
-  const [sessions, setSessions] = useState<Session[]>([]);
+  const [weeklyClassData, setWeeklyClassData] = useState<WeeklyClassSlot[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [filters, setFilters] = useState({
     subject: [] as string[],
-    topic: [] as string[],
     centre: [] as string[],
     tutor: [] as string[],
+    level: [] as string[],
+    stream: null as string | null,
   });
-  const [viewMode, setViewMode] = useState<"calendar" | "list">("calendar");
-  const [calendarFilter, setCalendarFilter] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/sessions2.json")
+    const cached = getCachedData();
+    if (cached) {
+      setWeeklyClassData(cached);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    fetch("http://192.168.50.143:3000/schedule")
       .then((res) => res.json())
-      .then((data: Session[]) => setSessions(data));
+      .then((res: { data: { data: WeeklyClassSlot[] } }) => {
+        setWeeklyClassData(res.data.data);
+        setCachedData(res.data.data);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching schedule data:", error);
+        setIsLoading(false);
+      });
   }, []);
 
-  // Generic filter logic
-  const applyFilters = (sessions: Session[]) => {
-    return sessions.filter((s) => {
+  // Compute filtered options for cascading filters
+  const filteredOptions = useMemo(() => {
+    // If no stream selected, return empty arrays for dependent filters
+    if (filters.stream === null) {
+      return {
+        levels: [],
+        subjects: [],
+        centres: [],
+        tutors: [],
+      };
+    }
+
+    // Base data filtered by stream
+    const streamFilteredData = weeklyClassData.filter((s) =>
+      levelToFilterMapper(filters.stream, s.level, s.stream)
+    );
+
+    // Apply bidirectional filtering for Level-Subject-Centre-Tutor
+    let filteredData = streamFilteredData;
+
+    // Filter by selected levels
+    if (filters.level.length > 0) {
+      filteredData = filteredData.filter((s) =>
+        filters.level.includes(s.level)
+      );
+    }
+
+    // Filter by selected subjects
+    if (filters.subject.length > 0) {
+      filteredData = filteredData.filter((s) =>
+        filters.subject.includes(s.subject)
+      );
+    }
+
+    // Filter by selected centres
+    if (filters.centre.length > 0) {
+      filteredData = filteredData.filter((s) =>
+        filters.centre.includes(s.centre)
+      );
+    }
+
+    // Filter by selected tutors
+    if (filters.tutor.length > 0) {
+      filteredData = filteredData.filter((s) =>
+        filters.tutor.includes(s.tutor)
+      );
+    }
+
+    // Extract available options from the filtered dataset
+    const availableLevels = [...new Set(filteredData.map((s) => s.level))];
+    const availableSubjects = [...new Set(filteredData.map((s) => s.subject))];
+    const availableCentres = [...new Set(filteredData.map((s) => s.centre))];
+    const availableTutors = [...new Set(filteredData.map((s) => s.tutor))];
+
+    return {
+      levels: availableLevels,
+      subjects: availableSubjects,
+      centres: availableCentres,
+      tutors: availableTutors,
+    };
+  }, [
+    weeklyClassData,
+    filters.stream,
+    filters.level,
+    filters.subject,
+    filters.centre,
+    filters.tutor,
+  ]);
+
+  const events = useMemo(() => {
+    // Apply filters
+    if (filters.stream === null || filters.subject.length === 0) {
+      return [];
+    }
+    const filtered = weeklyClassData.filter((s) => {
       return (
-        (filters.subject.length === 0 || filters.subject.includes(s.subject)) &&
-        (filters.topic.length === 0 ||
-          filters.topic.includes(`[${s.subject}] ${s.topic}`)) &&
+        levelToFilterMapper(filters.stream, s.level, s.stream) &&
+        filters.subject.includes(s.subject) &&
+        (filters.level.length === 0 || filters.level.includes(s.level)) &&
         (filters.centre.length === 0 || filters.centre.includes(s.centre)) &&
         (filters.tutor.length === 0 || filters.tutor.includes(s.tutor))
       );
     });
-  };
 
-  // Calendar view filtered sessions (must NOT show anything if nothing selected)
-  const calendarFilteredSessions = useMemo(() => {
-    const noFiltersSelected =
-      filters.subject.length === 0 &&
-      filters.topic.length === 0 &&
-      filters.centre.length === 0 &&
-      filters.tutor.length === 0;
-
-    if (noFiltersSelected) return [];
-
-    return applyFilters(sessions);
-  }, [sessions, filters]);
-
-  // List view filtered sessions (always show filtered, date handled inside ListView)
-  const listFilteredSessions = useMemo(() => {
-    return applyFilters(sessions);
-  }, [sessions, filters]);
-
-  const events = useMemo(() => {
-    const colorMap = [
-      "#ef4444",
-      "#3b82f6",
-      "#22c55e",
-      "#eab308",
-      "#8b5cf6",
-      "#ec4899",
-      "#6366f1",
-    ];
-    const subjectColors = Array.from(new Set(sessions.map((s) => s.subject)));
-    const colorDict = Object.fromEntries(
-      subjectColors.map((subject, idx) => [
-        subject,
-        colorMap[idx % colorMap.length],
-      ])
-    );
-
-    return calendarFilteredSessions.map((s) => ({
-      title: `${s.subject}`,
-      start: new Date(`${s.date} 2025 ${s.startTime}`),
-      end: new Date(`${s.date} 2025 ${s.endTime}`),
-      extendedProps: { ...s },
-      backgroundColor: colorDict[s.subject] || "#9ca3af",
-      textColor: "#ffffff",
+    // Map to event structure (add color if needed)
+    return filtered.map((s) => ({
+      ...s,
     }));
-  }, [calendarFilteredSessions, sessions]);
+  }, [weeklyClassData, filters]);
 
-  // Grouped + Sorted Topics
-  const topicOptions = useMemo(() => {
-    // If subjects are selected, filter sessions to those subjects
-    const filteredSessions =
-      filters.subject.length === 0
-        ? sessions
-        : sessions.filter((s) => filters.subject.includes(s.subject));
-    const combined = filteredSessions.map((s) => `[${s.subject}] ${s.topic}`);
-    return Array.from(new Set(combined)).sort((a, b) => a.localeCompare(b));
-  }, [sessions, filters.subject]);
+  // Clear dependent filters when parent filter changes
+  const handleFilterChange = (newFilters: typeof filters) => {
+    const prevFilters = filters;
+
+    // If stream changed, clear all dependent filters
+    if (prevFilters.stream !== newFilters.stream) {
+      setFilters({
+        ...newFilters,
+        level: [],
+        subject: [],
+        centre: [],
+        tutor: [],
+      });
+      return;
+    }
+
+    // For Level-Subject-Centre-Tutor bidirectional filtering,
+    // we don't automatically clear other filters anymore
+    // Let the user make selections and the UI will show only valid options
+    setFilters(newFilters);
+  };
 
   return (
     <div>
       <SignupBanner />
       <div className="p-4 space-y-6 text-sm md:text-base">
-        <div className="flex items-center gap-4 mb-6">
-          <button
-            onClick={() => setViewMode("calendar")}
-            className={`px-4 py-2 rounded ${
-              viewMode === "calendar" ? "bg-blue-500 text-white" : "bg-gray-200"
-            }`}
-          >
-            Calendar View
-          </button>
-          <button
-            onClick={() => setViewMode("list")}
-            className={`px-4 py-2 rounded ${
-              viewMode === "list" ? "bg-blue-500 text-white" : "bg-gray-200"
-            }`}
-          >
-            List View
-          </button>
-        </div>
-
-        <Filters
-          subjects={[...new Set(sessions.map((s) => s.subject))]}
-          topics={topicOptions}
-          centres={[...new Set(sessions.map((s) => s.centre))]}
-          tutors={[...new Set(sessions.map((s) => s.tutor))]}
-          filters={filters}
-          onFilterChange={setFilters}
-        />
-
-        {viewMode === "calendar" ? (
-          <CalendarView events={events} />
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-12 space-y-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <p className="text-gray-600">Loading courses...</p>
+          </div>
         ) : (
-          <ListView
-            sessions={listFilteredSessions}
-            calendarFilter={calendarFilter}
-            onCalendarFilterChange={setCalendarFilter}
-          />
+          <>
+            <Filters
+              streams={["JC", "Secondary (Express)", "Secondary (IP)"]}
+              levels={filteredOptions.levels}
+              subjects={filteredOptions.subjects}
+              centres={filteredOptions.centres}
+              tutors={filteredOptions.tutors}
+              filters={filters}
+              onFilterChange={handleFilterChange}
+            />
+            <WeeklyClassCalendar slots={events} />
+          </>
         )}
       </div>
       <BottomBanner />
