@@ -42,6 +42,8 @@ function levelToFilterMapper(
       return level.includes("Sec") && stream.includes("EXP");
     case "Secondary (IP)":
       return level.includes("Sec") && stream.includes("IP");
+    case "Primary":
+      return level.includes("Primary");
     default:
       return false;
   }
@@ -67,7 +69,8 @@ export default function Page() {
     }
 
     setIsLoading(true);
-    fetch("http://192.168.50.143:3000/schedule")
+    // fetch("http://192.168.50.143:3000/schedule")
+    fetch("https://lms-api-test.myzenithstudy.com/schedule")
       .then((res) => res.json())
       .then((res: { data: { data: WeeklyClassSlot[] } }) => {
         setWeeklyClassData(res.data.data);
@@ -80,7 +83,7 @@ export default function Page() {
       });
   }, []);
 
-  // Compute filtered options for cascading filters
+  // Compute filtered options for progressive disclosure with counts
   const filteredOptions = useMemo(() => {
     // If no stream selected, return empty arrays for dependent filters
     if (filters.stream === null) {
@@ -92,79 +95,137 @@ export default function Page() {
       };
     }
 
-    // Base data filtered by stream
+    // Base data filtered by stream only
     const streamFilteredData = weeklyClassData.filter((s) =>
       levelToFilterMapper(filters.stream, s.level, s.stream)
     );
 
-    // Apply bidirectional filtering for Level-Subject-Centre-Tutor
-    let filteredData = streamFilteredData;
+    // Get all unique options from stream-filtered data
+    const allLevels = [...new Set(streamFilteredData.map((s) => s.level))];
+    const allSubjects = [...new Set(streamFilteredData.map((s) => s.subject))];
+    const allCentres = [...new Set(streamFilteredData.map((s) => s.centre))];
+    const allTutors = [...new Set(streamFilteredData.map((s) => s.tutor))];
 
-    // Filter by selected levels
-    if (filters.level.length > 0) {
-      filteredData = filteredData.filter((s) =>
-        filters.level.includes(s.level)
-      );
-    }
+    // Function to count results for each option
+    const getResultCount = (field: string, value: string) => {
+      const testFilters = { ...filters };
+      if (field === "level") {
+        testFilters.level = [...filters.level, value];
+      } else if (field === "subject") {
+        testFilters.subject = [...filters.subject, value];
+      } else if (field === "centre") {
+        testFilters.centre = [...filters.centre, value];
+      } else if (field === "tutor") {
+        testFilters.tutor = [...filters.tutor, value];
+      }
 
-    // Filter by selected subjects
-    if (filters.subject.length > 0) {
-      filteredData = filteredData.filter((s) =>
-        filters.subject.includes(s.subject)
-      );
-    }
+      return streamFilteredData.filter((s) => {
+        return (
+          (testFilters.level.length === 0 ||
+            testFilters.level.includes(s.level)) &&
+          (testFilters.subject.length === 0 ||
+            testFilters.subject.includes(s.subject)) &&
+          (testFilters.centre.length === 0 ||
+            testFilters.centre.includes(s.centre)) &&
+          (testFilters.tutor.length === 0 ||
+            testFilters.tutor.includes(s.tutor))
+        );
+      }).length;
+    };
 
-    // Filter by selected centres
-    if (filters.centre.length > 0) {
-      filteredData = filteredData.filter((s) =>
-        filters.centre.includes(s.centre)
-      );
-    }
+    // Create options with counts and sort them
+    const levelsWithCounts = allLevels
+      .map((level, index) => ({
+        value: level,
+        count: getResultCount("level", level),
+        selected: filters.level.includes(level),
+        originalIndex: index,
+      }))
+      .sort((a, b) => {
+        // Only push zero-count options to the bottom, preserve original order otherwise
+        if (a.count === 0 && b.count > 0) return 1;
+        if (a.count > 0 && b.count === 0) return -1;
+        if (a.count === 0 && b.count === 0)
+          return a.value.localeCompare(b.value);
+        // For non-zero counts, preserve original order
+        return a.originalIndex - b.originalIndex;
+      });
 
-    // Filter by selected tutors
-    if (filters.tutor.length > 0) {
-      filteredData = filteredData.filter((s) =>
-        filters.tutor.includes(s.tutor)
-      );
-    }
+    const subjectsWithCounts = allSubjects
+      .map((subject, index) => ({
+        value: subject,
+        count: getResultCount("subject", subject),
+        selected: filters.subject.includes(subject),
+        originalIndex: index,
+      }))
+      .sort((a, b) => {
+        // Only push zero-count options to the bottom, preserve original order otherwise
+        if (a.count === 0 && b.count > 0) return 1;
+        if (a.count > 0 && b.count === 0) return -1;
+        if (a.count === 0 && b.count === 0)
+          return a.value.localeCompare(b.value);
+        // For non-zero counts, preserve original order
+        return a.originalIndex - b.originalIndex;
+      });
 
-    // Extract available options from the filtered dataset
-    const availableLevels = [...new Set(filteredData.map((s) => s.level))];
-    const availableSubjects = [...new Set(filteredData.map((s) => s.subject))];
-    const availableCentres = [...new Set(filteredData.map((s) => s.centre))];
-    const availableTutors = [...new Set(filteredData.map((s) => s.tutor))];
+    const centresWithCounts = allCentres
+      .map((centre, index) => ({
+        value: centre,
+        count: getResultCount("centre", centre),
+        selected: filters.centre.includes(centre),
+        originalIndex: index,
+      }))
+      .sort((a, b) => {
+        // Only push zero-count options to the bottom, preserve original order otherwise
+        if (a.count === 0 && b.count > 0) return 1;
+        if (a.count > 0 && b.count === 0) return -1;
+        if (a.count === 0 && b.count === 0)
+          return a.value.localeCompare(b.value);
+        // For non-zero counts, preserve original order
+        return a.originalIndex - b.originalIndex;
+      });
+
+    const tutorsWithCounts = allTutors
+      .map((tutor, index) => ({
+        value: tutor,
+        count: getResultCount("tutor", tutor),
+        selected: filters.tutor.includes(tutor),
+        originalIndex: index,
+      }))
+      .sort((a, b) => {
+        // Only push zero-count options to the bottom, preserve original order otherwise
+        if (a.count === 0 && b.count > 0) return 1;
+        if (a.count > 0 && b.count === 0) return -1;
+        if (a.count === 0 && b.count === 0)
+          return a.value.localeCompare(b.value);
+        // For non-zero counts, preserve original order
+        return a.originalIndex - b.originalIndex;
+      });
 
     return {
-      levels: availableLevels,
-      subjects: availableSubjects,
-      centres: availableCentres,
-      tutors: availableTutors,
+      levels: levelsWithCounts,
+      subjects: subjectsWithCounts,
+      centres: centresWithCounts,
+      tutors: tutorsWithCounts,
     };
-  }, [
-    weeklyClassData,
-    filters.stream,
-    filters.level,
-    filters.subject,
-    filters.centre,
-    filters.tutor,
-  ]);
+  }, [weeklyClassData, filters]);
 
   const events = useMemo(() => {
-    // Apply filters
-    if (filters.stream === null || filters.subject.length === 0) {
+    // Apply filters - now level is required instead of subject
+    if (filters.stream === null || filters.level.length === 0) {
       return [];
     }
     const filtered = weeklyClassData.filter((s) => {
       return (
         levelToFilterMapper(filters.stream, s.level, s.stream) &&
-        filters.subject.includes(s.subject) &&
-        (filters.level.length === 0 || filters.level.includes(s.level)) &&
+        filters.level.includes(s.level) &&
+        (filters.subject.length === 0 || filters.subject.includes(s.subject)) &&
         (filters.centre.length === 0 || filters.centre.includes(s.centre)) &&
         (filters.tutor.length === 0 || filters.tutor.includes(s.tutor))
       );
     });
 
-    // Map to event structure (add color if needed)
+    // Map to event structure
     return filtered.map((s) => ({
       ...s,
     }));
@@ -186,9 +247,20 @@ export default function Page() {
       return;
     }
 
-    // For Level-Subject-Centre-Tutor bidirectional filtering,
-    // we don't automatically clear other filters anymore
-    // Let the user make selections and the UI will show only valid options
+    // If level changed, clear subject, centre, and tutor filters
+    if (
+      JSON.stringify(prevFilters.level) !== JSON.stringify(newFilters.level)
+    ) {
+      setFilters({
+        ...newFilters,
+        subject: [],
+        centre: [],
+        tutor: [],
+      });
+      return;
+    }
+
+    // For Subject-Centre-Tutor, allow bidirectional filtering
     setFilters(newFilters);
   };
 
@@ -204,7 +276,12 @@ export default function Page() {
         ) : (
           <>
             <Filters
-              streams={["JC", "Secondary (Express)", "Secondary (IP)"]}
+              streams={[
+                "JC",
+                "Secondary (Express)",
+                "Secondary (IP)",
+                "Primary",
+              ]}
               levels={filteredOptions.levels}
               subjects={filteredOptions.subjects}
               centres={filteredOptions.centres}

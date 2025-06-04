@@ -20,19 +20,44 @@ export type WeeklyClassSlot = {
   prefillLink: string;
 };
 
-// Helper to get the next occurrence of a weekday (0=Sunday, 1=Monday, ...)
-function getNextWeekdayDate(weekday: number): Date {
-  const now = new Date();
-  const currentDay = now.getDay();
-  const diff = (weekday - currentDay + 7) % 7;
-  const result = new Date(now);
-  result.setDate(now.getDate() + diff);
+// Function to generate consistent colors from subject names
+function hashStringToColor(str: string): {
+  backgroundColor: string;
+  textColor: string;
+} {
+  // Simple hash function
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash = hash & hash; // Convert to 32-bit integer
+  }
+
+  // Use the hash to generate HSL values for better color distribution
+  const hue = Math.abs(hash) % 270;
+  const saturation = 75 + (Math.abs(hash) % 20); // 75-95%
+  const lightness = 55 + (Math.abs(hash) % 15); // 55-70%
+
+  const backgroundColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+
+  // Choose text color based on lightness
+  const textColor = lightness > 30 ? "#000000" : "#ffffff";
+
+  return { backgroundColor, textColor };
+}
+
+// Helper to get a fixed date for a weekday (using a reference week)
+function getFixedWeekdayDate(weekday: number): Date {
+  // Use a fixed reference date (e.g., January 7, 2024 was a Sunday)
+  const referenceDate = new Date(2024, 0, 7); // January 7, 2024 (Sunday)
+  const result = new Date(referenceDate);
+  result.setDate(referenceDate.getDate() + weekday);
   result.setHours(0, 0, 0, 0);
   return result;
 }
 
 export default function WeeklyClassCalendar({
-  slots, 
+  slots,
 }: {
   slots: WeeklyClassSlot[];
 }) {
@@ -54,7 +79,7 @@ export default function WeeklyClassCalendar({
 
   // Convert weekly slots to FullCalendar events for the current week
   const events = slots.map((slot) => {
-    const baseDate = getNextWeekdayDate(slot.day);
+    const baseDate = getFixedWeekdayDate(slot.day);
     const [startHour, startMinute] = slot.startTime.split(":").map(Number);
     const [endHour, endMinute] = slot.endTime.split(":").map(Number);
     const start = new Date(baseDate);
@@ -66,8 +91,8 @@ export default function WeeklyClassCalendar({
       start,
       end,
       extendedProps: slot,
-      backgroundColor: "#000000",
-      textColor: "#ffffff",
+      backgroundColor: hashStringToColor(slot.subject).backgroundColor,
+      textColor: hashStringToColor(slot.subject).textColor,
     };
   });
 
@@ -83,6 +108,7 @@ export default function WeeklyClassCalendar({
       <FullCalendar
         plugins={[timeGridPlugin]}
         initialView="timeGridWeek"
+        initialDate="2024-01-07" // Fixed reference date (Sunday)
         headerToolbar={{
           left: "",
           center: "",
@@ -91,6 +117,7 @@ export default function WeeklyClassCalendar({
         views={{}}
         events={events}
         dayHeaderContent={(args) => {
+          // Show only the day name, not the date
           return args.date.toLocaleDateString(undefined, { weekday: "short" });
         }}
         height="auto"
@@ -98,18 +125,20 @@ export default function WeeklyClassCalendar({
         slotMaxTime="22:00:00"
         allDaySlot={false}
         displayEventEnd={true}
+        // Disable navigation since this is a template view
+        navLinks={false}
+        // Hide the date numbers, only show day names
+        dayHeaderFormat={{ weekday: "short" }}
         eventContent={(arg) => {
-          const centre = arg.event.extendedProps.location;
+          const centre = arg.event.extendedProps.centre; // Fixed: was .location
           return (
             <div>
-              <div className="font-semibold">{arg.event.title}</div>
+              <div className="font-semibold">
+                {arg.event.extendedProps.subject}
+              </div>
               {centre && (
                 <div className="text-xs opacity-80">Centre: {centre}</div>
               )}
-              <br />
-              <div className="underline cursor-pointer">
-                Click for registration link
-              </div>
             </div>
           );
         }}
@@ -135,7 +164,8 @@ export default function WeeklyClassCalendar({
             {selectedEvent && (
               <>
                 <DialogTitle className="font-bold text-lg mb-2">
-                  {selectedEvent.subject} - {selectedEvent.level}
+                  {selectedEvent.subject} - {selectedEvent.level} -{" "}
+                  {selectedEvent.tutor}
                 </DialogTitle>
                 <div className="space-y-2">
                   <div className="text-sm">
