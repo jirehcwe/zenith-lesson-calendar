@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
+  experimental: {
+    esmExternals: false,
+  },
 };
 
 export default nextConfig;
