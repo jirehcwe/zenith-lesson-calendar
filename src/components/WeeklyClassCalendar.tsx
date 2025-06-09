@@ -58,8 +58,16 @@ function getFixedWeekdayDate(weekday: number): Date {
 
 export default function WeeklyClassCalendar({
   slots,
+  filters,
 }: {
   slots: WeeklyClassSlot[];
+  filters: {
+    subject: string[];
+    centre: string[];
+    tutor: string[];
+    level: string[];
+    stream: string | null;
+  };
 }) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isMobile, setIsMobile] = useState(false);
@@ -105,6 +113,12 @@ export default function WeeklyClassCalendar({
 
   return (
     <>
+      {filters.subject.length === 0 || filters.centre.length === 0 ? (
+        <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg border border-blue-200">
+          💡 <strong>Tip:</strong> Use the Subject and Centre filters above to
+          reduce overlap and see specific classes more clearly.
+        </div>
+      ) : null}
       <FullCalendar
         plugins={[timeGridPlugin]}
         initialView="timeGridWeek"
@@ -130,14 +144,16 @@ export default function WeeklyClassCalendar({
         // Hide the date numbers, only show day names
         dayHeaderFormat={{ weekday: "short" }}
         eventContent={(arg) => {
-          const centre = arg.event.extendedProps.centre; // Fixed: was .location
+          const centre = arg.event.extendedProps.centre;
           return (
             <div>
-              <div className="font-semibold">
+              <div className="font-semibold truncate">
                 {arg.event.extendedProps.subject}
               </div>
               {centre && (
-                <div className="text-xs opacity-80">Centre: {centre}</div>
+                <div className="text-xs opacity-80 truncate">
+                  {centre}
+                </div>
               )}
             </div>
           );
@@ -164,8 +180,7 @@ export default function WeeklyClassCalendar({
             {selectedEvent && (
               <>
                 <DialogTitle className="font-bold text-lg mb-2">
-                  {selectedEvent.subject} - {selectedEvent.level} -{" "}
-                  {selectedEvent.tutor}
+                  {selectedEvent.subject} - {selectedEvent.level}
                 </DialogTitle>
                 <div className="space-y-2">
                   <div className="text-sm">
@@ -204,7 +219,7 @@ export default function WeeklyClassCalendar({
                   }}
                 >
                   <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                    Register (prefilled)
+                    Register
                   </button>
                 </a>
               ) : null}

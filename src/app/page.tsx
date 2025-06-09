@@ -143,12 +143,15 @@ export default function Page() {
       }))
       .sort((a, b) => {
         // Only push zero-count options to the bottom, preserve original order otherwise
-        if (a.count === 0 && b.count > 0) return 1;
-        if (a.count > 0 && b.count === 0) return -1;
-        if (a.count === 0 && b.count === 0)
-          return a.value.localeCompare(b.value);
-        // For non-zero counts, preserve original order
-        return a.originalIndex - b.originalIndex;
+        // if (a.count === 0 && b.count > 0) return 1;
+        // if (a.count > 0 && b.count === 0) return -1;
+        // if (a.count === 0 && b.count === 0)
+        //   return a.value.localeCompare(b.value);
+        // // For non-zero counts, preserve original order
+        // return a.originalIndex - b.originalIndex;
+
+        // Sort reverse alphabetically by name
+        return b.value.localeCompare(a.value);
       });
 
     const subjectsWithCounts = allSubjects
@@ -289,7 +292,7 @@ export default function Page() {
               filters={filters}
               onFilterChange={handleFilterChange}
             />
-            <WeeklyClassCalendar slots={events} />
+            <WeeklyClassCalendar slots={events} filters={filters} />
           </>
         )}
       </div>
