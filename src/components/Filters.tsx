@@ -157,6 +157,7 @@ export default function Filters({
   levels,
   subjects,
   centres,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   tutors,
   filters,
   onFilterChange,
