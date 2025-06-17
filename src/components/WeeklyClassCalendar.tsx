@@ -106,7 +106,6 @@ export default function WeeklyClassCalendar({
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   const handleEventClick = (arg: any) => {
-    console.log(arg.event.extendedProps);
     setSelectedEvent(arg.event.extendedProps);
     setIsDialogOpen(true);
   };
@@ -130,7 +129,8 @@ export default function WeeklyClassCalendar({
         }}
         views={{}}
         events={events}
-        dayHeaderContent={(args) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        dayHeaderContent={(args: any) => {
           // Show only the day name, not the date
           return args.date.toLocaleDateString(undefined, { weekday: "short" });
         }}
@@ -151,9 +151,7 @@ export default function WeeklyClassCalendar({
                 {arg.event.extendedProps.subject}
               </div>
               {centre && (
-                <div className="text-xs opacity-80 truncate">
-                  {centre}
-                </div>
+                <div className="text-xs opacity-80 truncate">{centre}</div>
               )}
             </div>
           );

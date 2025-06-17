@@ -2,6 +2,9 @@
 
 # dependencies
 /node_modules
+/scripts/form_option_extractor/node_modules
+/scripts/form_option_extractor/dist
+/scripts/form_option_extractor/lambda.zip
 /.pnp
 .pnp.*
 .yarn/*
@@ -40,3 +43,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .vscode/settings.json
+scripts/credentials.json
+scripts/form_option_extractor/lambda.zip

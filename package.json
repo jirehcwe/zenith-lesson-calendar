@@ -6,16 +6,19 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "extract-form": "dotenv -e .env -- npx tsx scripts/form_option_extractor/index.ts"
   },
   "dependencies": {
     "@fullcalendar/daygrid": "^6.1.17",
     "@fullcalendar/react": "^6.1.17",
     "@fullcalendar/timegrid": "^6.1.17",
+    "@fullcalendar/core": "^6.1.17",
     "@headlessui/react": "^2.2.2",
     "@vercel/analytics": "^1.5.0",
     "csv-parse": "^5.6.0",
     "date-fns": "^4.1.0",
+    "google-auth-library": "^10.0.0-rc.3",
     "next": "15.3.2",
     "react": "^19.0.0",
     "react-datepicker": "^8.3.0",
@@ -23,16 +26,21 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.13.12",
     "@eslint/eslintrc": "^3",
+    "@googleapis/forms": "^3.0.1",
+    "@googleapis/sheets": "^10.0.1",
     "@tailwindcss/postcss": "^4",
     "@types/csv-parse": "^1.1.12",
-    "@types/node": "^20",
+    "@types/node": "^20.19.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
+    "googleapis": "^150.0.1",
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
+    "tsx": "^4.19.4",
     "typescript": "^5.8.3"
   }
 }

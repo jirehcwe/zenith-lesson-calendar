@@ -69,8 +69,8 @@ export default function Page() {
     }
 
     setIsLoading(true);
-    // fetch("http://192.168.50.143:3000/schedule")
-    fetch("https://lms-api-test.myzenithstudy.com/schedule")
+    fetch("http://192.168.50.143:3000/schedule")
+    // fetch("https://lms-api-test.myzenithstudy.com/schedule")
       .then((res) => res.json())
       .then((res: { data: { data: WeeklyClassSlot[] } }) => {
         setWeeklyClassData(res.data.data);
