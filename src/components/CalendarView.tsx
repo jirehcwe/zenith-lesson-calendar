@@ -6,8 +6,6 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import { END_DATE, Session, START_DATE } from "../types";
 import { useEffect, useState } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
-import { track } from "@vercel/analytics";
-
 export default function CalendarView({
   events,
 }: {
@@ -141,7 +139,7 @@ export default function CalendarView({
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => {
-                    track("form_click_prefilled");
+                    console.log("form_click_prefilled");
                   }}
                 >
                   <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">

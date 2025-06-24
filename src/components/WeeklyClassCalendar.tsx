@@ -5,7 +5,6 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import scrollGridPlugin from "@fullcalendar/scrollgrid";
 import { useEffect, useState } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
-import { track } from "@vercel/analytics";
 
 // Define a new type for weekly class slots (no topic, no date)
 export type WeeklyClassSlot = {
@@ -221,7 +220,7 @@ export default function WeeklyClassCalendar({
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => {
-                    track("form_click_prefilled");
+                    console.log("form_click_prefilled");
                   }}
                 >
                   <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
