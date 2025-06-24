@@ -37,13 +37,13 @@ function levelToFilterMapper(
   }
   switch (filter) {
     case "JC":
-      return level.includes("JC");
+      return level.startsWith("J");
     case "Secondary (Express)":
-      return level.includes("Sec") && stream.includes("EXP");
+      return level.startsWith("S") && stream.includes("EXP");
     case "Secondary (IP)":
-      return level.includes("Sec") && stream.includes("IP");
+      return level.startsWith("S") && stream.includes("IP");
     case "Primary":
-      return level.includes("Primary");
+      return level.startsWith("P");
     default:
       return false;
   }
@@ -51,6 +51,8 @@ function levelToFilterMapper(
 
 export default function Page() {
   const [weeklyClassData, setWeeklyClassData] = useState<WeeklyClassSlot[]>([]);
+
+  console.log(weeklyClassData);
   const [isLoading, setIsLoading] = useState(true);
   const [filters, setFilters] = useState({
     subject: [] as string[],
@@ -69,8 +71,8 @@ export default function Page() {
     }
 
     setIsLoading(true);
-    fetch("http://192.168.50.143:3000/schedule")
-    // fetch("https://lms-api-test.myzenithstudy.com/schedule")
+    // fetch("http://192.168.50.143:3000/schedule")
+    fetch("https://lms-api.myzenithstudy.com/schedule")
       .then((res) => res.json())
       .then((res: { data: { data: WeeklyClassSlot[] } }) => {
         setWeeklyClassData(res.data.data);
