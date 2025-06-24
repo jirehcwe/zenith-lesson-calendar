@@ -2,6 +2,7 @@
 
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
+import scrollGridPlugin from "@fullcalendar/scrollgrid";
 import { useEffect, useState } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { track } from "@vercel/analytics";
@@ -118,49 +119,56 @@ export default function WeeklyClassCalendar({
           reduce overlap and see specific classes more clearly.
         </div>
       ) : null}
-      <FullCalendar
-        plugins={[timeGridPlugin]}
-        initialView="timeGridWeek"
-        initialDate="2024-01-07" // Fixed reference date (Sunday)
-        headerToolbar={{
-          left: "",
-          center: "",
-          right: "",
-        }}
-        views={{}}
-        events={events}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        dayHeaderContent={(args: any) => {
-          // Show only the day name, not the date
-          return args.date.toLocaleDateString(undefined, { weekday: "short" });
-        }}
-        height="auto"
-        slotMinTime="07:00:00"
-        slotMaxTime="22:00:00"
-        allDaySlot={false}
-        displayEventEnd={true}
-        // Disable navigation since this is a template view
-        navLinks={false}
-        // Hide the date numbers, only show day names
-        dayHeaderFormat={{ weekday: "short" }}
-        eventContent={(arg) => {
-          const centre = arg.event.extendedProps.centre;
-          return (
-            <div>
-              <div className="font-semibold truncate">
-                {arg.event.extendedProps.subject}
+      <div>
+        <FullCalendar
+          schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
+          plugins={[timeGridPlugin, scrollGridPlugin]}
+          initialView="timeGridWeek"
+          initialDate="2024-01-07" // Fixed reference date (Sunday)
+          headerToolbar={{
+            left: "",
+            center: "",
+            right: "",
+          }}
+          views={{}}
+          events={events}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          dayHeaderContent={(args: any) => {
+            // Show only the day name, not the date
+            return args.date.toLocaleDateString(undefined, {
+              weekday: "short",
+            });
+          }}
+          height="auto"
+          slotMinTime="07:00:00"
+          slotMaxTime="22:00:00"
+          allDaySlot={false}
+          displayEventEnd={true}
+          // Disable navigation since this is a template view
+          navLinks={false}
+          // Hide the date numbers, only show day names
+          dayHeaderFormat={{ weekday: "short" }}
+          stickyHeaderDates={true}
+          dayMinWidth={100}
+          eventContent={(arg) => {
+            const centre = arg.event.extendedProps.centre;
+            return (
+              <div>
+                <div className="font-semibold truncate">
+                  {arg.event.extendedProps.subject}
+                </div>
+                {centre && (
+                  <div className="text-xs opacity-80 truncate">{centre}</div>
+                )}
               </div>
-              {centre && (
-                <div className="text-xs opacity-80 truncate">{centre}</div>
-              )}
-            </div>
-          );
-        }}
-        eventClick={handleEventClick}
-        // Show only one week, starting from Sunday
-        firstDay={0}
-        weekends={true}
-      />
+            );
+          }}
+          eventClick={handleEventClick}
+          // Show only one week, starting from Sunday
+          firstDay={0}
+          weekends={true}
+        />
+      </div>
       <Dialog
         open={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}

@@ -12,6 +12,7 @@
   "dependencies": {
     "@fullcalendar/daygrid": "^6.1.17",
     "@fullcalendar/react": "^6.1.17",
+    "@fullcalendar/scrollgrid": "^6.1.17",
     "@fullcalendar/timegrid": "^6.1.17",
     "@fullcalendar/core": "^6.1.17",
     "@headlessui/react": "^2.2.2",
