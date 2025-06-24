@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Zenith Crash Course Scheduler",
-  description: "Sign up for Zenith JC Crash Course now!",
+  title: "Zenith 2025 Schedule",
+  description: "View the Zenith 2025 Schedule and sign up for trial classes!",
 };
 
 export default function RootLayout({
