@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo } from "react";
 import Filters from "../components/Filters";
 import SignupBanner from "../components/SignupBanner";
-import BottomBanner from "@/components/BottomBanner";
 import WeeklyClassCalendar, {
   WeeklyClassSlot,
 } from "@/components/WeeklyClassCalendar";
@@ -270,35 +269,27 @@ export default function Page() {
   };
 
   return (
-    <div>
-      <SignupBanner />
-      <div className="p-4 space-y-6 text-sm md:text-base">
+    <div className="min-h-screen overflow-y-auto">
+      <div className="container mx-auto px-4 py-8">
+        <SignupBanner />
+        <h1 className="text-3xl font-bold text-center mb-6">
+          Zenith JC Crash Course Schedule
+        </h1>
+        <Filters
+          streams={["JC", "Secondary (Express)", "Secondary (IP)", "Primary"]}
+          levels={filteredOptions.levels}
+          subjects={filteredOptions.subjects}
+          centres={filteredOptions.centres}
+          tutors={filteredOptions.tutors}
+          filters={filters}
+          onFilterChange={handleFilterChange}
+        />
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-12 space-y-4">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            <p className="text-gray-600">Loading courses...</p>
-          </div>
+          <div className="text-center py-8">Loading schedule...</div>
         ) : (
-          <>
-            <Filters
-              streams={[
-                "JC",
-                "Secondary (Express)",
-                "Secondary (IP)",
-                "Primary",
-              ]}
-              levels={filteredOptions.levels}
-              subjects={filteredOptions.subjects}
-              centres={filteredOptions.centres}
-              tutors={filteredOptions.tutors}
-              filters={filters}
-              onFilterChange={handleFilterChange}
-            />
-            <WeeklyClassCalendar slots={events} filters={filters} />
-          </>
+          <WeeklyClassCalendar slots={events} filters={filters} />
         )}
       </div>
-      <BottomBanner />
     </div>
   );
 }
