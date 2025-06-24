@@ -50,8 +50,6 @@ function levelToFilterMapper(
 
 export default function Page() {
   const [weeklyClassData, setWeeklyClassData] = useState<WeeklyClassSlot[]>([]);
-
-  console.log(weeklyClassData);
   const [isLoading, setIsLoading] = useState(true);
   const [filters, setFilters] = useState({
     subject: [] as string[],
