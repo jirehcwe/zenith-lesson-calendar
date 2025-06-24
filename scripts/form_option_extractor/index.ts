@@ -232,8 +232,7 @@ class GoogleFormExtractor {
       return field;
     } else {
       if (
-        item.title !== "(J2) Select your Preferred Slot" &&
-        item.title !== "(J1) Select your Preferred Slot"
+        !item.title.toLowerCase().includes("select your preferred slot")
       ) {
         return null;
       }
