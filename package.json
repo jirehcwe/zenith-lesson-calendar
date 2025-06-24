@@ -16,7 +16,6 @@
     "@fullcalendar/timegrid": "^6.1.17",
     "@fullcalendar/core": "^6.1.17",
     "@headlessui/react": "^2.2.2",
-    "@vercel/analytics": "^1.5.0",
     "csv-parse": "^5.6.0",
     "date-fns": "^4.1.0",
     "google-auth-library": "^10.0.0-rc.3",
