@@ -170,8 +170,6 @@ export default function Filters({
     onFilterChange(newFilters);
   };
 
-  const isStreamSelected = filters.stream !== null;
-
   return (
     <div className="space-y-4 mb-6">
       {/* Stream Filter - Button Style */}
@@ -193,47 +191,53 @@ export default function Filters({
               {stream}
             </button>
           ))}
+          {filters.stream && (
+            <button
+              type="button"
+              onClick={() => setFilter("stream", null)}
+              className="px-3 py-2 rounded-lg border-2 border-gray-300 bg-white text-gray-700 hover:border-red-400 hover:bg-red-50 transition-all duration-200 font-medium"
+              aria-label="Clear stream selection"
+            >
+              ×
+            </button>
+          )}
         </div>
       </div>
 
       {/* Other Filters - Dropdown Style (Only show when stream is selected) */}
-      {isStreamSelected && (
-        <div className="space-y-4">
-          {/* Level Filter - Always show when stream is selected */}
-          <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
-            <MultiSelect
-              label="Level"
-              selected={filters.level}
-              options={levels}
-              onChange={(val) => setFilter("level", val)}
-            />
-          </div>
 
-          {/* Subject, Centre, Tutor - Only show when level is selected */}
-          {filters.level.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <MultiSelect
-                label="Subject"
-                selected={filters.subject}
-                options={subjects}
-                onChange={(val) => setFilter("subject", val)}
-              />
-              <MultiSelect
-                label="Centre"
-                selected={filters.centre}
-                options={centres}
-                onChange={(val) => setFilter("centre", val)}
-              />
-              {/* <MultiSelect
+      <div className="space-y-4">
+        {/* Level Filter - Always show when stream is selected */}
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+          <MultiSelect
+            label="Level"
+            selected={filters.level}
+            options={levels}
+            onChange={(val) => setFilter("level", val)}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <MultiSelect
+            label="Subject"
+            selected={filters.subject}
+            options={subjects}
+            onChange={(val) => setFilter("subject", val)}
+          />
+          <MultiSelect
+            label="Centre"
+            selected={filters.centre}
+            options={centres}
+            onChange={(val) => setFilter("centre", val)}
+          />
+          {/* <MultiSelect
                 label="Tutor"
                 selected={filters.tutor}
                 options={tutors}
                 onChange={(val) => setFilter("tutor", val)}
               /> */}
-            </div>
-          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }

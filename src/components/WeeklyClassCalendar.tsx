@@ -3,7 +3,7 @@
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import scrollGridPlugin from "@fullcalendar/scrollgrid";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 
 // Define a new type for weekly class slots (no topic, no date)
@@ -20,30 +20,174 @@ export type WeeklyClassSlot = {
   prefillLink: string;
 };
 
-// Function to generate consistent colors from subject names
-function hashStringToColor(str: string): {
+const jcSubjectToColorMap: Record<
+  string,
+  { backgroundColor: string; textColor: string }
+> = {
+  "General Paper": {
+    backgroundColor: "#FBBC03",
+    textColor: "#000000",
+  },
+  Biology: {
+    backgroundColor: "#95B0F0",
+    textColor: "#000000",
+  },
+  Physics: {
+    backgroundColor: "#95F095",
+    textColor: "#000000",
+  },
+  Chemistry: {
+    backgroundColor: "#FFFF02",
+    textColor: "#000000",
+  },
+  Mathematics: {
+    backgroundColor: "#BFFCFF",
+    textColor: "#000000",
+  },
+  Economics: {
+    backgroundColor: "#7BFF85",
+    textColor: "#000000",
+  },
+};
+
+const secSubjectToColorMap: Record<
+  string,
+  { backgroundColor: string; textColor: string }
+> = {
+  Mathematics: {
+    backgroundColor: "#FED966",
+    textColor: "#000000",
+  },
+  "A Math": {
+    backgroundColor: "#CFE2F3",
+    textColor: "#000000",
+  },
+  "E Math": {
+    backgroundColor: "#CFE2F3",
+    textColor: "#000000",
+  },
+  "Pure Physics": {
+    backgroundColor: "#C27BA0",
+    textColor: "#000000",
+  },
+  "Combined Physics": {
+    backgroundColor: "#C27BA0",
+    textColor: "#000000",
+  },
+  // IP
+  Chemistry: {
+    backgroundColor: "#C27BA0",
+    textColor: "#000000",
+  },
+  // Lower sec science
+  Science: {
+    backgroundColor: "#C27BA0",
+    textColor: "#000000",
+  },
+  "Pure Chemistry": {
+    backgroundColor: "#F4CCCC",
+    textColor: "#000000",
+  },
+  "Combined Chemistry": {
+    backgroundColor: "#F4CCCC",
+    textColor: "#000000",
+  },
+  "Pure Biology": {
+    backgroundColor: "#D9EAD3",
+    textColor: "#000000",
+  },
+  "Combined Biology": {
+    backgroundColor: "#D9EAD3",
+    textColor: "#000000",
+  },
+  English: {
+    backgroundColor: "#DD7E6B",
+    textColor: "#000000",
+  },
+};
+
+const primarySubjectToColorMap: Record<
+  string,
+  { backgroundColor: string; textColor: string }
+> = {
+  English: {
+    backgroundColor: "#9FC5E8",
+    textColor: "#000000",
+  },
+  Math: {
+    backgroundColor: "#F6B26B",
+    textColor: "#000000",
+  },
+  Science: {
+    backgroundColor: "#B6D7A8",
+    textColor: "#000000",
+  },
+};
+
+// // Function to generate consistent colors from subject names
+// function hashStringToColor(str: string): {
+//   backgroundColor: string;
+//   textColor: string;
+// } {
+//   // Simple hash function
+//   let hash = 0;
+//   for (let i = 0; i < str.length; i++) {
+//     const char = str.charCodeAt(i);
+//     hash = (hash << 5) - hash + char;
+//     hash = hash & hash; // Convert to 32-bit integer
+//   }
+
+//   // Use the hash to generate HSL values for better color distribution
+//   const hue = Math.abs(hash) % 270;
+//   const saturation = 75 + (Math.abs(hash) % 20); // 75-95%
+//   const lightness = 55 + (Math.abs(hash) % 15); // 55-70%
+
+//   const backgroundColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+
+//   // Choose text color based on lightness
+//   const textColor = lightness > 30 ? "#000000" : "#ffffff";
+
+//   return { backgroundColor, textColor };
+// }
+
+function subjectToColor(
+  level: string,
+  subject: string
+): {
   backgroundColor: string;
   textColor: string;
 } {
-  // Simple hash function
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash = hash & hash; // Convert to 32-bit integer
+  if (level.includes("J")) {
+    return (
+      jcSubjectToColorMap[subject] || {
+        backgroundColor: "#ffffff",
+        textColor: "#000000",
+      }
+    );
   }
 
-  // Use the hash to generate HSL values for better color distribution
-  const hue = Math.abs(hash) % 270;
-  const saturation = 75 + (Math.abs(hash) % 20); // 75-95%
-  const lightness = 55 + (Math.abs(hash) % 15); // 55-70%
+  if (level.includes("S")) {
+    return (
+      secSubjectToColorMap[subject] || {
+        backgroundColor: "#ffffff",
+        textColor: "#000000",
+      }
+    );
+  }
 
-  const backgroundColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+  if (level.includes("P")) {
+    return (
+      primarySubjectToColorMap[subject] || {
+        backgroundColor: "#ffffff",
+        textColor: "#000000",
+      }
+    );
+  }
 
-  // Choose text color based on lightness
-  const textColor = lightness > 30 ? "#000000" : "#ffffff";
-
-  return { backgroundColor, textColor };
+  return {
+    backgroundColor: "#ffffff",
+    textColor: "#000000",
+  };
 }
 
 // Helper to get a fixed date for a weekday (using a reference week)
@@ -58,8 +202,9 @@ function getFixedWeekdayDate(weekday: number): Date {
 
 export default function WeeklyClassCalendar({
   slots,
-  filters,
-}: {
+}: // eslint-disable-next-line @typescript-eslint/no-unused-vars
+// filters,
+{
   slots: WeeklyClassSlot[];
   filters: {
     subject: string[];
@@ -86,23 +231,33 @@ export default function WeeklyClassCalendar({
   }, []);
 
   // Convert weekly slots to FullCalendar events for the current week
-  const events = slots.map((slot) => {
-    const baseDate = getFixedWeekdayDate(slot.day);
-    const [startHour, startMinute] = slot.startTime.split(":").map(Number);
-    const [endHour, endMinute] = slot.endTime.split(":").map(Number);
-    const start = new Date(baseDate);
-    start.setHours(startHour, startMinute, 0, 0);
-    const end = new Date(baseDate);
-    end.setHours(endHour, endMinute, 0, 0);
-    return {
-      title: slot.title,
-      start,
-      end,
-      extendedProps: slot,
-      backgroundColor: hashStringToColor(slot.subject).backgroundColor,
-      textColor: hashStringToColor(slot.subject).textColor,
-    };
-  });
+  const events = useMemo(() => {
+    return slots.map((slot) => {
+      // Adjust slot.day if the calendar starts on Monday and slot is Sunday
+      let adjustedDay = slot.day;
+      if (slot.day === 0) {
+        adjustedDay = 7; // Treat Sunday as the 7th day (after Saturday) for a Monday-first calendar
+      }
+      const baseDate = getFixedWeekdayDate(adjustedDay);
+      const [startHour, startMinute] = slot.startTime.split(":").map(Number);
+      const [endHour, endMinute] = slot.endTime.split(":").map(Number);
+      const start = new Date(baseDate);
+      start.setHours(startHour, startMinute, 0, 0);
+      const end = new Date(baseDate);
+      end.setHours(endHour, endMinute, 0, 0);
+      return {
+        title: `${slot.level} ${slot.subject} ${
+          slot.stream ? `(${slot.stream})` : ""
+        }`,
+        start,
+        end,
+        extendedProps: slot,
+        backgroundColor: subjectToColor(slot.level, slot.subject)
+          .backgroundColor,
+        textColor: subjectToColor(slot.level, slot.subject).textColor,
+      };
+    });
+  }, [slots]);
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   const handleEventClick = (arg: any) => {
@@ -112,18 +267,16 @@ export default function WeeklyClassCalendar({
 
   return (
     <>
-      {filters.subject.length === 0 || filters.centre.length === 0 ? (
-        <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg border border-blue-200">
-          💡 <strong>Tip:</strong> Use the Subject and Centre filters above to
-          reduce overlap and see specific classes more clearly.
-        </div>
-      ) : null}
+      <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg border border-blue-200">
+        💡 <strong>Tip:</strong> Use the filters above to reduce overlap and see
+        specific classes more clearly.
+      </div>
       <div>
         <FullCalendar
           schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
           plugins={[timeGridPlugin, scrollGridPlugin]}
           initialView="timeGridWeek"
-          initialDate="2024-01-07" // Fixed reference date (Sunday)
+          initialDate="2024-01-08" // Fixed reference date (Monday)
           headerToolbar={{
             left: "",
             center: "",
@@ -153,9 +306,7 @@ export default function WeeklyClassCalendar({
             const centre = arg.event.extendedProps.centre;
             return (
               <div>
-                <div className="font-semibold truncate">
-                  {arg.event.extendedProps.subject}
-                </div>
+                <div className="font-semibold truncate">{arg.event.title}</div>
                 {centre && (
                   <div className="text-xs opacity-80 truncate">{centre}</div>
                 )}
@@ -164,7 +315,7 @@ export default function WeeklyClassCalendar({
           }}
           eventClick={handleEventClick}
           // Show only one week, starting from Sunday
-          firstDay={0}
+          firstDay={1}
           weekends={true}
         />
       </div>
@@ -185,7 +336,8 @@ export default function WeeklyClassCalendar({
             {selectedEvent && (
               <>
                 <DialogTitle className="font-bold text-lg mb-2">
-                  {selectedEvent.subject} - {selectedEvent.level}
+                  {selectedEvent.level} {selectedEvent.subject}{" "}
+                  {selectedEvent.stream ? `(${selectedEvent.stream})` : ""}
                 </DialogTitle>
                 <div className="space-y-2">
                   <div className="text-sm">
