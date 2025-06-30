@@ -172,7 +172,6 @@ export default function Filters({
 
   return (
     <div className="space-y-4 mb-6">
-      {/* Stream Filter - Button Style */}
       <div className="flex flex-col space-y-2">
         <label className="text-sm font-semibold text-gray-700">
           Select Stream
@@ -203,8 +202,6 @@ export default function Filters({
           )}
         </div>
       </div>
-
-      {/* Other Filters - Dropdown Style (Only show when stream is selected) */}
 
       <div className="space-y-4">
         {/* Level Filter - Always show when stream is selected */}

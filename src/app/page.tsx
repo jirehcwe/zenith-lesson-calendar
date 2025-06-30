@@ -32,7 +32,7 @@ function levelToFilterMapper(
   stream: string
 ): boolean {
   if (filter === null) {
-    return false;
+    return true;
   }
   switch (filter) {
     case "JC":
@@ -44,7 +44,7 @@ function levelToFilterMapper(
     case "Primary":
       return level.startsWith("P");
     default:
-      return false;
+      return true;
   }
 }
 
@@ -84,16 +84,6 @@ export default function Page() {
 
   // Compute filtered options for progressive disclosure with counts
   const filteredOptions = useMemo(() => {
-    // If no stream selected, return empty arrays for dependent filters
-    if (filters.stream === null) {
-      return {
-        levels: [],
-        subjects: [],
-        centres: [],
-        tutors: [],
-      };
-    }
-
     // Base data filtered by stream only
     const streamFilteredData = weeklyClassData.filter((s) =>
       levelToFilterMapper(filters.stream, s.level, s.stream)
@@ -109,27 +99,27 @@ export default function Page() {
     const getResultCount = (field: string, value: string) => {
       const testFilters = { ...filters };
       if (field === "level") {
-        testFilters.level = [...filters.level, value];
+        testFilters.level = [value];
       } else if (field === "subject") {
-        testFilters.subject = [...filters.subject, value];
+        testFilters.subject = [value];
       } else if (field === "centre") {
-        testFilters.centre = [...filters.centre, value];
+        testFilters.centre = [value];
       } else if (field === "tutor") {
-        testFilters.tutor = [...filters.tutor, value];
+        testFilters.tutor = [value];
       }
 
-      return streamFilteredData.filter((s) => {
+      const result = streamFilteredData.filter((s) => {
         return (
           (testFilters.level.length === 0 ||
             testFilters.level.includes(s.level)) &&
           (testFilters.subject.length === 0 ||
             testFilters.subject.includes(s.subject)) &&
           (testFilters.centre.length === 0 ||
-            testFilters.centre.includes(s.centre)) &&
-          (testFilters.tutor.length === 0 ||
-            testFilters.tutor.includes(s.tutor))
+            testFilters.centre.includes(s.centre))
         );
-      }).length;
+      });
+
+      return result.length;
     };
 
     // Create options with counts and sort them
@@ -164,10 +154,8 @@ export default function Page() {
         // Only push zero-count options to the bottom, preserve original order otherwise
         if (a.count === 0 && b.count > 0) return 1;
         if (a.count > 0 && b.count === 0) return -1;
-        if (a.count === 0 && b.count === 0)
-          return a.value.localeCompare(b.value);
-        // For non-zero counts, preserve original order
-        return a.originalIndex - b.originalIndex;
+
+        return a.value.localeCompare(b.value);
       });
 
     const centresWithCounts = allCentres
@@ -181,10 +169,8 @@ export default function Page() {
         // Only push zero-count options to the bottom, preserve original order otherwise
         if (a.count === 0 && b.count > 0) return 1;
         if (a.count > 0 && b.count === 0) return -1;
-        if (a.count === 0 && b.count === 0)
-          return a.value.localeCompare(b.value);
-        // For non-zero counts, preserve original order
-        return a.originalIndex - b.originalIndex;
+
+        return a.value.localeCompare(b.value);
       });
 
     const tutorsWithCounts = allTutors
@@ -198,10 +184,8 @@ export default function Page() {
         // Only push zero-count options to the bottom, preserve original order otherwise
         if (a.count === 0 && b.count > 0) return 1;
         if (a.count > 0 && b.count === 0) return -1;
-        if (a.count === 0 && b.count === 0)
-          return a.value.localeCompare(b.value);
-        // For non-zero counts, preserve original order
-        return a.originalIndex - b.originalIndex;
+
+        return a.value.localeCompare(b.value);
       });
 
     return {
@@ -213,17 +197,21 @@ export default function Page() {
   }, [weeklyClassData, filters]);
 
   const events = useMemo(() => {
-    // Apply filters - now level is required instead of subject
-    if (filters.stream === null || filters.level.length === 0) {
+    // If no filters are applied, return empty array
+    if (
+      filters.stream === null &&
+      filters.level.length === 0 &&
+      filters.subject.length === 0 &&
+      filters.centre.length === 0
+    ) {
       return [];
     }
     const filtered = weeklyClassData.filter((s) => {
       return (
         levelToFilterMapper(filters.stream, s.level, s.stream) &&
-        filters.level.includes(s.level) &&
+        (filters.level.length === 0 || filters.level.includes(s.level)) &&
         (filters.subject.length === 0 || filters.subject.includes(s.subject)) &&
-        (filters.centre.length === 0 || filters.centre.includes(s.centre)) &&
-        (filters.tutor.length === 0 || filters.tutor.includes(s.tutor))
+        (filters.centre.length === 0 || filters.centre.includes(s.centre))
       );
     });
 
@@ -249,20 +237,6 @@ export default function Page() {
       return;
     }
 
-    // If level changed, clear subject, centre, and tutor filters
-    if (
-      JSON.stringify(prevFilters.level) !== JSON.stringify(newFilters.level)
-    ) {
-      setFilters({
-        ...newFilters,
-        subject: [],
-        centre: [],
-        tutor: [],
-      });
-      return;
-    }
-
-    // For Subject-Centre-Tutor, allow bidirectional filtering
     setFilters(newFilters);
   };
 
