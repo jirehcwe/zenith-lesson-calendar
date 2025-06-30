@@ -59,7 +59,18 @@ export default function Page() {
     stream: null as string | null,
   });
 
+  // Effect to read filters from URL on component mount
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const initialFilters = {
+      subject: params.get("subject")?.split(",").filter(Boolean) || [],
+      centre: params.get("centre")?.split(",").filter(Boolean) || [],
+      tutor: params.get("tutor")?.split(",").filter(Boolean) || [],
+      level: params.get("level")?.split(",").filter(Boolean) || [],
+      stream: params.get("stream") || null,
+    };
+    setFilters(initialFilters);
+
     const cached = getCachedData();
     if (cached) {
       setWeeklyClassData(cached);
@@ -68,7 +79,6 @@ export default function Page() {
     }
 
     setIsLoading(true);
-    // fetch("http://192.168.50.143:3000/schedule")
     fetch("https://lms-api.myzenithstudy.com/schedule")
       .then((res) => res.json())
       .then((res: { data: { data: WeeklyClassSlot[] } }) => {
@@ -81,6 +91,28 @@ export default function Page() {
         setIsLoading(false);
       });
   }, []);
+
+  // Effect to update URL query params when filters change
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (filters.subject.length > 0) {
+      params.set("subject", filters.subject.join(","));
+    }
+    if (filters.centre.length > 0) {
+      params.set("centre", filters.centre.join(","));
+    }
+    if (filters.tutor.length > 0) {
+      params.set("tutor", filters.tutor.join(","));
+    }
+    if (filters.level.length > 0) {
+      params.set("level", filters.level.join(","));
+    }
+    if (filters.stream) {
+      params.set("stream", filters.stream);
+    }
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState({}, "", newUrl);
+  }, [filters]);
 
   // Compute filtered options for progressive disclosure with counts
   const filteredOptions = useMemo(() => {
