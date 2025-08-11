@@ -106,18 +106,38 @@ export default function CalendarView({
         eventContent={(arg) => {
           const topic = arg.event.extendedProps.topic;
           const centre = arg.event.extendedProps.centre;
+
+          const truncateText = (text: string, maxLength: number) => {
+            if (text.length <= maxLength) return text;
+            return text.substring(0, maxLength) + "...";
+          };
+
           return (
-            <div>
-              <div className="font-semibold">{arg.event.title}</div>
+            <div className="p-1 overflow-hidden">
+              <div
+                className="font-semibold text-xs truncate"
+                title={arg.event.title}
+              >
+                {arg.event.title}
+              </div>
               {topic && (
-                <div className="text-xs opacity-80">Topic: {topic}</div>
+                <div
+                  className="text-xs opacity-80 truncate"
+                  title={`Topic: ${topic}`}
+                >
+                  Topic: {truncateText(topic, 20)}
+                </div>
               )}
               {centre && (
-                <div className="text-xs opacity-80">Centre: {centre}</div>
+                <div
+                  className="text-xs opacity-80 truncate"
+                  title={`Centre: ${centre}`}
+                >
+                  Centre: {truncateText(centre, 15)}
+                </div>
               )}
-              <br />
-              <div className="underline cursor-pointer">
-                Click for registration link
+              <div className="text-xs underline cursor-pointer mt-1">
+                Click to register
               </div>
             </div>
           );
