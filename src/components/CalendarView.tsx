@@ -47,15 +47,15 @@ export default function CalendarView({
     setIsDialogOpen(true);
   };
 
-  console.log(
-    selectedEvent
-      ? `https://docs.google.com/forms/d/e/1FAIpQLSdqyeoGBF4DyUXQA3cUOaZee3DB5NFhTtqPRyN5wdkQcIgL0Q/viewform?usp=pp_url&entry.1157532004=SCHEDULE&entry.${
-          selectedEvent.extendedProps.prefillField
-        }=${encodeURIComponent(selectedEvent.extendedProps.prefill)
-          .replace(/%20/g, "+")
-          .replace(/%3A/g, ":")}`
-      : null
-  );
+  // console.log(
+  //   selectedEvent
+  //     ? `https://docs.google.com/forms/d/e/1FAIpQLSesYi1vS9HGIsyW1nTjxXbk07anXX3iZ9yAMXfwON4w0wiqdg/viewform?usp=pp_url&entry.1157532004=SCHEDULE&entry.${
+  //         selectedEvent.extendedProps.prefillField
+  //       }=${encodeURIComponent(selectedEvent.extendedProps.prefill)
+  //         .replace(/%20/g, "+")
+  //         .replace(/%3A/g, ":")}`
+  //     : null
+  // );
 
   return (
     <>
@@ -63,7 +63,8 @@ export default function CalendarView({
         plugins={[timeGridPlugin, dayGridPlugin]}
         initialView="timeGridWeek"
         validRange={{ start: START_DATE, end: END_DATE }}
-        initialDate="2025-05-25"
+        firstDay={1}
+        initialDate="2025-08-24"
         headerToolbar={{
           left: "prev,next today",
           center: "title",
@@ -80,7 +81,7 @@ export default function CalendarView({
         nowIndicator={true}
         height="auto"
         slotMinTime="09:00:00"
-        slotMaxTime="20:00:00"
+        slotMaxTime="22:00:00"
         allDaySlot={false}
         displayEventEnd={true}
         eventContent={(arg) => {
@@ -145,7 +146,7 @@ export default function CalendarView({
             <div className="flex justify-end mt-4">
               {selectedEvent?.extendedProps.prefill ? (
                 <a
-                  href={`https://docs.google.com/forms/d/e/1FAIpQLSdqyeoGBF4DyUXQA3cUOaZee3DB5NFhTtqPRyN5wdkQcIgL0Q/viewform?entry.1157532004=SCHEDULE&entry.${
+                  href={`https://docs.google.com/forms/d/e/1FAIpQLSesYi1vS9HGIsyW1nTjxXbk07anXX3iZ9yAMXfwON4w0wiqdg/viewform?entry.1157532004=SCHEDULE&entry.${
                     selectedEvent.extendedProps.prefillField
                   }=${encodeURIComponent(selectedEvent.extendedProps.prefill)}`}
                   target="_blank"

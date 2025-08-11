@@ -12,5 +12,5 @@ export type Session = {
   prefillField: string;
 };
 
-export const START_DATE = new Date("2025-05-26");
-export const END_DATE = new Date("2025-06-21");
+export const START_DATE = new Date("2025-08-25");
+export const END_DATE = new Date("2025-09-14");

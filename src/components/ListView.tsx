@@ -47,8 +47,8 @@ export default function ListView({
           className="border p-2 rounded"
           dateFormat="yyyy-MM-dd"
           isClearable
-          minDate={new Date("2025-05-26")}
-          maxDate={new Date("2025-06-23")}
+          minDate={new Date("2025-08-25")}
+          maxDate={new Date("2025-09-14")}
         />
       </div>
 

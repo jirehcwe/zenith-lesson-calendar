@@ -36,9 +36,36 @@ function MultiSelect({
     }
   };
 
+  const clearAll = () => {
+    onChange([]);
+  };
+
   return (
     <div className="flex flex-col">
-      <label className="text-sm font-semibold">{label}</label>
+      <div className="flex items-center justify-between">
+        <label className="text-sm font-semibold">{label}</label>
+        {selected.length > 0 && (
+          <button
+            onClick={clearAll}
+            className="text-gray-500 hover:text-red-500 transition-colors"
+            title={`Clear all ${label.toLowerCase()} filters`}
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        )}
+      </div>
       <Listbox value={selected} onChange={onChange} multiple>
         <div className="relative mt-1">
           <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white border p-2 text-left">
