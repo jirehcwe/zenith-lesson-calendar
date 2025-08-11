@@ -6,7 +6,6 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import { END_DATE, Session, START_DATE } from "../types";
 import { useEffect, useState } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
-import { track } from "@vercel/analytics";
 
 export default function CalendarView({
   events,
@@ -59,12 +58,32 @@ export default function CalendarView({
 
   return (
     <>
+      <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+        <div className="flex items-center">
+          <svg
+            className="w-5 h-5 text-blue-500 mr-2 flex-shrink-0"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fillRule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+              clipRule="evenodd"
+            />
+          </svg>
+          <p className="text-blue-700 text-sm">
+            <span className="font-semibold">Tip:</span> There are some crash
+            course slots in August! Use the left arrow to navigate to the August
+            calendar.
+          </p>
+        </div>
+      </div>
       <FullCalendar
         plugins={[timeGridPlugin, dayGridPlugin]}
         initialView="timeGridWeek"
         validRange={{ start: START_DATE, end: END_DATE }}
         firstDay={1}
-        initialDate="2025-08-24"
+        initialDate="2025-09-08"
         headerToolbar={{
           left: "prev,next today",
           center: "title",
@@ -151,9 +170,6 @@ export default function CalendarView({
                   }=${encodeURIComponent(selectedEvent.extendedProps.prefill)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => {
-                    track("form_click_prefilled");
-                  }}
                 >
                   <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
                     Register (prefilled)

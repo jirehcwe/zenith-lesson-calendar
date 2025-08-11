@@ -56,7 +56,7 @@ export default function ListView({
         {filtered.map((s) => (
           <div
             key={`${s.date}-${s.startTime}-${s.tutor}`}
-            className="p-4 border rounded shadow"
+            className="p-4 border rounded shadow flex flex-col"
           >
             <div className="font-semibold">{s.subject}</div>
             <div className="text-sm opacity-80">Topic: {s.topic}</div>
@@ -64,6 +64,21 @@ export default function ListView({
             <div className="text-sm opacity-80">Date: {s.date}</div>
             <div className="text-sm opacity-80">
               Time: {s.startTime} - {s.endTime}
+            </div>
+            <div className="mt-4 flex justify-end">
+              {s.prefill ? (
+                <a
+                  href={`https://docs.google.com/forms/d/e/1FAIpQLSesYi1vS9HGIsyW1nTjxXbk07anXX3iZ9yAMXfwON4w0wiqdg/viewform?entry.1157532004=SCHEDULE&entry.${
+                    s.prefillField
+                  }=${encodeURIComponent(s.prefill)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
+                    Register (prefilled)
+                  </button>
+                </a>
+              ) : null}
             </div>
           </div>
         ))}

@@ -1,5 +1,4 @@
 "use client";
-import { track } from "@vercel/analytics";
 
 export default function BottomBanner() {
   return (
@@ -11,9 +10,6 @@ export default function BottomBanner() {
           target="_blank"
           rel="noopener noreferrer"
           className="text-blue-600 underline"
-          onClick={() => {
-            track("form_click");
-          }}
         >
           Click here to sign up!
         </a>

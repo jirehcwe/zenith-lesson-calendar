@@ -32,22 +32,13 @@ export default function Page() {
         (filters.subject.length === 0 || filters.subject.includes(s.subject)) &&
         (filters.topic.length === 0 ||
           filters.topic.includes(`[${s.subject}] ${s.topic}`)) &&
-        (filters.centre.length === 0 || filters.centre.includes(s.centre)) &&
-        (filters.tutor.length === 0 || filters.tutor.includes(s.tutor))
+        (filters.centre.length === 0 || filters.centre.includes(s.centre))
       );
     });
   };
 
   // Calendar view filtered sessions (must NOT show anything if nothing selected)
   const calendarFilteredSessions = useMemo(() => {
-    const noFiltersSelected =
-      filters.subject.length === 0 &&
-      filters.topic.length === 0 &&
-      filters.centre.length === 0 &&
-      filters.tutor.length === 0;
-
-    if (noFiltersSelected) return [];
-
     return applyFilters(sessions);
   }, [sessions, filters]);
 

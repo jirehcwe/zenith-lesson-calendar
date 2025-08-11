@@ -42,34 +42,37 @@ function MultiSelect({
 
   return (
     <div className="flex flex-col">
-      <div className="flex items-center justify-between">
-        <label className="text-sm font-semibold">{label}</label>
-        {selected.length > 0 && (
-          <button
-            onClick={clearAll}
-            className="text-gray-500 hover:text-red-500 transition-colors"
-            title={`Clear all ${label.toLowerCase()} filters`}
-          >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        )}
-      </div>
+      <label className="text-sm font-semibold">{label}</label>
       <Listbox value={selected} onChange={onChange} multiple>
         <div className="relative mt-1">
-          <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white border p-2 text-left">
-            {selected.length > 0 ? selected.join(", ") : `Select ${label}`}
+          <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white border p-2 text-left flex items-center justify-between">
+            <span className="truncate">
+              {selected.length > 0 ? selected.join(", ") : `Select ${label}`}
+            </span>
+            {selected.length > 0 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  clearAll();
+                }}
+                className="ml-2 text-gray-400 hover:text-red-500 transition-colors flex-shrink-0"
+                title={`Clear all ${label.toLowerCase()} filters`}
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            )}
           </Listbox.Button>
           <Transition as={Fragment}>
             <Listbox.Options
