@@ -48,32 +48,127 @@ export default function Page() {
   }, [sessions, filters]);
 
   const events = useMemo(() => {
-    const colorMap = [
-      "#ef4444",
-      "#3b82f6",
-      "#22c55e",
-      "#eab308",
-      "#8b5cf6",
-      "#ec4899",
-      "#6366f1",
-    ];
-    const subjectColors = Array.from(new Set(sessions.map((s) => s.subject)));
-    const colorDict = Object.fromEntries(
-      subjectColors.map((subject, idx) => [
-        subject,
-        colorMap[idx % colorMap.length],
-      ])
-    );
+    const jcSubjectToColorMap: Record<
+      string,
+      { backgroundColor: string; textColor: string }
+    > = {
+      "General Paper": {
+        backgroundColor: "#FBBC03",
+        textColor: "#000000",
+      },
+      Biology: {
+        backgroundColor: "#95B0F0",
+        textColor: "#000000",
+      },
+      Physics: {
+        backgroundColor: "#95F095",
+        textColor: "#000000",
+      },
+      Chemistry: {
+        backgroundColor: "#FFFF02",
+        textColor: "#000000",
+      },
+      Mathematics: {
+        backgroundColor: "#BFFCFF",
+        textColor: "#000000",
+      },
+      Economics: {
+        backgroundColor: "#7BFF85",
+        textColor: "#000000",
+      },
+    };
 
-    return calendarFilteredSessions.map((s) => ({
-      title: `${s.subject}`,
-      start: new Date(`${s.date} 2025 ${s.startTime}`),
-      end: new Date(`${s.date} 2025 ${s.endTime}`),
-      extendedProps: { ...s },
-      backgroundColor: colorDict[s.subject] || "#9ca3af",
-      textColor: "#ffffff",
-    }));
-  }, [calendarFilteredSessions, sessions]);
+    const secSubjectToColorMap: Record<
+      string,
+      { backgroundColor: string; textColor: string }
+    > = {
+      Mathematics: {
+        backgroundColor: "#FED966",
+        textColor: "#000000",
+      },
+      Math: {
+        backgroundColor: "#FED966",
+        textColor: "#000000",
+      },
+      "IP Math": {
+        backgroundColor: "#FED966",
+        textColor: "#000000",
+      },
+      "A Math": {
+        backgroundColor: "#CFE2F3",
+        textColor: "#000000",
+      },
+      "E Math": {
+        backgroundColor: "#CFE2F3",
+        textColor: "#000000",
+      },
+      "Pure Physics": {
+        backgroundColor: "#C27BA0",
+        textColor: "#000000",
+      },
+      "Combined Physics": {
+        backgroundColor: "#C27BA0",
+        textColor: "#000000",
+      },
+      // IP
+      Chemistry: {
+        backgroundColor: "#C27BA0",
+        textColor: "#000000",
+      },
+      // Lower sec science
+      Science: {
+        backgroundColor: "#C27BA0",
+        textColor: "#000000",
+      },
+      "IP Science": {
+        backgroundColor: "#C27BA0",
+        textColor: "#000000",
+      },
+      "Pure Chemistry": {
+        backgroundColor: "#F4CCCC",
+        textColor: "#000000",
+      },
+      "Combined Chemistry": {
+        backgroundColor: "#F4CCCC",
+        textColor: "#000000",
+      },
+      "Pure Biology": {
+        backgroundColor: "#D9EAD3",
+        textColor: "#000000",
+      },
+      "Combined Biology": {
+        backgroundColor: "#D9EAD3",
+        textColor: "#000000",
+      },
+      English: {
+        backgroundColor: "#DD7E6B",
+        textColor: "#000000",
+      },
+      "IP English": {
+        backgroundColor: "#DD7E6B",
+        textColor: "#000000",
+      },
+    };
+
+    const map = calendarFilteredSessions[0]?.level.includes("J")
+      ? jcSubjectToColorMap
+      : secSubjectToColorMap;
+
+    return calendarFilteredSessions.map((s) => {
+      const color = map[s.displaySubject];
+      if (color === undefined) {
+        throw new Error(`No color found for ${s.displaySubject}`);
+      }
+      return {
+        title: `${s.subject}`,
+        start: new Date(`${s.date} 2025 ${s.startTime}`),
+        end: new Date(`${s.date} 2025 ${s.endTime}`),
+        extendedProps: { ...s },
+        backgroundColor: color.backgroundColor,
+        textColor: color.textColor,
+      };
+    });
+  }, [calendarFilteredSessions]);
 
   // Grouped + Sorted Topics
   const topicOptions = useMemo(() => {

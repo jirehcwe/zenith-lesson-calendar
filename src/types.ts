@@ -10,6 +10,7 @@ export type Session = {
   level: string;
   prefill: string;
   prefillField: string;
+  displaySubject: string;
 };
 
 export const START_DATE = new Date("2025-09-01");

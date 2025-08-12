@@ -184,9 +184,10 @@ const result = records.map((row: CsvRow) => {
     capacity: row["Capacity"],
     date: row["Date (text)"]?.replace(/\s*\(.*\)/, ""), // Remove day-of-week in brackets
     startTime: row["Start Time"]?.replace(/:(\d{2})\s/, " "),
-    endTime: addHours(row["Start Time"]?.replace(/:(\d{2})\s/, " "), 3),
+    endTime: addHours(row["Start Time"]?.replace(/:(\d{2})\s/, " "), 2),
     prefill: row["Form Option to Display"],
     prefillField,
+    displaySubject: row["Subject(Display)"],
   };
   return obj;
 });

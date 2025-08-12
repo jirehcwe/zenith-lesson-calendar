@@ -9,9 +9,10 @@
     "capacity": "9",
     "date": "06 Sep",
     "startTime": "11:15 AM",
-    "endTime": "2:15 PM",
+    "endTime": "1:15 PM",
     "prefill": "[S1 English] Marine Parade | 06 Sep (Sat) | 11:15AM - 01:15PM",
-    "prefillField": "1016736042"
+    "prefillField": "1016736042",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -23,9 +24,10 @@
     "capacity": "12",
     "date": "09 Sep",
     "startTime": "7:15 PM",
-    "endTime": "10:15 PM",
+    "endTime": "9:15 PM",
     "prefill": "[S1 English] Marine Parade | 09 Sep (Tue) | 07:15PM - 09:15PM",
-    "prefillField": "1016736042"
+    "prefillField": "1016736042",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -37,9 +39,10 @@
     "capacity": "9",
     "date": "12 Sep",
     "startTime": "3:00 PM",
-    "endTime": "6:00 PM",
+    "endTime": "5:00 PM",
     "prefill": "[S1 English] Marine Parade | 12 Sep (Fri) | 03:00PM - 05:00PM",
-    "prefillField": "1016736042"
+    "prefillField": "1016736042",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -51,9 +54,10 @@
     "capacity": "9",
     "date": "13 Sep",
     "startTime": "11:15 AM",
-    "endTime": "2:15 PM",
+    "endTime": "1:15 PM",
     "prefill": "[S1 English] Marine Parade | 13 Sep (Sat) | 11:15AM - 01:15PM",
-    "prefillField": "1016736042"
+    "prefillField": "1016736042",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -65,9 +69,10 @@
     "capacity": "12",
     "date": "08 Sep",
     "startTime": "5:00 PM",
-    "endTime": "8:00 PM",
+    "endTime": "7:00 PM",
     "prefill": "[S1 English] Potong Pasir | 08 Sep (Mon) | 05:00PM - 07:00PM",
-    "prefillField": "1016736042"
+    "prefillField": "1016736042",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -79,9 +84,10 @@
     "capacity": "10",
     "date": "06 Sep",
     "startTime": "9:00 AM",
-    "endTime": "12:00 PM",
+    "endTime": "11:00 AM",
     "prefill": "[S1 English] Tampines | 06 Sep (Sat) | 09:00AM - 11:00AM",
-    "prefillField": "1016736042"
+    "prefillField": "1016736042",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -93,9 +99,10 @@
     "capacity": "15",
     "date": "11 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S1 Math] Bishan | 11 Sep (Thu) | 10:00AM - 12:00PM",
-    "prefillField": "1165110009"
+    "prefillField": "1165110009",
+    "displaySubject": "Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -107,9 +114,10 @@
     "capacity": "11",
     "date": "12 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S1 Math] Bishan | 12 Sep (Fri) | 01:00PM - 03:00PM",
-    "prefillField": "1165110009"
+    "prefillField": "1165110009",
+    "displaySubject": "Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -121,9 +129,10 @@
     "capacity": "12",
     "date": "09 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S1 Math] Bukit Panjang | 09 Sep (Tue) | 01:00PM - 03:00PM",
-    "prefillField": "1165110009"
+    "prefillField": "1165110009",
+    "displaySubject": "Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -135,9 +144,10 @@
     "capacity": "15",
     "date": "08 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S1 Math] Buona Vista | 08 Sep (Mon) | 10:00AM - 12:00PM",
-    "prefillField": "1165110009"
+    "prefillField": "1165110009",
+    "displaySubject": "Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -149,9 +159,10 @@
     "capacity": "22",
     "date": "10 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S1 Math] Buona Vista | 10 Sep (Wed) | 10:00AM - 12:00PM",
-    "prefillField": "1165110009"
+    "prefillField": "1165110009",
+    "displaySubject": "Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -163,9 +174,10 @@
     "capacity": "30",
     "date": "11 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S1 Math] Jurong East | 11 Sep (Thu) | 10:00AM - 12:00PM",
-    "prefillField": "1165110009"
+    "prefillField": "1165110009",
+    "displaySubject": "Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -177,9 +189,10 @@
     "capacity": "29",
     "date": "06 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S1 Math] Kovan | 06 Sep (Sat) | 10:00AM - 12:00PM",
-    "prefillField": "1165110009"
+    "prefillField": "1165110009",
+    "displaySubject": "Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -191,9 +204,10 @@
     "capacity": "12",
     "date": "08 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S1 Math] Potong Pasir | 08 Sep (Mon) | 01:00PM - 03:00PM",
-    "prefillField": "1165110009"
+    "prefillField": "1165110009",
+    "displaySubject": "Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -205,9 +219,10 @@
     "capacity": "18",
     "date": "09 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S1 Math] Potong Pasir | 09 Sep (Tue) | 01:00PM - 03:00PM",
-    "prefillField": "1165110009"
+    "prefillField": "1165110009",
+    "displaySubject": "Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -219,9 +234,10 @@
     "capacity": "12",
     "date": "10 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S1 Math] Potong Pasir | 10 Sep (Wed) | 10:00AM - 12:00PM",
-    "prefillField": "1165110009"
+    "prefillField": "1165110009",
+    "displaySubject": "Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -233,9 +249,10 @@
     "capacity": "29",
     "date": "06 Sep",
     "startTime": "11:00 AM",
-    "endTime": "2:00 PM",
+    "endTime": "1:00 PM",
     "prefill": "[S1 Science] Kovan | 06 Sep (Sat) | 11:00AM - 01:00PM",
-    "prefillField": "862261665"
+    "prefillField": "862261665",
+    "displaySubject": "Science"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -247,9 +264,10 @@
     "capacity": "15",
     "date": "09 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S1 IP English] Bishan | 09 Sep (Tue) | 10:00AM - 12:00PM",
-    "prefillField": "810440307"
+    "prefillField": "810440307",
+    "displaySubject": "IP English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -261,9 +279,10 @@
     "capacity": "14",
     "date": "14 Sep",
     "startTime": "2:00 PM",
-    "endTime": "5:00 PM",
+    "endTime": "4:00 PM",
     "prefill": "[S1 IP English] Tan Kah Kee | 14 Sep (Sun) | 02:00PM - 04:00PM",
-    "prefillField": "810440307"
+    "prefillField": "810440307",
+    "displaySubject": "IP English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -275,9 +294,10 @@
     "capacity": "15",
     "date": "09 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S1 IP Math] Tan Kah Kee | 09 Sep (Tue) | 10:00AM - 12:00PM",
-    "prefillField": "857742220"
+    "prefillField": "857742220",
+    "displaySubject": "IP Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -289,9 +309,10 @@
     "capacity": "15",
     "date": "09 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S2 English] Bishan | 09 Sep (Tue) | 01:00PM - 03:00PM",
-    "prefillField": "822255076"
+    "prefillField": "822255076",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -303,9 +324,10 @@
     "capacity": "9",
     "date": "06 Sep",
     "startTime": "2:00 PM",
-    "endTime": "5:00 PM",
+    "endTime": "4:00 PM",
     "prefill": "[S2 English] Marine Parade | 06 Sep (Sat) | 02:00PM - 04:00PM",
-    "prefillField": "822255076"
+    "prefillField": "822255076",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -317,9 +339,10 @@
     "capacity": "12",
     "date": "07 Sep",
     "startTime": "2:00 PM",
-    "endTime": "5:00 PM",
+    "endTime": "4:00 PM",
     "prefill": "[S2 English] Marine Parade | 07 Sep (Sun) | 02:00PM - 04:00PM",
-    "prefillField": "822255076"
+    "prefillField": "822255076",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -331,9 +354,10 @@
     "capacity": "9",
     "date": "11 Sep",
     "startTime": "5:00 PM",
-    "endTime": "8:00 PM",
+    "endTime": "7:00 PM",
     "prefill": "[S2 English] Marine Parade | 11 Sep (Thu) | 05:00PM - 07:00PM",
-    "prefillField": "822255076"
+    "prefillField": "822255076",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -345,9 +369,10 @@
     "capacity": "9",
     "date": "12 Sep",
     "startTime": "7:15 PM",
-    "endTime": "10:15 PM",
+    "endTime": "9:15 PM",
     "prefill": "[S2 English] Marine Parade | 12 Sep (Fri) | 07:15PM - 09:15PM",
-    "prefillField": "822255076"
+    "prefillField": "822255076",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -359,9 +384,10 @@
     "capacity": "9",
     "date": "13 Sep",
     "startTime": "2:00 PM",
-    "endTime": "5:00 PM",
+    "endTime": "4:00 PM",
     "prefill": "[S2 English] Marine Parade | 13 Sep (Sat) | 02:00PM - 04:00PM",
-    "prefillField": "822255076"
+    "prefillField": "822255076",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -373,9 +399,10 @@
     "capacity": "12",
     "date": "14 Sep",
     "startTime": "2:00 PM",
-    "endTime": "5:00 PM",
+    "endTime": "4:00 PM",
     "prefill": "[S2 English] Marine Parade | 14 Sep (Sun) | 02:00PM - 04:00PM",
-    "prefillField": "822255076"
+    "prefillField": "822255076",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -387,9 +414,10 @@
     "capacity": "16",
     "date": "07 Sep",
     "startTime": "9:00 AM",
-    "endTime": "12:00 PM",
+    "endTime": "11:00 AM",
     "prefill": "[S2 English] Potong Pasir | 07 Sep (Sun) | 09:00AM - 11:00AM",
-    "prefillField": "822255076"
+    "prefillField": "822255076",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -401,9 +429,10 @@
     "capacity": "12",
     "date": "08 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S2 English] Potong Pasir | 08 Sep (Mon) | 01:00PM - 03:00PM",
-    "prefillField": "822255076"
+    "prefillField": "822255076",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -415,9 +444,10 @@
     "capacity": "22",
     "date": "12 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S2 English] Tampines | 12 Sep (Fri) | 10:00AM - 12:00PM",
-    "prefillField": "822255076"
+    "prefillField": "822255076",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -429,9 +459,10 @@
     "capacity": "15",
     "date": "11 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S2 Math] Bishan | 11 Sep (Thu) | 01:00PM - 03:00PM",
-    "prefillField": "1137033822"
+    "prefillField": "1137033822",
+    "displaySubject": "Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -443,9 +474,10 @@
     "capacity": "11",
     "date": "12 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S2 Math] Bishan | 12 Sep (Fri) | 10:00AM - 12:00PM",
-    "prefillField": "1137033822"
+    "prefillField": "1137033822",
+    "displaySubject": "Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -457,9 +489,10 @@
     "capacity": "15",
     "date": "08 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S2 Math] Buona Vista | 08 Sep (Mon) | 01:00PM - 03:00PM",
-    "prefillField": "1137033822"
+    "prefillField": "1137033822",
+    "displaySubject": "Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -471,9 +504,10 @@
     "capacity": "22",
     "date": "10 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S2 Math] Buona Vista | 10 Sep (Wed) | 01:00PM - 03:00PM",
-    "prefillField": "1137033822"
+    "prefillField": "1137033822",
+    "displaySubject": "Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -485,9 +519,10 @@
     "capacity": "30",
     "date": "11 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S2 Math] Jurong East | 11 Sep (Thu) | 01:00PM - 03:00PM",
-    "prefillField": "1137033822"
+    "prefillField": "1137033822",
+    "displaySubject": "Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -499,9 +534,10 @@
     "capacity": "29",
     "date": "07 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S2 Math] Kovan | 07 Sep (Sun) | 10:00AM - 12:00PM",
-    "prefillField": "1137033822"
+    "prefillField": "1137033822",
+    "displaySubject": "Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -513,9 +549,10 @@
     "capacity": "29",
     "date": "08 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S2 Math] Kovan | 08 Sep (Mon) | 10:00AM - 12:00PM",
-    "prefillField": "1137033822"
+    "prefillField": "1137033822",
+    "displaySubject": "Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -527,9 +564,10 @@
     "capacity": "29",
     "date": "13 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S2 Math] Kovan | 13 Sep (Sat) | 10:00AM - 12:00PM",
-    "prefillField": "1137033822"
+    "prefillField": "1137033822",
+    "displaySubject": "Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -541,9 +579,10 @@
     "capacity": "12",
     "date": "08 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S2 Math] Potong Pasir | 08 Sep (Mon) | 10:00AM - 12:00PM",
-    "prefillField": "1137033822"
+    "prefillField": "1137033822",
+    "displaySubject": "Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -555,9 +594,10 @@
     "capacity": "14",
     "date": "08 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S2 Math] Potong Pasir | 08 Sep (Mon) | 01:00PM - 03:00PM",
-    "prefillField": "1137033822"
+    "prefillField": "1137033822",
+    "displaySubject": "Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -569,9 +609,10 @@
     "capacity": "12",
     "date": "10 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S2 Math] Potong Pasir | 10 Sep (Wed) | 01:00PM - 03:00PM",
-    "prefillField": "1137033822"
+    "prefillField": "1137033822",
+    "displaySubject": "Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -583,9 +624,10 @@
     "capacity": "14",
     "date": "11 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S2 IP English] Tan Kah Kee | 11 Sep (Thu) | 01:00PM - 03:00PM",
-    "prefillField": "260829673"
+    "prefillField": "260829673",
+    "displaySubject": "IP English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -597,9 +639,10 @@
     "capacity": "15",
     "date": "08 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S2 IP Science] Tan Kah Kee | 08 Sep (Mon) | 10:00AM - 12:00PM",
-    "prefillField": "39674934"
+    "prefillField": "39674934",
+    "displaySubject": "IP Science"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -611,9 +654,10 @@
     "capacity": "15",
     "date": "07 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S2 IP Math] Tan Kah Kee | 07 Sep (Sun) | 01:00PM - 03:00PM",
-    "prefillField": "990975670"
+    "prefillField": "990975670",
+    "displaySubject": "IP Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -625,9 +669,10 @@
     "capacity": "15",
     "date": "09 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S2 IP Math] Tan Kah Kee | 09 Sep (Tue) | 01:00PM - 03:00PM",
-    "prefillField": "990975670"
+    "prefillField": "990975670",
+    "displaySubject": "IP Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -639,9 +684,10 @@
     "capacity": "18",
     "date": "10 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 A Math] Bishan | 10 Sep (Wed) | 10:00AM - 12:00PM",
-    "prefillField": "211505445"
+    "prefillField": "211505445",
+    "displaySubject": "A Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -653,9 +699,10 @@
     "capacity": "18",
     "date": "12 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 A Math] Bishan | 12 Sep (Fri) | 01:00PM - 03:00PM",
-    "prefillField": "211505445"
+    "prefillField": "211505445",
+    "displaySubject": "A Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -667,9 +714,10 @@
     "capacity": "12",
     "date": "06 Sep",
     "startTime": "11:15 AM",
-    "endTime": "2:15 PM",
+    "endTime": "1:15 PM",
     "prefill": "[S3 A Math] Bukit Panjang | 06 Sep (Sat) | 11:15AM - 01:15PM",
-    "prefillField": "211505445"
+    "prefillField": "211505445",
+    "displaySubject": "A Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -681,9 +729,10 @@
     "capacity": "12",
     "date": "13 Sep",
     "startTime": "11:15 AM",
-    "endTime": "2:15 PM",
+    "endTime": "1:15 PM",
     "prefill": "[S3 A Math] Bukit Panjang | 13 Sep (Sat) | 11:15AM - 01:15PM",
-    "prefillField": "211505445"
+    "prefillField": "211505445",
+    "displaySubject": "A Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -695,9 +744,10 @@
     "capacity": "12",
     "date": "13 Sep",
     "startTime": "7:00 PM",
-    "endTime": "10:00 PM",
+    "endTime": "9:00 PM",
     "prefill": "[S3 A Math] Bukit Panjang | 13 Sep (Sat) | 07:00PM - 09:00PM",
-    "prefillField": "211505445"
+    "prefillField": "211505445",
+    "displaySubject": "A Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -709,9 +759,10 @@
     "capacity": "30",
     "date": "08 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 A Math] Buona Vista | 08 Sep (Mon) | 01:00PM - 03:00PM",
-    "prefillField": "211505445"
+    "prefillField": "211505445",
+    "displaySubject": "A Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -723,9 +774,10 @@
     "capacity": "30",
     "date": "10 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 A Math] Buona Vista | 10 Sep (Wed) | 01:00PM - 03:00PM",
-    "prefillField": "211505445"
+    "prefillField": "211505445",
+    "displaySubject": "A Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -737,9 +789,10 @@
     "capacity": "30",
     "date": "11 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 A Math] Buona Vista | 11 Sep (Thu) | 01:00PM - 03:00PM",
-    "prefillField": "211505445"
+    "prefillField": "211505445",
+    "displaySubject": "A Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -751,9 +804,10 @@
     "capacity": "30",
     "date": "13 Sep",
     "startTime": "9:00 AM",
-    "endTime": "12:00 PM",
+    "endTime": "11:00 AM",
     "prefill": "[S3 A Math] Jurong East | 13 Sep (Sat) | 09:00AM - 11:00AM",
-    "prefillField": "211505445"
+    "prefillField": "211505445",
+    "displaySubject": "A Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -765,9 +819,10 @@
     "capacity": "21",
     "date": "09 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 A Math] Kovan | 09 Sep (Tue) | 10:00AM - 12:00PM",
-    "prefillField": "211505445"
+    "prefillField": "211505445",
+    "displaySubject": "A Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -779,9 +834,10 @@
     "capacity": "21",
     "date": "09 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 A Math] Kovan | 09 Sep (Tue) | 01:00PM - 03:00PM",
-    "prefillField": "211505445"
+    "prefillField": "211505445",
+    "displaySubject": "A Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -793,9 +849,10 @@
     "capacity": "29",
     "date": "14 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 A Math] Kovan | 14 Sep (Sun) | 10:00AM - 12:00PM",
-    "prefillField": "211505445"
+    "prefillField": "211505445",
+    "displaySubject": "A Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -807,9 +864,10 @@
     "capacity": "30",
     "date": "08 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 A Math] Paya Lebar | 08 Sep (Mon) | 10:00AM - 12:00PM",
-    "prefillField": "211505445"
+    "prefillField": "211505445",
+    "displaySubject": "A Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -821,9 +879,10 @@
     "capacity": "30",
     "date": "11 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 A Math] Paya Lebar | 11 Sep (Thu) | 10:00AM - 12:00PM",
-    "prefillField": "211505445"
+    "prefillField": "211505445",
+    "displaySubject": "A Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -835,9 +894,10 @@
     "capacity": "18",
     "date": "08 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 A Math] Potong Pasir | 08 Sep (Mon) | 10:00AM - 12:00PM",
-    "prefillField": "211505445"
+    "prefillField": "211505445",
+    "displaySubject": "A Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -849,9 +909,10 @@
     "capacity": "18",
     "date": "10 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 A Math] Potong Pasir | 10 Sep (Wed) | 01:00PM - 03:00PM",
-    "prefillField": "211505445"
+    "prefillField": "211505445",
+    "displaySubject": "A Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -863,9 +924,10 @@
     "capacity": "18",
     "date": "12 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 A Math] Potong Pasir | 12 Sep (Fri) | 01:00PM - 03:00PM",
-    "prefillField": "211505445"
+    "prefillField": "211505445",
+    "displaySubject": "A Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -877,9 +939,10 @@
     "capacity": "20",
     "date": "07 Sep",
     "startTime": "4:00 PM",
-    "endTime": "7:00 PM",
+    "endTime": "6:00 PM",
     "prefill": "[S3 A Math] Tampines | 07 Sep (Sun) | 04:00PM - 06:00PM",
-    "prefillField": "211505445"
+    "prefillField": "211505445",
+    "displaySubject": "A Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -891,9 +954,10 @@
     "capacity": "14",
     "date": "08 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 A Math] Tan Kah Kee | 08 Sep (Mon) | 01:00PM - 03:00PM",
-    "prefillField": "211505445"
+    "prefillField": "211505445",
+    "displaySubject": "A Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -905,9 +969,10 @@
     "capacity": "19",
     "date": "10 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 A Math] Tan Kah Kee | 10 Sep (Wed) | 01:00PM - 03:00PM",
-    "prefillField": "211505445"
+    "prefillField": "211505445",
+    "displaySubject": "A Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -919,9 +984,10 @@
     "capacity": "15",
     "date": "11 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 Combined Chemistry] Bishan | 11 Sep (Thu) | 10:00AM - 12:00PM",
-    "prefillField": "530119122"
+    "prefillField": "530119122",
+    "displaySubject": "Combined Chemistry"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -933,9 +999,10 @@
     "capacity": "14",
     "date": "09 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 Combined Chemistry] Potong Pasir | 09 Sep (Tue) | 01:00PM - 03:00PM",
-    "prefillField": "530119122"
+    "prefillField": "530119122",
+    "displaySubject": "Combined Chemistry"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -947,9 +1014,10 @@
     "capacity": "22",
     "date": "08 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 Combined Chemistry] Tampines | 08 Sep (Mon) | 10:00AM - 12:00PM",
-    "prefillField": "530119122"
+    "prefillField": "530119122",
+    "displaySubject": "Combined Chemistry"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -961,9 +1029,10 @@
     "capacity": "20",
     "date": "10 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 Combined Chemistry] Tampines | 10 Sep (Wed) | 01:00PM - 03:00PM",
-    "prefillField": "530119122"
+    "prefillField": "530119122",
+    "displaySubject": "Combined Chemistry"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -975,9 +1044,10 @@
     "capacity": "15",
     "date": "09 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 Combined Physics] Bishan | 09 Sep (Tue) | 01:00PM - 03:00PM",
-    "prefillField": "1411978775"
+    "prefillField": "1411978775",
+    "displaySubject": "Combined Physics"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -989,9 +1059,10 @@
     "capacity": "9",
     "date": "10 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 Combined Physics] Bishan | 10 Sep (Wed) | 01:00PM - 03:00PM",
-    "prefillField": "1411978775"
+    "prefillField": "1411978775",
+    "displaySubject": "Combined Physics"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1003,9 +1074,10 @@
     "capacity": "18",
     "date": "11 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 Combined Physics] Bishan | 11 Sep (Thu) | 01:00PM - 03:00PM",
-    "prefillField": "1411978775"
+    "prefillField": "1411978775",
+    "displaySubject": "Combined Physics"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1017,9 +1089,10 @@
     "capacity": "20",
     "date": "08 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 Combined Physics] Tampines | 08 Sep (Mon) | 01:00PM - 03:00PM",
-    "prefillField": "1411978775"
+    "prefillField": "1411978775",
+    "displaySubject": "Combined Physics"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1031,9 +1104,10 @@
     "capacity": "10",
     "date": "11 Sep",
     "startTime": "7:00 PM",
-    "endTime": "10:00 PM",
+    "endTime": "9:00 PM",
     "prefill": "[S3 Combined Physics] Tampines | 11 Sep (Thu) | 07:00PM - 09:00PM",
-    "prefillField": "1411978775"
+    "prefillField": "1411978775",
+    "displaySubject": "Combined Physics"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1045,9 +1119,10 @@
     "capacity": "18",
     "date": "10 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 E Math] Bishan | 10 Sep (Wed) | 01:00PM - 03:00PM",
-    "prefillField": ""
+    "prefillField": "",
+    "displaySubject": "E Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1059,9 +1134,10 @@
     "capacity": "18",
     "date": "12 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 E Math] Bishan | 12 Sep (Fri) | 10:00AM - 12:00PM",
-    "prefillField": ""
+    "prefillField": "",
+    "displaySubject": "E Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1073,9 +1149,10 @@
     "capacity": "12",
     "date": "06 Sep",
     "startTime": "9:00 AM",
-    "endTime": "12:00 PM",
+    "endTime": "11:00 AM",
     "prefill": "[S3 E Math] Bukit Panjang | 06 Sep (Sat) | 09:00AM - 11:00AM",
-    "prefillField": ""
+    "prefillField": "",
+    "displaySubject": "E Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1087,9 +1164,10 @@
     "capacity": "12",
     "date": "07 Sep",
     "startTime": "9:00 AM",
-    "endTime": "12:00 PM",
+    "endTime": "11:00 AM",
     "prefill": "[S3 E Math] Bukit Panjang | 07 Sep (Sun) | 09:00AM - 11:00AM",
-    "prefillField": ""
+    "prefillField": "",
+    "displaySubject": "E Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1101,9 +1179,10 @@
     "capacity": "12",
     "date": "13 Sep",
     "startTime": "9:00 AM",
-    "endTime": "12:00 PM",
+    "endTime": "11:00 AM",
     "prefill": "[S3 E Math] Bukit Panjang | 13 Sep (Sat) | 09:00AM - 11:00AM",
-    "prefillField": ""
+    "prefillField": "",
+    "displaySubject": "E Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1115,9 +1194,10 @@
     "capacity": "12",
     "date": "14 Sep",
     "startTime": "9:00 AM",
-    "endTime": "12:00 PM",
+    "endTime": "11:00 AM",
     "prefill": "[S3 E Math] Bukit Panjang | 14 Sep (Sun) | 09:00AM - 11:00AM",
-    "prefillField": ""
+    "prefillField": "",
+    "displaySubject": "E Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1129,9 +1209,10 @@
     "capacity": "12",
     "date": "14 Sep",
     "startTime": "4:00 PM",
-    "endTime": "7:00 PM",
+    "endTime": "6:00 PM",
     "prefill": "[S3 E Math] Bukit Panjang | 14 Sep (Sun) | 04:00PM - 06:00PM",
-    "prefillField": ""
+    "prefillField": "",
+    "displaySubject": "E Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1143,9 +1224,10 @@
     "capacity": "30",
     "date": "08 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 E Math] Buona Vista | 08 Sep (Mon) | 10:00AM - 12:00PM",
-    "prefillField": ""
+    "prefillField": "",
+    "displaySubject": "E Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1157,9 +1239,10 @@
     "capacity": "30",
     "date": "10 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 E Math] Buona Vista | 10 Sep (Wed) | 10:00AM - 12:00PM",
-    "prefillField": ""
+    "prefillField": "",
+    "displaySubject": "E Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1171,9 +1254,10 @@
     "capacity": "30",
     "date": "11 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 E Math] Buona Vista | 11 Sep (Thu) | 10:00AM - 12:00PM",
-    "prefillField": ""
+    "prefillField": "",
+    "displaySubject": "E Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1185,9 +1269,10 @@
     "capacity": "29",
     "date": "07 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 E Math] Kovan | 07 Sep (Sun) | 01:00PM - 03:00PM",
-    "prefillField": ""
+    "prefillField": "",
+    "displaySubject": "E Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1199,9 +1284,10 @@
     "capacity": "21",
     "date": "10 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 E Math] Kovan | 10 Sep (Wed) | 10:00AM - 12:00PM",
-    "prefillField": ""
+    "prefillField": "",
+    "displaySubject": "E Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1213,9 +1299,10 @@
     "capacity": "21",
     "date": "10 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 E Math] Kovan | 10 Sep (Wed) | 01:00PM - 03:00PM",
-    "prefillField": ""
+    "prefillField": "",
+    "displaySubject": "E Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1227,9 +1314,10 @@
     "capacity": "29",
     "date": "13 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 E Math] Kovan | 13 Sep (Sat) | 01:00PM - 03:00PM",
-    "prefillField": ""
+    "prefillField": "",
+    "displaySubject": "E Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1241,9 +1329,10 @@
     "capacity": "29",
     "date": "14 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 E Math] Kovan | 14 Sep (Sun) | 01:00PM - 03:00PM",
-    "prefillField": ""
+    "prefillField": "",
+    "displaySubject": "E Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1255,9 +1344,10 @@
     "capacity": "16",
     "date": "08 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 E Math] Potong Pasir | 08 Sep (Mon) | 01:00PM - 03:00PM",
-    "prefillField": ""
+    "prefillField": "",
+    "displaySubject": "E Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1269,9 +1359,10 @@
     "capacity": "18",
     "date": "09 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 E Math] Potong Pasir | 09 Sep (Tue) | 10:00AM - 12:00PM",
-    "prefillField": ""
+    "prefillField": "",
+    "displaySubject": "E Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1283,9 +1374,10 @@
     "capacity": "18",
     "date": "10 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 E Math] Potong Pasir | 10 Sep (Wed) | 10:00AM - 12:00PM",
-    "prefillField": ""
+    "prefillField": "",
+    "displaySubject": "E Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1297,9 +1389,10 @@
     "capacity": "18",
     "date": "12 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 E Math] Potong Pasir | 12 Sep (Fri) | 10:00AM - 12:00PM",
-    "prefillField": ""
+    "prefillField": "",
+    "displaySubject": "E Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1311,9 +1404,10 @@
     "capacity": "14",
     "date": "08 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 E Math] Tan Kah Kee | 08 Sep (Mon) | 10:00AM - 12:00PM",
-    "prefillField": ""
+    "prefillField": "",
+    "displaySubject": "E Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1325,9 +1419,10 @@
     "capacity": "19",
     "date": "10 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 E Math] Tan Kah Kee | 10 Sep (Wed) | 10:00AM - 12:00PM",
-    "prefillField": ""
+    "prefillField": "",
+    "displaySubject": "E Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1339,9 +1434,10 @@
     "capacity": "15",
     "date": "10 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 English] Bishan | 10 Sep (Wed) | 01:00PM - 03:00PM",
-    "prefillField": "136322790"
+    "prefillField": "136322790",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1353,9 +1449,10 @@
     "capacity": "24",
     "date": "11 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 English] Bukit Panjang | 11 Sep (Thu) | 01:00PM - 03:00PM",
-    "prefillField": "136322790"
+    "prefillField": "136322790",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1367,9 +1464,10 @@
     "capacity": "22",
     "date": "10 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 English] Buona Vista | 10 Sep (Wed) | 10:00AM - 12:00PM",
-    "prefillField": "136322790"
+    "prefillField": "136322790",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1381,9 +1479,10 @@
     "capacity": "9",
     "date": "06 Sep",
     "startTime": "4:15 PM",
-    "endTime": "7:15 PM",
+    "endTime": "6:15 PM",
     "prefill": "[S3 English] Marine Parade | 06 Sep (Sat) | 04:15PM - 06:15PM",
-    "prefillField": "136322790"
+    "prefillField": "136322790",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1395,9 +1494,10 @@
     "capacity": "12",
     "date": "07 Sep",
     "startTime": "4:15 PM",
-    "endTime": "7:15 PM",
+    "endTime": "6:15 PM",
     "prefill": "[S3 English] Marine Parade | 07 Sep (Sun) | 04:15PM - 06:15PM",
-    "prefillField": "136322790"
+    "prefillField": "136322790",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1409,9 +1509,10 @@
     "capacity": "9",
     "date": "11 Sep",
     "startTime": "7:15 PM",
-    "endTime": "10:15 PM",
+    "endTime": "9:15 PM",
     "prefill": "[S3 English] Marine Parade | 11 Sep (Thu) | 07:15PM - 09:15PM",
-    "prefillField": "136322790"
+    "prefillField": "136322790",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1423,9 +1524,10 @@
     "capacity": "9",
     "date": "12 Sep",
     "startTime": "5:00 PM",
-    "endTime": "8:00 PM",
+    "endTime": "7:00 PM",
     "prefill": "[S3 English] Marine Parade | 12 Sep (Fri) | 05:00PM - 07:00PM",
-    "prefillField": "136322790"
+    "prefillField": "136322790",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1437,9 +1539,10 @@
     "capacity": "9",
     "date": "13 Sep",
     "startTime": "4:15 PM",
-    "endTime": "7:15 PM",
+    "endTime": "6:15 PM",
     "prefill": "[S3 English] Marine Parade | 13 Sep (Sat) | 04:15PM - 06:15PM",
-    "prefillField": "136322790"
+    "prefillField": "136322790",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1451,9 +1554,10 @@
     "capacity": "12",
     "date": "14 Sep",
     "startTime": "4:15 PM",
-    "endTime": "7:15 PM",
+    "endTime": "6:15 PM",
     "prefill": "[S3 English] Marine Parade | 14 Sep (Sun) | 04:15PM - 06:15PM",
-    "prefillField": "136322790"
+    "prefillField": "136322790",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1465,9 +1569,10 @@
     "capacity": "16",
     "date": "08 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 English] Potong Pasir | 08 Sep (Mon) | 10:00AM - 12:00PM",
-    "prefillField": "136322790"
+    "prefillField": "136322790",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1479,9 +1584,10 @@
     "capacity": "16",
     "date": "10 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 English] Potong Pasir | 10 Sep (Wed) | 10:00AM - 12:00PM",
-    "prefillField": "136322790"
+    "prefillField": "136322790",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1493,9 +1599,10 @@
     "capacity": "22",
     "date": "12 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 English] Tampines | 12 Sep (Fri) | 01:00PM - 03:00PM",
-    "prefillField": "136322790"
+    "prefillField": "136322790",
+    "displaySubject": "English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1507,9 +1614,10 @@
     "capacity": "24",
     "date": "09 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 Pure Biology] Paya Lebar | 09 Sep (Tue) | 10:00AM - 12:00PM",
-    "prefillField": "672830523"
+    "prefillField": "672830523",
+    "displaySubject": "Pure Biology"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1521,9 +1629,10 @@
     "capacity": "18",
     "date": "09 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 Pure Chemistry] Bishan | 09 Sep (Tue) | 01:00PM - 03:00PM",
-    "prefillField": "530119122"
+    "prefillField": "530119122",
+    "displaySubject": "Pure Chemistry"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1535,9 +1644,10 @@
     "capacity": "15",
     "date": "11 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 Pure Chemistry] Bishan | 11 Sep (Thu) | 01:00PM - 03:00PM",
-    "prefillField": "530119122"
+    "prefillField": "530119122",
+    "displaySubject": "Pure Chemistry"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1549,9 +1659,10 @@
     "capacity": "22",
     "date": "08 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 Pure Chemistry] Buona Vista | 08 Sep (Mon) | 10:00AM - 12:00PM",
-    "prefillField": "530119122"
+    "prefillField": "530119122",
+    "displaySubject": "Pure Chemistry"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1563,9 +1674,10 @@
     "capacity": "15",
     "date": "09 Sep",
     "startTime": "3:00 PM",
-    "endTime": "6:00 PM",
+    "endTime": "5:00 PM",
     "prefill": "[S3 Pure Chemistry] Buona Vista | 09 Sep (Tue) | 03:00PM - 05:00PM",
-    "prefillField": "530119122"
+    "prefillField": "530119122",
+    "displaySubject": "Pure Chemistry"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1577,9 +1689,10 @@
     "capacity": "22",
     "date": "11 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 Pure Chemistry] Buona Vista | 11 Sep (Thu) | 01:00PM - 03:00PM",
-    "prefillField": "530119122"
+    "prefillField": "530119122",
+    "displaySubject": "Pure Chemistry"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1591,9 +1704,10 @@
     "capacity": "12",
     "date": "11 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 Pure Chemistry] Marine Parade | 11 Sep (Thu) | 01:00PM - 03:00PM",
-    "prefillField": "530119122"
+    "prefillField": "530119122",
+    "displaySubject": "Pure Chemistry"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1605,9 +1719,10 @@
     "capacity": "24",
     "date": "08 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 Pure Chemistry] Paya Lebar | 08 Sep (Mon) | 10:00AM - 12:00PM",
-    "prefillField": "530119122"
+    "prefillField": "530119122",
+    "displaySubject": "Pure Chemistry"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1619,9 +1734,10 @@
     "capacity": "21",
     "date": "10 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 Pure Chemistry] Potong Pasir | 10 Sep (Wed) | 10:00AM - 12:00PM",
-    "prefillField": "530119122"
+    "prefillField": "530119122",
+    "displaySubject": "Pure Chemistry"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1633,9 +1749,10 @@
     "capacity": "22",
     "date": "08 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 Pure Chemistry] Tampines | 08 Sep (Mon) | 01:00PM - 03:00PM",
-    "prefillField": "530119122"
+    "prefillField": "530119122",
+    "displaySubject": "Pure Chemistry"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1647,9 +1764,10 @@
     "capacity": "22",
     "date": "09 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 Pure Chemistry] Tampines | 09 Sep (Tue) | 10:00AM - 12:00PM",
-    "prefillField": "530119122"
+    "prefillField": "530119122",
+    "displaySubject": "Pure Chemistry"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1661,9 +1779,10 @@
     "capacity": "22",
     "date": "11 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 Pure Chemistry] Tampines | 11 Sep (Thu) | 01:00PM - 03:00PM",
-    "prefillField": "530119122"
+    "prefillField": "530119122",
+    "displaySubject": "Pure Chemistry"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1675,9 +1794,10 @@
     "capacity": "15",
     "date": "09 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 Pure Physics] Bishan | 09 Sep (Tue) | 10:00AM - 12:00PM",
-    "prefillField": "1411978775"
+    "prefillField": "1411978775",
+    "displaySubject": "Pure Physics"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1689,9 +1809,10 @@
     "capacity": "9",
     "date": "10 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 Pure Physics] Bishan | 10 Sep (Wed) | 10:00AM - 12:00PM",
-    "prefillField": "1411978775"
+    "prefillField": "1411978775",
+    "displaySubject": "Pure Physics"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1703,9 +1824,10 @@
     "capacity": "18",
     "date": "11 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 Pure Physics] Bishan | 11 Sep (Thu) | 10:00AM - 12:00PM",
-    "prefillField": "1411978775"
+    "prefillField": "1411978775",
+    "displaySubject": "Pure Physics"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1717,9 +1839,10 @@
     "capacity": "19",
     "date": "09 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 Pure Physics] Bukit Panjang | 09 Sep (Tue) | 01:00PM - 03:00PM",
-    "prefillField": "1411978775"
+    "prefillField": "1411978775",
+    "displaySubject": "Pure Physics"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1731,9 +1854,10 @@
     "capacity": "15",
     "date": "10 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 Pure Physics] Buona Vista | 10 Sep (Wed) | 01:00PM - 03:00PM",
-    "prefillField": "1411978775"
+    "prefillField": "1411978775",
+    "displaySubject": "Pure Physics"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1745,9 +1869,10 @@
     "capacity": "15",
     "date": "11 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 Pure Physics] Buona Vista | 11 Sep (Thu) | 01:00PM - 03:00PM",
-    "prefillField": "1411978775"
+    "prefillField": "1411978775",
+    "displaySubject": "Pure Physics"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1759,9 +1884,10 @@
     "capacity": "24",
     "date": "08 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 Pure Physics] Paya Lebar | 08 Sep (Mon) | 01:00PM - 03:00PM",
-    "prefillField": "1411978775"
+    "prefillField": "1411978775",
+    "displaySubject": "Pure Physics"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1773,9 +1899,10 @@
     "capacity": "21",
     "date": "10 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S3 Pure Physics] Potong Pasir | 10 Sep (Wed) | 01:00PM - 03:00PM",
-    "prefillField": "1411978775"
+    "prefillField": "1411978775",
+    "displaySubject": "Pure Physics"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1787,9 +1914,10 @@
     "capacity": "20",
     "date": "08 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 Pure Physics] Tampines | 08 Sep (Mon) | 10:00AM - 12:00PM",
-    "prefillField": "1411978775"
+    "prefillField": "1411978775",
+    "displaySubject": "Pure Physics"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1801,9 +1929,10 @@
     "capacity": "22",
     "date": "12 Sep",
     "startTime": "7:00 PM",
-    "endTime": "10:00 PM",
+    "endTime": "9:00 PM",
     "prefill": "[S3 Pure Physics] Tampines | 12 Sep (Fri) | 07:00PM - 09:00PM",
-    "prefillField": "1411978775"
+    "prefillField": "1411978775",
+    "displaySubject": "Pure Physics"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1815,9 +1944,10 @@
     "capacity": "9",
     "date": "09 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 IP English] Bishan | 09 Sep (Tue) | 10:00AM - 12:00PM",
-    "prefillField": "1249604192"
+    "prefillField": "1249604192",
+    "displaySubject": "IP English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1829,9 +1959,10 @@
     "capacity": "15",
     "date": "10 Sep",
     "startTime": "7:15 PM",
-    "endTime": "10:15 PM",
+    "endTime": "9:15 PM",
     "prefill": "[S3 IP English] Tan Kah Kee | 10 Sep (Wed) | 07:15PM - 09:15PM",
-    "prefillField": "1249604192"
+    "prefillField": "1249604192",
+    "displaySubject": "IP English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1843,9 +1974,10 @@
     "capacity": "15",
     "date": "10 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S3 IP Math] Tan Kah Kee | 10 Sep (Wed) | 10:00AM - 12:00PM",
-    "prefillField": "1473865721"
+    "prefillField": "1473865721",
+    "displaySubject": "IP Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1857,9 +1989,10 @@
     "capacity": "15",
     "date": "14 Sep",
     "startTime": "2:00 PM",
-    "endTime": "5:00 PM",
+    "endTime": "4:00 PM",
     "prefill": "[S3 IP Math] Tan Kah Kee | 14 Sep (Sun) | 02:00PM - 04:00PM",
-    "prefillField": "1473865721"
+    "prefillField": "1473865721",
+    "displaySubject": "IP Math"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1871,9 +2004,10 @@
     "capacity": "15",
     "date": "10 Sep",
     "startTime": "5:00 PM",
-    "endTime": "8:00 PM",
+    "endTime": "7:00 PM",
     "prefill": "[S4 IP English] Tan Kah Kee | 10 Sep (Wed) | 05:00PM - 07:00PM",
-    "prefillField": "1091300344"
+    "prefillField": "1091300344",
+    "displaySubject": "IP English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1885,9 +2019,10 @@
     "capacity": "14",
     "date": "11 Sep",
     "startTime": "10:00 AM",
-    "endTime": "1:00 PM",
+    "endTime": "12:00 PM",
     "prefill": "[S4 IP English] Tan Kah Kee | 11 Sep (Thu) | 10:00AM - 12:00PM",
-    "prefillField": "1091300344"
+    "prefillField": "1091300344",
+    "displaySubject": "IP English"
   },
   {
     "purpose": "Sep CC - Sec",
@@ -1899,8 +2034,9 @@
     "capacity": "15",
     "date": "10 Sep",
     "startTime": "1:00 PM",
-    "endTime": "4:00 PM",
+    "endTime": "3:00 PM",
     "prefill": "[S4 IP Math] Tan Kah Kee | 10 Sep (Wed) | 01:00PM - 03:00PM",
-    "prefillField": "376990052"
+    "prefillField": "376990052",
+    "displaySubject": "IP Math"
   }
 ]
