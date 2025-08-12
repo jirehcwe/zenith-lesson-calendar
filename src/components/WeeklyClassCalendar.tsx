@@ -266,12 +266,19 @@ export default function WeeklyClassCalendar({
   };
 
   return (
-    <>
-      <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg border border-blue-200">
-        💡 <strong>Tip:</strong> Use the filters above to reduce overlap and see
-        specific classes more clearly.
+    <div className="space-y-6">
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 flex items-center gap-3">
+        <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+          <span className="text-xl">💡</span>
+        </div>
+        <div className="text-sm text-gray-700">
+          <span className="font-semibold text-blue-800">Pro Tip:</span> Use the
+          filters above to reduce overlap and see specific classes more clearly.
+          Click on any class to register!
+        </div>
       </div>
-      <div>
+
+      <div className="relative overflow-hidden rounded-xl border border-gray-200 shadow-sm">
         <FullCalendar
           schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
           plugins={[timeGridPlugin, scrollGridPlugin]}
@@ -319,54 +326,105 @@ export default function WeeklyClassCalendar({
           weekends={true}
         />
       </div>
+
       <Dialog
         open={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         className="relative z-50"
       >
-        <div className="fixed inset-0 flex w-screen items-center justify-center p-4 bg-black/30">
-          <DialogPanel className="max-w-md w-full space-y-4 border bg-white p-6 rounded shadow-lg relative">
+        <div className="fixed inset-0 flex w-screen items-center justify-center p-3 bg-black/50 backdrop-blur-sm">
+          <DialogPanel className="max-w-sm w-full space-y-4 bg-white p-5 rounded-2xl shadow-2xl relative border-0">
             <button
-              className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-xl font-bold focus:outline-none"
+              className="absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
               onClick={() => setIsDialogOpen(false)}
               aria-label="Close"
             >
-              ×
+              ✕
             </button>
             {selectedEvent && (
               <>
-                <DialogTitle className="font-bold text-lg mb-2">
-                  {selectedEvent.level} {selectedEvent.subject}{" "}
-                  {selectedEvent.stream ? `(${selectedEvent.stream})` : ""}
-                </DialogTitle>
-                <div className="space-y-2">
-                  <div className="text-sm">
-                    <span className="font-semibold">Day:</span>{" "}
-                    {
-                      [
-                        "Sunday",
-                        "Monday",
-                        "Tuesday",
-                        "Wednesday",
-                        "Thursday",
-                        "Friday",
-                        "Saturday",
-                      ][selectedEvent.day]
-                    }
+                <div className="text-center space-y-3">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full">
+                    <span className="text-lg text-white font-bold">
+                      {selectedEvent.subject.charAt(0)}
+                    </span>
                   </div>
-                  <div className="text-sm">
-                    <span className="font-semibold">Venue:</span>{" "}
-                    {selectedEvent.centre}
-                  </div>
-                  <div className="text-sm">
-                    <span className="font-semibold">Timeslot:</span>{" "}
-                    {selectedEvent.startTime} - {selectedEvent.endTime}
+                  <DialogTitle className="text-xl font-bold text-gray-800">
+                    {selectedEvent.level} {selectedEvent.subject}
+                    {selectedEvent.stream && (
+                      <span className="block text-base text-blue-600 font-medium mt-1">
+                        ({selectedEvent.stream})
+                      </span>
+                    )}
+                  </DialogTitle>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="bg-gray-50 rounded-xl p-3 space-y-2.5">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-4 h-4 bg-blue-100 rounded-full flex items-center justify-center">
+                        <span className="text-[10px] text-blue-600">📅</span>
+                      </div>
+                      <div>
+                        <span className="font-semibold text-gray-700">
+                          Day:
+                        </span>
+                        <span className="ml-2 text-gray-600">
+                          {
+                            [
+                              "Sunday",
+                              "Monday",
+                              "Tuesday",
+                              "Wednesday",
+                              "Thursday",
+                              "Friday",
+                              "Saturday",
+                            ][selectedEvent.day]
+                          }
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-4 h-4 bg-blue-100 rounded-full flex items-center justify-center">
+                        <span className="text-[10px] text-blue-600">🏢</span>
+                      </div>
+                      <div>
+                        <span className="font-semibold text-gray-700">
+                          Venue:
+                        </span>
+                        <span className="ml-2 text-gray-600">
+                          {selectedEvent.centre}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-4 h-4 bg-blue-100 rounded-full flex items-center justify-center">
+                        <span className="text-[10px] text-blue-600">⏰</span>
+                      </div>
+                      <div>
+                        <span className="font-semibold text-gray-700">
+                          Time:
+                        </span>
+                        <span className="ml-2 text-gray-600">
+                          {selectedEvent.startTime} - {selectedEvent.endTime}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </>
             )}
-            <div className="flex justify-end mt-4">
-              {selectedEvent?.prefillLink ? (
+
+            <div className="flex gap-2.5 pt-3">
+              <button
+                className="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors text-sm"
+                onClick={() => setIsDialogOpen(false)}
+              >
+                Close
+              </button>
+              {selectedEvent?.prefillLink && (
                 <a
                   href={selectedEvent.prefillLink}
                   target="_blank"
@@ -374,16 +432,17 @@ export default function WeeklyClassCalendar({
                   onClick={() => {
                     console.log("form_click_prefilled");
                   }}
+                  className="flex-1"
                 >
-                  <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                    Register
+                  <button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition-all duration-200 text-sm">
+                    Register Now
                   </button>
                 </a>
-              ) : null}
+              )}
             </div>
           </DialogPanel>
         </div>
       </Dialog>
-    </>
+    </div>
   );
 }

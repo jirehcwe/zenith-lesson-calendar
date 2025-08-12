@@ -273,33 +273,58 @@ export default function Page() {
   };
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-50">
       <SignupBanner />
-      <div className="p-4 space-y-6 text-sm md:text-base">
-        {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-12 space-y-4">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            <p className="text-gray-600">Loading courses...</p>
-          </div>
-        ) : (
-          <>
-            <Filters
-              streams={[
-                "JC",
-                "Secondary (Express)",
-                "Secondary (IP)",
-                "Primary",
-              ]}
-              levels={filteredOptions.levels}
-              subjects={filteredOptions.subjects}
-              centres={filteredOptions.centres}
-              tutors={filteredOptions.tutors}
-              filters={filters}
-              onFilterChange={handleFilterChange}
-            />
-            <WeeklyClassCalendar slots={events} filters={filters} />
-          </>
-        )}
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 py-4 sm:py-8">
+        <div className="space-y-4 sm:space-y-8">
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-12 sm:py-24 space-y-4 sm:space-y-6">
+              <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600"></div>
+              <div className="text-center">
+                <p className="text-xl font-semibold text-gray-700">
+                  Loading courses...
+                </p>
+                <p className="text-gray-500 mt-2">
+                  Please wait while we fetch the latest schedule
+                </p>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="text-center py-4 sm:py-8">
+                <h2 className="text-xl sm:text-3xl font-bold text-gray-800 mb-2 sm:mb-4">
+                  Find Your Perfect Class Schedule
+                </h2>
+                <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-2 sm:px-0">
+                  Browse through our comprehensive course offerings and filter
+                  by your preferences to find the ideal classes for your
+                  academic journey.
+                </p>
+              </div>
+
+              <div className="modern-card p-3 sm:p-6">
+                <Filters
+                  streams={[
+                    "JC",
+                    "Secondary (Express)",
+                    "Secondary (IP)",
+                    "Primary",
+                  ]}
+                  levels={filteredOptions.levels}
+                  subjects={filteredOptions.subjects}
+                  centres={filteredOptions.centres}
+                  tutors={filteredOptions.tutors}
+                  filters={filters}
+                  onFilterChange={handleFilterChange}
+                />
+              </div>
+
+              <div className="modern-card p-3 sm:p-6">
+                <WeeklyClassCalendar slots={events} filters={filters} />
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
