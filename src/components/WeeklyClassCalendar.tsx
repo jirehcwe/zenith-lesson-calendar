@@ -5,6 +5,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import scrollGridPlugin from "@fullcalendar/scrollgrid";
 import { useEffect, useState, useMemo } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
+import { replaceCampaignInUrl } from "@/utils/campaign";
 
 // Define a new type for weekly class slots (no topic, no date)
 export type WeeklyClassSlot = {
@@ -426,7 +427,7 @@ export default function WeeklyClassCalendar({
               </button>
               {selectedEvent?.prefillLink && (
                 <a
-                  href={selectedEvent.prefillLink}
+                  href={replaceCampaignInUrl(selectedEvent.prefillLink)}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => {

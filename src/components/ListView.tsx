@@ -1,6 +1,7 @@
 "use client";
 
 import { WeeklyClassSlot } from "./WeeklyClassCalendar";
+import { replaceCampaignInUrl } from "@/utils/campaign";
 
 export default function ListView({
   sessions,
@@ -136,7 +137,7 @@ export default function ListView({
 
                     <div className="pt-2 border-t border-gray-100">
                       <a
-                        href={session.prefillLink}
+                        href={replaceCampaignInUrl(session.prefillLink)}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
