@@ -1,6 +1,6 @@
 "use client";
 
-import { Session } from "../types";
+import { END_DATE, Session, START_DATE } from "../types";
 import DatePicker from "react-datepicker";
 
 export default function ListView({
@@ -47,8 +47,8 @@ export default function ListView({
           className="border p-2 rounded"
           dateFormat="yyyy-MM-dd"
           isClearable
-          minDate={new Date("2025-08-25")}
-          maxDate={new Date("2025-09-14")}
+          minDate={new Date("2025-09-06")}
+          maxDate={END_DATE}
         />
       </div>
 
