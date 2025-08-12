@@ -33,7 +33,7 @@ const jcSubjectToColorMap: Record<
     textColor: "#000000",
   },
   Physics: {
-    backgroundColor: "#95F095",
+    backgroundColor: "#FC696A",
     textColor: "#000000",
   },
   Chemistry: {
