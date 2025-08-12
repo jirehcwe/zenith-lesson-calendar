@@ -140,7 +140,7 @@ export default function ListView({
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 font-medium text-sm">
+                        <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 hover:shadow-md hover:-translate-y-1 transition-all duration-200 font-medium text-sm">
                           Register for Class
                         </button>
                       </a>
