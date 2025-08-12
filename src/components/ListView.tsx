@@ -1,6 +1,6 @@
 "use client";
 
-import { END_DATE, Session, START_DATE } from "../types";
+import { END_DATE, Session } from "../types";
 import DatePicker from "react-datepicker";
 
 export default function ListView({
