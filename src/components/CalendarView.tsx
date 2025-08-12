@@ -48,7 +48,7 @@ export default function CalendarView({
 
   // console.log(
   //   selectedEvent
-  //     ? `https://docs.google.com/forms/d/e/1FAIpQLSesYi1vS9HGIsyW1nTjxXbk07anXX3iZ9yAMXfwON4w0wiqdg/viewform?usp=pp_url&entry.1157532004=SCHEDULE&entry.${
+  //     ? `https://docs.google.com/forms/d/e/1FAIpQLSdc1DdBljxZx1mXH6Ztpxr_zbnI9XJunAKHDeN_GVR1jBuI9Q/viewform?usp=pp_url&entry.1157532004=SCHEDULE&entry.${
   //         selectedEvent.extendedProps.prefillField
   //       }=${encodeURIComponent(selectedEvent.extendedProps.prefill)
   //         .replace(/%20/g, "+")
@@ -177,7 +177,7 @@ export default function CalendarView({
             <div className="flex justify-end mt-4">
               {selectedEvent?.extendedProps.prefill ? (
                 <a
-                  href={`https://docs.google.com/forms/d/e/1FAIpQLSesYi1vS9HGIsyW1nTjxXbk07anXX3iZ9yAMXfwON4w0wiqdg/viewform?entry.1157532004=SCHEDULE&entry.${
+                  href={`https://docs.google.com/forms/d/e/1FAIpQLSdc1DdBljxZx1mXH6Ztpxr_zbnI9XJunAKHDeN_GVR1jBuI9Q/viewform?entry.1157532004=SCHEDULE&entry.${
                     selectedEvent.extendedProps.prefillField
                   }=${encodeURIComponent(selectedEvent.extendedProps.prefill)}`}
                   target="_blank"

@@ -6,7 +6,7 @@ export default function BottomBanner() {
       <div className="text-sm font-semibold">
         Ready to lock in for your exams?{" "}
         <a
-          href="https://docs.google.com/forms/d/e/1FAIpQLSesYi1vS9HGIsyW1nTjxXbk07anXX3iZ9yAMXfwON4w0wiqdg/viewform?usp=dialog&entry.1157532004=SCHEDULE"
+          href="https://docs.google.com/forms/d/e/1FAIpQLSdc1DdBljxZx1mXH6Ztpxr_zbnI9XJunAKHDeN_GVR1jBuI9Q/viewform?usp=dialog&entry.1157532004=SCHEDULE"
           target="_blank"
           rel="noopener noreferrer"
           className="text-blue-600 underline"

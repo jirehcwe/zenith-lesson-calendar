@@ -68,7 +68,7 @@ export default function ListView({
             <div className="mt-4 flex justify-end">
               {s.prefill ? (
                 <a
-                  href={`https://docs.google.com/forms/d/e/1FAIpQLSesYi1vS9HGIsyW1nTjxXbk07anXX3iZ9yAMXfwON4w0wiqdg/viewform?entry.1157532004=SCHEDULE&entry.${
+                  href={`https://docs.google.com/forms/d/e/1FAIpQLSdc1DdBljxZx1mXH6Ztpxr_zbnI9XJunAKHDeN_GVR1jBuI9Q/viewform?entry.1157532004=SCHEDULE&entry.${
                     s.prefillField
                   }=${encodeURIComponent(s.prefill)}`}
                   target="_blank"
