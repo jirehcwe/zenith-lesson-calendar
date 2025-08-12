@@ -6,6 +6,8 @@ import SignupBanner from "../components/SignupBanner";
 import WeeklyClassCalendar, {
   WeeklyClassSlot,
 } from "@/components/WeeklyClassCalendar";
+import ListView from "@/components/ListView";
+import ViewSelector, { ViewType } from "@/components/ViewSelector";
 
 const CACHE_KEY = "weeklyClassData";
 const CACHE_TIME_KEY = "weeklyClassDataTimestamp";
@@ -51,6 +53,7 @@ function levelToFilterMapper(
 export default function Page() {
   const [weeklyClassData, setWeeklyClassData] = useState<WeeklyClassSlot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentView, setCurrentView] = useState<ViewType>("calendar");
   const [filters, setFilters] = useState({
     subject: [] as string[],
     centre: [] as string[],
@@ -92,9 +95,18 @@ export default function Page() {
       });
   }, []);
 
-  // Effect to update URL query params when filters change
+  // Effect to update URL query params when filters change (preserve non-filter params)
   useEffect(() => {
-    const params = new URLSearchParams();
+    const params = new URLSearchParams(window.location.search);
+
+    // Clear existing filter params only
+    params.delete("subject");
+    params.delete("centre");
+    params.delete("tutor");
+    params.delete("level");
+    params.delete("stream");
+
+    // Add current filter params
     if (filters.subject.length > 0) {
       params.set("subject", filters.subject.join(","));
     }
@@ -110,6 +122,7 @@ export default function Page() {
     if (filters.stream) {
       params.set("stream", filters.stream);
     }
+
     const newUrl = `${window.location.pathname}?${params.toString()}`;
     window.history.replaceState({}, "", newUrl);
   }, [filters]);
@@ -302,6 +315,8 @@ export default function Page() {
                 </p>
               </div>
 
+              <ViewSelector onViewChange={setCurrentView} />
+
               <div className="modern-card p-3 sm:p-6">
                 <Filters
                   streams={[
@@ -320,7 +335,11 @@ export default function Page() {
               </div>
 
               <div className="modern-card p-3 sm:p-6">
-                <WeeklyClassCalendar slots={events} filters={filters} />
+                {currentView === "calendar" ? (
+                  <WeeklyClassCalendar slots={events} filters={filters} />
+                ) : (
+                  <ListView sessions={events} />
+                )}
               </div>
             </>
           )}
