@@ -20,7 +20,7 @@ export default function Page() {
   const [calendarFilter, setCalendarFilter] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/sessions-jc.json")
+    fetch("/sessions-ss.json")
       .then((res) => res.json())
       .then((data: Session[]) => setSessions(data));
   }, []);

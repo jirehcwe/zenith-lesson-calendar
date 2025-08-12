@@ -23,8 +23,8 @@ function addHours(time: string, hours: number): string {
   return `${displayHour}:${minute.toString().padStart(2, "0")} ${newAmpm}`;
 }
 
-const csvPath = path.join(__dirname, "..", "public", "sessions-jc.csv");
-const outPath = path.join(__dirname, "..", "public", "sessions-jc.json");
+const csvPath = path.join(__dirname, "..", "public", "sessions-ss.csv");
+const outPath = path.join(__dirname, "..", "public", "sessions-ss.json");
 
 type CsvRow = Record<string, string>;
 
@@ -38,23 +38,134 @@ const result = records.map((row: CsvRow) => {
   // Map CSV columns to JSON keys
   let prefillField = "";
   switch (row["Subject"]) {
-    // case "JC - Math":
-    //   prefillField = "822255076";
-    //   break;
-    // case "JC - Econs":
-    //   prefillField = "1016736042";
-    //   break;
-    case "JC - Bio":
-      prefillField = "1188715475";
+    case "Sec - LS Math":
+      switch (row["Level"]) {
+        case "S1":
+          prefillField = "1165110009";
+          break;
+        case "S2":
+          prefillField = "1137033822";
+          break;
+        default:
+          throw new Error(`Unknown level: ${row["Level"]}`);
+      }
       break;
-    case "JC - Chem":
-      prefillField = "1143667470";
+    case "Sec - AM":
+      switch (row["Level"]) {
+        case "S3":
+          prefillField = "211505445";
+          break;
+        default:
+          throw new Error(`Unknown level: ${row["Level"]}`);
+      }
       break;
-    case "JC - Phy":
-      prefillField = "299425437";
+    case "Sec - EM":
+      switch (row["Level"]) {
+        case "S3":
+          prefillField = "1542437949";
+          break;
+        default:
+          throw new Error(`Unknown level: ${row["Level"]}`);
+      }
+      prefillField = "";
       break;
-    case "JC - GP":
-      prefillField = "136322790";
+    case "Sec - Eng":
+      switch (row["Level"]) {
+        case "S1":
+          prefillField = "1016736042";
+          break;
+        case "S2":
+          prefillField = "822255076";
+          break;
+        case "S3":
+          prefillField = "136322790";
+          break;
+        default:
+          throw new Error(`Unknown level: ${row["Level"]}`);
+      }
+      break;
+    case "Sec - LS Science":
+      switch (row["Level"]) {
+        case "S1":
+          prefillField = "862261665";
+          break;
+        default:
+          throw new Error(`Unknown level: ${row["Level"]}`);
+      }
+      break;
+    case "Sec - P Chem":
+    case "Sec - C Chem":
+      switch (row["Level"]) {
+        case "S3":
+          prefillField = "530119122";
+          break;
+        default:
+          throw new Error(`Unknown level: ${row["Level"]}`);
+      }
+      break;
+    case "Sec - P Phy":
+    case "Sec - C Phy":
+      switch (row["Level"]) {
+        case "S3":
+          prefillField = "1411978775";
+          break;
+        default:
+          throw new Error(`Unknown level: ${row["Level"]}`);
+      }
+      break;
+    case "Sec - P Bio":
+      switch (row["Level"]) {
+        case "S3":
+          prefillField = "672830523";
+          break;
+        default:
+          throw new Error(`Unknown level: ${row["Level"]}`);
+      }
+      break;
+    case "Sec (IP) - Eng":
+      switch (row["Level"]) {
+        case "S1":
+          prefillField = "810440307";
+          break;
+        case "S2":
+          prefillField = "260829673";
+          break;
+        case "S3":
+          prefillField = "1249604192";
+          break;
+        case "S4":
+          prefillField = "1091300344";
+          break;
+        default:
+          throw new Error(`Unknown level: ${row["Level"]}`);
+      }
+      break;
+    case "Sec (IP) - Math":
+      switch (row["Level"]) {
+        case "S1":
+          prefillField = "857742220";
+          break;
+        case "S2":
+          prefillField = "990975670";
+          break;
+        case "S3":
+          prefillField = "1473865721";
+          break;
+        case "S4":
+          prefillField = "376990052";
+          break;
+        default:
+          throw new Error(`Unknown level: ${row["Level"]}`);
+      }
+      break;
+    case "Sec (IP) - LS Science":
+      switch (row["Level"]) {
+        case "S2":
+          prefillField = "39674934";
+          break;
+        default:
+          throw new Error(`Unknown level: ${row["Level"]}`);
+      }
       break;
     default:
       throw new Error(`Unknown subject: ${row["Subject"]}`);

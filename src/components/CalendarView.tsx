@@ -72,9 +72,9 @@ export default function CalendarView({
             />
           </svg>
           <p className="text-blue-700 text-sm">
-            <span className="font-semibold">Tip:</span> There are some crash
-            course slots in August! Use the left arrow to navigate to the August
-            calendar.
+            <span className="font-semibold">Tip:</span> There are more crash
+            course slots in September! Use the right arrow to navigate to the
+            September calendar.
           </p>
         </div>
       </div>
@@ -83,7 +83,7 @@ export default function CalendarView({
         initialView="timeGridWeek"
         validRange={{ start: START_DATE, end: END_DATE }}
         firstDay={1}
-        initialDate="2025-09-08"
+        initialDate="2025-09-01"
         headerToolbar={{
           left: "prev,next today",
           center: "title",
