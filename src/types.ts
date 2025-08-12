@@ -13,5 +13,4 @@ export type Session = {
   displaySubject: string;
 };
 
-export const START_DATE = new Date("2025-09-01");
 export const END_DATE = new Date("2025-09-14");
