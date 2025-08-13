@@ -406,7 +406,7 @@ export default function Page() {
 
                       <div className="text-left">
                         <h4 className="font-bold text-lg text-gray-800 mb-3">
-                          Econs S to A | Chem D to A
+                          S to A - Econs | D to A - Chem
                         </h4>
                         <p className="text-gray-600 leading-relaxed">
                           &quot;I’m incredibly thankful for the help and support
@@ -425,7 +425,7 @@ export default function Page() {
                         </p>
                         <br />
                         <h4 className="font-bold text-lg text-gray-800 mb-3">
-                          Physics U to A
+                          U to A - Physics
                         </h4>
                         <p className="text-gray-600 leading-relaxed">
                           &quot;I can confidently say that Duncan played a
