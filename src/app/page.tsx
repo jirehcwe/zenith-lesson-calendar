@@ -313,11 +313,9 @@ export default function Page() {
                   {new URLSearchParams(window.location.search)
                     .get("campaign")
                     ?.includes("SCHEDULE1")
-                    ? `At Zenith, many of our students strengthen their learning by 
-                    taking two or more subjects. They're supported by caring teachers who go 
-                    above and beyond to help every student succeed. Discover how you can do the 
-                    same by finding a class that fits your timetable! Click on your preferred timeslot, 
-                    and enjoy a one-time free trial* for any new subject you choose.`
+                    ? `A-Levels is a crucial milestone in your educational journey, marking a key turning point that can shape future academic/career paths. 
+With a steep learning curve and the pressure of multiple subjects, Zenith offers multiple subjects with dedicated support to help you manage and excel in your grades.
+Select your preferred location/subject and sign up to enjoy a FREE trial class*!`
                     : `Browse through our comprehensive course offerings and filter
                   by your preferences to find the ideal classes for your
                   academic journey.`}
