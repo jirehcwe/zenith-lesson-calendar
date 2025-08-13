@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect, useMemo } from "react";
 import Filters from "../components/Filters";
 import SignupBanner from "../components/SignupBanner";
@@ -309,9 +310,17 @@ export default function Page() {
                   Find Your Perfect Class Schedule
                 </h2>
                 <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-2 sm:px-0">
-                  Browse through our comprehensive course offerings and filter
+                  {new URLSearchParams(window.location.search)
+                    .get("campaign")
+                    ?.includes("SCHEDULE1")
+                    ? `At Zenith, many of our students strengthen their learning by 
+                    taking two or more subjects. They're supported by caring teachers who go 
+                    above and beyond to help every student succeed. Discover how you can do the 
+                    same by finding a class that fits your timetable! Click on your preferred timeslot, 
+                    and enjoy a one-time free trial* for any new subject you choose.`
+                    : `Browse through our comprehensive course offerings and filter
                   by your preferences to find the ideal classes for your
-                  academic journey.
+                  academic journey.`}
                 </p>
               </div>
 
@@ -340,6 +349,153 @@ export default function Page() {
                 ) : (
                   <ListView sessions={events} />
                 )}
+              </div>
+
+              {/* Terms and Conditions Footer */}
+              <div className="text-center py-4 sm:py-6">
+                <p className="text-sm text-gray-600 max-w-4xl mx-auto px-4">
+                  * Free trial is only applicable if you have not attended a
+                  trial for the subject before, standard fees apply otherwise.
+                </p>
+              </div>
+
+              {/* Testimonials Section */}
+              <div className="py-8 sm:py-12">
+                <div className="text-center mb-8 sm:mb-12">
+                  <h3 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
+                    What Our Students Say
+                  </h3>
+                  <p className="text-gray-600 max-w-2xl mx-auto px-4">
+                    Hear from students who have transformed their academic
+                    journey with Zenith
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                  {/* Testimonial 1 */}
+                  <div className="modern-card p-6 text-center">
+                    <div className="mb-6">
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-full overflow-hidden bg-gray-200">
+                        <Image
+                          src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f73/68518e04ed2f9834d15663ac_Fionn%20Lim%20Hui%20Ying_Square.webp"
+                          alt="Fionn"
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                          width={45}
+                          height={45}
+                        />
+                      </div>
+                      <div className="font-semibold text-gray-800">Fionn</div>
+                    </div>
+
+                    {/* <div className="mb-6">
+                        <Image
+                          src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f73/68518dffee935c0cb5fdddea_Fionn%20Lim%20Hui%20Ying%20.webp"
+                          alt="Fionn's testimonial"
+                          className="w-full h-auto object-contain rounded-lg mb-4"
+                          loading="lazy"
+                          width={1080}
+                          height={1080}
+                        />
+                      </div> */}
+
+                    <div className="text-left">
+                      <h4 className="font-bold text-lg text-gray-800 mb-3">
+                        C to A Econs, C to B GP
+                      </h4>
+                      <p className="text-gray-600 leading-relaxed">
+                        &quot;Before joining Zenith, my grades were stagnant,
+                        but my passionate tutors made all the difference. Thanks
+                        to their support, I improved and performed better in my
+                        A-levels!&quot;
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Testimonial 2 */}
+                  <div className="modern-card p-6 text-center">
+                    <div className="mb-6">
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-full overflow-hidden bg-gray-200">
+                        <Image
+                          src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f73/68518da0ca0e589ab5ba0e03_Sven_Square.webp"
+                          alt="Sven"
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                          width={45}
+                          height={45}
+                        />
+                      </div>
+                      <div className="font-semibold text-gray-800">Sven</div>
+                    </div>
+
+                    {/* <div className="mb-6">
+                        <Image
+                          src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f73/68518daaf608cc4fac821811_Sven-p-1080.webp"
+                          alt="Sven's testimonial"
+                          className="w-full h-auto object-contain rounded-lg mb-4"
+                          loading="lazy"
+                          width={1080}
+                          height={1080}
+                        />
+                      </div> */}
+
+                    <div className="text-left">
+                      <h4 className="font-bold text-lg text-gray-800 mb-3">
+                        D to B Math, E to C Physics
+                      </h4>
+                      <p className="text-gray-600 leading-relaxed">
+                        ‍&quot;Zenith’s lessons in Econs and GP really sparked
+                        my interest and helped me understand global issues
+                        better. The fun teaching style and personalized approach
+                        made a big difference in both my grades and critical
+                        thinking skills.&quot;
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Testimonial 3 */}
+                  <div className="modern-card p-6 text-center md:col-span-2 lg:col-span-1">
+                    <div className="mb-6">
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-full overflow-hidden bg-gray-200">
+                        <Image
+                          src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f73/68518dcc2e4818b52d9ad58e_Gao%20Shan_Square.webp"
+                          alt="Gao Shan"
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                          width={45}
+                          height={45}
+                        />
+                      </div>
+                      <div className="font-semibold text-gray-800">
+                        Gao Shan
+                      </div>
+                    </div>
+
+                    {/* <div className="mb-6">
+                        <Image
+                          src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f73/68518dc70d9d9773f42f43b8_Gao%20Shan-p-1080.webp"
+                          alt="Gaoshan's testimonial"
+                          className="w-full h-auto object-contain rounded-lg mb-4"
+                          loading="lazy"
+                          width={1080}
+                          height={1080}
+                        />
+                      </div> */}
+
+                    <div className="text-left">
+                      <h4 className="font-bold text-lg text-gray-800 mb-3">
+                        S to A - Chem E to A - Econs
+                      </h4>
+                      <p className="text-gray-600 leading-relaxed">
+                        &quot;I discovered Zenith during their June holiday
+                        crash courses in Economics and Chemistry, where engaging
+                        teachers simplified complex concepts. Their guidance
+                        helped me achieve consistent A grades, making the
+                        experience both enjoyable and rewarding.&quot;
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </>
           )}
