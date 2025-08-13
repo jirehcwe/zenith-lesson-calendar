@@ -16,7 +16,7 @@ interface TestimonialCardProps {
 
 function TestimonialCard({ testimonial }: TestimonialCardProps) {
   return (
-    <div className="modern-card p-6 text-center h-full">
+    <div className="modern-card p-6 text-center">
       {/* Avatar and Name */}
       <div className="mb-6">
         <div className="w-16 h-16 mx-auto mb-4 rounded-full overflow-hidden bg-gray-200">
@@ -29,7 +29,7 @@ function TestimonialCard({ testimonial }: TestimonialCardProps) {
             height={64}
           />
         </div>
-        <div className="font-semibold text-gray-800">{testimonial.name}</div>
+        <div className="font-s  emibold text-gray-800">{testimonial.name}</div>
       </div>
 
       {/* Testimonials */}
@@ -56,8 +56,13 @@ export default function TestimonialCarousel() {
       {/* Custom styles for carousel */}
       <style jsx global>{`
         .testimonial-swiper .swiper-pagination {
-          position: static !important;
-          margin-top: 2rem;
+          position: absolute !important;
+          top: 0 !important;
+          bottom: auto !important;
+          left: 50% !important;
+          transform: translateX(-50%) !important;
+          width: auto !important;
+          margin: 0 !important;
         }
         .testimonial-swiper .swiper-pagination-bullet {
           background-color: #d1d5db;
@@ -70,10 +75,6 @@ export default function TestimonialCarousel() {
         }
         .testimonial-swiper .swiper-slide {
           height: auto;
-          display: flex;
-        }
-        .testimonial-swiper .swiper-slide > div {
-          width: 100%;
         }
       `}</style>
 
@@ -92,7 +93,7 @@ export default function TestimonialCarousel() {
         }}
         loop={true}
         className="testimonial-swiper"
-        style={{ paddingBottom: "60px" }}
+        style={{ paddingTop: "60px" }}
       >
         {testimonialsData.map((testimonial) => (
           <SwiperSlide key={testimonial.id}>
