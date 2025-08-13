@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useState, useEffect, useMemo } from "react";
 import Filters from "../components/Filters";
 import SignupBanner from "../components/SignupBanner";
