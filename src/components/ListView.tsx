@@ -23,16 +23,22 @@ export default function ListView({
 
   // Group sessions by day for better organization
   const sessionsByDay = sessions.reduce((acc, session) => {
-    const day = session.day;
-    if (!acc[day]) {
-      acc[day] = [];
+    // Adjust slot.day if the calendar starts on Monday and slot is Sunday
+    let adjustedDay = session.day;
+    if (session.day === 0) {
+      adjustedDay = 7; // Treat Sunday as the 7th day (after Saturday) for a Monday-first calendar
     }
-    acc[day].push(session);
-    return acc;
-  }, {} as Record<string, WeeklyClassSlot[]>);
 
-  // Sort days in order
-  const dayOrder = [
+    if (!acc[adjustedDay]) {
+      acc[adjustedDay] = [];
+    }
+    acc[adjustedDay].push(session);
+    return acc;
+  }, {} as Record<number, WeeklyClassSlot[]>);
+
+  // Sort days in order (1=Monday through 7=Sunday)
+  const dayNames = [
+    "", // Index 0 unused
     "Monday",
     "Tuesday",
     "Wednesday",
@@ -41,16 +47,17 @@ export default function ListView({
     "Saturday",
     "Sunday",
   ];
-  const sortedDays = Object.keys(sessionsByDay).sort(
-    (a, b) => dayOrder.indexOf(a) - dayOrder.indexOf(b)
-  );
+
+  const sortedDays = Object.keys(sessionsByDay)
+    .map(Number)
+    .sort((a, b) => a - b);
 
   return (
     <div className="space-y-8">
       {sortedDays.map((day) => (
         <div key={day} className="space-y-4">
           <h3 className="text-xl font-bold text-gray-800 border-b-2 border-blue-200 pb-2">
-            {dayOrder[parseInt(day)]}
+            {dayNames[day]}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {sessionsByDay[day]
