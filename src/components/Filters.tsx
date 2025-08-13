@@ -31,6 +31,14 @@ function truncateText(text: string, maxLength: number = 25): string {
   return text.substring(0, maxLength) + "...";
 }
 
+// Helper function to format location display text
+function formatLocationDisplay(location: string): string {
+  if (location === "Kovan") {
+    return "Kovan (NEW!)";
+  }
+  return location;
+}
+
 function MultiSelect({
   label,
   selected,
@@ -50,7 +58,9 @@ function MultiSelect({
 
   const displayText =
     selected.length > 0
-      ? selected.map((s) => truncateText(s, 20)).join(", ")
+      ? selected
+          .map((s) => truncateText(formatLocationDisplay(s), 20))
+          .join(", ")
       : `Select ${label}`;
 
   // Handle scrolling when dropdown opens
@@ -119,7 +129,11 @@ function MultiSelect({
                     : "hover:border-blue-300"
                 }`}
                 disabled={disabled}
-                title={selected.length > 0 ? selected.join(", ") : undefined}
+                title={
+                  selected.length > 0
+                    ? selected.map(formatLocationDisplay).join(", ")
+                    : undefined
+                }
               >
                 <span className="block truncate">{displayText}</span>
                 {selected.length > 0 && !disabled && (
@@ -171,7 +185,7 @@ function MultiSelect({
                           } ${
                             disabled ? "text-gray-400 cursor-not-allowed" : ""
                           } ${option.selected ? "bg-blue-50 font-medium" : ""}`}
-                          title={option.value}
+                          title={formatLocationDisplay(option.value)}
                         >
                           {/* Checkbox indicator */}
                           <div className="flex-shrink-0 w-4 h-4 border border-gray-300 rounded flex items-center justify-center bg-white">
@@ -197,7 +211,7 @@ function MultiSelect({
                                 option.count === 0 ? "line-through" : ""
                               }`}
                             >
-                              {option.value}
+                              {formatLocationDisplay(option.value)}
                             </span>
                           </div>
                         </li>

@@ -10,11 +10,11 @@
     "extract-form": "dotenv -e .env -- npx tsx scripts/form_option_extractor/index.ts"
   },
   "dependencies": {
+    "@fullcalendar/core": "^6.1.17",
     "@fullcalendar/daygrid": "^6.1.17",
     "@fullcalendar/react": "^6.1.17",
     "@fullcalendar/scrollgrid": "^6.1.17",
     "@fullcalendar/timegrid": "^6.1.17",
-    "@fullcalendar/core": "^6.1.17",
     "@headlessui/react": "^2.2.2",
     "csv-parse": "^5.6.0",
     "date-fns": "^4.1.0",
@@ -23,6 +23,7 @@
     "react": "^19.0.0",
     "react-datepicker": "^8.3.0",
     "react-dom": "^19.0.0",
+    "swiper": "^11.2.10",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

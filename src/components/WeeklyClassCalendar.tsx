@@ -7,6 +7,14 @@ import { useEffect, useState, useMemo } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { replaceCampaignInUrl } from "@/utils/campaign";
 
+// Helper function to format location display text
+function formatLocationDisplay(location: string): string {
+  if (location === "Kovan") {
+    return "Kovan (NEW!)";
+  }
+  return location;
+}
+
 // Define a new type for weekly class slots (no topic, no date)
 export type WeeklyClassSlot = {
   title: string;
@@ -203,8 +211,7 @@ function getFixedWeekdayDate(weekday: number): Date {
 
 export default function WeeklyClassCalendar({
   slots,
-}: // eslint-disable-next-line @typescript-eslint/no-unused-vars
-// filters,
+}: // filters,
 {
   slots: WeeklyClassSlot[];
   filters: {
@@ -268,6 +275,20 @@ export default function WeeklyClassCalendar({
 
   return (
     <div className="space-y-6">
+      {/* Custom CSS for FullCalendar hover effects */}
+      <style jsx>{`
+        :global(.fc-v-event) {
+          cursor: pointer !important;
+          transition: all 0.2s ease !important;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+        }
+        :global(.fc-v-event:hover) {
+          transform: scale(1.05) translateY(-1px) !important;
+          filter: brightness(0.9) !important;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25) !important;
+        }
+      `}</style>
+
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 flex items-center gap-3">
         <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
           <span className="text-xl">💡</span>
@@ -313,11 +334,20 @@ export default function WeeklyClassCalendar({
           eventContent={(arg) => {
             const centre = arg.event.extendedProps.centre;
             return (
-              <div>
-                <div className="font-semibold truncate">{arg.event.title}</div>
-                {centre && (
-                  <div className="text-xs opacity-80 truncate">{centre}</div>
-                )}
+              <div className="p-1 h-full flex flex-col justify-between overflow-hidden">
+                <div className="flex-1 min-h-0">
+                  <div className="font-semibold truncate text-sm">
+                    {arg.event.title}
+                  </div>
+                  {centre && (
+                    <div className="text-xs opacity-80 truncate">
+                      {formatLocationDisplay(centre)}
+                    </div>
+                  )}
+                </div>
+                <div className="text-xs underline opacity-90 truncate flex-shrink-0">
+                  Click to Register
+                </div>
               </div>
             );
           }}
@@ -395,7 +425,7 @@ export default function WeeklyClassCalendar({
                           Venue:
                         </span>
                         <span className="ml-2 text-gray-600">
-                          {selectedEvent.centre}
+                          {formatLocationDisplay(selectedEvent.centre)}
                         </span>
                       </div>
                     </div>
