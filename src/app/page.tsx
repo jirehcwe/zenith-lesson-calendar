@@ -432,7 +432,7 @@ export default function Page() {
                           the extra mile to ensure I fully understand the
                           material. His teaching is clear, engaging, and makes
                           even the most complex concepts easy to grasp. Duncan’s
-                          dedication to his students is truly evident, and I'm
+                          dedication to his students is truly evident, and I’m
                           incredibly grateful for his unwavering support
                           throughout. I couldn’t have achieved this without his
                           guidance. Highly recommended!&quot;
