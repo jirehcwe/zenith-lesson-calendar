@@ -406,7 +406,7 @@ export default function Page() {
 
                       <div className="text-left">
                         <h4 className="font-bold text-lg text-gray-800 mb-3">
-                          Econs S to A | Chem D to A | Physics U to A
+                          Econs S to A | Chem D to A
                         </h4>
                         <p className="text-gray-600 leading-relaxed">
                           &quot;I’m incredibly thankful for the help and support
@@ -424,6 +424,9 @@ export default function Page() {
                           able to improve from an S to an A!&quot;
                         </p>
                         <br />
+                        <h4 className="font-bold text-lg text-gray-800 mb-3">
+                          Physics U to A
+                        </h4>
                         <p className="text-gray-600 leading-relaxed">
                           &quot;I can confidently say that Duncan played a
                           pivotal role in my academic journey—helping me go from
@@ -445,15 +448,15 @@ export default function Page() {
                       <div className="mb-6">
                         <div className="w-16 h-16 mx-auto mb-4 rounded-full overflow-hidden bg-gray-200">
                           <Image
-                            src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f73/68518da0ca0e589ab5ba0e03_Sven_Square.webp"
-                            alt="Sven"
+                            src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f73/6855292ece9c33e8d67b947d_Screenshot%202025-06-20%20172556.png"
+                            alt="Leora"
                             className="w-full h-full object-cover"
                             loading="lazy"
                             width={45}
                             height={45}
                           />
                         </div>
-                        <div className="font-semibold text-gray-800">Sven</div>
+                        <div className="font-semibold text-gray-800">Leora</div>
                       </div>
 
                       {/* <div className="mb-6">
@@ -469,14 +472,32 @@ export default function Page() {
 
                       <div className="text-left">
                         <h4 className="font-bold text-lg text-gray-800 mb-3">
-                          E to A - Econs | D to A - GP
+                          D to A - GP
                         </h4>
                         <p className="text-gray-600 leading-relaxed">
-                          ‍&quot;Zenith’s lessons in Econs and GP really sparked
-                          my interest and helped me understand global issues
-                          better. The fun teaching style and personalized
-                          approach made a big difference in both my grades and
-                          critical thinking skills.&quot;
+                          ‍&quot;✨ From Overwhelmed to Overachieving: My GP
+                          Journey with Zenith! ✨ When I first entered JC,
+                          General Paper felt like an insurmountable challenge.
+                          Despite pouring in effort during my first semester, I
+                          hit a tipping point and knew I needed extra support,
+                          so I turned to Zenith . My tutor: Zach—the most
+                          patient and engaging tutor ever. He transformed what
+                          used to be tedious case study memorization into a bank
+                          of hilariously effective examples that made
+                          essay-writing so much easier. Even with the new
+                          syllabus and daunting exam format, his targeted
+                          practices and additional consults helped me clarify
+                          misconceptions, refine my thought process, and
+                          actually enjoy GP. But Zach didn’t just help with my
+                          grades. When I was overwhelmed and on the verge of
+                          burnout, he offered a listening ear and unwavering
+                          support, reigniting my motivation across all subjects.
+                          (Also, psst... he’s super generous with the monthly
+                          welfare, so there’s that too 😉). Jokes aside, I’m
+                          beyond grateful to Zach for being such a crucial part
+                          of my JC journey. If you’re struggling with GP, I
+                          highly recommend having him as part of yours too!
+                          💯✨&quot;
                         </p>
                       </div>
                     </div>
@@ -512,7 +533,7 @@ export default function Page() {
 
                       <div className="text-left">
                         <h4 className="font-bold text-lg text-gray-800 mb-3">
-                          S to A - Math | U to A - Bio
+                          S to A - Math
                         </h4>
                         <p className="text-gray-600 leading-relaxed">
                           &quot;I took H2 Math lessons with Hui Xuan from late
@@ -532,6 +553,9 @@ export default function Page() {
                           other way. Thank you, Hui Xuan!&quot;
                         </p>
                         <br />
+                        <h4 className="font-bold text-lg text-gray-800 mb-3">
+                          U to A - Bio
+                        </h4>
                         <p className="text-gray-600 leading-relaxed">
                           &quot;I took H2 Biology tuition with Derek Tan in
                           2024, and he was the most nurturing tutor I’ve ever
