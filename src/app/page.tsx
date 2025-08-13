@@ -409,16 +409,33 @@ export default function Page() {
                           Econs S to A | Chem D to A | Physics U to A
                         </h4>
                         <p className="text-gray-600 leading-relaxed">
-                          &quot;I can confidently say that my teachers Duncan
-                          (Physics) and Lay Chun (Econs) played a pivotal role
-                          in my academic journey—helping me go from a U to an A
-                          in Physics and from an S to an A in Econs. Their
-                          teaching is clear, engaging, and makes even the most
-                          complex concepts easy to grasp. What I appreciate most
-                          is their patience and willingness to go the extra mile
-                          to ensure I fully understand the material. I'm
-                          incredibly grateful for their unwavering support
-                          throughout. Highly recommended!&quot;
+                          &quot;I’m incredibly thankful for the help and support
+                          Lay Chun has provided throughout my studies. His
+                          lessons are always clear, engaging, and incredibly
+                          thorough. He takes the time to break down every
+                          concept in a way that’s easy to understand, no matter
+                          how complex the topic may seem. What I appreciate most
+                          is his patience—he always answers every one of my
+                          questions, no matter how simple or “stupid” they may
+                          feel, and he ensures I fully grasp the material before
+                          moving on. His willingness to explain things in
+                          different ways until I truly understand is what sets
+                          him apart. Thanks to his guidance and feedback, I was
+                          able to improve from an S to an A!&quot;
+                        </p>
+                        <br />
+                        <p className="text-gray-600 leading-relaxed">
+                          &quot;I can confidently say that Duncan played a
+                          pivotal role in my academic journey—helping me go from
+                          a U to an A in Physics. He’s an exceptional teacher:
+                          always responsive to my questions and willing to go
+                          the extra mile to ensure I fully understand the
+                          material. His teaching is clear, engaging, and makes
+                          even the most complex concepts easy to grasp. Duncan’s
+                          dedication to his students is truly evident, and I'm
+                          incredibly grateful for his unwavering support
+                          throughout. I couldn’t have achieved this without his
+                          guidance. Highly recommended!&quot;
                         </p>
                       </div>
                     </div>
@@ -469,15 +486,17 @@ export default function Page() {
                       <div className="mb-6">
                         <div className="w-16 h-16 mx-auto mb-4 rounded-full overflow-hidden bg-gray-200">
                           <Image
-                            src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f73/685526efb33a61437e79ebde_Screenshot%202025-06-20%20171621.png"
-                            alt="Ethan"
+                            src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f73/685509c6fb9942e9b642af7b_Screenshot%202025-06-20%20151153.png"
+                            alt="Gloria"
                             className="w-full h-full object-cover"
                             loading="lazy"
                             width={45}
                             height={45}
                           />
                         </div>
-                        <div className="font-semibold text-gray-800">Ethan</div>
+                        <div className="font-semibold text-gray-800">
+                          Gloria
+                        </div>
                       </div>
 
                       {/* <div className="mb-6">
@@ -493,17 +512,45 @@ export default function Page() {
 
                       <div className="text-left">
                         <h4 className="font-bold text-lg text-gray-800 mb-3">
-                          S to A - Chem | S to A - Bio
+                          S to A - Math | U to A - Bio
                         </h4>
                         <p className="text-gray-600 leading-relaxed">
-                          &quot;The tutors at Zenith are amazing at breaking
-                          down complex Chemistry and Biology topics into clear,
-                          easy-to-understand explanations. My tutors, Shi Neng
-                          and Melvin, are also incredibly responsive—always
-                          taking the time to promptly address any questions I
-                          have. Outside of class, they gave me solid advice on
-                          how to study for my exams, which really helped with my
-                          revision. 😁😁&quot;
+                          &quot;I took H2 Math lessons with Hui Xuan from late
+                          2023 to 2024, and it was an incredible experience. Hui
+                          Xuan is a fun-loving and dedicated tutor who made
+                          learning Math far less daunting. Despite my initial
+                          struggles, she broke down complex concepts into easily
+                          digestible lessons, structuring each session with
+                          scaffolding and clear summaries to support effective
+                          learning. Her approachable nature fostered a
+                          supportive environment where I felt comfortable asking
+                          questions without hesitation. Beyond lessons, she
+                          offered personalised advice and regularly checked in
+                          on my progress, ensuring steady and consistent
+                          improvement. Math with Hui Xuan has been a 10/10
+                          experience—I truly couldn’t have tackled JC Math any
+                          other way. Thank you, Hui Xuan!&quot;
+                        </p>
+                        <br />
+                        <p className="text-gray-600 leading-relaxed">
+                          &quot;I took H2 Biology tuition with Derek Tan in
+                          2024, and he was the most nurturing tutor I’ve ever
+                          had. His sharpness, attentiveness, and deep expertise
+                          completely transformed my learning experience. Before
+                          joining his class, I struggled with exams despite
+                          doing well in discussions. Yet, Derek never dismissed
+                          my difficulties. Instead, he patiently analysed my
+                          weaknesses and helped me develop practical strategies
+                          to improve. He tailored his teaching with patience and
+                          adaptability, always ensuring I could keep pace.
+                          Derek’s structured and clear teaching approach helped
+                          me gain confidence in the subject. He creates an
+                          empowering learning environment that eases anxieties
+                          and keeps students motivated—ultimately driving real
+                          improvement. His unwavering support and dedication had
+                          a profound impact on my journey. Thank you, Derek, for
+                          being an incredible tutor and mentor—I’m truly
+                          grateful.&quot;
                         </p>
                       </div>
                     </div>
