@@ -6,6 +6,7 @@ import scrollGridPlugin from "@fullcalendar/scrollgrid";
 import { useEffect, useState, useMemo } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { replaceCampaignInUrl } from "@/utils/campaign";
+import { prefillRegistration } from "@/utils/prefillRegistration";
 
 // Helper function to format location display text
 function formatLocationDisplay(location: string): string {
@@ -449,12 +450,6 @@ export default function WeeklyClassCalendar({
             )}
 
             <div className="flex gap-2.5 pt-3">
-              <button
-                className="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors text-sm"
-                onClick={() => setIsDialogOpen(false)}
-              >
-                Close
-              </button>
               {selectedEvent?.prefillLink && (
                 <a
                   href={replaceCampaignInUrl(selectedEvent.prefillLink)}
@@ -465,11 +460,22 @@ export default function WeeklyClassCalendar({
                   }}
                   className="flex-1"
                 >
-                  <button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition-all duration-200 text-sm">
-                    Register Now
+                  <button className="w-full px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors text-sm">
+                    Sign up for Trial
                   </button>
                 </a>
               )}
+              <a
+                href={replaceCampaignInUrl(
+                  prefillRegistration(selectedEvent?.level ?? "Unknown")
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <button className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition-all duration-200 text-sm">
+                  Register now
+                </button>
+              </a>
             </div>
           </DialogPanel>
         </div>

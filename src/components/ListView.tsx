@@ -2,6 +2,7 @@
 
 import { WeeklyClassSlot } from "./WeeklyClassCalendar";
 import { replaceCampaignInUrl } from "@/utils/campaign";
+import { prefillRegistration } from "@/utils/prefillRegistration";
 
 export default function ListView({
   sessions,
@@ -143,15 +144,30 @@ export default function ListView({
                     </div>
 
                     <div className="pt-2 border-t border-gray-100">
-                      <a
-                        href={replaceCampaignInUrl(session.prefillLink)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 hover:shadow-md hover:-translate-y-1 transition-all duration-200 font-medium text-sm">
-                          Register for Class
-                        </button>
-                      </a>
+                      <div className="flex gap-2.5">
+                        <a
+                          href={replaceCampaignInUrl(session.prefillLink)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1"
+                        >
+                          <button className="w-full px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors text-sm">
+                            Sign up for Trial
+                          </button>
+                        </a>
+                        <a
+                          href={replaceCampaignInUrl(
+                            prefillRegistration(session.level)
+                          )}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1"
+                        >
+                          <button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition-all duration-200 text-sm">
+                            Register now
+                          </button>
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
