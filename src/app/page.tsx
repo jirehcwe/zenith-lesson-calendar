@@ -67,8 +67,8 @@ export default function Page() {
 
     // Calculate HSV
     let h = 0;
-    let s = max === 0 ? 0 : delta / max;
-    let v = max;
+    const s = max === 0 ? 0 : delta / max;
+    const v = max;
 
     if (delta !== 0) {
       if (max === rNorm) {
@@ -133,7 +133,7 @@ export default function Page() {
     b = Math.round((b + m) * 255);
 
     // Convert to hex
-    const toHex = (n) => n.toString(16).padStart(2, "0").toUpperCase();
+    const toHex = (n: number) => n.toString(16).padStart(2, "0").toUpperCase();
 
     return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
   }
