@@ -187,7 +187,14 @@ export default function CalendarView({
                     Register (prefilled)
                   </button>
                 </a>
-              ) : null}
+              ) : (
+                <button
+                  className="px-4 py-2 bg-gray-300 text-gray-500 rounded cursor-not-allowed"
+                  disabled
+                >
+                  Class Full
+                </button>
+              )}
             </div>
           </DialogPanel>
         </div>
