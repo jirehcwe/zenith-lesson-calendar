@@ -47,6 +47,97 @@ export default function Page() {
     return applyFilters(sessions);
   }, [sessions, filters]);
 
+  function hexToHsv(hex: string) {
+    // Remove # if present
+    hex = hex.replace("#", "");
+
+    // Convert hex to RGB
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+
+    // Normalize RGB to 0-1
+    const rNorm = r / 255;
+    const gNorm = g / 255;
+    const bNorm = b / 255;
+
+    const max = Math.max(rNorm, gNorm, bNorm);
+    const min = Math.min(rNorm, gNorm, bNorm);
+    const delta = max - min;
+
+    // Calculate HSV
+    let h = 0;
+    let s = max === 0 ? 0 : delta / max;
+    let v = max;
+
+    if (delta !== 0) {
+      if (max === rNorm) {
+        h = ((gNorm - bNorm) / delta) % 6;
+      } else if (max === gNorm) {
+        h = (bNorm - rNorm) / delta + 2;
+      } else {
+        h = (rNorm - gNorm) / delta + 4;
+      }
+    }
+
+    h = Math.round(h * 60);
+    if (h < 0) h += 360;
+
+    return {
+      h: h, // 0-360 degrees
+      s: Math.round(s * 100), // 0-100%
+      v: Math.round(v * 100), // 0-100%
+    };
+  }
+
+  function hsvToHex({ h, s, v }: { h: number; s: number; v: number }) {
+    // Normalize inputs
+    s = s / 100; // Convert percentage to 0-1
+    v = v / 100; // Convert percentage to 0-1
+
+    const c = v * s; // Chroma
+    const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+    const m = v - c;
+
+    let r, g, b;
+
+    if (h >= 0 && h < 60) {
+      r = c;
+      g = x;
+      b = 0;
+    } else if (h >= 60 && h < 120) {
+      r = x;
+      g = c;
+      b = 0;
+    } else if (h >= 120 && h < 180) {
+      r = 0;
+      g = c;
+      b = x;
+    } else if (h >= 180 && h < 240) {
+      r = 0;
+      g = x;
+      b = c;
+    } else if (h >= 240 && h < 300) {
+      r = x;
+      g = 0;
+      b = c;
+    } else {
+      r = c;
+      g = 0;
+      b = x;
+    }
+
+    // Convert to 0-255 range and add m
+    r = Math.round((r + m) * 255);
+    g = Math.round((g + m) * 255);
+    b = Math.round((b + m) * 255);
+
+    // Convert to hex
+    const toHex = (n) => n.toString(16).padStart(2, "0").toUpperCase();
+
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+  }
+
   const events = useMemo(() => {
     const jcSubjectToColorMap: Record<
       string,
@@ -155,7 +246,15 @@ export default function Page() {
       : secSubjectToColorMap;
 
     return calendarFilteredSessions.map((s) => {
+      const isFull = s.prefill.length === 0;
       const color = map[s.displaySubject];
+      // convert color to HSV
+      const hsv = hexToHsv(color.backgroundColor);
+      const darkerHex = hsvToHex({
+        h: hsv.h,
+        s: hsv.s,
+        v: hsv.v * 0.8,
+      });
       if (color === undefined) {
         throw new Error(`No color found for ${s.displaySubject}`);
       }
@@ -164,7 +263,7 @@ export default function Page() {
         start: new Date(`${s.date} 2025 ${s.startTime}`),
         end: new Date(`${s.date} 2025 ${s.endTime}`),
         extendedProps: { ...s },
-        backgroundColor: color.backgroundColor,
+        backgroundColor: isFull ? darkerHex : color.backgroundColor,
         textColor: color.textColor,
       };
     });

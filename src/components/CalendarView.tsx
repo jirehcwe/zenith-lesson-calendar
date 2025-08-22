@@ -106,6 +106,7 @@ export default function CalendarView({
         eventContent={(arg) => {
           const topic = arg.event.extendedProps.topic;
           const centre = arg.event.extendedProps.centre;
+          const hasPrefill = arg.event.extendedProps.prefill;
 
           return (
             <div className="p-1 overflow-hidden h-full text-xs leading-tight">
@@ -128,8 +129,14 @@ export default function CalendarView({
                   Centre: {centre}
                 </div>
               )}
-              <div className="underline cursor-pointer mt-1 truncate">
-                Click to register
+              <div
+                className={`mt-1 truncate ${
+                  hasPrefill
+                    ? "underline cursor-pointer"
+                    : "text-gray-500 cursor-not-allowed"
+                }`}
+              >
+                {hasPrefill ? "Click to register" : "Class Full"}
               </div>
             </div>
           );
