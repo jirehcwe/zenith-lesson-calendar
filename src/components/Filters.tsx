@@ -33,9 +33,6 @@ function truncateText(text: string, maxLength: number = 25): string {
 
 // Helper function to format location display text
 function formatLocationDisplay(location: string): string {
-  if (location === "Kovan") {
-    return "Kovan (NEW!)";
-  }
   return location;
 }
 

@@ -37,7 +37,7 @@ export default function SignupBanner() {
           {/* Title Section */}
           <div className="text-center">
             <h1 className="text-2xl sm:text-3xl font-bold leading-tight text-white">
-              2025 Weekly Class Schedule
+              2026 Weekly Class Schedule
             </h1>
             <p className="text-sm sm:text-base text-blue-100 font-medium mt-2">
               Flexible scheduling • Expert tutors • Proven results
@@ -121,7 +121,7 @@ export default function SignupBanner() {
           <div className="flex-1 text-white space-y-6">
             <div className="space-y-4">
               <h1 className="text-4xl xl:text-4xl font-bold leading-tight">
-                2025 Weekly Class Schedule
+                2026 Weekly Class Schedule
               </h1>
               <p className="text-lg xl:text-lg text-blue-100 font-medium">
                 Flexible scheduling • Expert tutors • Proven results

@@ -10,9 +10,6 @@ import { prefillRegistration } from "@/utils/prefillRegistration";
 
 // Helper function to format location display text
 function formatLocationDisplay(location: string): string {
-  if (location === "Kovan") {
-    return "Kovan (NEW!)";
-  }
   return location;
 }
 
