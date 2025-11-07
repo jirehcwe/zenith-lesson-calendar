@@ -83,6 +83,10 @@ const secSubjectToColorMap: Record<
   },
   // IP
   Chemistry: {
+    backgroundColor: "#F4CCCC",
+    textColor: "#000000",
+  },
+  Physics: {
     backgroundColor: "#C27BA0",
     textColor: "#000000",
   },
