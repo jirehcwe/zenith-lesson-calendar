@@ -146,7 +146,7 @@ export default function ListView({
                     <div className="pt-2 border-t border-gray-100">
                       <div className="flex gap-2.5">
                         <a
-                          href={replaceCampaignInUrl(session.prefillLink)}
+                          href={replaceCampaignInUrl(session.prefillTrialLink)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex-1"
@@ -157,6 +157,7 @@ export default function ListView({
                         </a>
                         <a
                           href={replaceCampaignInUrl(
+                            session.prefillRegistrationLink ?? 
                             getFallbackRegistrationLinkByLevel(session.level)
                           )}
                           target="_blank"
