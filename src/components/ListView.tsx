@@ -2,7 +2,7 @@
 
 import { WeeklyClassSlot } from "./WeeklyClassCalendar";
 import { replaceCampaignInUrl } from "@/utils/campaign";
-import { prefillRegistration } from "@/utils/prefillRegistration";
+import { getFallbackRegistrationLinkByLevel } from "@/utils/prefillRegistration";
 
 export default function ListView({
   sessions,
@@ -157,7 +157,7 @@ export default function ListView({
                         </a>
                         <a
                           href={replaceCampaignInUrl(
-                            prefillRegistration(session.level)
+                            getFallbackRegistrationLinkByLevel(session.level)
                           )}
                           target="_blank"
                           rel="noopener noreferrer"

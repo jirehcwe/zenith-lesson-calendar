@@ -14,11 +14,25 @@ import { getCampaignParam } from "@/utils/campaign";
 
 const CACHE_KEY = "weeklyClassData";
 const CACHE_TIME_KEY = "weeklyClassDataTimestamp";
+const CACHE_VERSION_KEY = "weeklyClassDataVersion";
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in ms
+// Increment this version when the API changes to force all clients to invalidate cache
+const CACHE_VERSION = 1;
 
 function getCachedData() {
   const data = localStorage.getItem(CACHE_KEY);
   const timestamp = localStorage.getItem(CACHE_TIME_KEY);
+  const cachedVersion = localStorage.getItem(CACHE_VERSION_KEY);
+  
+  // Check if cache version matches current version
+  if (cachedVersion !== CACHE_VERSION.toString()) {
+    // Version mismatch - clear old cache
+    localStorage.removeItem(CACHE_KEY);
+    localStorage.removeItem(CACHE_TIME_KEY);
+    localStorage.removeItem(CACHE_VERSION_KEY);
+    return null;
+  }
+  
   if (data && timestamp && Date.now() - Number(timestamp) < CACHE_DURATION) {
     return JSON.parse(data);
   }
@@ -29,6 +43,7 @@ function getCachedData() {
 function setCachedData(data: any) {
   localStorage.setItem(CACHE_KEY, JSON.stringify(data));
   localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
+  localStorage.setItem(CACHE_VERSION_KEY, CACHE_VERSION.toString());
 }
 
 function levelToFilterMapper(

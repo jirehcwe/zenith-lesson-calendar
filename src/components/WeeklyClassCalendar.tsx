@@ -6,7 +6,7 @@ import scrollGridPlugin from "@fullcalendar/scrollgrid";
 import { useEffect, useState, useMemo } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { replaceCampaignInUrl } from "@/utils/campaign";
-import { prefillRegistration } from "@/utils/prefillRegistration";
+import { getFallbackRegistrationLinkByLevel } from "@/utils/prefillRegistration";
 
 // Helper function to format location display text
 function formatLocationDisplay(location: string): string {
@@ -24,7 +24,8 @@ export type WeeklyClassSlot = {
   centre: string;
   stream: string;
   level: string;
-  prefillLink: string;
+  prefillTrialLink: string;
+  prefillRegistrationLink?: string;
 };
 
 const jcSubjectToColorMap: Record<
@@ -451,9 +452,9 @@ export default function WeeklyClassCalendar({
             )}
 
             <div className="flex gap-2.5 pt-3">
-              {selectedEvent?.prefillLink && (
+              {selectedEvent?.prefillTrialLink && (
                 <a
-                  href={replaceCampaignInUrl(selectedEvent.prefillLink)}
+                  href={replaceCampaignInUrl(selectedEvent.prefillTrialLink)}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => {
@@ -468,7 +469,7 @@ export default function WeeklyClassCalendar({
               )}
               <a
                 href={replaceCampaignInUrl(
-                  prefillRegistration(selectedEvent?.level ?? "Unknown")
+                  selectedEvent?.prefillRegistrationLink ?? getFallbackRegistrationLinkByLevel(selectedEvent?.level ?? "Unknown")
                 )}
                 target="_blank"
                 rel="noopener noreferrer"
