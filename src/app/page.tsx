@@ -372,9 +372,12 @@ export default function Page() {
                   {filtersCollapsed && (
                     <button
                       onClick={toggleFiltersCollapse}
-                      className="lg:hidden w-full flex items-center gap-2 py-1 text-left hover:bg-gray-100 transition-colors rounded"
+                      className="lg:hidden w-full flex items-center justify-between gap-2 py-1 text-right hover:bg-gray-100 transition-colors rounded"
                       aria-label="Expand filters"
                     >
+                      <h3 className="text-base sm:text-lg font-bold text-gray-800 flex-1 text-right">
+                        Show Filters
+                      </h3>
                       <svg
                         className="w-5 h-5 text-gray-600 flex-shrink-0"
                         fill="none"
@@ -388,36 +391,11 @@ export default function Page() {
                           d="M19 9l-7 7-7-7"
                         />
                       </svg>
-                      <h3 className="text-base sm:text-lg font-bold text-gray-800 flex-1">
-                        Filters
-                      </h3>
                     </button>
                   )}
                   
                   {/* Expanded state - always show on desktop, conditional on mobile */}
                   <div className={filtersCollapsed ? "hidden lg:block" : ""}>
-                    <button
-                      onClick={toggleFiltersCollapse}
-                      className="lg:hidden w-full flex items-center gap-2 mb-4 py-1 text-left hover:bg-gray-100 transition-colors rounded"
-                      aria-label="Collapse filters"
-                    >
-                      <svg
-                        className="w-5 h-5 text-gray-600 flex-shrink-0"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 15l7-7 7 7"
-                        />
-                      </svg>
-                      <h3 className="text-base sm:text-lg font-bold text-gray-800 flex-1">
-                        Filters
-                      </h3>
-                    </button>
                     <div className="hidden lg:flex items-center gap-2 mb-4 py-1">
                       <h3 className="text-base sm:text-lg font-bold text-gray-800 flex-1">
                         Filters
@@ -437,6 +415,28 @@ export default function Page() {
                       filters={filters}
                       onFilterChange={handleFilterChange}
                     />
+                    <button
+                      onClick={toggleFiltersCollapse}
+                      className="lg:hidden w-full flex items-center justify-end gap-2 mt-4 py-1 text-right hover:bg-gray-100 transition-colors rounded"
+                      aria-label="Collapse filters"
+                    >
+                      <h3 className="text-base sm:text-lg font-bold text-gray-800">
+                        Hide Filters
+                      </h3>
+                      <svg
+                        className="w-5 h-5 text-gray-600 flex-shrink-0"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 15l7-7 7 7"
+                        />
+                      </svg>
+                    </button>
                   </div>
                 </div>
               </div>
