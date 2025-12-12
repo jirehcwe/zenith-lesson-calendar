@@ -1,12 +1,77 @@
 "use client";
 import Image from "next/image";
+import { useState, useEffect } from "react";
+
+const STORAGE_KEY = "signupBannerCollapsed";
 
 export default function SignupBanner() {
+  const [isCollapsed, setIsCollapsed] = useState(true);
+
+  useEffect(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored === "true") {
+      setIsCollapsed(true);
+    }
+  }, []);
+
+  const blurbText = "Browse through our comprehensive course offerings and filter by your preferences to find the ideal classes for your academic journey.";
+  const toggleCollapse = () => {
+    const newState = !isCollapsed;
+    setIsCollapsed(newState);
+    localStorage.setItem(STORAGE_KEY, newState.toString());
+  };
+
   return (
     <div className="w-full hero-gradient">
-      <div className="max-w-7xl mx-auto px-2 sm:px-4 py-4 sm:py-4">
+      <div className={`max-w-7xl mx-auto px-2 ${isCollapsed ? 'py-1 sm:py-1' : 'py-4 sm:py-4'}`}>
         {/* Mobile Layout - Stacked */}
-        <div className="lg:hidden space-y-4 relative">
+        <div className="lg:hidden relative">
+          {/* Collapsed State - Mobile Only */}
+          {isCollapsed ? (
+            <button
+              onClick={toggleCollapse}
+              className="w-full flex items-center gap-2 py-1 px-2 text-left hover:opacity-90 transition-opacity"
+              aria-label="Expand banner"
+            >
+              <svg
+                className="w-5 h-5 text-white flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+              <h1 className="text-base sm:text-lg font-bold text-white flex-1">
+                2026 Weekly Class Schedule
+              </h1>
+            </button>
+          ) : (
+            <div className="space-y-4 relative">
+              {/* Collapse Button */}
+              <button
+                onClick={toggleCollapse}
+                className="absolute top-0 left-0 z-20 text-white hover:text-blue-100 transition-colors p-2 bg-white/10 rounded-lg"
+                aria-label="Collapse banner"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 15l7-7 7 7"
+                  />
+                </svg>
+              </button>
           {/* Logo in top right - absolute positioned */}
           <div className="absolute top-0 right-0 z-10">
             <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg flex items-center justify-center">
@@ -88,6 +153,18 @@ export default function SignupBanner() {
               Trusted by over 14,000 students since 2019
             </p>
           </div>
+
+          {/* Intro Blurb Section - Mobile Only */}
+          <div className="pt-4 mt-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-3 text-center">
+              Find Your Perfect Class Schedule
+            </h2>
+            <p className="text-sm sm:text-base text-blue-100 max-w-2xl mx-auto text-center">
+              {blurbText}
+            </p>
+          </div>
+            </div>
+          )}
         </div>
 
         {/* Desktop Layout - Row */}
@@ -169,6 +246,16 @@ export default function SignupBanner() {
               </div>
               <p className="text-blue-100 text-base font-medium">
                 Trusted by over 14,000 students since 2019
+              </p>
+            </div>
+
+            {/* Intro Blurb Section - Desktop */}
+            <div className="pt-6 mt-6">
+              <h2 className="text-2xl xl:text-2xl font-bold text-white mb-3">
+                Find Your Perfect Class Schedule
+              </h2>
+              <p className="text-base l:text-lg text-blue-100 max-w-2xl">
+                {blurbText}
               </p>
             </div>
           </div>

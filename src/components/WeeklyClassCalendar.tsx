@@ -212,6 +212,8 @@ function getFixedWeekdayDate(weekday: number): Date {
   return result;
 }
 
+const PRO_TIP_STORAGE_KEY = "proTipDismissed";
+
 export default function WeeklyClassCalendar({
   slots,
 }: // filters,
@@ -231,6 +233,7 @@ export default function WeeklyClassCalendar({
     null
   );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isProTipDismissed, setIsProTipDismissed] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -240,6 +243,18 @@ export default function WeeklyClassCalendar({
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+    const stored = localStorage.getItem(PRO_TIP_STORAGE_KEY);
+    if (stored === "true") {
+      setIsProTipDismissed(true);
+    }
+  }, []);
+
+  const handleDismissProTip = () => {
+    setIsProTipDismissed(true);
+    localStorage.setItem(PRO_TIP_STORAGE_KEY, "true");
+  };
 
   // Convert weekly slots to FullCalendar events for the current week
   const events = useMemo(() => {
@@ -292,16 +307,37 @@ export default function WeeklyClassCalendar({
         }
       `}</style>
 
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 flex items-center gap-3">
-        <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-          <span className="text-xl">💡</span>
+      {!isProTipDismissed && (
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 flex items-center gap-3 relative">
+          <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+            <span className="text-xl">💡</span>
+          </div>
+          <div className="text-sm text-gray-700 flex-1">
+            <span className="font-semibold text-blue-800">Pro Tip:</span> Use the
+            filters above to reduce overlap and see specific classes more clearly.
+            Click on any class to register!
+          </div>
+          <button
+            onClick={handleDismissProTip}
+            className="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors p-1"
+            aria-label="Dismiss pro tip"
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
         </div>
-        <div className="text-sm text-gray-700">
-          <span className="font-semibold text-blue-800">Pro Tip:</span> Use the
-          filters above to reduce overlap and see specific classes more clearly.
-          Click on any class to register!
-        </div>
-      </div>
+      )}
 
       <div className="relative overflow-hidden rounded-xl border border-gray-200 shadow-sm">
         <FullCalendar
@@ -324,7 +360,7 @@ export default function WeeklyClassCalendar({
             });
           }}
           height="auto"
-          slotMinTime="07:00:00"
+          slotMinTime="09:00:00"
           slotMaxTime="22:00:00"
           allDaySlot={false}
           displayEventEnd={true}

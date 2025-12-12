@@ -50,6 +50,7 @@ function MultiSelect({
   disabled?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [filterDropdownMaxHeight, setFilterDropdownMaxHeight] = useState<string>("320px");
   const dropdownRef = useRef<HTMLDivElement>(null);
   const optionsRef = useRef<HTMLUListElement>(null);
 
@@ -60,45 +61,20 @@ function MultiSelect({
           .join(", ")
       : `Select ${label}`;
 
-  // Handle scrolling when dropdown opens
+  // Calculate max height based on available space from dropdown to bottom of screen
   useEffect(() => {
-    if (isOpen && dropdownRef.current && optionsRef.current) {
-      const timeoutId = setTimeout(() => {
-        const dropdown = dropdownRef.current;
-        const options = optionsRef.current;
-
-        if (!dropdown || !options) return;
-
-        const dropdownRect = dropdown.getBoundingClientRect();
-        const optionsRect = options.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
-
-        // Calculate if the dropdown extends beyond the viewport
-        const dropdownBottom = dropdownRect.bottom + optionsRect.height;
-        const isOverflowing = dropdownBottom > viewportHeight;
-
-        if (isOverflowing) {
-          // Calculate optimal scroll position to center the dropdown
-          const currentScrollY = window.scrollY;
-          const dropdownTop = dropdownRect.top + currentScrollY;
-          const optionsHeight = Math.min(320, optionsRect.height); // max-h-80 = 320px
-
-          // Target: position dropdown so it's centered in viewport with some padding
-          const viewportPadding = 40; // px padding from top/bottom
-          const targetScrollY =
-            dropdownTop -
-            (viewportHeight - optionsHeight) / 2 +
-            viewportPadding;
-
-          // Smooth scroll to the calculated position
-          window.scrollTo({
-            top: Math.max(0, targetScrollY),
-            behavior: "smooth",
-          });
-        }
-      }, 100); // Small delay to ensure DOM is updated
-
-      return () => clearTimeout(timeoutId);
+    if (isOpen && dropdownRef.current) {
+      const dropdown = dropdownRef.current;
+      const dropdownRect = dropdown.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      
+      // Calculate available space from dropdown bottom to viewport bottom
+      // Leave some padding (e.g., 20px) for spacing
+      const availableHeight = viewportHeight - dropdownRect.bottom - 20;
+      
+      // Set max height to available space, with a minimum of 100px
+      const calculatedMaxHeight = Math.max(100, availableHeight);
+      setFilterDropdownMaxHeight(`${calculatedMaxHeight}px`);
     }
   }, [isOpen]);
 
@@ -150,7 +126,8 @@ function MultiSelect({
               <Transition as={Fragment}>
                 <Listbox.Options
                   ref={optionsRef}
-                  className="absolute z-10 mt-2 w-full rounded-xl bg-white border-2 border-gray-200 shadow-xl list-none max-h-80 overflow-y-auto focus:outline-none"
+                  style={{ maxHeight: filterDropdownMaxHeight }}
+                  className="absolute z-10 mt-2 w-full rounded-xl bg-white border-2 border-gray-200 shadow-xl list-none overflow-y-auto focus:outline-none"
                 >
                   {options.map((option) => (
                     <Listbox.Option
@@ -244,9 +221,8 @@ export default function Filters({
   };
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-3">
-        <h3 className="text-lg font-bold text-gray-800">Filter Your Classes</h3>
+    <div className="space-y-4">
+      <div className="space-y-4">
         <div className="flex flex-col space-y-3">
           <label className="text-sm font-semibold text-gray-700">
             Select Stream

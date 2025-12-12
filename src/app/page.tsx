@@ -8,6 +8,7 @@ import WeeklyClassCalendar, {
 } from "@/components/WeeklyClassCalendar";
 import ListView from "@/components/ListView";
 import ViewSelector, { ViewType } from "@/components/ViewSelector";
+import BottomNav from "@/components/BottomNav";
 import TestimonialCarousel from "@/components/TestimonialCarousel";
 import TestimonialGrid from "@/components/TestimonialGrid";
 import { getCampaignParam } from "@/utils/campaign";
@@ -18,6 +19,8 @@ const CACHE_VERSION_KEY = "weeklyClassDataVersion";
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in ms
 // Increment this version when the API changes to force all clients to invalidate cache
 const CACHE_VERSION = 1;
+const FILTERS_COLLAPSED_STORAGE_KEY = "filtersCollapsed";
+
 
 function getCachedData() {
   const data = localStorage.getItem(CACHE_KEY);
@@ -73,6 +76,7 @@ export default function Page() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentView, setCurrentView] = useState<ViewType>("calendar");
   const [campaignParam, setCampaignParam] = useState<string>("");
+  const [filtersCollapsed, setFiltersCollapsed] = useState(false);
   const [filters, setFilters] = useState({
     subject: [] as string[],
     centre: [] as string[],
@@ -81,7 +85,7 @@ export default function Page() {
     stream: null as string | null,
   });
 
-  // Effect to read filters from URL on component mount
+  // Effect to read filters and view from URL on component mount
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const initialFilters = {
@@ -92,6 +96,18 @@ export default function Page() {
       stream: params.get("stream") || null,
     };
     setFilters(initialFilters);
+
+    // Read view from URL
+    const viewParam = params.get("view") as ViewType;
+    if (viewParam === "list" || viewParam === "calendar") {
+      setCurrentView(viewParam);
+    }
+
+    // Read filters collapsed state
+    const stored = localStorage.getItem(FILTERS_COLLAPSED_STORAGE_KEY);
+    if (stored === "true") {
+      setFiltersCollapsed(true);
+    }
 
     // Set campaign parameter
     setCampaignParam(getCampaignParam());
@@ -148,6 +164,22 @@ export default function Page() {
     const newUrl = `${window.location.pathname}?${params.toString()}`;
     window.history.replaceState({}, "", newUrl);
   }, [filters]);
+
+  // Effect to update URL query params when view changes (preserve other params)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (currentView === "calendar") {
+      // Remove view param for calendar (default)
+      params.delete("view");
+    } else {
+      // Set view param for other views
+      params.set("view", currentView);
+    }
+
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState({}, "", newUrl);
+  }, [currentView]);
 
   // Compute filtered options for progressive disclosure with counts
   const filteredOptions = useMemo(() => {
@@ -307,11 +339,17 @@ export default function Page() {
     setFilters(newFilters);
   };
 
+  const toggleFiltersCollapse = () => {
+    const newState = !filtersCollapsed;
+    setFiltersCollapsed(newState);
+    localStorage.setItem(FILTERS_COLLAPSED_STORAGE_KEY, newState.toString());
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <SignupBanner />
-      <div className="max-w-7xl mx-auto px-2 sm:px-4 py-4 sm:py-8">
-        <div className="space-y-4 sm:space-y-8">
+      <div className="max-w-7xl mx-auto px-2 pb-safe">
+        <div className="space-y-2 sm:space-y-2">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-12 sm:py-24 space-y-4 sm:space-y-6">
               <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600"></div>
@@ -326,40 +364,81 @@ export default function Page() {
             </div>
           ) : (
             <>
-              <div className="text-center py-4 sm:py-8">
-                <h2 className="text-xl sm:text-3xl font-bold text-gray-800 mb-2 sm:mb-4">
-                  Find Your Perfect Class Schedule
-                </h2>
-                <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-2 sm:px-0">
-                  {new URLSearchParams(window.location.search)
-                    .get("campaign")
-                    ?.includes("SCHEDULE1")
-                    ? `A-Levels is a crucial milestone in your educational journey, marking a key turning point that can shape future academic/career paths. 
-With a steep learning curve and the pressure of multiple subjects, Zenith offers multiple subjects with dedicated support to help you manage and excel in your grades.
-Select your preferred location/subject and sign up to enjoy a FREE trial class*!`
-                    : `Browse through our comprehensive course offerings and filter
-                  by your preferences to find the ideal classes for your
-                  academic journey.`}
-                </p>
-              </div>
+              <ViewSelector currentView={currentView} onViewChange={setCurrentView} />
 
-              <ViewSelector onViewChange={setCurrentView} />
-
-              <div className="modern-card p-3 sm:p-6">
-                <Filters
-                  streams={[
-                    "JC",
-                    "Secondary (Express)",
-                    "Secondary (IP)",
-                    "Primary",
-                  ]}
-                  levels={filteredOptions.levels}
-                  subjects={filteredOptions.subjects}
-                  centres={filteredOptions.centres}
-                  tutors={filteredOptions.tutors}
-                  filters={filters}
-                  onFilterChange={handleFilterChange}
-                />
+               <div className="md:static sticky top-0 z-[60] bg-gray-50 rounded-b-xl shadow-lg md:shadow-none">
+                 <div className="max-w-7xl mx-auto px-2 p-2">
+                  {/* Collapsed state - mobile only */}
+                  {filtersCollapsed && (
+                    <button
+                      onClick={toggleFiltersCollapse}
+                      className="lg:hidden w-full flex items-center gap-2 py-1 text-left hover:bg-gray-100 transition-colors rounded"
+                      aria-label="Expand filters"
+                    >
+                      <svg
+                        className="w-5 h-5 text-gray-600 flex-shrink-0"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                      <h3 className="text-base sm:text-lg font-bold text-gray-800 flex-1">
+                        Filters
+                      </h3>
+                    </button>
+                  )}
+                  
+                  {/* Expanded state - always show on desktop, conditional on mobile */}
+                  <div className={filtersCollapsed ? "hidden lg:block" : ""}>
+                    <button
+                      onClick={toggleFiltersCollapse}
+                      className="lg:hidden w-full flex items-center gap-2 mb-4 py-1 text-left hover:bg-gray-100 transition-colors rounded"
+                      aria-label="Collapse filters"
+                    >
+                      <svg
+                        className="w-5 h-5 text-gray-600 flex-shrink-0"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 15l7-7 7 7"
+                        />
+                      </svg>
+                      <h3 className="text-base sm:text-lg font-bold text-gray-800 flex-1">
+                        Filters
+                      </h3>
+                    </button>
+                    <div className="hidden lg:flex items-center gap-2 mb-4 py-1">
+                      <h3 className="text-base sm:text-lg font-bold text-gray-800 flex-1">
+                        Filters
+                      </h3>
+                    </div>
+                    <Filters
+                      streams={[
+                        "JC",
+                        "Secondary (Express)",
+                        "Secondary (IP)",
+                        "Primary",
+                      ]}
+                      levels={filteredOptions.levels}
+                      subjects={filteredOptions.subjects}
+                      centres={filteredOptions.centres}
+                      tutors={filteredOptions.tutors}
+                      filters={filters}
+                      onFilterChange={handleFilterChange}
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="modern-card p-3 sm:p-6">
@@ -406,6 +485,7 @@ Select your preferred location/subject and sign up to enjoy a FREE trial class*!
           )}
         </div>
       </div>
+      <BottomNav currentView={currentView} onViewChange={setCurrentView} />
     </div>
   );
 }

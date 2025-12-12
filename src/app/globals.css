@@ -49,3 +49,14 @@ body {
 .fc-day-today {
   background: none !important;
 }
+
+/* Safe area inset support for iPhone home indicator */
+.pb-safe {
+  padding-bottom: calc(4rem + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 768px) {
+  .pb-safe {
+    padding-bottom: 2rem;
+  }
+}
