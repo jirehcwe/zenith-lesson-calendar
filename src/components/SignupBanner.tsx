@@ -14,7 +14,7 @@ export default function SignupBanner() {
     }
   }, []);
 
-  const blurbText = "Browse through our comprehensive course offerings and filter by your preferences to find the ideal classes for your academic journey.";
+  const blurbText = "Attend a FREE trial or register for your preferred class today. Browse through our comprehensive course offerings and filter by your preferences to find the ideal classes for your academic journey.";
   const toggleCollapse = () => {
     const newState = !isCollapsed;
     setIsCollapsed(newState);
@@ -105,7 +105,7 @@ export default function SignupBanner() {
               2026 Weekly Class Schedule
             </h1>
             <p className="text-sm sm:text-base text-blue-100 font-medium mt-2">
-              Flexible scheduling • Expert tutors • Proven results
+              Flexible scheduling • Expert tutors • Proven results • Free trial for all subjects
             </p>
           </div>
 
@@ -150,7 +150,7 @@ export default function SignupBanner() {
               </div>
             </div>
             <p className="text-blue-100 text-xs sm:text-sm font-medium">
-              Trusted by over 14,000 students since 2019
+              Trusted by over 20,000 students since 2019
             </p>
           </div>
 
@@ -201,7 +201,7 @@ export default function SignupBanner() {
                 2026 Weekly Class Schedule
               </h1>
               <p className="text-lg xl:text-lg text-blue-100 font-medium">
-                Flexible scheduling • Expert tutors • Proven results
+                Flexible scheduling • Expert tutors • Proven results • Free trial for all subjects
               </p>
             </div>
 
@@ -245,7 +245,7 @@ export default function SignupBanner() {
                 </div>
               </div>
               <p className="text-blue-100 text-base font-medium">
-                Trusted by over 14,000 students since 2019
+                Trusted by over 20,000 students since 2019
               </p>
             </div>
 

@@ -315,7 +315,7 @@ export default function WeeklyClassCalendar({
           <div className="text-sm text-gray-700 flex-1">
             <span className="font-semibold text-blue-800">Pro Tip:</span> Use the
             filters above to reduce overlap and see specific classes more clearly.
-            Click on any class to register!
+            Click on any class for a free trial or register directly!
           </div>
           <button
             onClick={handleDismissProTip}
@@ -385,7 +385,7 @@ export default function WeeklyClassCalendar({
                   )}
                 </div>
                 <div className="text-xs underline opacity-90 truncate flex-shrink-0">
-                  Click to Register
+                  Free Trial/Registration
                 </div>
               </div>
             );
