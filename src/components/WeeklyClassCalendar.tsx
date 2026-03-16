@@ -498,8 +498,8 @@ export default function WeeklyClassCalendar({
                   }}
                   className="flex-1"
                 >
-                  <button className="w-full px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors text-sm">
-                    Sign up for Trial
+                  <button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition-all duration-200 text-sm">
+                    Sign up for FREE Trial
                   </button>
                 </a>
               )}
