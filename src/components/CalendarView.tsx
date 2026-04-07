@@ -6,7 +6,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import { END_DATE, Session, START_DATE } from "../types";
 import { useEffect, useState } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
-import { replaceCampaignInUrl } from "@/utils/campaign";
+import { replaceCampaignInUrl, replacePromocodeInUrl } from "@/utils/campaign";
 export default function CalendarView({
   events,
 }: {
@@ -134,13 +134,13 @@ export default function CalendarView({
             <div className="flex justify-end mt-4">
               {selectedEvent?.extendedProps.prefill ? (
                 <a
-                  href={replaceCampaignInUrl(
+                  href={replacePromocodeInUrl(replaceCampaignInUrl(
                     `https://docs.google.com/forms/d/e/1FAIpQLSdqyeoGBF4DyUXQA3cUOaZee3DB5NFhTtqPRyN5wdkQcIgL0Q/viewform?entry.1157532004=SCHEDULE&entry.${
                       selectedEvent.extendedProps.prefillField
                     }=${encodeURIComponent(
                       selectedEvent.extendedProps.prefill
                     )}`
-                  )}
+                  ))}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => {

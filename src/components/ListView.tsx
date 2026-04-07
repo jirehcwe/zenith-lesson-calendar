@@ -1,7 +1,7 @@
 "use client";
 
 import { WeeklyClassSlot } from "./WeeklyClassCalendar";
-import { replaceCampaignInUrl } from "@/utils/campaign";
+import { replaceCampaignInUrl, replacePromocodeInUrl } from "@/utils/campaign";
 import { getFallbackRegistrationLinkByLevel } from "@/utils/prefillRegistration";
 
 export default function ListView({
@@ -146,7 +146,7 @@ export default function ListView({
                     <div className="pt-2 border-t border-gray-100">
                       <div className="flex gap-2.5">
                         <a
-                          href={replaceCampaignInUrl(session.prefillTrialLink)}
+                          href={replacePromocodeInUrl(replaceCampaignInUrl(session.prefillTrialLink))}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex-1"
@@ -156,10 +156,10 @@ export default function ListView({
                           </button>
                         </a>
                         <a
-                          href={replaceCampaignInUrl(
-                            session.prefillRegistrationLink ?? 
+                          href={replacePromocodeInUrl(replaceCampaignInUrl(
+                            session.prefillRegistrationLink ??
                             getFallbackRegistrationLinkByLevel(session.level)
-                          )}
+                          ))}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex-1"
