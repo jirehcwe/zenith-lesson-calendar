@@ -5,7 +5,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import scrollGridPlugin from "@fullcalendar/scrollgrid";
 import { useEffect, useState, useMemo } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
-import { replaceCampaignInUrl } from "@/utils/campaign";
+import { replaceCampaignInUrl, replacePromocodeInUrl } from "@/utils/campaign";
 import { getFallbackRegistrationLinkByLevel } from "@/utils/prefillRegistration";
 
 // Helper function to format location display text
@@ -514,7 +514,7 @@ export default function WeeklyClassCalendar({
               <div className="flex gap-2.5 pt-3">
                 {selectedEvent?.prefillTrialLink && (
                   <a
-                    href={replaceCampaignInUrl(selectedEvent.prefillTrialLink)}
+                    href={replacePromocodeInUrl(replaceCampaignInUrl(selectedEvent.prefillTrialLink))}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => {
@@ -528,9 +528,9 @@ export default function WeeklyClassCalendar({
                   </a>
                 )}
                 <a
-                  href={replaceCampaignInUrl(
+                  href={replacePromocodeInUrl(replaceCampaignInUrl(
                     selectedEvent?.prefillRegistrationLink ?? getFallbackRegistrationLinkByLevel(selectedEvent?.level ?? "Unknown")
-                  )}
+                  ))}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
