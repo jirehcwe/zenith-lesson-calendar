@@ -13,6 +13,13 @@ function formatLocationDisplay(location: string): string {
   return location;
 }
 
+// Check if a slot is full based on [FULL] prefix in the title
+export function isSlotFull(slot: WeeklyClassSlot): boolean {
+  return slot.title.startsWith("[FULL]");
+}
+
+const FULL_SLOT_COLOR = { backgroundColor: "#d1d5db", textColor: "#6b7280" };
+
 // Define a new type for weekly class slots (no topic, no date)
 export type WeeklyClassSlot = {
   title: string;
@@ -271,6 +278,10 @@ export default function WeeklyClassCalendar({
       start.setHours(startHour, startMinute, 0, 0);
       const end = new Date(baseDate);
       end.setHours(endHour, endMinute, 0, 0);
+      const full = isSlotFull(slot);
+      const color = full
+        ? FULL_SLOT_COLOR
+        : subjectToColor(slot.level, slot.subject);
       return {
         title: `${slot.level} ${slot.subject} ${
           slot.stream ? `(${slot.stream})` : ""
@@ -278,9 +289,8 @@ export default function WeeklyClassCalendar({
         start,
         end,
         extendedProps: slot,
-        backgroundColor: subjectToColor(slot.level, slot.subject)
-          .backgroundColor,
-        textColor: subjectToColor(slot.level, slot.subject).textColor,
+        backgroundColor: color.backgroundColor,
+        textColor: color.textColor,
       };
     });
   }, [slots]);
@@ -372,6 +382,7 @@ export default function WeeklyClassCalendar({
           dayMinWidth={100}
           eventContent={(arg) => {
             const centre = arg.event.extendedProps.centre;
+            const full = isSlotFull(arg.event.extendedProps as WeeklyClassSlot);
             return (
               <div className="p-1 h-full flex flex-col justify-between overflow-hidden">
                 <div className="flex-1 min-h-0">
@@ -384,9 +395,15 @@ export default function WeeklyClassCalendar({
                     </div>
                   )}
                 </div>
-                <div className="text-xs underline opacity-90 truncate flex-shrink-0">
-                  Free Trial/Registration
-                </div>
+                {full ? (
+                  <div className="text-xs font-semibold opacity-90 truncate flex-shrink-0">
+                    FULL
+                  </div>
+                ) : (
+                  <div className="text-xs underline opacity-90 truncate flex-shrink-0">
+                    Free Trial/Registration
+                  </div>
+                )}
               </div>
             );
           }}
@@ -487,34 +504,42 @@ export default function WeeklyClassCalendar({
               </>
             )}
 
-            <div className="flex gap-2.5 pt-3">
-              {selectedEvent?.prefillTrialLink && (
+            {selectedEvent && isSlotFull(selectedEvent) ? (
+              <div className="pt-3">
+                <div className="w-full bg-gray-100 text-gray-500 font-medium py-2.5 px-4 rounded-lg text-sm text-center">
+                  This class is currently full
+                </div>
+              </div>
+            ) : (
+              <div className="flex gap-2.5 pt-3">
+                {selectedEvent?.prefillTrialLink && (
+                  <a
+                    href={replaceCampaignInUrl(selectedEvent.prefillTrialLink)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => {
+                      console.log("form_click_prefilled");
+                    }}
+                    className="flex-1"
+                  >
+                    <button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition-all duration-200 text-sm">
+                      Sign up for FREE Trial
+                    </button>
+                  </a>
+                )}
                 <a
-                  href={replaceCampaignInUrl(selectedEvent.prefillTrialLink)}
+                  href={replaceCampaignInUrl(
+                    selectedEvent?.prefillRegistrationLink ?? getFallbackRegistrationLinkByLevel(selectedEvent?.level ?? "Unknown")
+                  )}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => {
-                    console.log("form_click_prefilled");
-                  }}
-                  className="flex-1"
                 >
-                  <button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition-all duration-200 text-sm">
-                    Sign up for FREE Trial
+                  <button className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition-all duration-200 text-sm">
+                    Register now
                   </button>
                 </a>
-              )}
-              <a
-                href={replaceCampaignInUrl(
-                  selectedEvent?.prefillRegistrationLink ?? getFallbackRegistrationLinkByLevel(selectedEvent?.level ?? "Unknown")
-                )}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <button className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition-all duration-200 text-sm">
-                  Register now
-                </button>
-              </a>
-            </div>
+              </div>
+            )}
           </DialogPanel>
         </div>
       </Dialog>
