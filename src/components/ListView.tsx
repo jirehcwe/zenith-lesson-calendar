@@ -1,6 +1,6 @@
 "use client";
 
-import { WeeklyClassSlot } from "./WeeklyClassCalendar";
+import { WeeklyClassSlot, isSlotFull } from "./WeeklyClassCalendar";
 import { replaceCampaignInUrl } from "@/utils/campaign";
 import { getFallbackRegistrationLinkByLevel } from "@/utils/prefillRegistration";
 
@@ -63,10 +63,16 @@ export default function ListView({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {sessionsByDay[day]
               .sort((a, b) => a.startTime.localeCompare(b.startTime))
-              .map((session, index) => (
+              .map((session, index) => {
+                const full = isSlotFull(session);
+                return (
                 <div
                   key={`${session.startTime}-${session.tutor}-${session.centre}-${session.day}-${index}`}
-                  className="bg-white border-2 border-gray-200 rounded-xl p-5 shadow-sm"
+                  className={`rounded-xl p-5 shadow-sm border-2 ${
+                    full
+                      ? "bg-gray-100 border-gray-300 opacity-60"
+                      : "bg-white border-gray-200"
+                  }`}
                 >
                   <div className="flex flex-col space-y-3">
                     <div className="flex items-start justify-between">
@@ -144,35 +150,42 @@ export default function ListView({
                     </div>
 
                     <div className="pt-2 border-t border-gray-100">
-                      <div className="flex gap-2.5">
-                        <a
-                          href={replaceCampaignInUrl(session.prefillTrialLink)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex-1"
-                        >
-                          <button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition-all duration-200 text-sm whitespace-nowrap">
-                            Sign up for FREE Trial
-                          </button>
-                        </a>
-                        <a
-                          href={replaceCampaignInUrl(
-                            session.prefillRegistrationLink ?? 
-                            getFallbackRegistrationLinkByLevel(session.level)
-                          )}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex-1"
-                        >
-                          <button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition-all duration-200 text-sm">
-                            Register now
-                          </button>
-                        </a>
-                      </div>
+                      {full ? (
+                        <div className="w-full bg-gray-200 text-gray-500 font-medium py-2.5 px-4 rounded-lg text-sm text-center">
+                          This class is currently full
+                        </div>
+                      ) : (
+                        <div className="flex gap-2.5">
+                          <a
+                            href={replaceCampaignInUrl(session.prefillTrialLink)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex-1"
+                          >
+                            <button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition-all duration-200 text-sm whitespace-nowrap">
+                              Sign up for FREE Trial
+                            </button>
+                          </a>
+                          <a
+                            href={replaceCampaignInUrl(
+                              session.prefillRegistrationLink ??
+                              getFallbackRegistrationLinkByLevel(session.level)
+                            )}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex-1"
+                          >
+                            <button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition-all duration-200 text-sm">
+                              Register now
+                            </button>
+                          </a>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
-              ))}
+                );
+              })}
           </div>
         </div>
       ))}
