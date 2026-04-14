@@ -18,9 +18,33 @@ const CACHE_TIME_KEY = "weeklyClassDataTimestamp";
 const CACHE_VERSION_KEY = "weeklyClassDataVersion";
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in ms
 // Increment this version when the API changes to force all clients to invalidate cache
-const CACHE_VERSION = 1;
+const CACHE_VERSION = 2;
 const FILTERS_COLLAPSED_STORAGE_KEY = "filtersCollapsed";
 
+// Collapse db-schedule-updater's venue granularity back into the flat labels
+// the calendar has always used: "Zoom" → "Online", and strip any parenthetical
+// classroom suffix like "Tan Kah Kee (Coronation Plaza)" → "Tan Kah Kee".
+function normaliseCentre(centre: string): string {
+  if (centre === "Zoom") return "Online";
+  return centre.replace(/\s*\([^)]*\)\s*$/, "").trim();
+}
+
+// db-schedule-updater returns the full level name ("Secondary 3", "Primary 4");
+// the calendar UI has always used short codes ("S3", "P4"). JC levels are
+// already stored as "J1"/"J2" so they pass through unchanged.
+function normaliseLevel(level: string): string {
+  if (level.startsWith("Secondary ")) return "S" + level.slice(10);
+  if (level.startsWith("Primary ")) return "P" + level.slice(8);
+  return level;
+}
+
+function normaliseSlot(slot: WeeklyClassSlot): WeeklyClassSlot {
+  return {
+    ...slot,
+    centre: normaliseCentre(slot.centre),
+    level: normaliseLevel(slot.level),
+  };
+}
 
 function getCachedData() {
   const data = localStorage.getItem(CACHE_KEY);
@@ -120,11 +144,14 @@ export default function Page() {
     }
 
     setIsLoading(true);
-    fetch("https://lms-api.myzenithstudy.com/schedule")
+    fetch(
+      `https://api.schedule.myzenithstudy.com/schedule?year=${new Date().getFullYear()}`
+    )
       .then((res) => res.json())
       .then((res: { data: { data: WeeklyClassSlot[] } }) => {
-        setWeeklyClassData(res.data.data);
-        setCachedData(res.data.data);
+        const normalised = res.data.data.map(normaliseSlot);
+        setWeeklyClassData(normalised);
+        setCachedData(normalised);
         setIsLoading(false);
       })
       .catch((error) => {

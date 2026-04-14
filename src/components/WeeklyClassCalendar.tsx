@@ -176,9 +176,16 @@ function subjectToColor(
   backgroundColor: string;
   textColor: string;
 } {
+  // IP-stream subjects arrive from the schedule API prefixed ("IP Mathematics",
+  // "IP Chemistry", …). Strip the prefix so they pick up the same colour as
+  // their non-IP counterparts in the maps below.
+  const normalisedSubject = subject.startsWith("IP ")
+    ? subject.slice(3)
+    : subject;
+
   if (level.includes("J")) {
     return (
-      jcSubjectToColorMap[subject] || {
+      jcSubjectToColorMap[normalisedSubject] || {
         backgroundColor: "#ffffff",
         textColor: "#000000",
       }
@@ -187,7 +194,7 @@ function subjectToColor(
 
   if (level.includes("S")) {
     return (
-      secSubjectToColorMap[subject] || {
+      secSubjectToColorMap[normalisedSubject] || {
         backgroundColor: "#ffffff",
         textColor: "#000000",
       }
@@ -196,7 +203,7 @@ function subjectToColor(
 
   if (level.includes("P")) {
     return (
-      primarySubjectToColorMap[subject] || {
+      primarySubjectToColorMap[normalisedSubject] || {
         backgroundColor: "#ffffff",
         textColor: "#000000",
       }
