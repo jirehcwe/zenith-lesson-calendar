@@ -12,7 +12,8 @@
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
     "prefill": "[J1 Chemistry] Acid-Base Equilibria (NYJC, TMJC, EJC, VJC Only) - 10 Sep (Wed) | 10:00AM - 01:00PM | Tampines",
-    "prefillField": "1143667470"
+    "prefillField": "1143667470",
+    "displaySubject": "Chemistry"
   },
   {
     "purpose": "Sep CC - JC",
@@ -27,7 +28,8 @@
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
     "prefill": "[J1 Biology] Cancer - 12 Sep (Fri) | 10:00AM - 01:00PM | Bukit Panjang",
-    "prefillField": "1188715475"
+    "prefillField": "1188715475",
+    "displaySubject": "Biology"
   },
   {
     "purpose": "Sep CC - JC",
@@ -42,7 +44,8 @@
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
     "prefill": "[J1 Biology] Cancer - 12 Sep (Fri) | 10:00AM - 01:00PM | Buona Vista",
-    "prefillField": "1188715475"
+    "prefillField": "1188715475",
+    "displaySubject": "Biology"
   },
   {
     "purpose": "Sep CC - JC",
@@ -57,13 +60,14 @@
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
     "prefill": "[J1 Biology] Cancer - 11 Sep (Thu) | 10:00AM - 01:00PM | Tan Kah Kee",
-    "prefillField": "1188715475"
+    "prefillField": "1188715475",
+    "displaySubject": "Biology"
   },
   {
     "purpose": "Sep CC - JC",
     "subject": "JC - Bio",
     "level": "J1",
-    "topic": "Control of Ekaryotic Gene Expression",
+    "topic": "Control of Eukaryotic Gene Expression",
     "tutor": "Melvin",
     "centre": "Bukit Panjang",
     "classroom": "BP-1 (JC)",
@@ -71,14 +75,15 @@
     "date": "08 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "[J1 Biology] Control of Ekaryotic Gene Expression - 08 Sep (Mon) | 10:00AM - 01:00PM | Bukit Panjang",
-    "prefillField": "1188715475"
+    "prefill": "[J1 Biology] Control of Eukaryotic Gene Expression - 08 Sep (Mon) | 10:00AM - 01:00PM | Bukit Panjang",
+    "prefillField": "1188715475",
+    "displaySubject": "Biology"
   },
   {
     "purpose": "Sep CC - JC",
     "subject": "JC - Bio",
     "level": "J1",
-    "topic": "Control of Ekaryotic Gene Expression",
+    "topic": "Control of Eukaryotic Gene Expression",
     "tutor": "Derek",
     "centre": "Marymount",
     "classroom": "MM-1",
@@ -86,14 +91,15 @@
     "date": "12 Sep",
     "startTime": "1:00 PM",
     "endTime": "4:00 PM",
-    "prefill": "[J1 Biology] Control of Ekaryotic Gene Expression - 12 Sep (Fri) | 01:00PM - 04:00PM | Marymount",
-    "prefillField": "1188715475"
+    "prefill": "[J1 Biology] Control of Eukaryotic Gene Expression - 12 Sep (Fri) | 01:00PM - 04:00PM | Marymount",
+    "prefillField": "1188715475",
+    "displaySubject": "Biology"
   },
   {
     "purpose": "Sep CC - JC",
     "subject": "JC - Bio",
     "level": "J1",
-    "topic": "Control of Ekaryotic Gene Expression",
+    "topic": "Control of Eukaryotic Gene Expression",
     "tutor": "Josh",
     "centre": "Paya Lebar",
     "classroom": "KINEX-5",
@@ -101,14 +107,15 @@
     "date": "09 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "[J1 Biology] Control of Ekaryotic Gene Expression - 09 Sep (Tue) | 10:00AM - 01:00PM | Paya Lebar",
-    "prefillField": "1188715475"
+    "prefill": "[J1 Biology] Control of Eukaryotic Gene Expression - 09 Sep (Tue) | 10:00AM - 01:00PM | Paya Lebar",
+    "prefillField": "1188715475",
+    "displaySubject": "Biology"
   },
   {
     "purpose": "Sep CC - JC",
     "subject": "JC - Bio",
     "level": "J1",
-    "topic": "Control of Ekaryotic Gene Expression",
+    "topic": "Control of Eukaryotic Gene Expression",
     "tutor": "Phoebe",
     "centre": "Potong Pasir",
     "classroom": "PP-2 (L1)",
@@ -116,14 +123,15 @@
     "date": "12 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "[J1 Biology] Control of Ekaryotic Gene Expression - 12 Sep (Fri) | 10:00AM - 01:00PM | Potong Pasir",
-    "prefillField": "1188715475"
+    "prefill": "[J1 Biology] Control of Eukaryotic Gene Expression - 12 Sep (Fri) | 10:00AM - 01:00PM | Potong Pasir",
+    "prefillField": "1188715475",
+    "displaySubject": "Biology"
   },
   {
     "purpose": "Sep CC - JC",
     "subject": "JC - Bio",
     "level": "J1",
-    "topic": "Control of Ekaryotic Gene Expression",
+    "topic": "Control of Eukaryotic Gene Expression",
     "tutor": "Derek",
     "centre": "Tampines",
     "classroom": "TP-4 (ext)",
@@ -131,14 +139,15 @@
     "date": "10 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "[J1 Biology] Control of Ekaryotic Gene Expression - 10 Sep (Wed) | 10:00AM - 01:00PM | Tampines",
-    "prefillField": "1188715475"
+    "prefill": "[J1 Biology] Control of Eukaryotic Gene Expression - 10 Sep (Wed) | 10:00AM - 01:00PM | Tampines",
+    "prefillField": "1188715475",
+    "displaySubject": "Biology"
   },
   {
     "purpose": "Sep CC - JC",
     "subject": "JC - Bio",
     "level": "J1",
-    "topic": "Control of Ekaryotic Gene Expression",
+    "topic": "Control of Eukaryotic Gene Expression",
     "tutor": "Phoebe",
     "centre": "Tan Kah Kee",
     "classroom": "CORO-1",
@@ -146,8 +155,9 @@
     "date": "10 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "[J1 Biology] Control of Ekaryotic Gene Expression - 10 Sep (Wed) | 10:00AM - 01:00PM | Tan Kah Kee",
-    "prefillField": "1188715475"
+    "prefill": "[J1 Biology] Control of Eukaryotic Gene Expression - 10 Sep (Wed) | 10:00AM - 01:00PM | Tan Kah Kee",
+    "prefillField": "1188715475",
+    "displaySubject": "Biology"
   },
   {
     "purpose": "Sep CC - JC",
@@ -162,7 +172,8 @@
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
     "prefill": "[J1 Biology] Gene Expression - 09 Sep (Tue) | 10:00AM - 01:00PM | Potong Pasir",
-    "prefillField": "1188715475"
+    "prefillField": "1188715475",
+    "displaySubject": "Biology"
   },
   {
     "purpose": "Sep CC - JC",
@@ -177,7 +188,8 @@
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
     "prefill": "[J1 Biology] Gene Expression - 10 Sep (Wed) | 01:30PM - 04:30PM | Tampines",
-    "prefillField": "1188715475"
+    "prefillField": "1188715475",
+    "displaySubject": "Biology"
   },
   {
     "purpose": "Sep CC - JC",
@@ -192,7 +204,8 @@
     "startTime": "7:00 PM",
     "endTime": "10:00 PM",
     "prefill": "[J1 Physics] Gravitational Field - 07 Sep (Sun) | 07:00PM - 10:00PM | Bukit Panjang",
-    "prefillField": "299425437"
+    "prefillField": "299425437",
+    "displaySubject": "Physics"
   },
   {
     "purpose": "Sep CC - JC",
@@ -207,7 +220,8 @@
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
     "prefill": "[J1 Physics] Gravitational Field - 12 Sep (Fri) | 01:30PM - 04:30PM | Potong Pasir",
-    "prefillField": "299425437"
+    "prefillField": "299425437",
+    "displaySubject": "Physics"
   },
   {
     "purpose": "Sep CC - JC",
@@ -222,7 +236,8 @@
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
     "prefill": "[J1 Physics] Gravitational Field - 11 Sep (Thu) | 01:30PM - 04:30PM | Tampines",
-    "prefillField": "299425437"
+    "prefillField": "299425437",
+    "displaySubject": "Physics"
   },
   {
     "purpose": "Sep CC - JC",
@@ -237,7 +252,8 @@
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
     "prefill": "[J1 Chemistry] Organic Chemistry (Isomerism, Alkanes) - 09 Sep (Tue) | 10:00AM - 01:00PM | Buona Vista",
-    "prefillField": "1143667470"
+    "prefillField": "1143667470",
+    "displaySubject": "Chemistry"
   },
   {
     "purpose": "Sep CC - JC",
@@ -247,12 +263,13 @@
     "tutor": "Kelly",
     "centre": "Kovan",
     "classroom": "KO-1",
-    "capacity": "29",
+    "capacity": "23",
     "date": "09 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
     "prefill": "[J1 Chemistry] Organic Chemistry (Isomerism, Alkanes) - 09 Sep (Tue) | 10:00AM - 01:00PM | Kovan",
-    "prefillField": "1143667470"
+    "prefillField": "1143667470",
+    "displaySubject": "Chemistry"
   },
   {
     "purpose": "Sep CC - JC",
@@ -262,12 +279,13 @@
     "tutor": "Kelly",
     "centre": "Kovan",
     "classroom": "KO-1",
-    "capacity": "29",
+    "capacity": "23",
     "date": "10 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
     "prefill": "[J1 Chemistry] Organic Chemistry (Isomerism, Alkanes) - 10 Sep (Wed) | 10:00AM - 01:00PM | Kovan",
-    "prefillField": "1143667470"
+    "prefillField": "1143667470",
+    "displaySubject": "Chemistry"
   },
   {
     "purpose": "Sep CC - JC",
@@ -277,12 +295,13 @@
     "tutor": "Kelly",
     "centre": "Kovan",
     "classroom": "KO-1",
-    "capacity": "29",
+    "capacity": "23",
     "date": "12 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
     "prefill": "[J1 Chemistry] Organic Chemistry (Isomerism, Alkanes) - 12 Sep (Fri) | 01:30PM - 04:30PM | Kovan",
-    "prefillField": "1143667470"
+    "prefillField": "1143667470",
+    "displaySubject": "Chemistry"
   },
   {
     "purpose": "Sep CC - JC",
@@ -297,7 +316,8 @@
     "startTime": "1:00 PM",
     "endTime": "4:00 PM",
     "prefill": "[J1 Chemistry] Organic Chemistry (Isomerism, Alkanes) - 12 Sep (Fri) | 01:00PM - 04:00PM | Marymount",
-    "prefillField": "1143667470"
+    "prefillField": "1143667470",
+    "displaySubject": "Chemistry"
   },
   {
     "purpose": "Sep CC - JC",
@@ -312,7 +332,8 @@
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
     "prefill": "[J1 Chemistry] Organic Chemistry (Isomerism, Alkanes) - 09 Sep (Tue) | 10:00AM - 01:00PM | Paya Lebar",
-    "prefillField": "1143667470"
+    "prefillField": "1143667470",
+    "displaySubject": "Chemistry"
   },
   {
     "purpose": "Sep CC - JC",
@@ -327,7 +348,8 @@
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
     "prefill": "[J1 Chemistry] Organic Chemistry (Isomerism, Alkanes) - 10 Sep (Wed) | 01:30PM - 04:30PM | Paya Lebar",
-    "prefillField": "1143667470"
+    "prefillField": "1143667470",
+    "displaySubject": "Chemistry"
   },
   {
     "purpose": "Sep CC - JC",
@@ -342,7 +364,8 @@
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
     "prefill": "[J1 Chemistry] Organic Chemistry (Isomerism, Alkanes) - 11 Sep (Thu) | 01:30PM - 04:30PM | Paya Lebar",
-    "prefillField": "1143667470"
+    "prefillField": "1143667470",
+    "displaySubject": "Chemistry"
   },
   {
     "purpose": "Sep CC - JC",
@@ -357,7 +380,8 @@
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
     "prefill": "[J1 Chemistry] Organic Chemistry (Isomerism, Alkanes) - 12 Sep (Fri) | 01:30PM - 04:30PM | Potong Pasir",
-    "prefillField": "1143667470"
+    "prefillField": "1143667470",
+    "displaySubject": "Chemistry"
   },
   {
     "purpose": "Sep CC - JC",
@@ -372,7 +396,8 @@
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
     "prefill": "[J1 Chemistry] Organic Chemistry (Isomerism, Alkanes) - 08 Sep (Mon) | 01:30PM - 04:30PM | Tampines",
-    "prefillField": "1143667470"
+    "prefillField": "1143667470",
+    "displaySubject": "Chemistry"
   },
   {
     "purpose": "Sep CC - JC",
@@ -387,82 +412,88 @@
     "startTime": "3:00 PM",
     "endTime": "6:00 PM",
     "prefill": "[J1 Chemistry] Organic Chemistry (Isomerism, Alkanes) - 09 Sep (Tue) | 03:00PM - 06:00PM | Tan Kah Kee",
-    "prefillField": "1143667470"
+    "prefillField": "1143667470",
+    "displaySubject": "Chemistry"
   },
   {
     "purpose": "Sep CC - JC",
-    "subject": "JC - GP",
+    "subject": "JC - Chem",
     "level": "J1",
-    "topic": "Paper 2 SAQ, Summary and NIT Practice",
-    "tutor": "Joey Kang",
-    "centre": "Bukit Panjang",
-    "classroom": "BP-2 (JC/SS)",
-    "capacity": "12",
-    "date": "26 Aug",
-    "startTime": "5:00 PM",
-    "endTime": "8:00 PM",
-    "prefill": "[J1 GP] Paper 2 SAQ, Summary and NIT Practice - 26 Aug (Tue) | 05:00PM - 08:00PM | Bukit Panjang",
-    "prefillField": "136322790"
+    "topic": "Reaction Kinetics",
+    "tutor": "E Ler",
+    "centre": "Jurong East",
+    "classroom": "JE-1",
+    "capacity": "30",
+    "date": "10 Sep",
+    "startTime": "10:00 AM",
+    "endTime": "1:00 PM",
+    "prefill": "[J1 Chemistry] Reaction Kinetics - 10 Sep (Wed) | 10:00AM - 01:00PM | Jurong East",
+    "prefillField": "1143667470",
+    "displaySubject": "Chemistry"
   },
   {
     "purpose": "Sep CC - JC",
-    "subject": "JC - GP",
+    "subject": "JC - Chem",
     "level": "J1",
-    "topic": "Paper 2 SAQ, Summary and NIT Practice",
-    "tutor": "Zach",
-    "centre": "Buona Vista",
-    "classroom": "BV-LT",
-    "capacity": "70",
-    "date": "25 Aug",
-    "startTime": "5:00 PM",
-    "endTime": "8:00 PM",
-    "prefill": "[J1 GP] Paper 2 SAQ, Summary and NIT Practice - 25 Aug (Mon) | 05:00PM - 08:00PM | Buona Vista",
-    "prefillField": "136322790"
+    "topic": "Organic Chemistry (Isomerism, Alkanes)",
+    "tutor": "E Ler",
+    "centre": "Jurong East",
+    "classroom": "JE-1",
+    "capacity": "30",
+    "date": "08 Sep",
+    "startTime": "10:00 AM",
+    "endTime": "1:00 PM",
+    "prefill": "[J1 Chemistry] Organic Chemistry (Isomerism, Alkanes) - 08 Sep (Mon) | 10:00AM - 01:00PM | Jurong East",
+    "prefillField": "1143667470",
+    "displaySubject": "Chemistry"
   },
   {
     "purpose": "Sep CC - JC",
-    "subject": "JC - GP",
+    "subject": "JC - Chem",
     "level": "J1",
-    "topic": "Paper 2 SAQ, Summary and NIT Practice",
-    "tutor": "Finn",
-    "centre": "Marymount",
-    "classroom": "MM-2",
-    "capacity": "27",
-    "date": "25 Aug",
-    "startTime": "5:00 PM",
-    "endTime": "8:00 PM",
-    "prefill": "[J1 GP] Paper 2 SAQ, Summary and NIT Practice - 25 Aug (Mon) | 05:00PM - 08:00PM | Marymount",
-    "prefillField": "136322790"
+    "topic": "Organic Chemistry (Isomerism, Alkanes)",
+    "tutor": "E Ler",
+    "centre": "Jurong East",
+    "classroom": "JE-1",
+    "capacity": "30",
+    "date": "09 Sep",
+    "startTime": "10:00 AM",
+    "endTime": "1:00 PM",
+    "prefill": "[J1 Chemistry] Organic Chemistry (Isomerism, Alkanes) - 09 Sep (Tue) | 10:00AM - 01:00PM | Jurong East",
+    "prefillField": "1143667470",
+    "displaySubject": "Chemistry"
   },
   {
     "purpose": "Sep CC - JC",
-    "subject": "JC - GP",
+    "subject": "JC - Bio",
     "level": "J1",
-    "topic": "Paper 2 SAQ, Summary and NIT Practice",
-    "tutor": "Jaymi",
-    "centre": "Paya Lebar",
-    "classroom": "KINEX-1",
-    "capacity": "24",
-    "date": "26 Aug",
-    "startTime": "5:00 PM",
-    "endTime": "8:00 PM",
-    "prefill": "[J1 GP] Paper 2 SAQ, Summary and NIT Practice - 26 Aug (Tue) | 05:00PM - 08:00PM | Paya Lebar",
-    "prefillField": "136322790"
+    "topic": "Control of Eukaryotic Gene Expression",
+    "tutor": "Josh",
+    "centre": "Jurong East",
+    "classroom": "JE-2",
+    "capacity": "25",
+    "date": "11 Sep",
+    "startTime": "10:00 AM",
+    "endTime": "1:00 PM",
+    "prefill": "[J1 Biology] Control of Eukaryotic Gene Expression - 11 Sep (Thu) | 10:00AM - 01:00PM | Jurong East",
+    "prefillField": "1188715475",
+    "displaySubject": "Biology"
   },
   {
     "purpose": "Sep CC - JC",
-    "subject": "JC - GP",
+    "subject": "JC - Phy",
     "level": "J1",
-    "topic": "Paper 2 SAQ, Summary and NIT Practice",
-    "tutor": "Hui Ying",
-    "centre": "Potong Pasir",
-    "classroom": "PP-4 (L2)",
-    "capacity": "36",
-    "date": "27 Aug",
-    "startTime": "5:00 PM",
-    "endTime": "8:00 PM",
-    "prefill": "[J1 GP] Paper 2 SAQ, Summary and NIT Practice - 27 Aug (Wed) | 05:00PM - 08:00PM | Potong Pasir",
-    "prefillField": "136322790"
+    "topic": "Gravitational Field",
+    "tutor": "Enzhao",
+    "centre": "Jurong East",
+    "classroom": "JE-2",
+    "capacity": "25",
+    "date": "12 Sep",
+    "startTime": "1:30 PM",
+    "endTime": "4:30 PM",
+    "prefill": "[J1 Physics] Gravitational Field - 12 Sep (Fri) | 01:30PM - 04:30PM | Jurong East",
+    "prefillField": "299425437",
+    "displaySubject": "Physics"
   },
   {
     "purpose": "Sep CC - JC",
@@ -477,7 +508,8 @@
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
     "prefill": "[J1 Chemistry] Reaction Kinetics - 10 Sep (Wed) | 10:00AM - 01:00PM | Bukit Panjang",
-    "prefillField": "1143667470"
+    "prefillField": "1143667470",
+    "displaySubject": "Chemistry"
   },
   {
     "purpose": "Sep CC - JC",
@@ -487,12 +519,13 @@
     "tutor": "Kelly",
     "centre": "Kovan",
     "classroom": "KO-1",
-    "capacity": "29",
+    "capacity": "23",
     "date": "11 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
     "prefill": "[J1 Chemistry] Reaction Kinetics - 11 Sep (Thu) | 10:00AM - 01:00PM | Kovan",
-    "prefillField": "1143667470"
+    "prefillField": "1143667470",
+    "displaySubject": "Chemistry"
   },
   {
     "purpose": "Sep CC - JC",
@@ -502,12 +535,13 @@
     "tutor": "Kelly",
     "centre": "Kovan",
     "classroom": "KO-1",
-    "capacity": "29",
+    "capacity": "23",
     "date": "12 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
     "prefill": "[J1 Chemistry] Reaction Kinetics - 12 Sep (Fri) | 10:00AM - 01:00PM | Kovan",
-    "prefillField": "1143667470"
+    "prefillField": "1143667470",
+    "displaySubject": "Chemistry"
   },
   {
     "purpose": "Sep CC - JC",
@@ -522,7 +556,8 @@
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
     "prefill": "[J1 Chemistry] Reaction Kinetics - 08 Sep (Mon) | 01:30PM - 04:30PM | Paya Lebar",
-    "prefillField": "1143667470"
+    "prefillField": "1143667470",
+    "displaySubject": "Chemistry"
   },
   {
     "purpose": "Sep CC - JC",
@@ -537,7 +572,8 @@
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
     "prefill": "[J1 Chemistry] Reaction Kinetics - 12 Sep (Fri) | 10:00AM - 01:00PM | Potong Pasir",
-    "prefillField": "1143667470"
+    "prefillField": "1143667470",
+    "displaySubject": "Chemistry"
   },
   {
     "purpose": "Sep CC - JC",
@@ -552,7 +588,8 @@
     "startTime": "3:00 PM",
     "endTime": "6:00 PM",
     "prefill": "[J1 Chemistry] Reaction Kinetics - 08 Sep (Mon) | 03:00PM - 06:00PM | Tan Kah Kee",
-    "prefillField": "1143667470"
+    "prefillField": "1143667470",
+    "displaySubject": "Chemistry"
   },
   {
     "purpose": "Sep CC - JC",
@@ -567,7 +604,8 @@
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
     "prefill": "[J1 Physics] Superposition - 09 Sep (Tue) | 01:30PM - 04:30PM | Bukit Panjang",
-    "prefillField": "299425437"
+    "prefillField": "299425437",
+    "displaySubject": "Physics"
   },
   {
     "purpose": "Sep CC - JC",
@@ -582,7 +620,8 @@
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
     "prefill": "[J1 Physics] Superposition - 09 Sep (Tue) | 01:30PM - 04:30PM | Marymount",
-    "prefillField": "299425437"
+    "prefillField": "299425437",
+    "displaySubject": "Physics"
   },
   {
     "purpose": "Sep CC - JC",
@@ -596,8 +635,9 @@
     "date": "10 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "[J1 Physics] Superposition - 10 Sep (Wed) | 10:00AM - 01:00PM | Paya Lebar",
-    "prefillField": "299425437"
+    "prefill": "",
+    "prefillField": "299425437",
+    "displaySubject": "Physics"
   },
   {
     "purpose": "Sep CC - JC",
@@ -612,7 +652,8 @@
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
     "prefill": "[J1 Physics] Superposition - 09 Sep (Tue) | 01:30PM - 04:30PM | Potong Pasir",
-    "prefillField": "299425437"
+    "prefillField": "299425437",
+    "displaySubject": "Physics"
   },
   {
     "purpose": "Sep CC - JC",
@@ -627,6 +668,87 @@
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
     "prefill": "[J1 Physics] Superposition - 11 Sep (Thu) | 01:30PM - 04:30PM | Tan Kah Kee",
-    "prefillField": "299425437"
+    "prefillField": "299425437",
+    "displaySubject": "Physics"
+  },
+  {
+    "purpose": "Sep CC - JC",
+    "subject": "JC - GP",
+    "level": "J1",
+    "topic": "Paper 2 SAQ, Summary and NIT Practice",
+    "tutor": "Joey Kang",
+    "centre": "Bukit Panjang",
+    "classroom": "BP-3 (SS)",
+    "capacity": "24",
+    "date": "26 Aug",
+    "startTime": "5:00 PM",
+    "endTime": "8:00 PM",
+    "prefill": "[J1 GP] Paper 2 SAQ, Summary and NIT Practice - 26 Aug (Tue) | 05:00PM - 08:00PM | Bukit Panjang",
+    "prefillField": "136322790",
+    "displaySubject": "GP"
+  },
+  {
+    "purpose": "Sep CC - JC",
+    "subject": "JC - GP",
+    "level": "J1",
+    "topic": "Paper 2 SAQ, Summary and NIT Practice",
+    "tutor": "Zach",
+    "centre": "Buona Vista",
+    "classroom": "BV-LT",
+    "capacity": "70",
+    "date": "25 Aug",
+    "startTime": "5:00 PM",
+    "endTime": "8:00 PM",
+    "prefill": "[J1 GP] Paper 2 SAQ, Summary and NIT Practice - 25 Aug (Mon) | 05:00PM - 08:00PM | Buona Vista",
+    "prefillField": "136322790",
+    "displaySubject": "GP"
+  },
+  {
+    "purpose": "Sep CC - JC",
+    "subject": "JC - GP",
+    "level": "J1",
+    "topic": "Paper 2 SAQ, Summary and NIT Practice",
+    "tutor": "Finn",
+    "centre": "Marymount",
+    "classroom": "MM-2",
+    "capacity": "27",
+    "date": "25 Aug",
+    "startTime": "5:00 PM",
+    "endTime": "8:00 PM",
+    "prefill": "",
+    "prefillField": "136322790",
+    "displaySubject": "GP"
+  },
+  {
+    "purpose": "Sep CC - JC",
+    "subject": "JC - GP",
+    "level": "J1",
+    "topic": "Paper 2 SAQ, Summary and NIT Practice",
+    "tutor": "Jaymi",
+    "centre": "Paya Lebar",
+    "classroom": "KINEX-1",
+    "capacity": "24",
+    "date": "26 Aug",
+    "startTime": "5:00 PM",
+    "endTime": "8:00 PM",
+    "prefill": "",
+    "prefillField": "136322790",
+    "displaySubject": "GP"
+  },
+  {
+    "purpose": "Sep CC - JC",
+    "subject": "JC - GP",
+    "level": "J1",
+    "topic": "Paper 2 SAQ, Summary and NIT Practice",
+    "tutor": "Hui Ying",
+    "centre": "Potong Pasir",
+    "classroom": "PP-4 (L2)",
+    "capacity": "36",
+    "date": "27 Aug",
+    "startTime": "5:00 PM",
+    "endTime": "8:00 PM",
+    "prefill": "",
+    "prefillField": "136322790",
+    "displaySubject": "GP"
   }
 ]
