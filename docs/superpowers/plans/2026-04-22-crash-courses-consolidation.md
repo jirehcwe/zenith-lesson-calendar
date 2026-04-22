@@ -6,13 +6,17 @@
 
 **Architecture:** Per-CC config lives in `crash-courses/<slug>/` as a `config.ts` (metadata, copy, colors, CTAs, date range, form URLs) + `sessions.json` (fixed-date `Session[]`). A resolver at `crash-courses/index.ts` reads the env var at build time and fails the build loudly on missing/unknown slugs. All consumers (`layout.tsx`, `page.tsx`, banners, views) take their content from the resolved config.
 
-**Tech Stack:** Next.js 15 (static export), React 19, TypeScript, Tailwind, FullCalendar, Headless UI, Cloudflare Pages, wrangler, `@vercel/analytics` (kept from existing).
+**Tech Stack:** Next.js 15 (static export), React 19, TypeScript, Tailwind, FullCalendar, Headless UI, Cloudflare Pages, wrangler, `@vercel/analytics` (kept from existing), **Jest + React Testing Library + `next/jest`** (added by this plan).
 
 **Reference spec:** `docs/superpowers/specs/2026-04-22-crash-courses-consolidation-design.md`
 
-**Note on testing:** This project has no test framework. Verification per task is `npm run lint && NEXT_PUBLIC_CC_SLUG=<slug> npm run build`, plus manual visual inspection in `npm run dev` where UI changes are involved.
+**Testing strategy:**
+- Task 2 installs Jest using the `next/jest` preset (TS support, JSDOM env, `@/` path mapping).
+- Every task that introduces runtime logic (resolver, utilities, config validation, URL builder) has a failing-test-first TDD step.
+- UI component tests are deliberately scoped narrow: we don't snapshot-test layout, but we do render banners + views enough to verify config content is surfaced.
+- Verification per task: unit tests (`npm test`) + typecheck (`npx tsc --noEmit`) + build with both slugs (`NEXT_PUBLIC_CC_SLUG=<slug> npm run build`) + `npm run dev` visual spot-check where UI changes.
 
-**Note on branch starting point:** Start from `sept-ss-cc` (simpler component tree that already matches the fixed-date CC model). Port improvements **onto** it from `regular-lessons` rather than starting from `regular-lessons` and stripping.
+**Note on branch starting point:** Start from `sept-ss-cc` (simpler component tree that already matches the fixed-date CC model). Port improvements **onto** it from `regular-lessons`.
 
 ---
 
@@ -46,7 +50,113 @@ git commit --allow-empty -m "chore: start crash-courses consolidation branch"
 
 ---
 
-## Task 2: Scaffold `crash-courses/types.ts`
+## Task 2: Install Jest + `next/jest` and wire npm scripts
+
+**Files:**
+- Create: `jest.config.ts`
+- Create: `jest.setup.ts`
+- Modify: `package.json`
+- Modify: `.gitignore` (add `coverage/`)
+- Create: `src/__tests__/smoke.test.ts` (one-liner to prove the runner works)
+
+- [ ] **Step 1: Install dependencies**
+
+```bash
+npm install --save-dev \
+  jest@^29 \
+  jest-environment-jsdom@^29 \
+  @testing-library/react@^16 \
+  @testing-library/jest-dom@^6 \
+  @testing-library/dom@^10 \
+  @types/jest@^29
+```
+
+Rationale: `next/jest` (bundled with Next.js 15) auto-configures SWC, TypeScript, and module path aliases. No need for `ts-jest` or `babel-jest`.
+
+- [ ] **Step 2: Create `jest.config.ts`**
+
+```ts
+import type { Config } from "jest";
+import nextJest from "next/jest.js";
+
+const createJestConfig = nextJest({ dir: "./" });
+
+const config: Config = {
+  setupFilesAfterEach: ["<rootDir>/jest.setup.ts"],
+  testEnvironment: "jest-environment-jsdom",
+  moduleNameMapper: {
+    "^@/(.*)$": "<rootDir>/src/$1",
+  },
+  testPathIgnorePatterns: ["/node_modules/", "/.next/", "/out/"],
+  collectCoverageFrom: [
+    "src/**/*.{ts,tsx}",
+    "crash-courses/**/*.{ts,tsx}",
+    "!**/*.d.ts",
+    "!**/node_modules/**",
+  ],
+};
+
+export default createJestConfig(config);
+```
+
+- [ ] **Step 3: Create `jest.setup.ts`**
+
+```ts
+import "@testing-library/jest-dom";
+```
+
+- [ ] **Step 4: Add npm scripts**
+
+Edit `package.json`, add to `scripts`:
+
+```json
+"test": "jest",
+"test:watch": "jest --watch",
+"test:coverage": "jest --coverage"
+```
+
+- [ ] **Step 5: Update `.gitignore`**
+
+Append:
+
+```
+coverage/
+```
+
+- [ ] **Step 6: Write the smoke test (failing first, then passing)**
+
+Create `src/__tests__/smoke.test.ts`:
+
+```ts
+describe("jest environment", () => {
+  it("runs typescript tests", () => {
+    expect(1 + 1).toBe(2);
+  });
+
+  it("has jsdom globals available", () => {
+    expect(typeof window).toBe("object");
+    expect(typeof document).toBe("object");
+  });
+});
+```
+
+- [ ] **Step 7: Run tests**
+
+```bash
+npm test
+# Expect: 1 test file, 2 tests passing.
+```
+
+- [ ] **Step 8: Commit**
+
+```bash
+git add package.json package-lock.json jest.config.ts jest.setup.ts src/__tests__/smoke.test.ts .gitignore
+git commit -m "chore: add jest + next/jest test framework"
+```
+
+---
+
+## Task 3: Scaffold `crash-courses/types.ts`
 
 **Files:**
 - Create: `crash-courses/types.ts`
@@ -61,41 +171,40 @@ export type SubjectColor = { backgroundColor: string; textColor: string };
 
 export type BannerContent = {
   headline?: string;
-  body: string;      // may contain inline JSX-like markers later; keep as string for now
+  body: string;
   ctaLabel: string;
   ctaHref: string;   // may contain "SCHEDULE" and "PROMOCODE" placeholders
 };
 
 export type CalendarUIConfig = {
   firstDay: number;              // 0=Sun, 1=Mon
-  initialDate: string;           // ISO YYYY-MM-DD, the date the calendar lands on
+  initialDate: string;           // ISO YYYY-MM-DD
   slotMinTime: string;           // "HH:MM:SS"
   slotMaxTime: string;           // "HH:MM:SS"
-  listViewMinDate: string;       // ISO YYYY-MM-DD for the datepicker minDate
+  listViewMinDate: string;       // ISO YYYY-MM-DD
   tip?: { label: string; body: string } | null;
 };
 
 export type CrashCourseConfig = {
   slug: string;
   metadata: { title: string; description: string };
-  dateRange: { start: string; end: string };         // ISO YYYY-MM-DD
-  year: number;                                      // used when parsing "06 Sep" style dates
+  dateRange: { start: string; end: string };
+  year: number;
   subjectColors: Record<string, SubjectColor>;
   signupBanner: BannerContent & { imageSrc: string; imageAlt: string };
   bottomBanner: BannerContent;
   calendar: CalendarUIConfig;
-  registrationFormUrl: string;                       // base form URL, with SCHEDULE/PROMOCODE placeholders
-  campaignField: string;                             // e.g. "entry.1157532004" — where SCHEDULE goes
-  promocodeField?: string;                           // optional, for PROMOCODE prefill
+  registrationFormUrl: string;
+  campaignField: string;
+  promocodeField?: string;
   sessions: Session[];
 };
 ```
 
-- [ ] **Step 2: Verify it typechecks**
+- [ ] **Step 2: Verify typecheck**
 
 ```bash
 npx tsc --noEmit
-# Expect: no errors (Session import will resolve via existing tsconfig paths)
 ```
 
 - [ ] **Step 3: Commit**
@@ -107,12 +216,13 @@ git commit -m "feat(cc): add CrashCourseConfig type"
 
 ---
 
-## Task 3: Move SS data into `crash-courses/ss-sep-2025/`
+## Task 4: Move SS data into `crash-courses/ss-sep-2025/`
 
 **Files:**
 - Create: `crash-courses/ss-sep-2025/sessions.json` (moved from `public/sessions-ss.json`)
+- Create: `crash-courses/ss-sep-2025/sessions.csv` (moved from `public/sessions-ss.csv`)
 - Create: `crash-courses/ss-sep-2025/config.ts`
-- Delete: `public/sessions-ss.json`, `public/sessions-ss.csv` (CSV moves to `crash-courses/ss-sep-2025/sessions.csv`)
+- Modify: `tsconfig.json`
 
 - [ ] **Step 1: Move the data files**
 
@@ -122,24 +232,9 @@ git mv public/sessions-ss.json crash-courses/ss-sep-2025/sessions.json
 git mv public/sessions-ss.csv crash-courses/ss-sep-2025/sessions.csv
 ```
 
-- [ ] **Step 2: Add JSON module resolution to tsconfig**
+- [ ] **Step 2: Ensure JSON module resolution**
 
-Open `tsconfig.json`, ensure `compilerOptions.resolveJsonModule: true` and `compilerOptions.esModuleInterop: true` are present. If already present, skip.
-
-```bash
-cat tsconfig.json
-```
-
-Add only if missing:
-
-```json
-{
-  "compilerOptions": {
-    "resolveJsonModule": true,
-    "esModuleInterop": true
-  }
-}
-```
+Open `tsconfig.json`. Ensure `compilerOptions.resolveJsonModule: true` and `esModuleInterop: true` are present. If missing, add them.
 
 - [ ] **Step 3: Write SS config**
 
@@ -219,7 +314,6 @@ export default config;
 
 ```bash
 npx tsc --noEmit
-# Expect: no errors
 ```
 
 - [ ] **Step 5: Commit**
@@ -231,16 +325,15 @@ git commit -m "feat(cc): migrate SS September 2025 data + config"
 
 ---
 
-## Task 4: Move JC data into `crash-courses/jc-sep-2025/`
+## Task 5: Move JC data into `crash-courses/jc-sep-2025/`
 
 **Files:**
 - Create: `crash-courses/jc-sep-2025/sessions.json` (from `sept-jc-cc` branch's `public/sessions-jc.json`)
+- Create: `crash-courses/jc-sep-2025/sessions.csv`
 - Create: `crash-courses/jc-sep-2025/config.ts`
 - Delete: `public/sessions-jc.json`, `public/sessions-jc.csv`
 
-- [ ] **Step 1: Pull JC data from sept-jc-cc branch**
-
-The current `crash-courses` branch (forked from `sept-ss-cc`) has `public/sessions-jc.json` but it's actually the SS-era stale copy. Take the authoritative JC data from `sept-jc-cc`:
+- [ ] **Step 1: Pull authoritative JC data from `sept-jc-cc`**
 
 ```bash
 mkdir -p crash-courses/jc-sep-2025
@@ -310,7 +403,7 @@ const config: CrashCourseConfig = {
 export default config;
 ```
 
-Verify the form URL and subject keys against `git show sept-jc-cc:src/components/SignupBanner.tsx` and `git show sept-jc-cc:src/app/page.tsx` before committing.
+Verify the JC form URL and subject keys against `git show sept-jc-cc:src/components/SignupBanner.tsx` and `git show sept-jc-cc:src/app/page.tsx` before committing.
 
 - [ ] **Step 3: Verify typecheck**
 
@@ -327,15 +420,71 @@ git commit -m "feat(cc): migrate JC September 2025 data + config"
 
 ---
 
-## Task 5: Write the config resolver
+## Task 6: Write the config resolver + resolver & integrity tests
 
 **Files:**
 - Create: `crash-courses/index.ts`
+- Create: `crash-courses/__tests__/resolver.test.ts`
+- Create: `crash-courses/__tests__/config-integrity.test.ts`
 
-- [ ] **Step 1: Write the resolver**
+- [ ] **Step 1: Write the failing resolver test**
+
+Create `crash-courses/__tests__/resolver.test.ts`:
 
 ```ts
-// crash-courses/index.ts
+import { getCrashCourseConfig } from "..";
+
+describe("getCrashCourseConfig", () => {
+  const ORIGINAL_SLUG = process.env.NEXT_PUBLIC_CC_SLUG;
+
+  afterEach(() => {
+    if (ORIGINAL_SLUG === undefined) {
+      delete process.env.NEXT_PUBLIC_CC_SLUG;
+    } else {
+      process.env.NEXT_PUBLIC_CC_SLUG = ORIGINAL_SLUG;
+    }
+  });
+
+  it("throws when NEXT_PUBLIC_CC_SLUG is unset", () => {
+    delete process.env.NEXT_PUBLIC_CC_SLUG;
+    expect(() => getCrashCourseConfig()).toThrow(/NEXT_PUBLIC_CC_SLUG is not set/);
+  });
+
+  it("throws with known slugs listed when given an unknown slug", () => {
+    process.env.NEXT_PUBLIC_CC_SLUG = "does-not-exist";
+    expect(() => getCrashCourseConfig()).toThrow(/Unknown crash course slug.*does-not-exist/);
+    expect(() => getCrashCourseConfig()).toThrow(/jc-sep-2025/);
+    expect(() => getCrashCourseConfig()).toThrow(/ss-sep-2025/);
+  });
+
+  it("returns the SS config when slug is ss-sep-2025", () => {
+    process.env.NEXT_PUBLIC_CC_SLUG = "ss-sep-2025";
+    const cfg = getCrashCourseConfig();
+    expect(cfg.slug).toBe("ss-sep-2025");
+    expect(cfg.metadata.title).toContain("SS");
+  });
+
+  it("returns the JC config when slug is jc-sep-2025", () => {
+    process.env.NEXT_PUBLIC_CC_SLUG = "jc-sep-2025";
+    const cfg = getCrashCourseConfig();
+    expect(cfg.slug).toBe("jc-sep-2025");
+    expect(cfg.metadata.title).toContain("JC");
+  });
+});
+```
+
+- [ ] **Step 2: Run test to verify it fails**
+
+```bash
+npm test -- crash-courses/__tests__/resolver.test.ts
+# Expect: FAIL — cannot import from ".."
+```
+
+- [ ] **Step 3: Write the resolver**
+
+Create `crash-courses/index.ts`:
+
+```ts
 import type { CrashCourseConfig } from "./types";
 import jcSep2025 from "./jc-sep-2025/config";
 import ssSep2025 from "./ss-sep-2025/config";
@@ -361,33 +510,100 @@ export function getCrashCourseConfig(): CrashCourseConfig {
   return config;
 }
 
+export function getAllRegisteredConfigs(): CrashCourseConfig[] {
+  return Object.values(REGISTRY);
+}
+
 export type { CrashCourseConfig } from "./types";
 ```
 
-- [ ] **Step 2: Verify build fails without env var**
+- [ ] **Step 4: Run resolver tests — now pass**
 
 ```bash
-unset NEXT_PUBLIC_CC_SLUG
-npm run build
-# Expect: build will still succeed here because resolver isn't imported yet.
-# This is the baseline — we'll re-verify this fails in Task 15 after wiring consumers.
+npm test -- crash-courses/__tests__/resolver.test.ts
+# Expect: PASS (all 4 tests)
 ```
 
-- [ ] **Step 3: Commit**
+- [ ] **Step 5: Write the failing config-integrity test**
+
+Create `crash-courses/__tests__/config-integrity.test.ts`:
+
+```ts
+import { getAllRegisteredConfigs } from "..";
+
+describe("CrashCourseConfig integrity", () => {
+  const configs = getAllRegisteredConfigs();
+
+  it.each(configs.map((c) => [c.slug, c] as const))(
+    "%s: slug matches registry key",
+    (slug, cfg) => {
+      expect(cfg.slug).toBe(slug);
+    }
+  );
+
+  it.each(configs.map((c) => [c.slug, c] as const))(
+    "%s: every session's displaySubject has a matching entry in subjectColors",
+    (_slug, cfg) => {
+      const missing = new Set<string>();
+      for (const s of cfg.sessions) {
+        if (!cfg.subjectColors[s.displaySubject]) missing.add(s.displaySubject);
+      }
+      expect(Array.from(missing)).toEqual([]);
+    }
+  );
+
+  it.each(configs.map((c) => [c.slug, c] as const))(
+    "%s: dateRange.start is before dateRange.end",
+    (_slug, cfg) => {
+      expect(new Date(cfg.dateRange.start).getTime()).toBeLessThan(
+        new Date(cfg.dateRange.end).getTime()
+      );
+    }
+  );
+
+  it.each(configs.map((c) => [c.slug, c] as const))(
+    "%s: sessions is non-empty",
+    (_slug, cfg) => {
+      expect(cfg.sessions.length).toBeGreaterThan(0);
+    }
+  );
+
+  it.each(configs.map((c) => [c.slug, c] as const))(
+    "%s: registrationFormUrl contains the campaignField value as SCHEDULE placeholder",
+    (_slug, cfg) => {
+      // Sanity: the configured form URL should reference the campaign field
+      // with "SCHEDULE" so that replaceUrlPlaceholders can swap it.
+      expect(cfg.registrationFormUrl).toContain(cfg.campaignField);
+      expect(cfg.registrationFormUrl).toContain("SCHEDULE");
+    }
+  );
+});
+```
+
+- [ ] **Step 6: Run integrity test — may fail if any session has a displaySubject missing from colors**
 
 ```bash
-git add crash-courses/index.ts
-git commit -m "feat(cc): add slug resolver with build-time guard"
+npm test -- crash-courses/__tests__/config-integrity.test.ts
+# Expected: PASS if configs are internally consistent. If it fails, the
+# error names the missing subject — add it to subjectColors in the config
+# for that slug and re-run.
+```
+
+- [ ] **Step 7: Commit**
+
+```bash
+git add crash-courses/index.ts crash-courses/__tests__/
+git commit -m "feat(cc): add slug resolver with build-time guard + tests"
 ```
 
 ---
 
-## Task 6: Refactor `src/types.ts` — drop hardcoded dates
+## Task 7: Refactor `src/types.ts` — drop hardcoded dates
 
 **Files:**
 - Modify: `src/types.ts`
 
-- [ ] **Step 1: Remove START_DATE / END_DATE exports**
+- [ ] **Step 1: Remove `START_DATE` / `END_DATE` exports**
 
 Replace the entire content of `src/types.ts` with:
 
@@ -408,26 +624,26 @@ export type Session = {
 };
 ```
 
-- [ ] **Step 2: Verify typecheck reports the expected errors**
+- [ ] **Step 2: Verify typecheck surfaces downstream consumers**
 
 ```bash
 npx tsc --noEmit
-# Expect: errors in src/app/page.tsx, src/components/CalendarView.tsx, src/components/ListView.tsx
-# for missing START_DATE / END_DATE — these are fixed in Tasks 7, 8, 11.
+# Expect: errors in page.tsx, CalendarView.tsx, ListView.tsx for missing
+# START_DATE / END_DATE. Fixed in Tasks 8, 9, 13, 14.
 ```
 
-Don't commit yet; the next tasks fix the downstream consumers in the same commit boundary.
+Don't commit yet.
 
 ---
 
-## Task 7: Refactor `src/app/layout.tsx` to consume config metadata
+## Task 8: Refactor `src/app/layout.tsx` to consume config metadata
 
 **Files:**
 - Modify: `src/app/layout.tsx`
 
 - [ ] **Step 1: Replace hardcoded metadata**
 
-Replace the content of `src/app/layout.tsx` with:
+Replace `src/app/layout.tsx` with:
 
 ```tsx
 import type { Metadata } from "next";
@@ -469,9 +685,7 @@ export default function RootLayout({
 }
 ```
 
-Note: the relative import `../../crash-courses` (not `@/`) avoids needing to extend `tsconfig` paths outside `src/`.
-
-- [ ] **Step 2: Verify build fails without env var**
+- [ ] **Step 2: Missing-slug build fails**
 
 ```bash
 unset NEXT_PUBLIC_CC_SLUG
@@ -479,27 +693,27 @@ npm run build
 # Expect: build fails with "NEXT_PUBLIC_CC_SLUG is not set"
 ```
 
-- [ ] **Step 3: Verify build succeeds with slug**
+- [ ] **Step 3: Build succeeds with slug**
 
 ```bash
 NEXT_PUBLIC_CC_SLUG=ss-sep-2025 npm run build
-# Expect: build succeeds, metadata title is "Zenith September SS Crash Course Scheduler"
+# Expect: success; metadata title "Zenith September SS Crash Course Scheduler"
 ```
 
-Don't commit yet — `page.tsx` still imports `START_DATE`/`END_DATE`.
+Don't commit yet — `page.tsx` still imports START_DATE/END_DATE.
 
 ---
 
-## Task 8: Refactor `src/app/page.tsx` to consume config
+## Task 9: Refactor `src/app/page.tsx` to consume config
 
 **Files:**
 - Modify: `src/app/page.tsx`
 
-This is the central refactor. Remove: fetch effect, hardcoded color maps, JC-vs-Sec branching via `level.includes("J")`.
+This is the central refactor. Remove: fetch effect, hardcoded color maps, `level.includes("J")` branching.
 
 - [ ] **Step 1: Rewrite `page.tsx`**
 
-Replace the entire content of `src/app/page.tsx` with:
+Replace the entire content with:
 
 ```tsx
 "use client";
@@ -667,18 +881,11 @@ export default function Page() {
 }
 ```
 
-Key changes from the sept-ss-cc original:
-- `useEffect(() => fetch(...))` → `config.sessions` (synchronous).
-- Inline `jcSubjectToColorMap` / `secSubjectToColorMap` → `config.subjectColors`.
-- `level.includes("J")` branching removed — color lookup is a flat map keyed by `displaySubject`.
-- `2025` hardcoded in `new Date(...)` strings → `config.year`.
-
 - [ ] **Step 2: Verify build for both slugs**
 
 ```bash
 NEXT_PUBLIC_CC_SLUG=ss-sep-2025 npm run build
 NEXT_PUBLIC_CC_SLUG=jc-sep-2025 npm run build
-# Expect: both succeed.
 ```
 
 - [ ] **Step 3: Commit**
@@ -690,15 +897,14 @@ git commit -m "feat(cc): config-drive layout + page + types"
 
 ---
 
-## Task 9: Refactor `SignupBanner` and `BottomBanner` to consume config
+## Task 10: Refactor banners — config-driven + smoke tests
 
 **Files:**
 - Modify: `src/components/SignupBanner.tsx`
 - Modify: `src/components/BottomBanner.tsx`
+- Create: `src/components/__tests__/BottomBanner.test.tsx`
 
 - [ ] **Step 1: Rewrite `SignupBanner.tsx`**
-
-Replace the entire content with:
 
 ```tsx
 "use client";
@@ -709,7 +915,6 @@ import { getCrashCourseConfig } from "../../crash-courses";
 const { signupBanner } = getCrashCourseConfig();
 
 export default function SignupBanner() {
-  // Render body paragraphs split by \n\n
   const paragraphs = signupBanner.body.split("\n\n");
   return (
     <div className="w-full p-4 bg-[rgb(245,244,236)] rounded flex flex-col items-center justify-center gap-4 text-center max-w-3xl mx-auto">
@@ -748,8 +953,6 @@ export default function SignupBanner() {
 
 - [ ] **Step 2: Rewrite `BottomBanner.tsx`**
 
-Replace the entire content with:
-
 ```tsx
 "use client";
 
@@ -776,37 +979,153 @@ export default function BottomBanner() {
 }
 ```
 
-- [ ] **Step 3: Verify build and visual inspection**
+- [ ] **Step 3: Write smoke test for BottomBanner (failing first)**
+
+Create `src/components/__tests__/BottomBanner.test.tsx`:
+
+```tsx
+import { render, screen } from "@testing-library/react";
+import BottomBanner from "../BottomBanner";
+
+beforeAll(() => {
+  process.env.NEXT_PUBLIC_CC_SLUG = "ss-sep-2025";
+});
+
+describe("BottomBanner", () => {
+  it("renders CTA label and href from the resolved config", () => {
+    render(<BottomBanner />);
+    const link = screen.getByRole("link");
+    expect(link).toHaveAttribute("href", expect.stringContaining("docs.google.com/forms"));
+    expect(link.textContent).toMatch(/sign up/i);
+  });
+});
+```
+
+Note: `getCrashCourseConfig()` is called at module-load time of `BottomBanner.tsx`. Setting `NEXT_PUBLIC_CC_SLUG` in `beforeAll` is fine because the test file imports `BottomBanner` lazily — Jest evaluates the `beforeAll` before the `describe` body runs, and the import above is hoisted but the component file resolves `getCrashCourseConfig()` at its own module-init time when the test file first touches it via `render`. If flakiness appears, switch to a dynamic import inside the test.
+
+- [ ] **Step 4: Run — expect pass**
+
+```bash
+npm test -- src/components/__tests__/BottomBanner.test.tsx
+# Expect: PASS
+```
+
+- [ ] **Step 5: Visual spot-check**
 
 ```bash
 NEXT_PUBLIC_CC_SLUG=ss-sep-2025 npm run dev
 ```
 
-Open `http://localhost:3000`. Confirm banner image, headline text, CTA label, and CTA link match `ss-sep-2025/config.ts`. Stop server.
+Check banner image, body, CTA on `http://localhost:3000`. Stop. Repeat for `jc-sep-2025`.
+
+- [ ] **Step 6: Commit**
 
 ```bash
-NEXT_PUBLIC_CC_SLUG=jc-sep-2025 npm run dev
-```
-
-Confirm JC banner text says "Ready to lock in for promos?" and the form link is the JC one. Stop.
-
-- [ ] **Step 4: Commit**
-
-```bash
-git add src/components/SignupBanner.tsx src/components/BottomBanner.tsx
-git commit -m "feat(cc): config-drive banner components"
+git add src/components/SignupBanner.tsx src/components/BottomBanner.tsx src/components/__tests__/
+git commit -m "feat(cc): config-drive banners + smoke test"
 ```
 
 ---
 
-## Task 10: Port `campaign.ts` utility from `regular-lessons`
+## Task 11: Port `campaign.ts` utility + unit tests
 
 **Files:**
 - Create: `src/utils/campaign.ts`
+- Create: `src/utils/__tests__/campaign.test.ts`
 
-- [ ] **Step 1: Create the utility**
+- [ ] **Step 1: Write the failing tests**
 
-Write `src/utils/campaign.ts`:
+Create `src/utils/__tests__/campaign.test.ts`:
+
+```ts
+/**
+ * @jest-environment jsdom
+ */
+import {
+  getCampaignParam,
+  getPromocodeParam,
+  replaceCampaignInUrl,
+  replacePromocodeInUrl,
+  replaceUrlPlaceholders,
+} from "../campaign";
+
+describe("campaign/promocode URL utilities", () => {
+  beforeEach(() => {
+    window.history.pushState({}, "", "/");
+  });
+
+  describe("getCampaignParam", () => {
+    it("returns SCHEDULE when no campaign param is present", () => {
+      expect(getCampaignParam()).toBe("SCHEDULE");
+    });
+
+    it("returns the campaign query value when present", () => {
+      window.history.pushState({}, "", "/?campaign=EMAIL_AUG");
+      expect(getCampaignParam()).toBe("EMAIL_AUG");
+    });
+  });
+
+  describe("replaceCampaignInUrl", () => {
+    it("substitutes SCHEDULE with the campaign value", () => {
+      window.history.pushState({}, "", "/?campaign=TIKTOK");
+      expect(replaceCampaignInUrl("https://form?entry.1=SCHEDULE")).toBe(
+        "https://form?entry.1=TIKTOK"
+      );
+    });
+
+    it("leaves SCHEDULE unchanged when no campaign param is set", () => {
+      expect(replaceCampaignInUrl("https://form?entry.1=SCHEDULE&x=1")).toBe(
+        "https://form?entry.1=SCHEDULE&x=1"
+      );
+    });
+
+    it("replaces every occurrence of SCHEDULE", () => {
+      window.history.pushState({}, "", "/?campaign=X");
+      expect(replaceCampaignInUrl("SCHEDULE/SCHEDULE?k=SCHEDULE")).toBe("X/X?k=X");
+    });
+  });
+
+  describe("getPromocodeParam", () => {
+    it("returns empty string when no promocode param is present", () => {
+      expect(getPromocodeParam()).toBe("");
+    });
+
+    it("returns the promocode query value when present", () => {
+      window.history.pushState({}, "", "/?promocode=SAVE20");
+      expect(getPromocodeParam()).toBe("SAVE20");
+    });
+  });
+
+  describe("replacePromocodeInUrl", () => {
+    it("substitutes PROMOCODE with the promocode value", () => {
+      window.history.pushState({}, "", "/?promocode=ABC");
+      expect(replacePromocodeInUrl("form?promo=PROMOCODE")).toBe("form?promo=ABC");
+    });
+
+    it("replaces PROMOCODE with empty string when param is absent", () => {
+      expect(replacePromocodeInUrl("form?promo=PROMOCODE")).toBe("form?promo=");
+    });
+  });
+
+  describe("replaceUrlPlaceholders", () => {
+    it("applies both SCHEDULE and PROMOCODE substitutions", () => {
+      window.history.pushState({}, "", "/?campaign=CAM&promocode=PRM");
+      expect(replaceUrlPlaceholders("?c=SCHEDULE&p=PROMOCODE")).toBe("?c=CAM&p=PRM");
+    });
+  });
+});
+```
+
+- [ ] **Step 2: Run — expect fail**
+
+```bash
+npm test -- src/utils/__tests__/campaign.test.ts
+# Expect: FAIL — module not found
+```
+
+- [ ] **Step 3: Write the utility**
+
+Create `src/utils/campaign.ts`:
 
 ```ts
 /**
@@ -817,7 +1136,9 @@ Write `src/utils/campaign.ts`:
 
 export function getCampaignParam(): string {
   if (typeof window === "undefined") return "SCHEDULE";
-  return new URLSearchParams(window.location.search).get("campaign") || "SCHEDULE";
+  return (
+    new URLSearchParams(window.location.search).get("campaign") || "SCHEDULE"
+  );
 }
 
 export function replaceCampaignInUrl(url: string): string {
@@ -833,35 +1154,151 @@ export function replacePromocodeInUrl(url: string): string {
   return url.replace(/PROMOCODE/g, getPromocodeParam());
 }
 
-/** Convenience: apply both replacements. */
 export function replaceUrlPlaceholders(url: string): string {
   return replacePromocodeInUrl(replaceCampaignInUrl(url));
 }
 ```
 
-- [ ] **Step 2: Verify typecheck**
+- [ ] **Step 4: Run — expect pass**
 
 ```bash
-npx tsc --noEmit
+npm test -- src/utils/__tests__/campaign.test.ts
+# Expect: PASS (all tests green)
 ```
 
-- [ ] **Step 3: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
-git add src/utils/campaign.ts
-git commit -m "feat(cc): add campaign + promocode URL param utilities"
+git add src/utils/campaign.ts src/utils/__tests__/
+git commit -m "feat(cc): add campaign + promocode URL utilities + tests"
 ```
 
 ---
 
-## Task 11: Refactor `CalendarView` — config-drive, port campaign replacement
+## Task 12: Extract shared `buildRegistrationUrl` helper + tests
+
+**Files:**
+- Create: `src/utils/registration.ts`
+- Create: `src/utils/__tests__/registration.test.ts`
+
+This helper is used by both CalendarView (Task 13) and ListView (Task 14). Extracting it as a pure function avoids duplication and gets us tested coverage in one place.
+
+- [ ] **Step 1: Write the failing tests**
+
+Create `src/utils/__tests__/registration.test.ts`:
+
+```ts
+/**
+ * @jest-environment jsdom
+ */
+import { buildRegistrationUrl } from "../registration";
+
+const baseWithQuery =
+  "https://docs.google.com/forms/d/e/FORMID/viewform?entry.1157532004=SCHEDULE";
+const baseNoQuery = "https://docs.google.com/forms/d/e/FORMID/viewform";
+
+const session = {
+  prefill: "[S1 English] Marine Parade | 06 Sep (Sat) | 11:15AM - 01:15PM",
+  prefillField: "1016736042",
+};
+
+describe("buildRegistrationUrl", () => {
+  beforeEach(() => {
+    window.history.pushState({}, "", "/");
+  });
+
+  it("appends the prefill entry with `&` when the base URL already has a query", () => {
+    const url = buildRegistrationUrl(baseWithQuery, session);
+    expect(url).toContain("?entry.1157532004=SCHEDULE&entry.1016736042=");
+  });
+
+  it("appends the prefill entry with `?` when the base URL has no query", () => {
+    const url = buildRegistrationUrl(baseNoQuery, session);
+    expect(url.startsWith(`${baseNoQuery}?entry.1016736042=`)).toBe(true);
+  });
+
+  it("url-encodes the prefill value", () => {
+    const url = buildRegistrationUrl(baseWithQuery, session);
+    expect(url).toContain(encodeURIComponent(session.prefill));
+    expect(url).not.toContain(session.prefill); // raw (un-encoded) should not leak
+  });
+
+  it("substitutes the SCHEDULE placeholder when ?campaign= is present", () => {
+    window.history.pushState({}, "", "/?campaign=PROMO_AUG");
+    const url = buildRegistrationUrl(baseWithQuery, session);
+    expect(url).toContain("entry.1157532004=PROMO_AUG");
+    expect(url).not.toContain("=SCHEDULE");
+  });
+
+  it("substitutes PROMOCODE when present in the base URL and ?promocode= is set", () => {
+    window.history.pushState({}, "", "/?promocode=SAVE20");
+    const url = buildRegistrationUrl(
+      `${baseWithQuery}&entry.9999=PROMOCODE`,
+      session
+    );
+    expect(url).toContain("entry.9999=SAVE20");
+  });
+});
+```
+
+- [ ] **Step 2: Run — expect fail**
+
+```bash
+npm test -- src/utils/__tests__/registration.test.ts
+# Expect: FAIL — module not found
+```
+
+- [ ] **Step 3: Write the helper**
+
+Create `src/utils/registration.ts`:
+
+```ts
+import { Session } from "@/types";
+import { replaceUrlPlaceholders } from "./campaign";
+
+/**
+ * Build the prefilled Google Form registration URL for a given session.
+ *
+ * Composes the base form URL (which may or may not already have a query
+ * string) with `entry.<prefillField>=<encoded prefill value>`, then runs
+ * the result through `replaceUrlPlaceholders` so that SCHEDULE / PROMOCODE
+ * markers are swapped for the current page's `?campaign=` / `?promocode=`
+ * URL params.
+ */
+export function buildRegistrationUrl(
+  baseFormUrl: string,
+  session: Pick<Session, "prefill" | "prefillField">
+): string {
+  const joiner = baseFormUrl.includes("?") ? "&" : "?";
+  const raw = `${baseFormUrl}${joiner}entry.${session.prefillField}=${encodeURIComponent(session.prefill)}`;
+  return replaceUrlPlaceholders(raw);
+}
+```
+
+- [ ] **Step 4: Run — expect pass**
+
+```bash
+npm test -- src/utils/__tests__/registration.test.ts
+# Expect: PASS (all tests green)
+```
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add src/utils/registration.ts src/utils/__tests__/registration.test.ts
+git commit -m "feat(cc): add buildRegistrationUrl helper + tests"
+```
+
+---
+
+## Task 13: Refactor `CalendarView` — config-drive, use shared URL helper
 
 **Files:**
 - Modify: `src/components/CalendarView.tsx`
 
-- [ ] **Step 1: Rewrite CalendarView**
+- [ ] **Step 1: Rewrite**
 
-Replace the entire content of `src/components/CalendarView.tsx` with:
+Replace `src/components/CalendarView.tsx` with:
 
 ```tsx
 "use client";
@@ -873,16 +1310,9 @@ import { Session } from "../types";
 import { useEffect, useState } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { getCrashCourseConfig } from "../../crash-courses";
-import { replaceUrlPlaceholders } from "@/utils/campaign";
+import { buildRegistrationUrl } from "@/utils/registration";
 
 const config = getCrashCourseConfig();
-
-function buildRegistrationUrl(session: Session): string {
-  const base = config.registrationFormUrl;
-  const joiner = base.includes("?") ? "&" : "?";
-  const raw = `${base}${joiner}entry.${session.prefillField}=${encodeURIComponent(session.prefill)}`;
-  return replaceUrlPlaceholders(raw);
-}
 
 export default function CalendarView({
   events,
@@ -1045,7 +1475,10 @@ export default function CalendarView({
             <div className="flex justify-end mt-4">
               {selectedEvent?.extendedProps.prefill ? (
                 <a
-                  href={buildRegistrationUrl(selectedEvent.extendedProps)}
+                  href={buildRegistrationUrl(
+                    config.registrationFormUrl,
+                    selectedEvent.extendedProps
+                  )}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -1070,43 +1503,38 @@ export default function CalendarView({
 }
 ```
 
-Key ports from regular-lessons:
-- `buildRegistrationUrl` helper uses `replaceUrlPlaceholders` so both SCHEDULE (campaign) and PROMOCODE are substituted.
-- Calendar settings (`firstDay`, `initialDate`, `slotMinTime`, `slotMaxTime`) come from config.
-- Tip banner is now conditional on `config.calendar.tip`.
+- [ ] **Step 2: Tests + build**
 
-- [ ] **Step 2: Verify dev run**
+```bash
+npm test
+NEXT_PUBLIC_CC_SLUG=ss-sep-2025 npm run build
+```
+
+- [ ] **Step 3: Visual spot-check**
 
 ```bash
 NEXT_PUBLIC_CC_SLUG=ss-sep-2025 npm run dev
 ```
 
-- Click a non-full slot → register URL opens with the SS form.
-- Append `?campaign=TEST&promocode=PROMO1` to the dev URL, click register → confirm the opened form URL contains `entry.1157532004=TEST` (not SCHEDULE) and the PROMOCODE replacement (no-op here unless the SS `registrationFormUrl` includes PROMOCODE — it doesn't yet, which is fine).
+Click a non-full slot → popup opens → click Register → URL opens. Append `?campaign=TEST` to the dev URL and confirm the form URL contains `entry.1157532004=TEST`. Stop.
 
-```bash
-NEXT_PUBLIC_CC_SLUG=jc-sep-2025 npm run dev
-```
-
-Confirm JC slots open with the JC form URL.
-
-- [ ] **Step 3: Commit**
+- [ ] **Step 4: Commit**
 
 ```bash
 git add src/components/CalendarView.tsx
-git commit -m "feat(cc): config-drive CalendarView + port campaign/promocode replacement"
+git commit -m "feat(cc): config-drive CalendarView + use shared registration helper"
 ```
 
 ---
 
-## Task 12: Refactor `ListView` — config-drive, port campaign replacement
+## Task 14: Refactor `ListView` — config-drive, use shared URL helper, grey-out
 
 **Files:**
 - Modify: `src/components/ListView.tsx`
 
-- [ ] **Step 1: Rewrite ListView**
+- [ ] **Step 1: Rewrite**
 
-Replace the entire content with:
+Replace `src/components/ListView.tsx` with:
 
 ```tsx
 "use client";
@@ -1114,16 +1542,9 @@ Replace the entire content with:
 import { Session } from "../types";
 import DatePicker from "react-datepicker";
 import { getCrashCourseConfig } from "../../crash-courses";
-import { replaceUrlPlaceholders } from "@/utils/campaign";
+import { buildRegistrationUrl } from "@/utils/registration";
 
 const config = getCrashCourseConfig();
-
-function buildRegistrationUrl(session: Session): string {
-  const base = config.registrationFormUrl;
-  const joiner = base.includes("?") ? "&" : "?";
-  const raw = `${base}${joiner}entry.${session.prefillField}=${encodeURIComponent(session.prefill)}`;
-  return replaceUrlPlaceholders(raw);
-}
 
 export default function ListView({
   sessions,
@@ -1191,7 +1612,7 @@ export default function ListView({
             <div className="mt-4 flex justify-end">
               {s.prefill ? (
                 <a
-                  href={buildRegistrationUrl(s)}
+                  href={buildRegistrationUrl(config.registrationFormUrl, s)}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -1216,40 +1637,112 @@ export default function ListView({
 }
 ```
 
-Key ports:
-- Hardcoded form URL → `buildRegistrationUrl` via `config.registrationFormUrl` + `replaceUrlPlaceholders`.
-- Hardcoded `2025` in `normalizeDate` → `config.year`.
-- Hardcoded `minDate="2025-09-06"` → `config.calendar.listViewMinDate`.
-- `maxDate={END_DATE}` → `config.dateRange.end`.
-- Greyed-out full card styling via `opacity-60` (porting the regular-lessons pattern).
+- [ ] **Step 2: Tests + build**
 
-- [ ] **Step 2: Verify dev run**
+```bash
+npm test
+NEXT_PUBLIC_CC_SLUG=ss-sep-2025 npm run build
+```
+
+- [ ] **Step 3: Visual spot-check**
 
 ```bash
 NEXT_PUBLIC_CC_SLUG=ss-sep-2025 npm run dev
 ```
 
-Switch to List View, confirm date picker, register links, and full-class grey-out work as before.
+Switch to List View. Confirm date picker range matches config, register links use config form URL, full-class cards grey out.
 
-- [ ] **Step 3: Commit**
+- [ ] **Step 4: Commit**
 
 ```bash
 git add src/components/ListView.tsx
-git commit -m "feat(cc): config-drive ListView + port campaign/promocode replacement + grey-out"
+git commit -m "feat(cc): config-drive ListView + use shared registration helper + grey-out"
 ```
 
 ---
 
-## Task 13: Port filter-collapse UX polish
+## Task 15: Port filter-collapse UX polish + persistence test
 
 **Files:**
 - Modify: `src/components/Filters.tsx`
+- Create: `src/components/__tests__/Filters.test.tsx`
 
-This ports the "filter toggle persisted to localStorage" UX from regular-lessons onto the simpler CC filters shape.
+- [ ] **Step 1: Write the failing persistence test**
 
-- [ ] **Step 1: Add collapse state + persistence**
+Create `src/components/__tests__/Filters.test.tsx`:
 
-Replace the default export section of `src/components/Filters.tsx` (the `export default function Filters({...})` block and below) with:
+```tsx
+import { render, screen, act } from "@testing-library/react";
+import userEventDefault from "@testing-library/user-event";
+import Filters from "../Filters";
+
+const userEvent = (userEventDefault as unknown as { default?: typeof userEventDefault }).default ?? userEventDefault;
+
+const STORAGE_KEY = "crashCourseFiltersCollapsed";
+
+function renderFilters() {
+  return render(
+    <Filters
+      subjects={["English", "Math"]}
+      topics={["[English] Personal Recount"]}
+      centres={["Marine Parade"]}
+      tutors={[]}
+      filters={{ subject: [], topic: [], centre: [], tutor: [] }}
+      onFilterChange={() => {}}
+    />
+  );
+}
+
+describe("Filters collapse persistence", () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it("defaults to expanded when no stored state", () => {
+    renderFilters();
+    expect(screen.getByText(/Filters/i)).toBeInTheDocument();
+    // MultiSelect labels are visible when expanded
+    expect(screen.getByText("Subject")).toBeInTheDocument();
+  });
+
+  it("persists collapsed state across renders", async () => {
+    const user = userEvent.setup();
+    const { unmount } = renderFilters();
+
+    const toggle = screen.getByRole("button", { name: /Filters/i });
+    await user.click(toggle);
+    expect(localStorage.getItem(STORAGE_KEY)).toBe("true");
+
+    unmount();
+    renderFilters();
+    // Subject label should now be hidden (section collapsed)
+    expect(screen.queryByText("Subject")).toBeNull();
+  });
+});
+```
+
+Install `@testing-library/user-event` if not already present:
+
+```bash
+npm install --save-dev @testing-library/user-event@^14
+```
+
+- [ ] **Step 2: Run — expect fail (collapse behavior not implemented)**
+
+```bash
+npm test -- src/components/__tests__/Filters.test.tsx
+# Expect: FAIL — no toggle button, nothing collapses
+```
+
+- [ ] **Step 3: Implement collapse + persistence in Filters**
+
+Update imports at the top of `src/components/Filters.tsx`:
+
+```tsx
+import { Fragment, useEffect, useState } from "react";
+```
+
+Replace the `export default function Filters(...)` block with:
 
 ```tsx
 const FILTERS_COLLAPSED_STORAGE_KEY = "crashCourseFiltersCollapsed";
@@ -1328,37 +1821,23 @@ export default function Filters({
 }
 ```
 
-And add `useState, useEffect` to the top-of-file import:
-
-```tsx
-import { Fragment, useEffect, useState } from "react";
-```
-
-- [ ] **Step 2: Verify typecheck**
+- [ ] **Step 4: Run — expect pass**
 
 ```bash
-npx tsc --noEmit
+npm test -- src/components/__tests__/Filters.test.tsx
+# Expect: PASS
 ```
 
-- [ ] **Step 3: Verify dev run**
+- [ ] **Step 5: Commit**
 
 ```bash
-NEXT_PUBLIC_CC_SLUG=ss-sep-2025 npm run dev
-```
-
-- Collapse filters, refresh page → collapsed state is retained.
-- Apply a subject filter → "X active" badge appears next to Filters heading.
-
-- [ ] **Step 4: Commit**
-
-```bash
-git add src/components/Filters.tsx
-git commit -m "feat(cc): collapsible filters with localStorage persistence"
+git add package.json package-lock.json src/components/Filters.tsx src/components/__tests__/Filters.test.tsx
+git commit -m "feat(cc): collapsible filters with localStorage persistence + tests"
 ```
 
 ---
 
-## Task 14: Update CSV→JSON script output path
+## Task 16: Update CSV→JSON script output path
 
 **Files:**
 - Modify: `scripts/csv_to_sessions2json.ts`
@@ -1369,23 +1848,22 @@ git commit -m "feat(cc): collapsible filters with localStorage persistence"
 cat scripts/csv_to_sessions2json.ts
 ```
 
-Identify the input and output path constants.
+Identify input/output path constants.
 
-- [ ] **Step 2: Parametrize the slug**
+- [ ] **Step 2: Parametrize by slug**
 
-Change the script to accept a slug argument (`node scripts/csv_to_sessions2json.ts ss-sep-2025`) and read from / write to:
+Change the script to accept a slug as the first CLI argument. Read from `crash-courses/<slug>/sessions.csv`, write to `crash-courses/<slug>/sessions.json`. Do not change the row-parsing / mapping logic.
 
-- Input: `crash-courses/<slug>/sessions.csv`
-- Output: `crash-courses/<slug>/sessions.json`
-
-Replace the file-path constants with slug-derived paths. The exact rewrite depends on the script's current shape — keep the parsing logic unchanged, only update IO paths.
-
-- [ ] **Step 3: Verify round-trip**
+- [ ] **Step 3: Round-trip verification**
 
 ```bash
 npx ts-node scripts/csv_to_sessions2json.ts ss-sep-2025
 git diff crash-courses/ss-sep-2025/sessions.json
-# Expect: no diff (or only cosmetic formatting diff).
+# Expect: no diff (or cosmetic only).
+
+npx ts-node scripts/csv_to_sessions2json.ts jc-sep-2025
+git diff crash-courses/jc-sep-2025/sessions.json
+# Expect: no diff.
 ```
 
 - [ ] **Step 4: Commit**
@@ -1397,11 +1875,18 @@ git commit -m "chore(scripts): point csv_to_sessions2json at crash-courses/<slug
 
 ---
 
-## Task 15: Final local verification
+## Task 17: Final local verification
 
 **Files:** none (verification only)
 
-- [ ] **Step 1: Missing-slug build fails**
+- [ ] **Step 1: Full test run**
+
+```bash
+npm test
+# Expect: all suites PASS. Coverage report optional via `npm run test:coverage`.
+```
+
+- [ ] **Step 2: Missing-slug build fails**
 
 ```bash
 unset NEXT_PUBLIC_CC_SLUG
@@ -1409,14 +1894,14 @@ npm run build 2>&1 | tail -20
 # Expect: build fails with "NEXT_PUBLIC_CC_SLUG is not set"
 ```
 
-- [ ] **Step 2: Unknown-slug build fails**
+- [ ] **Step 3: Unknown-slug build fails**
 
 ```bash
 NEXT_PUBLIC_CC_SLUG=nonexistent npm run build 2>&1 | tail -20
-# Expect: build fails with "Unknown crash course slug: nonexistent. Known slugs: jc-sep-2025, ss-sep-2025"
+# Expect: build fails with "Unknown crash course slug"
 ```
 
-- [ ] **Step 3: SS build succeeds and serves**
+- [ ] **Step 4: SS build succeeds and serves**
 
 ```bash
 NEXT_PUBLIC_CC_SLUG=ss-sep-2025 npm run build
@@ -1426,7 +1911,7 @@ curl -s http://localhost:3000 | grep -q "Zenith September SS Crash Course Schedu
 kill %1 2>/dev/null
 ```
 
-- [ ] **Step 4: JC build succeeds and serves**
+- [ ] **Step 5: JC build succeeds and serves**
 
 ```bash
 NEXT_PUBLIC_CC_SLUG=jc-sep-2025 npm run build
@@ -1436,14 +1921,13 @@ curl -s http://localhost:3000 | grep -q "Zenith September JC Crash Course Schedu
 kill %1 2>/dev/null
 ```
 
-- [ ] **Step 5: Lint passes**
+- [ ] **Step 6: Lint**
 
 ```bash
 npm run lint
-# Expect: no errors.
 ```
 
-- [ ] **Step 6: Push branch**
+- [ ] **Step 7: Push branch**
 
 ```bash
 git push -u origin crash-courses
@@ -1451,21 +1935,19 @@ git push -u origin crash-courses
 
 ---
 
-## Task 16: Deployment rewire (user-executed)
+## Task 18: Deployment rewire (user-executed)
 
 **Files:** none (manual CF API / wrangler operations)
 
 > **Ask the user before running these.** These are production-scoped, shared-systems changes. The assistant must not execute without explicit confirmation per invocation.
 
-- [ ] **Step 1: Required env vars**
-
-Export in the user's shell:
+- [ ] **Step 1: Export env**
 
 ```bash
-export CF_API_TOKEN=...           # Cloudflare API token with Pages:Edit
-export CF_ACCOUNT_ID=...          # Cloudflare account ID
-export JC_PROJECT_NAME=...        # the JC Pages project name
-export SS_PROJECT_NAME=...        # the SS Pages project name
+export CF_API_TOKEN=...
+export CF_ACCOUNT_ID=...
+export JC_PROJECT_NAME=...
+export SS_PROJECT_NAME=...
 ```
 
 - [ ] **Step 2: Change production branch on JC project**
@@ -1478,8 +1960,6 @@ curl -X PATCH \
   -d '{"production_branch":"crash-courses"}'
 ```
 
-Expected response `success: true`.
-
 - [ ] **Step 3: Set NEXT_PUBLIC_CC_SLUG on JC project**
 
 ```bash
@@ -1490,41 +1970,42 @@ curl -X PATCH \
   -d '{"deployment_configs":{"production":{"env_vars":{"NEXT_PUBLIC_CC_SLUG":{"value":"jc-sep-2025","type":"plain_text"}}}}}'
 ```
 
-- [ ] **Step 4: Repeat steps 2-3 for SS project**
+- [ ] **Step 4: Repeat Steps 2-3 for SS project**
 
-Swap `$JC_PROJECT_NAME` → `$SS_PROJECT_NAME` and the slug value → `ss-sep-2025`.
+Substitute `$JC_PROJECT_NAME` → `$SS_PROJECT_NAME`, slug → `ss-sep-2025`.
 
 - [ ] **Step 5: Trigger redeploy**
 
-Either push a new commit to `crash-courses` (empty commit works) or trigger via wrangler:
+Either push a new commit to `crash-courses`, or:
 
 ```bash
-npm run build && NEXT_PUBLIC_CC_SLUG=jc-sep-2025 npx wrangler pages deploy out \
-  --project-name=$JC_PROJECT_NAME --branch=crash-courses
-npm run build && NEXT_PUBLIC_CC_SLUG=ss-sep-2025 npx wrangler pages deploy out \
-  --project-name=$SS_PROJECT_NAME --branch=crash-courses
+NEXT_PUBLIC_CC_SLUG=jc-sep-2025 npm run build
+npx wrangler pages deploy out --project-name=$JC_PROJECT_NAME --branch=crash-courses
+
+NEXT_PUBLIC_CC_SLUG=ss-sep-2025 npm run build
+npx wrangler pages deploy out --project-name=$SS_PROJECT_NAME --branch=crash-courses
 ```
 
-Note the `NEXT_PUBLIC_CC_SLUG` in front of `npm run build` — the env var must be present **at build time** for Next.js to bake the correct config into the static output. The wrangler deploy step ships whatever `out/` currently contains.
+The env var must be present **at build time** — Next.js bakes it into the static output.
 
 - [ ] **Step 6: Verify production**
 
-- Visit `crashcourse.jc.zenitheducationstudio.com` → confirm JC colors, JC banner copy, JC form URL on register click.
-- Visit `crashcourse.ss.zenitheducationstudio.com` → confirm SS.
-- `?promocode=TEST` URL param → confirm it injects into form URLs (if `registrationFormUrl` contains the `PROMOCODE` placeholder; otherwise it's a silent no-op, which is expected).
+- `crashcourse.jc.zenitheducationstudio.com` → JC colors, JC banner copy, JC form URL.
+- `crashcourse.ss.zenitheducationstudio.com` → SS.
+- Append `?campaign=TEST` → form URLs contain `entry.1157532004=TEST`.
 
 ---
 
-## Task 17: Adding a future crash course (reference runbook)
+## Task 19: Adding a future crash course (reference runbook)
 
-This task has no steps for this plan — it's a reference for the next crash course.
+This task has no steps for this plan — reference only.
 
 **Files:** `crash-courses/<new-slug>/config.ts`, `crash-courses/<new-slug>/sessions.json`
 
 Procedure:
 1. `mkdir crash-courses/oct-jc-2025`
 2. `cp crash-courses/jc-sep-2025/config.ts crash-courses/oct-jc-2025/config.ts` and edit: slug, metadata, dateRange, subjectColors, banner copy, form URL.
-3. Generate `sessions.json` via `npx ts-node scripts/csv_to_sessions2json.ts oct-jc-2025` (after dropping the CSV into the same folder).
+3. Drop the CSV into the folder, then `npx ts-node scripts/csv_to_sessions2json.ts oct-jc-2025`.
 4. Register in `crash-courses/index.ts`:
    ```ts
    import octJc2025 from "./oct-jc-2025/config";
@@ -1534,15 +2015,28 @@ Procedure:
      "oct-jc-2025": octJc2025,
    };
    ```
-5. Create the Cloudflare Pages project (or reuse an existing one), set `NEXT_PUBLIC_CC_SLUG=oct-jc-2025`, point at `crash-courses` branch.
+5. `npm test` — the config-integrity test suite automatically covers the new config.
+6. Create/reuse the Cloudflare Pages project, set `NEXT_PUBLIC_CC_SLUG=oct-jc-2025`, point at `crash-courses` branch.
 
 ---
 
 ## Self-review notes
 
-- Spec sections 1-5 each have covering tasks: Task 1 (branch strategy), Task 2 (types) + Task 5 (resolver) (config layout + resolver), Tasks 6-13 (consumer refactor), Tasks 10-13 (improvement port list — campaign/promocode, grey-out, filter polish; register buttons already present on CC and verified in dev steps), Task 16 (deployment rewire).
-- The "port list" item "register buttons on calendar popup + list-view rows" is partially a no-op: sept-ss-cc already has these. The ports that apply are the **campaign/promocode URL placeholder replacement** (Task 11, Task 12) and the full-class grey-out of list rows (Task 12). The improvement list in the spec is accurate; what's being ported is specifically the reusable behaviour behind those UX touches.
-- No "TBD" / "TODO" / "implement later" strings anywhere.
-- Type consistency: `CrashCourseConfig` shape is defined once in Task 2 and referenced by exact field names throughout Tasks 3, 4, 7, 8, 9, 11, 12.
-- `replaceUrlPlaceholders` is defined in Task 10 before its first use in Task 11.
-- No tests are required by the plan because the project has no test framework; verification is build + lint + manual dev run. Flagged in the header.
+- **Spec coverage:**
+  - Branch strategy → Task 1
+  - Config layout → Tasks 3, 4, 5
+  - Config resolver + build-time guard → Task 6
+  - Consumer refactor → Tasks 7, 8, 9, 10, 13, 14
+  - Improvement port list → Tasks 11 (campaign util), 12 (URL helper), 13 (CalendarView), 14 (ListView grey-out), 15 (filter collapse)
+  - Deployment rewire → Task 18
+- **Testing coverage:**
+  - Jest scaffold → Task 2
+  - Resolver unit tests → Task 6
+  - Config integrity (auto-covers future CCs) → Task 6
+  - Banner smoke test → Task 10
+  - Campaign util unit tests → Task 11
+  - URL builder unit tests → Task 12
+  - Filter persistence test → Task 15
+- **Type consistency:** `CrashCourseConfig` shape defined once in Task 3; all later tasks reference exact field names. `buildRegistrationUrl(base, session)` signature is defined in Task 12 and consumed identically in Tasks 13, 14.
+- **No placeholders:** every step has concrete commands or full code.
+- **TDD discipline:** Tasks 6, 11, 12, 15 write failing tests before implementation; Task 10 writes the smoke test as a follow-up (component already implemented in earlier steps — this is acceptable because the smoke test is a cross-check against the config-driving refactor, not a design driver).
