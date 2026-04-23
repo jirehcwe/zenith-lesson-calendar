@@ -23,8 +23,28 @@ function addHours(time: string, hours: number): string {
   return `${displayHour}:${minute.toString().padStart(2, "0")} ${newAmpm}`;
 }
 
-const csvPath = path.join(__dirname, "..", "public", "sessions-ss.csv");
-const outPath = path.join(__dirname, "..", "public", "sessions-ss.json");
+const slug = process.argv[2];
+if (!slug) {
+  console.error(
+    "Usage: npx ts-node scripts/csv_to_sessions2json.ts <slug>\n" +
+      "Example: npx ts-node scripts/csv_to_sessions2json.ts ss-may-2026"
+  );
+  process.exit(1);
+}
+
+const slugDir = path.join(__dirname, "..", "crash-courses", slug);
+if (!fs.existsSync(slugDir)) {
+  console.error(`Directory not found: crash-courses/${slug}/`);
+  process.exit(1);
+}
+
+const csvPath = path.join(slugDir, "sessions.csv");
+const outPath = path.join(slugDir, "sessions.json");
+
+if (!fs.existsSync(csvPath)) {
+  console.error(`Input CSV not found: crash-courses/${slug}/sessions.csv`);
+  process.exit(1);
+}
 
 type CsvRow = Record<string, string>;
 
@@ -194,4 +214,6 @@ const result = records.map((row: CsvRow) => {
 
 fs.writeFileSync(outPath, JSON.stringify(result, null, 2));
 
-console.log(`sessions.json generated with ${result.length} sessions.`);
+console.log(
+  `crash-courses/${slug}/sessions.json generated with ${result.length} sessions.`
+);
