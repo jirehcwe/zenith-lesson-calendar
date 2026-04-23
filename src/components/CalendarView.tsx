@@ -3,6 +3,7 @@
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import scrollGridPlugin from "@fullcalendar/scrollgrid";
 import { Session } from "../types";
 import { useEffect, useState } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
@@ -70,7 +71,7 @@ export default function CalendarView({
         </div>
       )}
       <FullCalendar
-        plugins={[timeGridPlugin, dayGridPlugin]}
+        plugins={[timeGridPlugin, dayGridPlugin, scrollGridPlugin]}
         initialView="timeGridWeek"
         validRange={{
           start: new Date(config.dateRange.start),
@@ -79,9 +80,9 @@ export default function CalendarView({
         firstDay={config.calendar.firstDay}
         initialDate={config.calendar.initialDate}
         headerToolbar={{
-          left: "prev,next today",
+          left: isMobile ? "prev,next" : "prev,next today",
           center: "title",
-          right: isMobile ? "timeGridWeek" : "timeGridWeek,dayGridMonth",
+          right: isMobile ? "" : "timeGridWeek,dayGridMonth",
         }}
         views={{
           timeGridThreeDay: {
@@ -97,6 +98,9 @@ export default function CalendarView({
         slotMaxTime={config.calendar.slotMaxTime}
         allDaySlot={false}
         displayEventEnd={true}
+        dayMinWidth={120}
+        stickyHeaderDates={true}
+        schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
         eventContent={(arg) => {
           const topic = arg.event.extendedProps.topic;
           const centre = arg.event.extendedProps.centre;

@@ -1,34 +1,36 @@
 /**
  * SignupBanner tests.
  *
- * getCrashCourseConfig() is called at module-top-level in SignupBanner.tsx.
- * We mock the crash-courses module at the file level with jest.mock so that
- * the config is available without the env var and without isolateModules.
- * next/image is also mocked to avoid needing a Next.js context in jsdom.
+ * SignupBanner reads config.hero at render time via getCrashCourseConfig().
+ * We mock that resolver and next/image so the component renders without a
+ * Next.js context or a NEXT_PUBLIC_CC_SLUG env var.
+ *
+ * Note on collapse: SignupBanner has a collapse toggle that only affects the
+ * mobile (`lg:hidden`) layout. The desktop (`hidden lg:flex`) layout is always
+ * in the DOM regardless of collapse state, so "blurb absent when collapsed"
+ * cannot be asserted in jsdom (no CSS viewport queries). We instead assert on
+ * the toggle button's label, which switches between Expand/Collapse based on
+ * state.
  */
 
-// Mocks must be declared before any imports that load the component.
-
-// Mock next/image so it renders as a plain <img> without needing Next.js context.
 jest.mock("next/image", () => ({
   __esModule: true,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   default: ({ src, alt, ...rest }: any) => <img src={src} alt={alt} {...rest} />,
 }));
 
-// Provide a hardcoded SS config so NEXT_PUBLIC_CC_SLUG need not be set at load time.
 jest.mock("../../../crash-courses", () => ({
   getCrashCourseConfig: () => ({
     slug: "ss-may-2026",
-    signupBanner: {
-      imageSrc: "/zenith_banner.jpg",
-      imageAlt: "Zenith Banner",
-      body:
-        "This website will help you plan out the crash course slots you wish to attend\n\n" +
-        "Ready to lock in for your exams?",
-      ctaLabel: "Click here to sign up!",
-      ctaHref:
-        "https://docs.google.com/forms/d/e/1FAIpQLSdc1DdBljxZx1mXH6Ztpxr_zbnI9XJunAKHDeN_GVR1jBuI9Q/viewform?usp=pp_url&entry.1157532004=SCHEDULE",
+    hero: {
+      title: "May 2026 SS Crash Course",
+      tagline: "Flexible scheduling • Expert tutors • Proven results",
+      blurbHeadline: "Plan Your Crash Course Schedule",
+      blurbBody:
+        "Register for the Secondary crash course slots you want to attend.",
+      stats: "Trusted by over 20,000 students since 2019",
+      heroImageSrc: "/zenith-banner.webp",
+      heroImageAlt: "Zenith Education",
     },
   }),
 }));
@@ -37,33 +39,64 @@ import { render, screen } from "@testing-library/react";
 import React from "react";
 import SignupBanner from "../SignupBanner";
 
-describe("SignupBanner", () => {
-  it("renders an img with the config imageSrc and imageAlt", () => {
-    render(<SignupBanner />);
-    const img = screen.getByAltText("Zenith Banner");
-    expect(img).toBeInTheDocument();
-    expect(img.getAttribute("src")).toContain("zenith_banner");
+describe("SignupBanner content from config.hero", () => {
+  beforeEach(() => {
+    localStorage.clear();
   });
 
-  it("renders a CTA link with the config ctaHref", () => {
+  it("renders the hero title", () => {
     render(<SignupBanner />);
-    const link = screen.getByRole("link");
-    expect(link).toHaveAttribute(
-      "href",
-      "https://docs.google.com/forms/d/e/1FAIpQLSdc1DdBljxZx1mXH6Ztpxr_zbnI9XJunAKHDeN_GVR1jBuI9Q/viewform?usp=pp_url&entry.1157532004=SCHEDULE"
+    const titles = screen.getAllByText(/May 2026 SS Crash Course/i);
+    expect(titles.length).toBeGreaterThan(0);
+  });
+
+  it("renders the hero image with configured src/alt", () => {
+    render(<SignupBanner />);
+    const imgs = screen.getAllByAltText("Zenith Education");
+    expect(imgs.length).toBeGreaterThan(0);
+    expect(imgs[0].getAttribute("src")).toContain("zenith-banner");
+  });
+
+  it("renders the tagline", () => {
+    render(<SignupBanner />);
+    const taglines = screen.getAllByText(/Flexible scheduling/i);
+    expect(taglines.length).toBeGreaterThan(0);
+  });
+
+  it("renders the stats line", () => {
+    render(<SignupBanner />);
+    const stats = screen.getAllByText(/Trusted by over 20,000/i);
+    expect(stats.length).toBeGreaterThan(0);
+  });
+
+  it("renders the blurb headline and body", () => {
+    render(<SignupBanner />);
+    const headlines = screen.getAllByText(/Plan Your Crash Course Schedule/i);
+    expect(headlines.length).toBeGreaterThan(0);
+    const bodies = screen.getAllByText(
+      /Register for the Secondary crash course slots/i
     );
+    expect(bodies.length).toBeGreaterThan(0);
+  });
+});
+
+describe("SignupBanner mobile collapse toggle", () => {
+  beforeEach(() => {
+    localStorage.clear();
   });
 
-  it("renders the CTA link with the config ctaLabel text", () => {
-    render(<SignupBanner />);
-    const link = screen.getByRole("link");
-    expect(link).toHaveTextContent(/click here to sign up/i);
-  });
-
-  it("renders body text from the SS banner", () => {
+  it("mounts collapsed by default and exposes an Expand button", () => {
     render(<SignupBanner />);
     expect(
-      screen.getByText(/plan out the crash course slots/i)
+      screen.getByRole("button", { name: /expand banner/i })
+    ).toBeInTheDocument();
+  });
+
+  it("mounts expanded when localStorage says so, exposes a Collapse button", () => {
+    localStorage.setItem("signupBannerCollapsed", "false");
+    render(<SignupBanner />);
+    expect(
+      screen.getByRole("button", { name: /collapse banner/i })
     ).toBeInTheDocument();
   });
 });

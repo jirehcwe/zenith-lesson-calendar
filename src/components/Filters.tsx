@@ -45,7 +45,7 @@ function MultiSelect({
       <label className="text-sm font-semibold">{label}</label>
       <Listbox value={selected} onChange={onChange} multiple>
         <div className="relative mt-1">
-          <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white border p-2 text-left flex items-center justify-between">
+          <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white border border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 transition-all p-2 text-left flex items-center justify-between">
             <span className="truncate">
               {selected.length > 0 ? selected.join(", ") : `Select ${label}`}
             </span>

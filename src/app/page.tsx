@@ -7,6 +7,7 @@ import Filters from "../components/Filters";
 import { Session } from "../types";
 import SignupBanner from "../components/SignupBanner";
 import BottomBanner from "@/components/BottomBanner";
+import ViewSelector from "@/components/ViewSelector";
 import { getCrashCourseConfig } from "../../crash-courses";
 
 const config = getCrashCourseConfig();
@@ -120,25 +121,8 @@ export default function Page() {
   return (
     <div>
       <SignupBanner />
-      <div className="p-4 space-y-6 text-sm md:text-base">
-        <div className="flex items-center gap-4 mb-6">
-          <button
-            onClick={() => setViewMode("calendar")}
-            className={`px-4 py-2 rounded ${
-              viewMode === "calendar" ? "bg-blue-500 text-white" : "bg-gray-200"
-            }`}
-          >
-            Calendar View
-          </button>
-          <button
-            onClick={() => setViewMode("list")}
-            className={`px-4 py-2 rounded ${
-              viewMode === "list" ? "bg-blue-500 text-white" : "bg-gray-200"
-            }`}
-          >
-            List View
-          </button>
-        </div>
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 py-6 space-y-6 text-sm md:text-base">
+        <ViewSelector currentView={viewMode} onViewChange={setViewMode} />
 
         <Filters
           subjects={[...new Set(sessions.map((s) => s.subject))]}
@@ -149,15 +133,17 @@ export default function Page() {
           onFilterChange={setFilters}
         />
 
-        {viewMode === "calendar" ? (
-          <CalendarView events={events} />
-        ) : (
-          <ListView
-            sessions={listFilteredSessions}
-            calendarFilter={calendarFilter}
-            onCalendarFilterChange={setCalendarFilter}
-          />
-        )}
+        <div className="modern-card p-2 sm:p-6">
+          {viewMode === "calendar" ? (
+            <CalendarView events={events} />
+          ) : (
+            <ListView
+              sessions={listFilteredSessions}
+              calendarFilter={calendarFilter}
+              onCalendarFilterChange={setCalendarFilter}
+            />
+          )}
+        </div>
       </div>
       <BottomBanner />
     </div>

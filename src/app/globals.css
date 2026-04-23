@@ -3,7 +3,12 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #2d3748;
+  --primary-blue: #4a90e2;
+  --secondary-blue: #5b9bd5;
+  --accent-orange: #ffa726;
+  --text-dark: #2d3748;
+  --text-light: #718096;
 }
 
 @theme inline {
@@ -16,5 +21,82 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  line-height: 1.6;
+}
+
+/* Modern button styles */
+.btn-primary {
+  @apply bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+}
+
+.btn-secondary {
+  @apply bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+}
+
+/* Hero gradient background */
+.hero-gradient {
+  background: linear-gradient(135deg, #4a90e2 0%, #5b9bd5 50%, #7bb3f0 100%);
+}
+
+/* Modern card styling */
+.modern-card {
+  @apply bg-white rounded-xl shadow-lg border border-gray-100 transition-all duration-200 hover:shadow-xl;
+}
+
+/* Remove yellow highlight from FullCalendar's today cell */
+.fc-day-today {
+  background: none !important;
+}
+
+/* FullCalendar header toolbar — lighter buttons, cleaner layout on mobile */
+.fc .fc-button-primary {
+  background-color: #f3f4f6;
+  border-color: #e5e7eb;
+  color: #374151;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+  transition: all 0.15s ease;
+}
+.fc .fc-button-primary:not(:disabled):hover {
+  background-color: #e5e7eb;
+  border-color: #d1d5db;
+  color: #111827;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.06);
+}
+.fc .fc-button-primary:not(:disabled).fc-button-active,
+.fc .fc-button-primary:not(:disabled):active {
+  background-color: #4a90e2;
+  border-color: #4a90e2;
+  color: white;
+}
+
+/* On mobile, stack toolbar chunks vertically for a cleaner layout */
+@media (max-width: 640px) {
+  .fc-toolbar.fc-header-toolbar {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .fc-toolbar-chunk {
+    display: flex;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 0.25rem;
+  }
+  .fc-toolbar-title {
+    font-size: 1.1rem !important;
+    text-align: center;
+    white-space: nowrap;
+  }
+}
+
+/* Safe area inset support for iPhone home indicator */
+.pb-safe {
+  padding-bottom: calc(4rem + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 768px) {
+  .pb-safe {
+    padding-bottom: 2rem;
+  }
 }

@@ -10,7 +10,10 @@ const config: CrashCourseConfig = {
     title: "Zenith May SS Crash Course Scheduler",
     description: "Sign up for Zenith Secondary Crash Course now!",
   },
-  dateRange: { start: "2026-05-01", end: "2026-05-31" },
+  // TEMP: pointed at Sep 2026 so the placeholder Sep-dated session data
+  // renders for visual testing. Revert to "2026-05-01" / "2026-05-31"
+  // when real May 2026 roster lands.
+  dateRange: { start: "2026-09-01", end: "2026-09-30" },
   year: 2026,
   subjectColors: {
     Mathematics: { backgroundColor: "#FED966", textColor: "#000000" },
@@ -30,15 +33,16 @@ const config: CrashCourseConfig = {
     English: { backgroundColor: "#DD7E6B", textColor: "#000000" },
     "IP English": { backgroundColor: "#DD7E6B", textColor: "#000000" },
   },
-  signupBanner: {
-    imageSrc: "/zenith_banner.jpg",
-    imageAlt: "Zenith Banner",
-    body:
-      "This website will help you plan out the crash course slots you wish to attend\n\n" +
-      "Ready to lock in for your exams?",
-    ctaLabel: "Click here to sign up!",
-    ctaHref:
-      "https://docs.google.com/forms/d/e/1FAIpQLSdc1DdBljxZx1mXH6Ztpxr_zbnI9XJunAKHDeN_GVR1jBuI9Q/viewform?usp=pp_url&entry.1157532004=SCHEDULE",
+  hero: {
+    title: "May 2026 SS Crash Course",
+    tagline:
+      "Flexible scheduling • Expert tutors • Proven results • Book your slots early",
+    blurbHeadline: "Plan Your Crash Course Schedule",
+    blurbBody:
+      "Register for the Secondary crash course slots you want to attend. Browse the calendar, filter by subject or centre, and sign up for your preferred sessions before they fill up.",
+    stats: "Trusted by over 20,000 students since 2019",
+    heroImageSrc: "/zenith-banner.webp",
+    heroImageAlt: "Zenith Education",
   },
   bottomBanner: {
     body: "Ready to lock in for your exams?",
@@ -48,11 +52,14 @@ const config: CrashCourseConfig = {
   },
   calendar: {
     firstDay: 1,
-    initialDate: "2026-05-01",
+    initialDate: "2026-09-01",
     slotMinTime: "09:00:00",
     slotMaxTime: "22:00:00",
-    listViewMinDate: "2026-05-01",
-    tip: null,
+    listViewMinDate: "2026-09-06",
+    tip: {
+      label: "Pro Tip",
+      body: "Use the filters to narrow down by subject or centre. Click any class for the prefilled registration link.",
+    },
   },
   registrationFormUrl:
     "https://docs.google.com/forms/d/e/1FAIpQLSdc1DdBljxZx1mXH6Ztpxr_zbnI9XJunAKHDeN_GVR1jBuI9Q/viewform?entry.1157532004=SCHEDULE",

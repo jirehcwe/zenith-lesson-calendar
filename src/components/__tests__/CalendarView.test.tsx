@@ -24,6 +24,7 @@ jest.mock("@fullcalendar/react", () => ({
 }));
 jest.mock("@fullcalendar/timegrid", () => ({ __esModule: true, default: {} }));
 jest.mock("@fullcalendar/daygrid", () => ({ __esModule: true, default: {} }));
+jest.mock("@fullcalendar/scrollgrid", () => ({ __esModule: true, default: {} }));
 
 // Mutable mock config — tests reassign fields on this object before
 // render() and the component reads the current value at render time.
@@ -33,12 +34,14 @@ const baseMockConfig: CrashCourseConfig = {
   dateRange: { start: "2026-05-01", end: "2026-05-31" },
   year: 2026,
   subjectColors: { Math: { backgroundColor: "#FED966", textColor: "#000" } },
-  signupBanner: {
-    imageSrc: "/mock.jpg",
-    imageAlt: "mock",
-    body: "mock",
-    ctaLabel: "mock",
-    ctaHref: "https://mock",
+  hero: {
+    title: "mock title",
+    tagline: "mock tagline",
+    blurbHeadline: "mock headline",
+    blurbBody: "mock body",
+    stats: "mock stats",
+    heroImageSrc: "/mock.webp",
+    heroImageAlt: "mock",
   },
   bottomBanner: { body: "mock", ctaLabel: "mock", ctaHref: "https://mock" },
   calendar: {

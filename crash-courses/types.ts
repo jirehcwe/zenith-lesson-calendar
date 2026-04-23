@@ -9,6 +9,16 @@ export type BannerContent = {
   ctaHref: string;
 };
 
+export type HeroContent = {
+  title: string;           // "May 2026 SS Crash Course"
+  tagline: string;         // "Flexible scheduling • Expert tutors • …"
+  blurbHeadline: string;   // "Find Your Perfect Crash Course"
+  blurbBody: string;       // long intro paragraph
+  stats: string;           // "Trusted by over 20,000 students since 2019"
+  heroImageSrc: string;    // e.g. "/zenith-banner.webp"
+  heroImageAlt: string;
+};
+
 export type CalendarUIConfig = {
   firstDay: number;
   initialDate: string;
@@ -24,7 +34,7 @@ export type CrashCourseConfig = {
   dateRange: { start: string; end: string };
   year: number;
   subjectColors: Record<string, SubjectColor>;
-  signupBanner: BannerContent & { imageSrc: string; imageAlt: string };
+  hero: HeroContent;
   bottomBanner: BannerContent;
   calendar: CalendarUIConfig;
   registrationFormUrl: string;

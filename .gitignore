@@ -44,3 +44,11 @@ next-env.d.ts
 **/node_modules/
 **/dist/
 *.zip
+
+# local visual-regression artifacts (playwright-mcp screenshots)
+.playwright-mcp/
+*-preview-*.png
+*-mobile-*.png
+*-desktop-*.png
+prod-schedule-*.png
+prod-mobile.png

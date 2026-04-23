@@ -47,7 +47,7 @@ export default function ListView({
             }
           }}
           placeholderText="Select date"
-          className="border p-2 rounded"
+          className="border border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 transition-all p-2 rounded-lg bg-white"
           dateFormat="yyyy-MM-dd"
           isClearable
           minDate={new Date(config.calendar.listViewMinDate)}
