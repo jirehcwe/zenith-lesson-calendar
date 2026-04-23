@@ -9,8 +9,6 @@ import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { getCrashCourseConfig } from "../../crash-courses";
 import { buildRegistrationUrl } from "@/utils/registration";
 
-const config = getCrashCourseConfig();
-
 export default function CalendarView({
   events,
 }: {
@@ -23,6 +21,7 @@ export default function CalendarView({
     textColor: string;
   }[];
 }) {
+  const config = getCrashCourseConfig();
   const [isMobile, setIsMobile] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<{
     title: string;
