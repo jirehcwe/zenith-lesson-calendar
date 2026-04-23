@@ -3,6 +3,7 @@
 import { Session } from "../types";
 import DatePicker from "react-datepicker";
 import { getCrashCourseConfig } from "../../crash-courses";
+import { buildRegistrationUrl } from "@/utils/registration";
 
 const config = getCrashCourseConfig();
 
@@ -15,7 +16,6 @@ export default function ListView({
   calendarFilter: string | null;
   onCalendarFilterChange: (date: string | null) => void;
 }) {
-  // Normalize session date: "24 May" => "2025-05-24"
   const normalizeDate = (raw: string): string | null => {
     const parsed = Date.parse(`${raw} ${config.year}`);
     if (isNaN(parsed)) return null;
@@ -59,7 +59,9 @@ export default function ListView({
         {filtered.map((s) => (
           <div
             key={`${s.date}-${s.startTime}-${s.tutor}`}
-            className="p-4 border rounded shadow flex flex-col"
+            className={`p-4 border rounded shadow flex flex-col ${
+              s.prefill ? "" : "opacity-60"
+            }`}
           >
             <div className="font-semibold">{s.subject}</div>
             <div className="text-sm opacity-80">Topic: {s.topic}</div>
@@ -71,9 +73,7 @@ export default function ListView({
             <div className="mt-4 flex justify-end">
               {s.prefill ? (
                 <a
-                  href={`https://docs.google.com/forms/d/e/1FAIpQLSdc1DdBljxZx1mXH6Ztpxr_zbnI9XJunAKHDeN_GVR1jBuI9Q/viewform?entry.1157532004=SCHEDULE&entry.${
-                    s.prefillField
-                  }=${encodeURIComponent(s.prefill)}`}
+                  href={buildRegistrationUrl(config.registrationFormUrl, s)}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
