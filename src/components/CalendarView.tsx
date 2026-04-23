@@ -4,11 +4,12 @@ import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { Session } from "../types";
-import { getCrashCourseConfig } from "../../crash-courses";
-
-const config = getCrashCourseConfig();
 import { useEffect, useState } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
+import { getCrashCourseConfig } from "../../crash-courses";
+import { buildRegistrationUrl } from "@/utils/registration";
+
+const config = getCrashCourseConfig();
 
 export default function CalendarView({
   events,
@@ -34,30 +35,17 @@ export default function CalendarView({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleEventClick = (arg: any) => {
     setSelectedEvent(arg.event);
     setIsDialogOpen(true);
   };
-
-  // console.log(
-  //   selectedEvent
-  //     ? `https://docs.google.com/forms/d/e/1FAIpQLSdc1DdBljxZx1mXH6Ztpxr_zbnI9XJunAKHDeN_GVR1jBuI9Q/viewform?usp=pp_url&entry.1157532004=SCHEDULE&entry.${
-  //         selectedEvent.extendedProps.prefillField
-  //       }=${encodeURIComponent(selectedEvent.extendedProps.prefill)
-  //         .replace(/%20/g, "+")
-  //         .replace(/%3A/g, ":")}`
-  //     : null
-  // );
 
   return (
     <>
@@ -85,7 +73,10 @@ export default function CalendarView({
       <FullCalendar
         plugins={[timeGridPlugin, dayGridPlugin]}
         initialView="timeGridWeek"
-        validRange={{ start: config.dateRange.start, end: config.dateRange.end }}
+        validRange={{
+          start: new Date(config.dateRange.start),
+          end: new Date(config.dateRange.end),
+        }}
         firstDay={config.calendar.firstDay}
         initialDate={config.calendar.initialDate}
         headerToolbar={{
@@ -111,13 +102,9 @@ export default function CalendarView({
           const topic = arg.event.extendedProps.topic;
           const centre = arg.event.extendedProps.centre;
           const hasPrefill = arg.event.extendedProps.prefill;
-
           return (
             <div className="p-1 overflow-hidden h-full text-xs leading-tight">
-              <div
-                className="font-semibold truncate mb-1"
-                title={arg.event.title}
-              >
+              <div className="font-semibold truncate mb-1" title={arg.event.title}>
                 {arg.event.title}
               </div>
               {topic && (
@@ -126,10 +113,7 @@ export default function CalendarView({
                 </div>
               )}
               {centre && (
-                <div
-                  className="opacity-80 truncate"
-                  title={`Centre: ${centre}`}
-                >
+                <div className="opacity-80 truncate" title={`Centre: ${centre}`}>
                   Centre: {centre}
                 </div>
               )}
@@ -188,9 +172,10 @@ export default function CalendarView({
             <div className="flex justify-end mt-4">
               {selectedEvent?.extendedProps.prefill ? (
                 <a
-                  href={`https://docs.google.com/forms/d/e/1FAIpQLSdc1DdBljxZx1mXH6Ztpxr_zbnI9XJunAKHDeN_GVR1jBuI9Q/viewform?entry.1157532004=SCHEDULE&entry.${
-                    selectedEvent.extendedProps.prefillField
-                  }=${encodeURIComponent(selectedEvent.extendedProps.prefill)}`}
+                  href={buildRegistrationUrl(
+                    config.registrationFormUrl,
+                    selectedEvent.extendedProps
+                  )}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
