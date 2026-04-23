@@ -9,6 +9,17 @@ const nextConfig: NextConfig = {
   experimental: {
     esmExternals: false,
   },
+  webpack: (config) => {
+    // crash-courses/index.ts uses require("fs") / require("path") guarded by
+    // isNodeRuntime(). Those branches never execute in the browser, but webpack
+    // still tries to resolve them. Tell it to stub them out instead of failing.
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      path: false,
+    };
+    return config;
+  },
   async headers() {
     return [
       {

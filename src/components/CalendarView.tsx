@@ -3,7 +3,10 @@
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import { END_DATE, Session, START_DATE } from "../types";
+import { Session } from "../types";
+import { getCrashCourseConfig } from "../../crash-courses";
+
+const config = getCrashCourseConfig();
 import { useEffect, useState } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 
@@ -58,32 +61,33 @@ export default function CalendarView({
 
   return (
     <>
-      <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-        <div className="flex items-center">
-          <svg
-            className="w-5 h-5 text-blue-500 mr-2 flex-shrink-0"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fillRule="evenodd"
-              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-              clipRule="evenodd"
-            />
-          </svg>
-          <p className="text-blue-700 text-sm">
-            <span className="font-semibold">Tip:</span> There are more crash
-            course slots in September! Use the right arrow to navigate to the
-            September calendar.
-          </p>
+      {config.calendar.tip && (
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="flex items-center">
+            <svg
+              className="w-5 h-5 text-blue-500 mr-2 flex-shrink-0"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <p className="text-blue-700 text-sm">
+              <span className="font-semibold">{config.calendar.tip.label}:</span>{" "}
+              {config.calendar.tip.body}
+            </p>
+          </div>
         </div>
-      </div>
+      )}
       <FullCalendar
         plugins={[timeGridPlugin, dayGridPlugin]}
         initialView="timeGridWeek"
-        validRange={{ start: START_DATE, end: END_DATE }}
-        firstDay={1}
-        initialDate="2025-09-01"
+        validRange={{ start: config.dateRange.start, end: config.dateRange.end }}
+        firstDay={config.calendar.firstDay}
+        initialDate={config.calendar.initialDate}
         headerToolbar={{
           left: "prev,next today",
           center: "title",
@@ -99,8 +103,8 @@ export default function CalendarView({
         events={events}
         nowIndicator={true}
         height="auto"
-        slotMinTime="09:00:00"
-        slotMaxTime="22:00:00"
+        slotMinTime={config.calendar.slotMinTime}
+        slotMaxTime={config.calendar.slotMaxTime}
         allDaySlot={false}
         displayEventEnd={true}
         eventContent={(arg) => {

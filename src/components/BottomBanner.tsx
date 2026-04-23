@@ -1,17 +1,21 @@
 "use client";
 
+import { getCrashCourseConfig } from "../../crash-courses";
+
+const { bottomBanner } = getCrashCourseConfig();
+
 export default function BottomBanner() {
   return (
     <div className="w-full p-4 bg-[rgb(245,244,236)] rounded flex flex-col items-center justify-center gap-4 text-center max-w-3xl mx-auto">
       <div className="text-sm font-semibold">
-        Ready to lock in for your exams?{" "}
+        {bottomBanner.body}{" "}
         <a
-          href="https://docs.google.com/forms/d/e/1FAIpQLSdc1DdBljxZx1mXH6Ztpxr_zbnI9XJunAKHDeN_GVR1jBuI9Q/viewform?usp=dialog&entry.1157532004=SCHEDULE"
+          href={bottomBanner.ctaHref}
           target="_blank"
           rel="noopener noreferrer"
           className="text-blue-600 underline"
         >
-          Click here to sign up!
+          {bottomBanner.ctaLabel}
         </a>
       </div>
     </div>

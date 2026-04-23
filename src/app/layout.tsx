@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { getCrashCourseConfig } from "../../crash-courses";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -12,9 +13,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const config = getCrashCourseConfig();
+
 export const metadata: Metadata = {
-  title: "Zenith September SS Crash Course Scheduler",
-  description: "Sign up for Zenith Secondary Crash Course now!",
+  title: config.metadata.title,
+  description: config.metadata.description,
 };
 
 export default function RootLayout({

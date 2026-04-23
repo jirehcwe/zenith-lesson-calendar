@@ -1,7 +1,10 @@
 "use client";
 
-import { END_DATE, Session } from "../types";
+import { Session } from "../types";
 import DatePicker from "react-datepicker";
+import { getCrashCourseConfig } from "../../crash-courses";
+
+const config = getCrashCourseConfig();
 
 export default function ListView({
   sessions,
@@ -14,7 +17,7 @@ export default function ListView({
 }) {
   // Normalize session date: "24 May" => "2025-05-24"
   const normalizeDate = (raw: string): string | null => {
-    const parsed = Date.parse(`${raw} 2025`);
+    const parsed = Date.parse(`${raw} ${config.year}`);
     if (isNaN(parsed)) return null;
     const d = new Date(parsed);
     const yyyy = d.getFullYear();
@@ -47,8 +50,8 @@ export default function ListView({
           className="border p-2 rounded"
           dateFormat="yyyy-MM-dd"
           isClearable
-          minDate={new Date("2025-09-06")}
-          maxDate={END_DATE}
+          minDate={new Date(config.calendar.listViewMinDate)}
+          maxDate={new Date(config.dateRange.end)}
         />
       </div>
 
