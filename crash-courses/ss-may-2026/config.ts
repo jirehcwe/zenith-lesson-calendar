@@ -5,13 +5,13 @@ import type { Session } from "@/types";
 const sessions = sessionsRaw as Session[];
 
 const config: CrashCourseConfig = {
-  slug: "ss-sep-2025",
+  slug: "ss-may-2026",
   metadata: {
-    title: "Zenith September SS Crash Course Scheduler",
+    title: "Zenith May SS Crash Course Scheduler",
     description: "Sign up for Zenith Secondary Crash Course now!",
   },
-  dateRange: { start: "2025-09-01", end: "2025-09-14" },
-  year: 2025,
+  dateRange: { start: "2026-05-01", end: "2026-05-31" },
+  year: 2026,
   subjectColors: {
     Mathematics: { backgroundColor: "#FED966", textColor: "#000000" },
     Math: { backgroundColor: "#FED966", textColor: "#000000" },
@@ -48,15 +48,11 @@ const config: CrashCourseConfig = {
   },
   calendar: {
     firstDay: 1,
-    initialDate: "2025-09-01",
+    initialDate: "2026-05-01",
     slotMinTime: "09:00:00",
     slotMaxTime: "22:00:00",
-    listViewMinDate: "2025-09-06",
-    tip: {
-      label: "Tip",
-      body:
-        "There are more crash course slots in September! Use the right arrow to navigate to the September calendar.",
-    },
+    listViewMinDate: "2026-05-01",
+    tip: null,
   },
   registrationFormUrl:
     "https://docs.google.com/forms/d/e/1FAIpQLSdc1DdBljxZx1mXH6Ztpxr_zbnI9XJunAKHDeN_GVR1jBuI9Q/viewform?entry.1157532004=SCHEDULE",

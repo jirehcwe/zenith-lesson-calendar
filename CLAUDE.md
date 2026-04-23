@@ -25,7 +25,7 @@ npm test                                       # (post-consolidation) jest
 npx ts-node scripts/csv_to_sessions2json.ts    # regenerate sessions JSON from CSV
 ```
 
-On crash-course branches, the dev/build server picks up the hardcoded fetch path in `src/app/page.tsx`. After consolidation, pass `NEXT_PUBLIC_CC_SLUG=<slug>` at build time (e.g. `NEXT_PUBLIC_CC_SLUG=ss-sep-2025 npm run build`); the build fails loudly if it's missing or unknown.
+On the legacy `sept-*-cc` branches, the dev/build server picks up the hardcoded fetch path in `src/app/page.tsx`. On the consolidated `crash-courses` branch, pass `NEXT_PUBLIC_CC_SLUG=<slug>` at build time (e.g. `NEXT_PUBLIC_CC_SLUG=ss-may-2026 npm run build`); the resolver in `crash-courses/index.ts` scans disk, validates that `crash-courses/<slug>/config.ts` and `sessions.json` both exist, and fails the build loudly if the slug is missing, unknown, or the matching files aren't on disk. Adding a new crash course = drop a new folder under `crash-courses/` with those two files — no registry edits.
 
 ## Session data
 

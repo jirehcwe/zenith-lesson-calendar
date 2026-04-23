@@ -1,4 +1,4 @@
-import { getCrashCourseConfig } from "..";
+import { getCrashCourseConfig, listAvailableSlugs } from "..";
 
 describe("getCrashCourseConfig", () => {
   const ORIGINAL_SLUG = process.env.NEXT_PUBLIC_CC_SLUG;
@@ -16,24 +16,39 @@ describe("getCrashCourseConfig", () => {
     expect(() => getCrashCourseConfig()).toThrow(/NEXT_PUBLIC_CC_SLUG is not set/);
   });
 
-  it("throws with known slugs listed when given an unknown slug", () => {
+  it("throws with available slugs listed when given a slug with no matching folder", () => {
     process.env.NEXT_PUBLIC_CC_SLUG = "does-not-exist";
-    expect(() => getCrashCourseConfig()).toThrow(/Unknown crash course slug.*does-not-exist/);
-    expect(() => getCrashCourseConfig()).toThrow(/jc-sep-2025/);
-    expect(() => getCrashCourseConfig()).toThrow(/ss-sep-2025/);
+    expect(() => getCrashCourseConfig()).toThrow(
+      /Crash course config not found.*does-not-exist/
+    );
+    expect(() => getCrashCourseConfig()).toThrow(/Available slugs/);
   });
 
-  it("returns the SS config when slug is ss-sep-2025", () => {
-    process.env.NEXT_PUBLIC_CC_SLUG = "ss-sep-2025";
-    const cfg = getCrashCourseConfig();
-    expect(cfg.slug).toBe("ss-sep-2025");
-    expect(cfg.metadata.title).toContain("SS");
+  it("loads the config for each discovered slug", () => {
+    const slugs = listAvailableSlugs();
+    expect(slugs.length).toBeGreaterThan(0);
+    for (const slug of slugs) {
+      process.env.NEXT_PUBLIC_CC_SLUG = slug;
+      const cfg = getCrashCourseConfig();
+      expect(cfg.slug).toBe(slug);
+    }
+  });
+});
+
+describe("listAvailableSlugs", () => {
+  it("returns an alphabetically-sorted, de-duplicated array", () => {
+    const slugs = listAvailableSlugs();
+    const sorted = [...slugs].sort();
+    expect(slugs).toEqual(sorted);
+    expect(new Set(slugs).size).toBe(slugs.length);
   });
 
-  it("returns the JC config when slug is jc-sep-2025", () => {
-    process.env.NEXT_PUBLIC_CC_SLUG = "jc-sep-2025";
-    const cfg = getCrashCourseConfig();
-    expect(cfg.slug).toBe("jc-sep-2025");
-    expect(cfg.metadata.title).toContain("JC");
+  it("only includes folders with both config.ts and sessions.json", () => {
+    // Every discovered slug must be resolvable via getCrashCourseConfig.
+    // This indirectly validates that listAvailableSlugs gates on both files.
+    for (const slug of listAvailableSlugs()) {
+      process.env.NEXT_PUBLIC_CC_SLUG = slug;
+      expect(() => getCrashCourseConfig()).not.toThrow();
+    }
   });
 });
