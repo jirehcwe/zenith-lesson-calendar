@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 
 type FiltersProps = {
@@ -112,6 +112,8 @@ function MultiSelect({
   );
 }
 
+const FILTERS_COLLAPSED_STORAGE_KEY = "crashCourseFiltersCollapsed";
+
 export default function Filters({
   subjects,
   topics,
@@ -119,37 +121,74 @@ export default function Filters({
   filters,
   onFilterChange,
 }: FiltersProps) {
+  const [collapsed, setCollapsed] = useState<boolean>(false);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem(FILTERS_COLLAPSED_STORAGE_KEY);
+    if (stored !== null) setCollapsed(stored === "true");
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (hydrated) {
+      localStorage.setItem(FILTERS_COLLAPSED_STORAGE_KEY, String(collapsed));
+    }
+  }, [collapsed, hydrated]);
+
   const setFilter = (field: keyof FiltersProps["filters"], value: string[]) => {
-    const newFilters = { ...filters, [field]: value };
-    onFilterChange(newFilters);
+    onFilterChange({ ...filters, [field]: value });
   };
 
+  const activeCount =
+    filters.subject.length + filters.topic.length + filters.centre.length;
+
   return (
-    <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-      <MultiSelect
-        label="Subject"
-        selected={filters.subject}
-        options={subjects}
-        onChange={(val) => setFilter("subject", val)}
-      />
-      <MultiSelect
-        label="Topic"
-        selected={filters.topic}
-        options={topics}
-        onChange={(val) => setFilter("topic", val)}
-      />
-      <MultiSelect
-        label="Centre"
-        selected={filters.centre}
-        options={centres}
-        onChange={(val) => setFilter("centre", val)}
-      />
-      {/* <MultiSelect
-        label="Tutor"
-        selected={filters.tutor}
-        options={tutors}
-        onChange={(val) => setFilter("tutor", val)}
-      /> */}
+    <div className="mb-6">
+      <div className="flex items-center justify-between mb-3 border-b pb-2">
+        <button
+          type="button"
+          onClick={() => setCollapsed((c) => !c)}
+          className="flex items-center gap-2 text-sm font-semibold text-gray-700 hover:text-gray-900"
+          aria-expanded={!collapsed}
+        >
+          <span>{collapsed ? "▶" : "▼"}</span>
+          <span>Filters</span>
+          {activeCount > 0 && (
+            <span className="ml-1 inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-blue-100 text-blue-700">
+              {activeCount} active
+            </span>
+          )}
+        </button>
+      </div>
+      {!collapsed && (
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <MultiSelect
+            label="Subject"
+            selected={filters.subject}
+            options={subjects}
+            onChange={(val) => setFilter("subject", val)}
+          />
+          <MultiSelect
+            label="Topic"
+            selected={filters.topic}
+            options={topics}
+            onChange={(val) => setFilter("topic", val)}
+          />
+          <MultiSelect
+            label="Centre"
+            selected={filters.centre}
+            options={centres}
+            onChange={(val) => setFilter("centre", val)}
+          />
+          {/* <MultiSelect
+            label="Tutor"
+            selected={filters.tutor}
+            options={tutors}
+            onChange={(val) => setFilter("tutor", val)}
+          /> */}
+        </div>
+      )}
     </div>
   );
 }
