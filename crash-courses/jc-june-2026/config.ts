@@ -5,27 +5,23 @@ import type { Session } from "@/types";
 const sessions = sessionsRaw as Session[];
 
 const config: CrashCourseConfig = {
-  slug: "jc-may-2026",
+  slug: "jc-june-2026",
   metadata: {
-    title: "Zenith May JC Crash Course Scheduler",
+    title: "Zenith June JC Crash Course Scheduler",
     description: "Sign up for Zenith JC Crash Course now!",
   },
-  // TEMP: pointed at Sep 2026 so the placeholder Sep-dated session data
-  // renders for visual testing. Revert to "2026-05-01" / "2026-05-31"
-  // when real May 2026 roster lands.
-  dateRange: { start: "2026-09-01", end: "2026-09-30" },
+  dateRange: { start: "2026-06-01", end: "2026-06-30" },
   year: 2026,
   subjectColors: {
-    GP: { backgroundColor: "#FBBC03", textColor: "#000000" },
-    "General Paper": { backgroundColor: "#FBBC03", textColor: "#000000" },
-    Biology: { backgroundColor: "#95B0F0", textColor: "#000000" },
-    Physics: { backgroundColor: "#FC696A", textColor: "#000000" },
-    Chemistry: { backgroundColor: "#FFFF02", textColor: "#000000" },
-    Mathematics: { backgroundColor: "#BFFCFF", textColor: "#000000" },
-    Economics: { backgroundColor: "#7BFF85", textColor: "#000000" },
+    "J1 GP": { backgroundColor: "#FBBC03", textColor: "#000000" },
+    "J1 Biology": { backgroundColor: "#95B0F0", textColor: "#000000" },
+    "J1 Physics": { backgroundColor: "#FC696A", textColor: "#000000" },
+    "J1 Chemistry": { backgroundColor: "#FFFF02", textColor: "#000000" },
+    "J1 Math": { backgroundColor: "#BFFCFF", textColor: "#000000" },
+    "J1 Economics": { backgroundColor: "#7BFF85", textColor: "#000000" },
   },
   hero: {
-    title: "May 2026 JC Crash Course",
+    title: "June 2026 JC Crash Course",
     tagline:
       "Flexible scheduling • Expert tutors • Proven results • Lock in your promo rates",
     blurbHeadline: "Plan Your Crash Course Schedule",
@@ -39,21 +35,21 @@ const config: CrashCourseConfig = {
     body: "Ready to lock in for promos?",
     ctaLabel: "Click here to sign up!",
     ctaHref:
-      "https://docs.google.com/forms/d/e/1FAIpQLSesYi1vS9HGIsyW1nTjxXbk07anXX3iZ9yAMXfwON4w0wiqdg/viewform?usp=dialog&entry.1157532004=SCHEDULE",
+      "https://docs.google.com/forms/d/e/1FAIpQLSf0WPe24FSB4ix2R8LgWHdgjns098Nthn1zFYLtR3zIeDCG-A/viewform?usp=dialog&entry.1157532004=SCHEDULE",
   },
   calendar: {
     firstDay: 1,
-    initialDate: "2026-09-01",
+    initialDate: "2026-06-01",
     slotMinTime: "09:00:00",
     slotMaxTime: "22:00:00",
-    listViewMinDate: "2026-09-06",
+    listViewMinDate: "2026-06-01",
     tip: {
       label: "Pro Tip",
       body: "Use the filters to narrow down by subject or centre. Click any class for the prefilled registration link.",
     },
   },
   registrationFormUrl:
-    "https://docs.google.com/forms/d/e/1FAIpQLSesYi1vS9HGIsyW1nTjxXbk07anXX3iZ9yAMXfwON4w0wiqdg/viewform?entry.1157532004=SCHEDULE",
+    "https://docs.google.com/forms/d/e/1FAIpQLSf0WPe24FSB4ix2R8LgWHdgjns098Nthn1zFYLtR3zIeDCG-A/viewform?entry.1157532004=SCHEDULE",
   campaignField: "entry.1157532004",
   sessions,
 };

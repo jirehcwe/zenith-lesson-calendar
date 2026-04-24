@@ -1,0 +1,44 @@
+{
+  "durationHours": 2,
+  "prefillFields": {
+    "S1 English": "1016736042",
+    "S2 English": "822255076",
+    "S3 English": "136322790",
+    "S4/5 English": "1188715475",
+
+    "S1 Math": "1165110009",
+    "S2 Math": "1137033822",
+    "S3 E Math": "1542437949",
+    "S3 A Math": "211505445",
+    "S4/5 E Math": "2092540930",
+    "S4/5 A Math": "84713578",
+
+    "S1 Science": "862261665",
+    "S2 Science": "1745400898",
+
+    "S3 Pure Physics": "1411978775",
+    "S3 Combined Physics": "1411978775",
+    "S4/5 Pure Physics": "2067436543",
+    "S4/5 Combined Physics": "2067436543",
+
+    "S3 Combined Chemistry": "530119122",
+    "S4/5 Pure Chemistry": "600100063",
+    "S4/5 Combined Chemistry": "600100063",
+
+    "S4/5 Pure Biology": "737212271",
+    "S4/5 Combined Biology": "737212271",
+
+    "S1 IP English": "810440307",
+    "S2 IP English": "260829673",
+    "S3 IP English": "1249604192",
+    "S4 IP English": "1091300344",
+
+    "S1 IP Math": "857742220",
+    "S2 IP Math": "990975670",
+    "S3 IP Math": "1473865721",
+    "S4 IP Math": "376990052",
+
+    "S3 IP Chemistry": "1815277042",
+    "S4 IP Chemistry": "1316559099"
+  }
+}

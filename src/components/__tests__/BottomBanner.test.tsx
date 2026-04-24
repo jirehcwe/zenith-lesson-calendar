@@ -3,7 +3,7 @@ import React from "react";
 
 describe("BottomBanner", () => {
   it("renders CTA label and href from the resolved config", () => {
-    process.env.NEXT_PUBLIC_CC_SLUG = "ss-may-2026";
+    process.env.NEXT_PUBLIC_CC_SLUG = "ss-june-2026";
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let BottomBanner: React.ComponentType<any>;
     jest.isolateModules(() => {

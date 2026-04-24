@@ -1,0 +1,11 @@
+{
+  "durationHours": 3,
+  "prefillFields": {
+    "J1 Biology": "737212271",
+    "J1 Chemistry": "600100063",
+    "J1 Economics": "1188715475",
+    "J1 GP": "84713578",
+    "J1 Math": "2092540930",
+    "J1 Physics": "2067436543"
+  }
+}

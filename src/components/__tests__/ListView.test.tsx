@@ -10,7 +10,7 @@
 // Mock must be before any imports that transitively load the component.
 jest.mock("../../../crash-courses", () => ({
   getCrashCourseConfig: () => ({
-    slug: "ss-may-2026",
+    slug: "ss-june-2026",
     year: 2026,
     dateRange: { start: "2026-05-01", end: "2026-05-31" },
     calendar: { listViewMinDate: "2026-05-01" },

@@ -29,7 +29,7 @@ jest.mock("@fullcalendar/scrollgrid", () => ({ __esModule: true, default: {} }))
 // Mutable mock config — tests reassign fields on this object before
 // render() and the component reads the current value at render time.
 const baseMockConfig: CrashCourseConfig = {
-  slug: "ss-may-2026",
+  slug: "ss-june-2026",
   metadata: { title: "Mock SS", description: "mock" },
   dateRange: { start: "2026-05-01", end: "2026-05-31" },
   year: 2026,

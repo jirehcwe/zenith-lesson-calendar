@@ -5,12 +5,9 @@ const path = require("path");
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const { parse } = require("csv-parse/sync");
 
-// Helper to add hours to a time string like '10:00AM'
 function addHours(time: string, hours: number): string {
   const [hourMin, ampm] = time.split(" ");
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [hourStr, minuteStr, secondStr] = hourMin.split(":");
+  const [hourStr, minuteStr] = hourMin.split(":");
   let hour = Number(hourStr);
   const minute = Number(minuteStr);
   if (ampm.toUpperCase() === "PM" && hour !== 12) hour += 12;
@@ -27,7 +24,7 @@ const slug = process.argv[2];
 if (!slug) {
   console.error(
     "Usage: npx ts-node scripts/csv_to_sessions2json.ts <slug>\n" +
-      "Example: npx ts-node scripts/csv_to_sessions2json.ts ss-may-2026"
+      "Example: npx ts-node scripts/csv_to_sessions2json.ts ss-june-2026"
   );
   process.exit(1);
 }
@@ -39,181 +36,101 @@ if (!fs.existsSync(slugDir)) {
 }
 
 const csvPath = path.join(slugDir, "sessions.csv");
+const mappingPath = path.join(slugDir, "form-mapping.json");
 const outPath = path.join(slugDir, "sessions.json");
 
 if (!fs.existsSync(csvPath)) {
   console.error(`Input CSV not found: crash-courses/${slug}/sessions.csv`);
   process.exit(1);
 }
+if (!fs.existsSync(mappingPath)) {
+  console.error(
+    `Form mapping not found: crash-courses/${slug}/form-mapping.json\n` +
+      `Expected shape: { "durationHours": number, "prefillFields": { [displaySubject]: entryId } }`
+  );
+  process.exit(1);
+}
+
+type FormMapping = {
+  durationHours: number;
+  prefillFields: Record<string, string>;
+};
+
+const mapping: FormMapping = JSON.parse(fs.readFileSync(mappingPath, "utf8"));
+const { durationHours, prefillFields } = mapping;
+
+if (typeof durationHours !== "number" || !Number.isFinite(durationHours)) {
+  console.error(
+    `Invalid durationHours in crash-courses/${slug}/form-mapping.json (expected number).`
+  );
+  process.exit(1);
+}
+if (!prefillFields || typeof prefillFields !== "object") {
+  console.error(
+    `Invalid prefillFields in crash-courses/${slug}/form-mapping.json (expected { [displaySubject]: entryId }).`
+  );
+  process.exit(1);
+}
+
+function lookupPrefillField(displaySubject: string): string {
+  const field = prefillFields[displaySubject];
+  if (field === undefined) {
+    throw new Error(
+      `No form entry for displaySubject "${displaySubject}" in crash-courses/${slug}/form-mapping.json. ` +
+        `Add it under "prefillFields".`
+    );
+  }
+  return field;
+}
 
 type CsvRow = Record<string, string>;
 
 const csvContent = fs.readFileSync(csvPath, "utf8");
 const records = parse(csvContent, {
-  columns: true,
+  // Trim header names — the SS source sheet used to export with trailing
+  // whitespace in column names, which would break row[...] lookups.
+  columns: (headers: string[]) => headers.map((h) => h.trim()),
   skip_empty_lines: true,
+  relax_column_count: true,
+  trim: true,
 }) as CsvRow[];
 
-const result = records.map((row: CsvRow) => {
-  // Map CSV columns to JSON keys
-  let prefillField = "";
-  switch (row["Subject"]) {
-    case "Sec - LS Math":
-      switch (row["Level"]) {
-        case "S1":
-          prefillField = "1165110009";
-          break;
-        case "S2":
-          prefillField = "1137033822";
-          break;
-        default:
-          throw new Error(`Unknown level: ${row["Level"]}`);
-      }
-      break;
-    case "Sec - AM":
-      switch (row["Level"]) {
-        case "S3":
-          prefillField = "211505445";
-          break;
-        default:
-          throw new Error(`Unknown level: ${row["Level"]}`);
-      }
-      break;
-    case "Sec - EM":
-      switch (row["Level"]) {
-        case "S3":
-          prefillField = "1542437949";
-          break;
-        default:
-          throw new Error(`Unknown level: ${row["Level"]}`);
-      }
-      prefillField = "";
-      break;
-    case "Sec - Eng":
-      switch (row["Level"]) {
-        case "S1":
-          prefillField = "1016736042";
-          break;
-        case "S2":
-          prefillField = "822255076";
-          break;
-        case "S3":
-          prefillField = "136322790";
-          break;
-        default:
-          throw new Error(`Unknown level: ${row["Level"]}`);
-      }
-      break;
-    case "Sec - LS Science":
-      switch (row["Level"]) {
-        case "S1":
-          prefillField = "862261665";
-          break;
-        default:
-          throw new Error(`Unknown level: ${row["Level"]}`);
-      }
-      break;
-    case "Sec - P Chem":
-    case "Sec - C Chem":
-      switch (row["Level"]) {
-        case "S3":
-          prefillField = "530119122";
-          break;
-        default:
-          throw new Error(`Unknown level: ${row["Level"]}`);
-      }
-      break;
-    case "Sec - P Phy":
-    case "Sec - C Phy":
-      switch (row["Level"]) {
-        case "S3":
-          prefillField = "1411978775";
-          break;
-        default:
-          throw new Error(`Unknown level: ${row["Level"]}`);
-      }
-      break;
-    case "Sec - P Bio":
-      switch (row["Level"]) {
-        case "S3":
-          prefillField = "672830523";
-          break;
-        default:
-          throw new Error(`Unknown level: ${row["Level"]}`);
-      }
-      break;
-    case "Sec (IP) - Eng":
-      switch (row["Level"]) {
-        case "S1":
-          prefillField = "810440307";
-          break;
-        case "S2":
-          prefillField = "260829673";
-          break;
-        case "S3":
-          prefillField = "1249604192";
-          break;
-        case "S4":
-          prefillField = "1091300344";
-          break;
-        default:
-          throw new Error(`Unknown level: ${row["Level"]}`);
-      }
-      break;
-    case "Sec (IP) - Math":
-      switch (row["Level"]) {
-        case "S1":
-          prefillField = "857742220";
-          break;
-        case "S2":
-          prefillField = "990975670";
-          break;
-        case "S3":
-          prefillField = "1473865721";
-          break;
-        case "S4":
-          prefillField = "376990052";
-          break;
-        default:
-          throw new Error(`Unknown level: ${row["Level"]}`);
-      }
-      break;
-    case "Sec (IP) - LS Science":
-      switch (row["Level"]) {
-        case "S2":
-          prefillField = "39674934";
-          break;
-        default:
-          throw new Error(`Unknown level: ${row["Level"]}`);
-      }
-      break;
-    default:
-      throw new Error(`Unknown subject: ${row["Subject"]}`);
-  }
+// Source sheets contain template/summary rows with no Subject(Display) or
+// with "#N/A" placeholders — skip those silently. Any row that HAS a
+// display subject but isn't in the mapping will still throw loudly below.
+const validRows = records.filter((row) => {
+  const d = row["Subject(Display)"];
+  return d && d !== "#N/A";
+});
+const skipped = records.length - validRows.length;
 
-  console.log(row["Form Option to Display"]);
+const result = validRows.map((row: CsvRow) => {
+  const displaySubject = row["Subject(Display)"];
+  const prefillField = lookupPrefillField(displaySubject);
+  const startTime = row["Start Time"]?.replace(/:(\d{2})\s/, " ");
 
-  const obj = {
+  return {
     purpose: row["Purpose"],
     subject: row["Subject"],
     level: row["Level"],
     topic: row["Topic"],
     tutor: row["Tutor"],
     centre: row["Centre"],
-    classroom: row["Classroom"],
+    // SS sheets historically misspelled as "Classeroom"; fall back just in case.
+    classroom: row["Classroom"] ?? row["Classeroom"],
     capacity: row["Capacity"],
-    date: row["Date (text)"]?.replace(/\s*\(.*\)/, ""), // Remove day-of-week in brackets
-    startTime: row["Start Time"]?.replace(/:(\d{2})\s/, " "),
-    endTime: addHours(row["Start Time"]?.replace(/:(\d{2})\s/, " "), 2),
+    date: row["Date (text)"]?.replace(/\s*\(.*\)/, ""),
+    startTime,
+    endTime: addHours(startTime, durationHours),
     prefill: row["Form Option to Display"],
     prefillField,
-    displaySubject: row["Subject(Display)"],
+    displaySubject,
   };
-  return obj;
 });
 
 fs.writeFileSync(outPath, JSON.stringify(result, null, 2));
 
 console.log(
-  `crash-courses/${slug}/sessions.json generated with ${result.length} sessions.`
+  `crash-courses/${slug}/sessions.json generated with ${result.length} sessions ` +
+    `(duration ${durationHours}h, skipped ${skipped} blank/placeholder rows).`
 );

@@ -21,7 +21,7 @@ jest.mock("next/image", () => ({
 
 jest.mock("../../../crash-courses", () => ({
   getCrashCourseConfig: () => ({
-    slug: "ss-may-2026",
+    slug: "ss-june-2026",
     hero: {
       title: "May 2026 SS Crash Course",
       tagline: "Flexible scheduling • Expert tutors • Proven results",
