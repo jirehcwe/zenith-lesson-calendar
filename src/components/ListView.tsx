@@ -6,6 +6,8 @@ import { getCrashCourseConfig } from "../../crash-courses";
 import { buildRegistrationUrl } from "@/utils/registration";
 
 const config = getCrashCourseConfig();
+const labelFor = (code: string): string =>
+  config.subjectLabels?.[code] ?? code;
 
 export default function ListView({
   sessions,
@@ -63,7 +65,7 @@ export default function ListView({
               s.prefill ? "" : "opacity-60"
             }`}
           >
-            <div className="font-semibold">{s.subject}</div>
+            <div className="font-semibold">{labelFor(s.subject)}</div>
             <div className="text-sm opacity-80">Topic: {s.topic}</div>
             <div className="text-sm opacity-80">Centre: {s.centre}</div>
             <div className="text-sm opacity-80">Date: {s.date}</div>

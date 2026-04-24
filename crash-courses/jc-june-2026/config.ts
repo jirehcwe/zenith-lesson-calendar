@@ -20,6 +20,14 @@ const config: CrashCourseConfig = {
     "J1 Math": { backgroundColor: "#BFFCFF", textColor: "#000000" },
     "J1 Economics": { backgroundColor: "#7BFF85", textColor: "#000000" },
   },
+  subjectLabels: {
+    BIO: "Biology",
+    CHEM: "Chemistry",
+    ECON: "Economics",
+    GP: "General Paper",
+    MATH: "Math",
+    PHYS: "Physics",
+  },
   hero: {
     title: "June 2026 JC Crash Course",
     tagline:

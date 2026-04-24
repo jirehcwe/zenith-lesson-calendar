@@ -34,6 +34,10 @@ export type CrashCourseConfig = {
   dateRange: { start: string; end: string };
   year: number;
   subjectColors: Record<string, SubjectColor>;
+  // Maps raw CSV `subject` codes (e.g. "SMath(AM)") to the labels shown
+  // to students in filters, list cards, and calendar event titles. Codes
+  // without an entry fall back to the raw code at render time.
+  subjectLabels?: Record<string, string>;
   hero: HeroContent;
   bottomBanner: BannerContent;
   calendar: CalendarUIConfig;

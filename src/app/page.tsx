@@ -11,6 +11,8 @@ import ViewSelector from "@/components/ViewSelector";
 import { getCrashCourseConfig } from "../../crash-courses";
 
 const config = getCrashCourseConfig();
+const labelFor = (code: string): string =>
+  config.subjectLabels?.[code] ?? code;
 
 function hexToHsv(hex: string) {
   hex = hex.replace("#", "");
@@ -72,7 +74,7 @@ export default function Page() {
       (s) =>
         (filters.subject.length === 0 || filters.subject.includes(s.subject)) &&
         (filters.topic.length === 0 ||
-          filters.topic.includes(`[${s.subject}] ${s.topic}`)) &&
+          filters.topic.includes(`[${labelFor(s.subject)}] ${s.topic}`)) &&
         (filters.centre.length === 0 || filters.centre.includes(s.centre))
     );
 
@@ -99,7 +101,7 @@ export default function Page() {
       const hsv = hexToHsv(color.backgroundColor);
       const darkerHex = hsvToHex({ h: hsv.h, s: hsv.s, v: hsv.v * 0.8 });
       return {
-        title: s.subject,
+        title: labelFor(s.subject),
         start: new Date(`${s.date} ${config.year} ${s.startTime}`),
         end: new Date(`${s.date} ${config.year} ${s.endTime}`),
         extendedProps: { ...s },
@@ -114,7 +116,9 @@ export default function Page() {
       filters.subject.length === 0
         ? sessions
         : sessions.filter((s) => filters.subject.includes(s.subject));
-    const combined = filtered.map((s) => `[${s.subject}] ${s.topic}`);
+    const combined = filtered.map(
+      (s) => `[${labelFor(s.subject)}] ${s.topic}`
+    );
     return Array.from(new Set(combined)).sort((a, b) => a.localeCompare(b));
   }, [sessions, filters.subject]);
 
@@ -131,6 +135,7 @@ export default function Page() {
           tutors={[...new Set(sessions.map((s) => s.tutor))]}
           filters={filters}
           onFilterChange={setFilters}
+          subjectLabel={labelFor}
         />
 
         <div className="modern-card p-2 sm:p-6">

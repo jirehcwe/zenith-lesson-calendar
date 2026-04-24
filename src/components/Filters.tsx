@@ -15,6 +15,9 @@ type FiltersProps = {
     tutor: string[];
   };
   onFilterChange: (filters: FiltersProps["filters"]) => void;
+  // Transform applied to subject option values for display in the UI.
+  // Filter state keeps the raw value; only the rendered label differs.
+  subjectLabel?: (code: string) => string;
 };
 
 function MultiSelect({
@@ -22,12 +25,15 @@ function MultiSelect({
   selected,
   options,
   onChange,
+  optionLabel,
 }: {
   label: string;
   selected: string[];
   options: string[];
   onChange: (newSelected: string[]) => void;
+  optionLabel?: (value: string) => string;
 }) {
+  const displayOf = (v: string) => optionLabel?.(v) ?? v;
   const toggleOption = (option: string) => {
     if (selected.includes(option)) {
       onChange(selected.filter((o) => o !== option));
@@ -47,7 +53,9 @@ function MultiSelect({
         <div className="relative mt-1">
           <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white border border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 transition-all p-2 text-left flex items-center justify-between">
             <span className="truncate">
-              {selected.length > 0 ? selected.join(", ") : `Select ${label}`}
+              {selected.length > 0
+                ? selected.map(displayOf).join(", ")
+                : `Select ${label}`}
             </span>
             {selected.length > 0 && (
               <button
@@ -99,7 +107,7 @@ function MultiSelect({
                         readOnly
                         className="mr-2"
                       />
-                      {option}
+                      {displayOf(option)}
                     </li>
                   )}
                 </Listbox.Option>
@@ -120,6 +128,7 @@ export default function Filters({
   centres,
   filters,
   onFilterChange,
+  subjectLabel,
 }: FiltersProps) {
   const [collapsed, setCollapsed] = useState<boolean>(false);
   const [hydrated, setHydrated] = useState(false);
@@ -168,6 +177,7 @@ export default function Filters({
             selected={filters.subject}
             options={subjects}
             onChange={(val) => setFilter("subject", val)}
+            optionLabel={subjectLabel}
           />
           <MultiSelect
             label="Topic"
