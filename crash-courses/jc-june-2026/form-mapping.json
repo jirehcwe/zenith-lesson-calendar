@@ -1,5 +1,13 @@
 {
   "durationHours": 3,
+  "subjectCodes": {
+    "J1 Biology": "BIO",
+    "J1 Chemistry": "CHEM",
+    "J1 Economics": "ECON",
+    "J1 GP": "GP",
+    "J1 Math": "MATH",
+    "J1 Physics": "PHYS"
+  },
   "prefillFields": {
     "J1 Biology": "737212271",
     "J1 Chemistry": "600100063",

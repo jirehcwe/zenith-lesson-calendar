@@ -1,5 +1,60 @@
 {
   "durationHours": 2,
+  "subjectCodes": {
+    "S1 English": "LSEng",
+    "S2 English": "LSEng",
+    "S3 English": "SEng",
+    "S4/5 English": "SEng",
+
+    "S1 IP English": "LSEng(IP)",
+    "S2 IP English": "LSEng(IP)",
+    "S3 IP English": "SEng(IP)",
+    "S4 IP English": "SEng(IP)",
+
+    "S1 Math": "LSMath",
+    "S2 Math": "LSMath",
+    "S1 IP Math": "LSMath(IP)",
+    "S2 IP Math": "LSMath(IP)",
+    "S3 IP Math": "SMath(IP)",
+    "S4 IP Math": "SMath(IP)",
+
+    "S3 A Math": "SMath(AM)",
+    "S4/5 A Math": "SMath(AM)",
+    "S3 E Math": "SMath(EM)",
+    "S4/5 E Math": "SMath(EM)",
+
+    "S1 Science": "LSScience",
+    "S2 Science": "LSScience",
+
+    "S3 Pure Physics": "SPhy(Pure)",
+    "S4/5 Pure Physics": "SPhy(Pure)",
+    "S3 Combined Physics": "SPhy(Comb)",
+    "S4/5 Combined Physics": "SPhy(Comb)",
+
+    "S3 Pure Chemistry": "SChem(Pure)",
+    "S4/5 Pure Chemistry": "SChem(Pure)",
+    "S3 Combined Chemistry": "SChem(Comb)",
+    "S4/5 Combined Chemistry": "SChem(Comb)",
+    "S3 IP Chemistry": "SChem(IP)",
+    "S4 IP Chemistry": "SChem(IP)",
+
+    "S3 Pure Biology": "SBio(Pure)",
+    "S4/5 Pure Biology": "SBio(Pure)",
+    "S4/5 Combined Biology": "SBio(Comb)",
+
+    "S3 Pure History": "SHis(Pure)",
+    "S4 Pure History": "SHis(Pure)",
+    "S3 Combined History": "SHis(Comb)",
+    "S4 Combined History": "SHis(Comb)",
+
+    "S3 Pure Literature": "SLit(Pure)",
+    "S4 Pure Literature": "SLit(Pure)",
+    "S3 Combined Literature": "SLit(Comb)",
+    "S4 Combined Literature": "SLit(Comb)",
+
+    "S3 Social Studies": "SSoc",
+    "S4 Social Studies": "SSoc"
+  },
   "prefillFields": {
     "S1 English": "1016736042",
     "S2 English": "822255076",

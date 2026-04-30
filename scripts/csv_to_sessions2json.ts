@@ -46,22 +46,29 @@ if (!fs.existsSync(csvPath)) {
 if (!fs.existsSync(mappingPath)) {
   console.error(
     `Form mapping not found: crash-courses/${slug}/form-mapping.json\n` +
-      `Expected shape: { "durationHours": number, "prefillFields": { [displaySubject]: entryId } }`
+      `Expected shape: { "durationHours": number, "subjectCodes": { [displaySubject]: shortCode }, "prefillFields": { [displaySubject]: entryId } }`
   );
   process.exit(1);
 }
 
 type FormMapping = {
   durationHours: number;
+  subjectCodes: Record<string, string>;
   prefillFields: Record<string, string>;
 };
 
 const mapping: FormMapping = JSON.parse(fs.readFileSync(mappingPath, "utf8"));
-const { durationHours, prefillFields } = mapping;
+const { durationHours, subjectCodes, prefillFields } = mapping;
 
 if (typeof durationHours !== "number" || !Number.isFinite(durationHours)) {
   console.error(
     `Invalid durationHours in crash-courses/${slug}/form-mapping.json (expected number).`
+  );
+  process.exit(1);
+}
+if (!subjectCodes || typeof subjectCodes !== "object") {
+  console.error(
+    `Invalid subjectCodes in crash-courses/${slug}/form-mapping.json (expected { [displaySubject]: shortCode }).`
   );
   process.exit(1);
 }
@@ -83,17 +90,27 @@ function lookupPrefillField(displaySubject: string): string {
   return field;
 }
 
+function lookupSubjectCode(displaySubject: string): string {
+  const code = subjectCodes[displaySubject];
+  if (code === undefined) {
+    throw new Error(
+      `No subject code for displaySubject "${displaySubject}" in crash-courses/${slug}/form-mapping.json. ` +
+        `Add it under "subjectCodes".`
+    );
+  }
+  return code;
+}
+
 type CsvRow = Record<string, string>;
 
 const csvContent = fs.readFileSync(csvPath, "utf8");
 const records = parse(csvContent, {
-  // Source sheets repeat several header names (Subject, Tutor, Centre, Level)
-  // because the helper columns at AF–AM duplicate them. csv-parse's default
-  // collision behaviour is "last-wins", which would mask the always-populated
-  // first-appearance columns (D/E/G) behind the formula-driven dup columns
-  // (AH/AL/AK) that ops doesn't reliably drag down.
-  // Suffix duplicates so we can address both: e.g. row["Subject"] = col D,
-  // row["Subject__2"] = col AH. Headers are trimmed for whitespace too.
+  // Source sheets repeat header names (Subject, Tutor, Centre, Level) at the
+  // helper columns AF–AM. csv-parse's default collision behaviour is
+  // "last-wins", which would mask the always-populated first-appearance
+  // columns (D/E/G) behind the formula-driven dup columns ops doesn't
+  // reliably drag down. Suffix duplicates so the first appearance stays at
+  // the unsuffixed key — that's the one we always read.
   columns: (headers: string[]) => {
     const seen = new Map<string, number>();
     return headers.map((h) => {
@@ -117,32 +134,15 @@ const validRows = records.filter((row) => {
 });
 const skipped = records.length - validRows.length;
 
-// Tutor + Centre come from D/E/G (first appearance, always populated by ops).
-// Subject is the asymmetric one: col D holds descriptive groupings ("JC -
-// Econs", "SS - P Lit") while col AH holds the short codes the rest of the
-// pipeline indexes by ("ECON", "SLit(Pure)"). Prefer the dup column; when
-// it's empty (formula not pulled down), reverse-lookup the short code from
-// other rows in the same CSV that share displaySubject.
-const dsToSubject: Record<string, string> = {};
-for (const r of validRows) {
-  if (r["Subject__2"] && !dsToSubject[r["Subject(Display)"]]) {
-    dsToSubject[r["Subject(Display)"]] = r["Subject__2"];
-  }
-}
-let subjectFallbacks = 0;
-const subjectMisses = new Set<string>();
-
+// Subject (short code) is derived from displaySubject via subjectCodes in
+// form-mapping.json — never from the AH dup column, since ops doesn't always
+// drag the helper-column formulas down to new rows. Tutor + Centre still
+// come from D/E/G (first appearance), which ops fills manually.
 const result = validRows.map((row: CsvRow) => {
   const displaySubject = row["Subject(Display)"];
   const prefillField = lookupPrefillField(displaySubject);
+  const subject = lookupSubjectCode(displaySubject);
   const startTime = row["Start Time"]?.replace(/:(\d{2})\s/, " ");
-
-  let subject = row["Subject__2"];
-  if (!subject) {
-    subject = dsToSubject[displaySubject] ?? "";
-    if (subject) subjectFallbacks++;
-    else subjectMisses.add(displaySubject);
-  }
 
   return {
     purpose: row["Purpose"],
@@ -162,18 +162,6 @@ const result = validRows.map((row: CsvRow) => {
     displaySubject,
   };
 });
-
-if (subjectFallbacks) {
-  console.log(`Subject reverse-look-up filled ${subjectFallbacks} rows.`);
-}
-if (subjectMisses.size) {
-  console.warn(
-    `WARN: no subject code resolvable for ${subjectMisses.size} displaySubject(s) ` +
-      `(no other row in this CSV has the AH dup column populated): ` +
-      [...subjectMisses].join(", ") +
-      ` — those sessions will have subject="" in the output.`
-  );
-}
 
 fs.writeFileSync(outPath, JSON.stringify(result, null, 2));
 
