@@ -87,9 +87,22 @@ type CsvRow = Record<string, string>;
 
 const csvContent = fs.readFileSync(csvPath, "utf8");
 const records = parse(csvContent, {
-  // Trim header names — the SS source sheet used to export with trailing
-  // whitespace in column names, which would break row[...] lookups.
-  columns: (headers: string[]) => headers.map((h) => h.trim()),
+  // Source sheets repeat several header names (Subject, Tutor, Centre, Level)
+  // because the helper columns at AF–AM duplicate them. csv-parse's default
+  // collision behaviour is "last-wins", which would mask the always-populated
+  // first-appearance columns (D/E/G) behind the formula-driven dup columns
+  // (AH/AL/AK) that ops doesn't reliably drag down.
+  // Suffix duplicates so we can address both: e.g. row["Subject"] = col D,
+  // row["Subject__2"] = col AH. Headers are trimmed for whitespace too.
+  columns: (headers: string[]) => {
+    const seen = new Map<string, number>();
+    return headers.map((h) => {
+      const t = h.trim();
+      const n = (seen.get(t) ?? 0) + 1;
+      seen.set(t, n);
+      return n === 1 ? t : `${t}__${n}`;
+    });
+  },
   skip_empty_lines: true,
   relax_column_count: true,
   trim: true,
@@ -104,31 +117,19 @@ const validRows = records.filter((row) => {
 });
 const skipped = records.length - validRows.length;
 
-// Source sheets repeat the header names "Subject", "Tutor", "Centre" in two
-// places (cols D/E/G and dup cols AH/AK/AL — the second set hosts pulled-down
-// formulas that compute short codes/lookups). csv-parse keeps the LAST
-// occurrence on collisions, so row["Subject"|"Tutor"|"Centre"] reads the
-// dup columns. When ops forgets to drag those formulas down to the bottom,
-// the dup columns are blank for trailing rows. Two fallbacks below:
-//   1. Subject — reverse-lookup from other rows with the same displaySubject.
-//   2. Tutor / Centre — pull from column A "Schedule Codes" which packs
-//      "Purpose<>Level<>SubjectGroup<>Tutor<>Day<>Centre<>Classroom<>..."
-//      and is always populated by ops as the source-of-truth row identifier.
+// Tutor + Centre come from D/E/G (first appearance, always populated by ops).
+// Subject is the asymmetric one: col D holds descriptive groupings ("JC -
+// Econs", "SS - P Lit") while col AH holds the short codes the rest of the
+// pipeline indexes by ("ECON", "SLit(Pure)"). Prefer the dup column; when
+// it's empty (formula not pulled down), reverse-lookup the short code from
+// other rows in the same CSV that share displaySubject.
 const dsToSubject: Record<string, string> = {};
 for (const r of validRows) {
-  if (r["Subject"] && !dsToSubject[r["Subject(Display)"]]) {
-    dsToSubject[r["Subject(Display)"]] = r["Subject"];
+  if (r["Subject__2"] && !dsToSubject[r["Subject(Display)"]]) {
+    dsToSubject[r["Subject(Display)"]] = r["Subject__2"];
   }
 }
-function fromScheduleCode(row: CsvRow, idx: number): string {
-  const code = row["Schedule Codes"];
-  if (!code) return "";
-  const parts = code.split("<>");
-  return parts[idx]?.trim() ?? "";
-}
 let subjectFallbacks = 0;
-let tutorFallbacks = 0;
-let centreFallbacks = 0;
 const subjectMisses = new Set<string>();
 
 const result = validRows.map((row: CsvRow) => {
@@ -136,23 +137,11 @@ const result = validRows.map((row: CsvRow) => {
   const prefillField = lookupPrefillField(displaySubject);
   const startTime = row["Start Time"]?.replace(/:(\d{2})\s/, " ");
 
-  let subject = row["Subject"];
+  let subject = row["Subject__2"];
   if (!subject) {
     subject = dsToSubject[displaySubject] ?? "";
     if (subject) subjectFallbacks++;
     else subjectMisses.add(displaySubject);
-  }
-
-  let tutor = row["Tutor"];
-  if (!tutor) {
-    tutor = fromScheduleCode(row, 3);
-    if (tutor) tutorFallbacks++;
-  }
-
-  let centre = row["Centre"];
-  if (!centre) {
-    centre = fromScheduleCode(row, 5);
-    if (centre) centreFallbacks++;
   }
 
   return {
@@ -160,8 +149,8 @@ const result = validRows.map((row: CsvRow) => {
     subject,
     level: row["Level"],
     topic: row["Topic"],
-    tutor,
-    centre,
+    tutor: row["Tutor"],
+    centre: row["Centre"],
     // SS sheets historically misspelled as "Classeroom"; fall back just in case.
     classroom: row["Classroom"] ?? row["Classeroom"],
     capacity: row["Capacity"],
@@ -174,15 +163,13 @@ const result = validRows.map((row: CsvRow) => {
   };
 });
 
-if (subjectFallbacks || tutorFallbacks || centreFallbacks) {
-  console.log(
-    `Filled empty dup-column fields: subject=${subjectFallbacks}, tutor=${tutorFallbacks}, centre=${centreFallbacks}.`
-  );
+if (subjectFallbacks) {
+  console.log(`Subject reverse-look-up filled ${subjectFallbacks} rows.`);
 }
 if (subjectMisses.size) {
   console.warn(
     `WARN: no subject code resolvable for ${subjectMisses.size} displaySubject(s) ` +
-      `(no other row had Subject populated and column A was missing/short): ` +
+      `(no other row in this CSV has the AH dup column populated): ` +
       [...subjectMisses].join(", ") +
       ` — those sessions will have subject="" in the output.`
   );
