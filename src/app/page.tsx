@@ -129,10 +129,16 @@ export default function Page() {
         <ViewSelector currentView={viewMode} onViewChange={setViewMode} />
 
         <Filters
-          subjects={[...new Set(sessions.map((s) => s.subject))]}
+          subjects={[...new Set(sessions.map((s) => s.subject))].sort(
+            (a, b) => labelFor(a).localeCompare(labelFor(b))
+          )}
           topics={topicOptions}
-          centres={[...new Set(sessions.map((s) => s.centre))]}
-          tutors={[...new Set(sessions.map((s) => s.tutor))]}
+          centres={[...new Set(sessions.map((s) => s.centre))].sort((a, b) =>
+            a.localeCompare(b)
+          )}
+          tutors={[...new Set(sessions.map((s) => s.tutor))].sort((a, b) =>
+            a.localeCompare(b)
+          )}
           filters={filters}
           onFilterChange={setFilters}
           subjectLabel={labelFor}
