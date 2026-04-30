@@ -45,4 +45,9 @@ export type CrashCourseConfig = {
   campaignField: string;
   promocodeField?: string;
   sessions: Session[];
+  // Set to true when a slug folder exists ahead of the source data. Lets the
+  // config ship through type-check + bundle while waiting for the schedule
+  // CSV; the config-integrity "non-empty sessions" assertion is skipped, and
+  // build/deploy of this slug should be gated externally until data lands.
+  preLaunch?: boolean;
 };

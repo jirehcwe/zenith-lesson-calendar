@@ -31,8 +31,9 @@ describe("CrashCourseConfig integrity", () => {
   );
 
   it.each(configs.map((c) => [c.slug, c] as const))(
-    "%s: sessions is non-empty",
+    "%s: sessions is non-empty (unless preLaunch)",
     (_slug, cfg) => {
+      if (cfg.preLaunch) return;
       expect(cfg.sessions.length).toBeGreaterThan(0);
     }
   );

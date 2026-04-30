@@ -1,0 +1,19 @@
+{
+  "durationHours": 2,
+  "subjectCodes": {
+    "P5 English": "PEng",
+    "P6 English": "PEng",
+    "P5 Math": "PMath",
+    "P6 Math": "PMath",
+    "P5 Science": "PSci",
+    "P6 Science": "PSci"
+  },
+  "prefillFields": {
+    "P5 English": "822255076",
+    "P5 Math": "1137033822",
+    "P5 Science": "1745400898",
+    "P6 English": "2096830254",
+    "P6 Math": "1480143045",
+    "P6 Science": "1945975074"
+  }
+}

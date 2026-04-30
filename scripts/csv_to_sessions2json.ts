@@ -125,12 +125,19 @@ const records = parse(csvContent, {
   trim: true,
 }) as CsvRow[];
 
-// Source sheets contain template/summary rows with no Subject(Display) or
-// with "#N/A" placeholders — skip those silently. Any row that HAS a
-// display subject but isn't in the mapping will still throw loudly below.
+// Source sheets contain template/summary/waitlist rows that should not be
+// treated as real sessions. Rules to skip a row:
+//   - Subject(Display) empty or "#N/A" (JC/SS template rows).
+//   - Schedule Codes (col A — header is "Schedule Codes" in JC/SS,
+//     "Scheduling code" in Pri) empty (Pri waitlist placeholders, which DO
+//     have Subject(Display) populated but no real schedule).
+// Any surviving row whose displaySubject isn't in the mapping still throws.
 const validRows = records.filter((row) => {
   const d = row["Subject(Display)"];
-  return d && d !== "#N/A";
+  if (!d || d === "#N/A") return false;
+  const code = row["Schedule Codes"] ?? row["Scheduling code"];
+  if (!code || !code.trim()) return false;
+  return true;
 });
 const skipped = records.length - validRows.length;
 

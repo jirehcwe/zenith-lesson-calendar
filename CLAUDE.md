@@ -27,6 +27,8 @@ npx ts-node scripts/csv_to_sessions2json.ts    # regenerate sessions JSON from C
 
 On the legacy `sept-*-cc` branches, the dev/build server picks up the hardcoded fetch path in `src/app/page.tsx`. On the consolidated `crash-courses` branch, pass `NEXT_PUBLIC_CC_SLUG=<slug>` at build time (e.g. `NEXT_PUBLIC_CC_SLUG=ss-june-2026 npm run build`); the resolver in `crash-courses/index.ts` scans disk, validates that `crash-courses/<slug>/config.ts` and `sessions.json` both exist, and fails the build loudly if the slug is missing, unknown, or the matching files aren't on disk. Adding a new crash course = drop a new folder under `crash-courses/` with those two files — no registry edits.
 
+A slug can be staged ahead of its source data by setting `preLaunch: true` in `config.ts` and shipping `sessions.json` as `[]`. The config-integrity test waives the "non-empty sessions" assertion for these, so the folder type-checks and bundles while waiting for ops; flip the flag back off once `sessions.csv` lands and `sessions.json` is regenerated. Don't deploy a `preLaunch` slug — gate it at the CF Pages project level until data is in.
+
 ## Session data
 
 Crash-course sessions live in `public/sessions-*.json` (per-branch). Shape is `Session[]` from `src/types.ts`. Regenerate from the matching `sessions-*.csv` via `scripts/csv_to_sessions2json.ts`. On regular-lessons, the schedule is fetched from the `db-schedule-updater` API at runtime.
@@ -35,9 +37,10 @@ Crash-course sessions live in `public/sessions-*.json` (per-branch). Shape is `S
 
 ## Deployment
 
-Cloudflare Pages, one project per site. Build command is `npm run build`, output dir is `out/`. Production branch per project:
-- JC crash course → `sept-jc-cc` (moving to `crash-courses`).
-- SS crash course → `sept-ss-cc` (moving to `crash-courses`).
+Cloudflare Pages, one project per site. Build command is `npx @cloudflare/next-on-pages@1`, output dir is `.vercel/output/static`. Production branch is `crash-courses` for all three crash-course sites; each project sets a different `NEXT_PUBLIC_CC_SLUG` env var:
+- JC crash course → project `zenith-crash-course-jc`, slug `jc-june-2026`, domain `crashcourse.jc.zenitheducationstudio.com`.
+- SS crash course → project `zenith-crash-course-ss`, slug `ss-june-2026`, domain `crashcourse.ss.zenitheducationstudio.com`.
+- Primary crash course → project `zenith-crash-course-pri`, slug `pri-june-2026`, domain `crashcourse.pri.zenitheducationstudio.com`.
 - Regular lessons → `regular-lessons`.
 
 Production-branch changes and env var updates require the Cloudflare REST API or dashboard — wrangler doesn't expose a flag for either. Ask the user before touching production; never run these commands unattended.
