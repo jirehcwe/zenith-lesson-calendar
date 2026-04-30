@@ -21,10 +21,12 @@
     "S4/5 Pure Physics": "2067436543",
     "S4/5 Combined Physics": "2067436543",
 
+    "S3 Pure Chemistry": "530119122",
     "S3 Combined Chemistry": "530119122",
     "S4/5 Pure Chemistry": "600100063",
     "S4/5 Combined Chemistry": "600100063",
 
+    "S3 Pure Biology": "672830523",
     "S4/5 Pure Biology": "737212271",
     "S4/5 Combined Biology": "737212271",
 
@@ -39,6 +41,19 @@
     "S4 IP Math": "376990052",
 
     "S3 IP Chemistry": "1815277042",
-    "S4 IP Chemistry": "1316559099"
+    "S4 IP Chemistry": "1316559099",
+
+    "S3 Pure History": "2134367015",
+    "S3 Combined History": "2134367015",
+    "S4 Pure History": "341992752",
+    "S4 Combined History": "341992752",
+
+    "S3 Pure Literature": "103510107",
+    "S3 Combined Literature": "103510107",
+    "S4 Pure Literature": "854174201",
+    "S4 Combined Literature": "854174201",
+
+    "S3 Social Studies": "202167365",
+    "S4 Social Studies": "719580115"
   }
 }

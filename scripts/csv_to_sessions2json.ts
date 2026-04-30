@@ -104,18 +104,64 @@ const validRows = records.filter((row) => {
 });
 const skipped = records.length - validRows.length;
 
+// Source sheets repeat the header names "Subject", "Tutor", "Centre" in two
+// places (cols D/E/G and dup cols AH/AK/AL — the second set hosts pulled-down
+// formulas that compute short codes/lookups). csv-parse keeps the LAST
+// occurrence on collisions, so row["Subject"|"Tutor"|"Centre"] reads the
+// dup columns. When ops forgets to drag those formulas down to the bottom,
+// the dup columns are blank for trailing rows. Two fallbacks below:
+//   1. Subject — reverse-lookup from other rows with the same displaySubject.
+//   2. Tutor / Centre — pull from column A "Schedule Codes" which packs
+//      "Purpose<>Level<>SubjectGroup<>Tutor<>Day<>Centre<>Classroom<>..."
+//      and is always populated by ops as the source-of-truth row identifier.
+const dsToSubject: Record<string, string> = {};
+for (const r of validRows) {
+  if (r["Subject"] && !dsToSubject[r["Subject(Display)"]]) {
+    dsToSubject[r["Subject(Display)"]] = r["Subject"];
+  }
+}
+function fromScheduleCode(row: CsvRow, idx: number): string {
+  const code = row["Schedule Codes"];
+  if (!code) return "";
+  const parts = code.split("<>");
+  return parts[idx]?.trim() ?? "";
+}
+let subjectFallbacks = 0;
+let tutorFallbacks = 0;
+let centreFallbacks = 0;
+const subjectMisses = new Set<string>();
+
 const result = validRows.map((row: CsvRow) => {
   const displaySubject = row["Subject(Display)"];
   const prefillField = lookupPrefillField(displaySubject);
   const startTime = row["Start Time"]?.replace(/:(\d{2})\s/, " ");
 
+  let subject = row["Subject"];
+  if (!subject) {
+    subject = dsToSubject[displaySubject] ?? "";
+    if (subject) subjectFallbacks++;
+    else subjectMisses.add(displaySubject);
+  }
+
+  let tutor = row["Tutor"];
+  if (!tutor) {
+    tutor = fromScheduleCode(row, 3);
+    if (tutor) tutorFallbacks++;
+  }
+
+  let centre = row["Centre"];
+  if (!centre) {
+    centre = fromScheduleCode(row, 5);
+    if (centre) centreFallbacks++;
+  }
+
   return {
     purpose: row["Purpose"],
-    subject: row["Subject"],
+    subject,
     level: row["Level"],
     topic: row["Topic"],
-    tutor: row["Tutor"],
-    centre: row["Centre"],
+    tutor,
+    centre,
     // SS sheets historically misspelled as "Classeroom"; fall back just in case.
     classroom: row["Classroom"] ?? row["Classeroom"],
     capacity: row["Capacity"],
@@ -127,6 +173,20 @@ const result = validRows.map((row: CsvRow) => {
     displaySubject,
   };
 });
+
+if (subjectFallbacks || tutorFallbacks || centreFallbacks) {
+  console.log(
+    `Filled empty dup-column fields: subject=${subjectFallbacks}, tutor=${tutorFallbacks}, centre=${centreFallbacks}.`
+  );
+}
+if (subjectMisses.size) {
+  console.warn(
+    `WARN: no subject code resolvable for ${subjectMisses.size} displaySubject(s) ` +
+      `(no other row had Subject populated and column A was missing/short): ` +
+      [...subjectMisses].join(", ") +
+      ` — those sessions will have subject="" in the output.`
+  );
+}
 
 fs.writeFileSync(outPath, JSON.stringify(result, null, 2));
 

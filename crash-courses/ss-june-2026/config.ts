@@ -10,6 +10,11 @@ const A_E_MATH = "#CFE2F3";
 const PHYSICS = "#C27BA0";
 const CHEMISTRY = "#F4CCCC";
 const BIOLOGY = "#D9EAD3";
+// TODO: humanities palette is a placeholder picked from Google Sheets defaults.
+// Confirm with design before deploy.
+const HISTORY = "#B6A48E";
+const LITERATURE = "#D5A6BD";
+const SOCIAL_STUDIES = "#C9DAF8";
 const BLACK = "#000000";
 
 const config: CrashCourseConfig = {
@@ -50,13 +55,29 @@ const config: CrashCourseConfig = {
     "S4/5 Combined Physics": { backgroundColor: PHYSICS, textColor: BLACK },
 
     "S3 Combined Chemistry": { backgroundColor: CHEMISTRY, textColor: BLACK },
+    "S3 Pure Chemistry": { backgroundColor: CHEMISTRY, textColor: BLACK },
     "S4/5 Pure Chemistry": { backgroundColor: CHEMISTRY, textColor: BLACK },
     "S4/5 Combined Chemistry": { backgroundColor: CHEMISTRY, textColor: BLACK },
     "S3 IP Chemistry": { backgroundColor: CHEMISTRY, textColor: BLACK },
     "S4 IP Chemistry": { backgroundColor: CHEMISTRY, textColor: BLACK },
 
+    "S3 Pure Biology": { backgroundColor: BIOLOGY, textColor: BLACK },
     "S4/5 Pure Biology": { backgroundColor: BIOLOGY, textColor: BLACK },
     "S4/5 Combined Biology": { backgroundColor: BIOLOGY, textColor: BLACK },
+
+    // TODO: humanities — colours are placeholders, confirm with design.
+    "S3 Pure History": { backgroundColor: HISTORY, textColor: BLACK },
+    "S3 Combined History": { backgroundColor: HISTORY, textColor: BLACK },
+    "S4 Pure History": { backgroundColor: HISTORY, textColor: BLACK },
+    "S4 Combined History": { backgroundColor: HISTORY, textColor: BLACK },
+
+    "S3 Pure Literature": { backgroundColor: LITERATURE, textColor: BLACK },
+    "S3 Combined Literature": { backgroundColor: LITERATURE, textColor: BLACK },
+    "S4 Pure Literature": { backgroundColor: LITERATURE, textColor: BLACK },
+    "S4 Combined Literature": { backgroundColor: LITERATURE, textColor: BLACK },
+
+    "S3 Social Studies": { backgroundColor: SOCIAL_STUDIES, textColor: BLACK },
+    "S4 Social Studies": { backgroundColor: SOCIAL_STUDIES, textColor: BLACK },
   },
   subjectLabels: {
     LSEng: "Lower Sec English",
@@ -76,6 +97,11 @@ const config: CrashCourseConfig = {
     "SChem(IP)": "(IP) Chemistry",
     "SBio(Pure)": "Pure Biology",
     "SBio(Comb)": "Combined Biology",
+    "SHis(Pure)": "Pure History",
+    "SHis(Comb)": "Combined History",
+    "SLit(Pure)": "Pure Literature",
+    "SLit(Comb)": "Combined Literature",
+    SSoc: "Social Studies",
   },
   hero: {
     title: "June 2026 SS Crash Course",
