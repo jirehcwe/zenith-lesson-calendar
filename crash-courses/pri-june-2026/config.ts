@@ -28,9 +28,12 @@ const config: CrashCourseConfig = {
     "P6 Science": { backgroundColor: SCIENCE, textColor: BLACK },
   },
   subjectLabels: {
-    PEng: "English",
-    PMath: "Math",
-    PSci: "Science",
+    P5Eng: "P5 English",
+    P6Eng: "P6 English",
+    P5Math: "P5 Math",
+    P6Math: "P6 Math",
+    P5Sci: "P5 Science",
+    P6Sci: "P6 Science",
   },
   hero: {
     title: "June 2026 Primary Crash Course",
