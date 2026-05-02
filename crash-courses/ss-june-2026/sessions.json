@@ -1345,22 +1345,6 @@
   },
   {
     "purpose": "Sec JunCC",
-    "subject": "SPhy(Pure)",
-    "level": "S3 2026",
-    "topic": "Energy",
-    "tutor": "JM",
-    "centre": "Bukit Panjang",
-    "classroom": "BP-2",
-    "capacity": "12",
-    "date": "05 Jun",
-    "startTime": "1:00 PM",
-    "endTime": "3:00 PM",
-    "prefill": "[S3 Pure Physics] Bukit Panjang | 05 Jun (Fri) | 01:00PM - 03:00PM",
-    "prefillField": "1411978775",
-    "displaySubject": "S3 Pure Physics"
-  },
-  {
-    "purpose": "Sec JunCC",
     "subject": "SMath(EM)",
     "level": "S4 2026",
     "topic": "Vectors",
@@ -1470,6 +1454,22 @@
     "prefill": "[S1 Math] Jurong East | 04 Jun (Thu) | 01:00PM - 03:00PM",
     "prefillField": "1165110009",
     "displaySubject": "S1 Math"
+  },
+  {
+    "purpose": "Sec JunCC",
+    "subject": "SPhy(Pure)",
+    "level": "S3 2026",
+    "topic": "Energy",
+    "tutor": "JM",
+    "centre": "Jurong East",
+    "classroom": "JE-2",
+    "capacity": "27",
+    "date": "05 Jun",
+    "startTime": "1:00 PM",
+    "endTime": "3:00 PM",
+    "prefill": "[S3 Pure Physics] Jurong East | 05 Jun (Fri) | 01:00PM - 03:00PM",
+    "prefillField": "1411978775",
+    "displaySubject": "S3 Pure Physics"
   },
   {
     "purpose": "Sec JunCC",
@@ -3057,7 +3057,7 @@
   },
   {
     "purpose": "Sec JunCC",
-    "subject": "SPhy(Pure)",
+    "subject": "SPhy(Comb)",
     "level": "S3 2026",
     "topic": "Energy",
     "tutor": "JM",
@@ -3067,9 +3067,9 @@
     "date": "11 Jun",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "[S3 Pure Physics] Bukit Panjang | 11 Jun (Thu) | 10:00AM - 12:00PM",
+    "prefill": "[S3 Combined Physics] Bukit Panjang | 11 Jun (Thu) | 10:00AM - 12:00PM",
     "prefillField": "1411978775",
-    "displaySubject": "S3 Pure Physics"
+    "displaySubject": "S3 Combined Physics"
   },
   {
     "purpose": "Sec JunCC",
@@ -3105,7 +3105,7 @@
   },
   {
     "purpose": "Sec JunCC",
-    "subject": "SPhy(Pure)",
+    "subject": "SPhy(Comb)",
     "level": "S3 2026",
     "topic": "Energy",
     "tutor": "JM",
@@ -3115,9 +3115,9 @@
     "date": "08 Jun",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "[S3 Pure Physics] Bukit Panjang | 08 Jun (Mon) | 10:00AM - 12:00PM",
+    "prefill": "[S3 Combined Physics] Bukit Panjang | 08 Jun (Mon) | 10:00AM - 12:00PM",
     "prefillField": "1411978775",
-    "displaySubject": "S3 Pure Physics"
+    "displaySubject": "S3 Combined Physics"
   },
   {
     "purpose": "Sec JunCC",
@@ -3185,7 +3185,7 @@
   },
   {
     "purpose": "Sec JunCC",
-    "subject": "SPhy(Pure)",
+    "subject": "SPhy(Comb)",
     "level": "S3 2026",
     "topic": "Energy",
     "tutor": "JM",
@@ -3195,9 +3195,9 @@
     "date": "09 Jun",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "[S3 Pure Physics] Jurong East | 09 Jun (Tue) | 10:00AM - 12:00PM",
+    "prefill": "[S3 Combined Physics] Jurong East | 09 Jun (Tue) | 10:00AM - 12:00PM",
     "prefillField": "1411978775",
-    "displaySubject": "S3 Pure Physics"
+    "displaySubject": "S3 Combined Physics"
   },
   {
     "purpose": "Sec JunCC",
@@ -3249,7 +3249,7 @@
   },
   {
     "purpose": "Sec JunCC",
-    "subject": "SPhy(Pure)",
+    "subject": "SPhy(Comb)",
     "level": "S3 2026",
     "topic": "Energy",
     "tutor": "JM",
@@ -3259,9 +3259,9 @@
     "date": "12 Jun",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "[S3 Pure Physics] Jurong East | 12 Jun (Fri) | 10:00AM - 12:00PM",
+    "prefill": "[S3 Combined Physics] Jurong East | 12 Jun (Fri) | 10:00AM - 12:00PM",
     "prefillField": "1411978775",
-    "displaySubject": "S3 Pure Physics"
+    "displaySubject": "S3 Combined Physics"
   },
   {
     "purpose": "Sec JunCC",
