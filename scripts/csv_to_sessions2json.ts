@@ -5,19 +5,27 @@ const path = require("path");
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const { parse } = require("csv-parse/sync");
 
-function addHours(time: string, hours: number): string {
-  const [hourMin, ampm] = time.split(" ");
-  const [hourStr, minuteStr] = hourMin.split(":");
-  let hour = Number(hourStr);
-  const minute = Number(minuteStr);
-  if (ampm.toUpperCase() === "PM" && hour !== 12) hour += 12;
-  if (ampm.toUpperCase() === "AM" && hour === 12) hour = 0;
-  hour += hours;
-  if (hour >= 24) hour -= 24;
-  const newAmpm = hour >= 12 ? "PM" : "AM";
-  let displayHour = hour % 12;
-  if (displayHour === 0) displayHour = 12;
-  return `${displayHour}:${minute.toString().padStart(2, "0")} ${newAmpm}`;
+// Class times are sourced from the "Timeslot (+Nhr)" column, not "Start Time".
+// Historically those two have drifted (Start Time has been set 30 min earlier
+// than the actual class on a chunk of rows), and Timeslot is also what
+// populates the form prefill string customers see — so reading from Timeslot
+// keeps the calendar block and the registration form in sync.
+function normalizeTime(raw: string): string {
+  const m = raw.trim().match(/^(\d{1,2}):(\d{2})(?::\d{2})?\s*(AM|PM)$/i);
+  if (!m) throw new Error(`Cannot parse time "${raw}"`);
+  return `${Number(m[1])}:${m[2]} ${m[3].toUpperCase()}`;
+}
+
+function parseTimeslot(raw: string): { startTime: string; endTime: string } {
+  const parts = raw.split(/\s*[-–]\s*/);
+  if (parts.length !== 2)
+    throw new Error(
+      `Cannot parse timeslot "${raw}" (expected "HH:MMam - HH:MMpm").`
+    );
+  return {
+    startTime: normalizeTime(parts[0]),
+    endTime: normalizeTime(parts[1]),
+  };
 }
 
 const slug = process.argv[2];
@@ -46,26 +54,19 @@ if (!fs.existsSync(csvPath)) {
 if (!fs.existsSync(mappingPath)) {
   console.error(
     `Form mapping not found: crash-courses/${slug}/form-mapping.json\n` +
-      `Expected shape: { "durationHours": number, "subjectCodes": { [displaySubject]: shortCode }, "prefillFields": { [displaySubject]: entryId } }`
+      `Expected shape: { "subjectCodes": { [displaySubject]: shortCode }, "prefillFields": { [displaySubject]: entryId } }`
   );
   process.exit(1);
 }
 
 type FormMapping = {
-  durationHours: number;
   subjectCodes: Record<string, string>;
   prefillFields: Record<string, string>;
 };
 
 const mapping: FormMapping = JSON.parse(fs.readFileSync(mappingPath, "utf8"));
-const { durationHours, subjectCodes, prefillFields } = mapping;
+const { subjectCodes, prefillFields } = mapping;
 
-if (typeof durationHours !== "number" || !Number.isFinite(durationHours)) {
-  console.error(
-    `Invalid durationHours in crash-courses/${slug}/form-mapping.json (expected number).`
-  );
-  process.exit(1);
-}
 if (!subjectCodes || typeof subjectCodes !== "object") {
   console.error(
     `Invalid subjectCodes in crash-courses/${slug}/form-mapping.json (expected { [displaySubject]: shortCode }).`
@@ -104,6 +105,7 @@ function lookupSubjectCode(displaySubject: string): string {
 type CsvRow = Record<string, string>;
 
 const csvContent = fs.readFileSync(csvPath, "utf8");
+let capturedHeaders: string[] = [];
 const records = parse(csvContent, {
   // Source sheets repeat header names (Subject, Tutor, Centre, Level) at the
   // helper columns AF–AM. csv-parse's default collision behaviour is
@@ -113,17 +115,30 @@ const records = parse(csvContent, {
   // the unsuffixed key — that's the one we always read.
   columns: (headers: string[]) => {
     const seen = new Map<string, number>();
-    return headers.map((h) => {
+    const renamed = headers.map((h) => {
       const t = h.trim();
       const n = (seen.get(t) ?? 0) + 1;
       seen.set(t, n);
       return n === 1 ? t : `${t}__${n}`;
     });
+    capturedHeaders = renamed;
+    return renamed;
   },
   skip_empty_lines: true,
   relax_column_count: true,
   trim: true,
 }) as CsvRow[];
+
+// Per-sheet the timeslot column is "Timeslot (+3hr)" (JC) or "Timeslot (+2hr)"
+// (SS, Pri). Resolve by prefix so each new course doesn't have to hardcode it.
+const timeslotKey = capturedHeaders.find((k) => /^Timeslot\b/i.test(k));
+if (!timeslotKey) {
+  console.error(
+    `No "Timeslot (+Nhr)" column found in crash-courses/${slug}/sessions.csv. ` +
+      `That column is the source-of-truth for class start/end times.`
+  );
+  process.exit(1);
+}
 
 // Source sheets contain template/summary/waitlist rows that should not be
 // treated as real sessions. Rules to skip a row:
@@ -149,7 +164,7 @@ const result = validRows.map((row: CsvRow) => {
   const displaySubject = row["Subject(Display)"];
   const prefillField = lookupPrefillField(displaySubject);
   const subject = lookupSubjectCode(displaySubject);
-  const startTime = row["Start Time"]?.replace(/:(\d{2})\s/, " ");
+  const { startTime, endTime } = parseTimeslot(row[timeslotKey]);
 
   return {
     purpose: row["Purpose"],
@@ -163,7 +178,7 @@ const result = validRows.map((row: CsvRow) => {
     capacity: row["Capacity"],
     date: row["Date (text)"]?.replace(/\s*\(.*\)/, ""),
     startTime,
-    endTime: addHours(startTime, durationHours),
+    endTime,
     prefill: row["Form Option to Display"],
     prefillField,
     displaySubject,
@@ -174,5 +189,5 @@ fs.writeFileSync(outPath, JSON.stringify(result, null, 2));
 
 console.log(
   `crash-courses/${slug}/sessions.json generated with ${result.length} sessions ` +
-    `(duration ${durationHours}h, skipped ${skipped} blank/placeholder rows).`
+    `(times from "${timeslotKey}", skipped ${skipped} blank/placeholder rows).`
 );
