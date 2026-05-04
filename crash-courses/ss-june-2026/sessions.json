@@ -4441,9 +4441,9 @@
     "classroom": "BS-1",
     "capacity": "24",
     "date": "19 Jun",
-    "startTime": "3:00 PM",
-    "endTime": "5:00 PM",
-    "prefill": "[S4 IP English] Bishan | 19 Jun (Fri) | 03:00PM - 05:00PM",
+    "startTime": "1:00 PM",
+    "endTime": "3:00 PM",
+    "prefill": "[S4 IP English] Bishan | 19 Jun (Fri) | 01:00PM - 03:00PM",
     "prefillField": "1091300344",
     "displaySubject": "S4 IP English"
   },
@@ -5566,22 +5566,6 @@
     "prefill": "[S4/5 Combined Chemistry] Bishan | 26 Jun (Fri) | 01:00PM - 03:00PM",
     "prefillField": "600100063",
     "displaySubject": "S4/5 Combined Chemistry"
-  },
-  {
-    "purpose": "Sec JunCC",
-    "subject": "SEng(IP)",
-    "level": "S4 2026",
-    "topic": "Argumentative Essay",
-    "tutor": "Antonia",
-    "centre": "Bishan",
-    "classroom": "BS-1",
-    "capacity": "24",
-    "date": "26 Jun",
-    "startTime": "3:00 PM",
-    "endTime": "5:00 PM",
-    "prefill": "[S4 IP English] Bishan | 26 Jun (Fri) | 03:00PM - 05:00PM",
-    "prefillField": "1091300344",
-    "displaySubject": "S4 IP English"
   },
   {
     "purpose": "Sec JunCC",
