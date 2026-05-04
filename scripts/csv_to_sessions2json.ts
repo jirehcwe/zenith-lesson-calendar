@@ -140,18 +140,25 @@ if (!timeslotKey) {
   process.exit(1);
 }
 
-// Source sheets contain template/summary/waitlist rows that should not be
-// treated as real sessions. Rules to skip a row:
+// Source sheets contain template/summary/waitlist/closed rows that should
+// not be treated as real sessions. Rules to skip a row:
 //   - Subject(Display) empty or "#N/A" (JC/SS template rows).
 //   - Schedule Codes (col A — header is "Schedule Codes" in JC/SS,
 //     "Scheduling code" in Pri) empty (Pri waitlist placeholders, which DO
 //     have Subject(Display) populated but no real schedule).
+//   - Form Controls starting with "Closed" (e.g. "Closed - Not running") —
+//     ops manually closes a class by flipping this dropdown; we drop the
+//     row entirely so it doesn't render on the calendar at all (note: an
+//     empty prefill is a separate "class full" signal that greys out the
+//     slot, which we still want to support).
 // Any surviving row whose displaySubject isn't in the mapping still throws.
 const validRows = records.filter((row) => {
   const d = row["Subject(Display)"];
   if (!d || d === "#N/A") return false;
   const code = row["Schedule Codes"] ?? row["Scheduling code"];
   if (!code || !code.trim()) return false;
+  const formControls = (row["Form Controls"] ?? "").trim();
+  if (/^closed\b/i.test(formControls)) return false;
   return true;
 });
 const skipped = records.length - validRows.length;

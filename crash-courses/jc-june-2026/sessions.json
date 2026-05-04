@@ -2961,22 +2961,6 @@
   },
   {
     "purpose": "JC JunCC",
-    "subject": "ECON",
-    "level": "J1 2026",
-    "topic": "Market Failure and Government Intervention",
-    "tutor": "Lay Chun",
-    "centre": "Bukit Panjang",
-    "classroom": "BP-1",
-    "capacity": "24",
-    "date": "11 Jun",
-    "startTime": "1:30 PM",
-    "endTime": "4:30 PM",
-    "prefill": "[J1 Economics] Bukit Panjang | 11 Jun (Thu) | 01:30PM - 04:30PM | Market Failure and Government Intervention",
-    "prefillField": "1188715475",
-    "displaySubject": "J1 Economics"
-  },
-  {
-    "purpose": "JC JunCC",
     "subject": "BIO",
     "level": "J1 2026",
     "topic": "DNA Replication",
