@@ -9,10 +9,13 @@ import SignupBanner from "../components/SignupBanner";
 import BottomBanner from "@/components/BottomBanner";
 import ViewSelector from "@/components/ViewSelector";
 import { getCrashCourseConfig } from "../../crash-courses";
+import { isMockExam, hasAnyMockExams } from "@/utils/sessionVariant";
 
 const config = getCrashCourseConfig();
 const labelFor = (code: string): string =>
   config.subjectLabels?.[code] ?? code;
+
+const REGULAR_TYPE_LABEL = "Crash Course";
 
 function hexToHsv(hex: string) {
   hex = hex.replace("#", "");
@@ -60,11 +63,25 @@ function hsvToHex({ h, s, v }: { h: number; s: number; v: number }) {
 
 export default function Page() {
   const sessions: Session[] = config.sessions;
+  const showTypeFilter = hasAnyMockExams(sessions, config);
+  const typeOf = (s: Session): string =>
+    isMockExam(s, config) && config.mockExam
+      ? config.mockExam.variantLabel
+      : REGULAR_TYPE_LABEL;
+  const typeOptions = useMemo(
+    () =>
+      showTypeFilter && config.mockExam
+        ? [REGULAR_TYPE_LABEL, config.mockExam.variantLabel]
+        : [],
+    [showTypeFilter]
+  );
+
   const [filters, setFilters] = useState({
     subject: [] as string[],
     topic: [] as string[],
     centre: [] as string[],
     tutor: [] as string[],
+    type: [] as string[],
   });
   const [viewMode, setViewMode] = useState<"calendar" | "list">("calendar");
   const [calendarFilter, setCalendarFilter] = useState<string | null>(null);
@@ -75,7 +92,8 @@ export default function Page() {
         (filters.subject.length === 0 || filters.subject.includes(s.subject)) &&
         (filters.topic.length === 0 ||
           filters.topic.includes(`[${labelFor(s.subject)}] ${s.topic}`)) &&
-        (filters.centre.length === 0 || filters.centre.includes(s.centre))
+        (filters.centre.length === 0 || filters.centre.includes(s.centre)) &&
+        (filters.type.length === 0 || filters.type.includes(typeOf(s)))
     );
 
   const calendarFilteredSessions = useMemo(
@@ -100,6 +118,11 @@ export default function Page() {
       }
       const hsv = hexToHsv(color.backgroundColor);
       const darkerHex = hsvToHex({ h: hsv.h, s: hsv.s, v: hsv.v * 0.8 });
+      const isMock = isMockExam(s, config);
+      // Mock exams keep the subject hue (so subject recognition stays intact)
+      // and are differentiated by a diagonal stripe overlay (CSS) plus an
+      // "EXAM" pill rendered in eventContent. The "full" signal continues to
+      // darken the background; stripes compose on top.
       return {
         title: labelFor(s.subject),
         start: new Date(`${s.date} ${config.year} ${s.startTime}`),
@@ -107,6 +130,7 @@ export default function Page() {
         extendedProps: { ...s },
         backgroundColor: isFull ? darkerHex : color.backgroundColor,
         textColor: color.textColor,
+        classNames: isMock ? ["mock-exam-event"] : undefined,
       };
     });
   }, [calendarFilteredSessions]);
@@ -139,6 +163,7 @@ export default function Page() {
           tutors={[...new Set(sessions.map((s) => s.tutor))].sort((a, b) =>
             a.localeCompare(b)
           )}
+          types={typeOptions}
           filters={filters}
           onFilterChange={setFilters}
           subjectLabel={labelFor}
@@ -156,7 +181,7 @@ export default function Page() {
           )}
         </div>
       </div>
-      <BottomBanner />
+      {config.bottomBanner && <BottomBanner />}
     </div>
   );
 }

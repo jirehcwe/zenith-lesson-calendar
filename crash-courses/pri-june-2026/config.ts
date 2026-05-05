@@ -15,7 +15,7 @@ const config: CrashCourseConfig = {
     title: "Zenith June Primary Crash Course Scheduler",
     description: "Sign up for Zenith Primary Crash Course now!",
   },
-  dateRange: { start: "2026-06-01", end: "2026-06-19" },
+  dateRange: { start: "2026-06-01", end: "2026-06-30" },
   year: 2026,
   subjectColors: {
     "P5 English": { backgroundColor: ENGLISH, textColor: BLACK },
@@ -46,12 +46,6 @@ const config: CrashCourseConfig = {
     heroImageSrc: "/zenith-banner.webp",
     heroImageAlt: "Zenith Education",
   },
-  bottomBanner: {
-    body: "Ready to lock in for your exams?",
-    ctaLabel: "Click here to sign up!",
-    ctaHref:
-      "https://docs.google.com/forms/d/e/1FAIpQLSf7DBZ-j35Yd3XkzqZfntLPjJEqqm0q0J3mVx2-loTdz0euQg/viewform?usp=dialog&entry.1157532004=SCHEDULE",
-  },
   calendar: {
     firstDay: 1,
     initialDate: "2026-06-01",
@@ -67,6 +61,12 @@ const config: CrashCourseConfig = {
     "https://docs.google.com/forms/d/e/1FAIpQLSf7DBZ-j35Yd3XkzqZfntLPjJEqqm0q0J3mVx2-loTdz0euQg/viewform?entry.1157532004=SCHEDULE",
   campaignField: "entry.1157532004",
   sessions,
+  mockExam: {
+    purposeMatch: "Pri Mock Exam",
+    variantLabel: "Exam Simulation",
+    registrationFormUrl: "https://pci.jotform.com/form/261182286777064",
+    ctaLabel: "Register for Exam Simulation",
+  },
 };
 
 export default config;

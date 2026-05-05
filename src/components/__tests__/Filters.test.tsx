@@ -13,7 +13,7 @@ function renderFilters() {
       topics={["[English] Personal Recount"]}
       centres={["Marine Parade"]}
       tutors={[]}
-      filters={{ subject: [], topic: [], centre: [], tutor: [] }}
+      filters={{ subject: [], topic: [], centre: [], tutor: [], type: [] }}
       onFilterChange={() => {}}
     />
   );

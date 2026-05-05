@@ -78,6 +78,7 @@ const makeEvent = (session: Session) => ({
 });
 
 const sessionWithPrefill: Session = {
+  purpose: "SS SepCC",
   subject: "Math",
   tutor: "Matthew",
   centre: "Marine Parade",

@@ -3,7 +3,11 @@
 import { Session } from "../types";
 import DatePicker from "react-datepicker";
 import { getCrashCourseConfig } from "../../crash-courses";
-import { buildRegistrationUrl } from "@/utils/registration";
+import {
+  getRegistrationUrl,
+  getCtaLabel,
+  isMockExam,
+} from "@/utils/sessionVariant";
 
 const config = getCrashCourseConfig();
 const labelFor = (code: string): string =>
@@ -63,10 +67,23 @@ export default function ListView({
             key={`${s.date}-${s.startTime}-${s.tutor}`}
             className={`p-4 border rounded shadow flex flex-col ${
               s.prefill ? "" : "opacity-60"
+            } ${
+              isMockExam(s, config)
+                ? "bg-[repeating-linear-gradient(45deg,transparent_0,transparent_8px,rgba(0,0,0,0.06)_8px,rgba(0,0,0,0.06)_10px)]"
+                : ""
             }`}
           >
-            <div className="font-semibold">{labelFor(s.subject)}</div>
-            <div className="text-sm opacity-80">Topic: {s.topic}</div>
+            <div className="font-semibold flex items-center gap-2">
+              <span>{labelFor(s.subject)}</span>
+              {isMockExam(s, config) && (
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-black/75 text-white text-[10px] font-bold tracking-wide leading-none">
+                  EXAM
+                </span>
+              )}
+            </div>
+            {s.topic && s.topic.trim().length > 0 && (
+              <div className="text-sm opacity-80">Topic: {s.topic}</div>
+            )}
             <div className="text-sm opacity-80">Centre: {s.centre}</div>
             <div className="text-sm opacity-80">Date: {s.date}</div>
             <div className="text-sm opacity-80">
@@ -75,12 +92,12 @@ export default function ListView({
             <div className="mt-4 flex justify-end">
               {s.prefill ? (
                 <a
-                  href={buildRegistrationUrl(config.registrationFormUrl, s)}
+                  href={getRegistrationUrl(s, config)}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
-                    Register (prefilled)
+                    {getCtaLabel(s, config, "Register (prefilled)")}
                   </button>
                 </a>
               ) : (

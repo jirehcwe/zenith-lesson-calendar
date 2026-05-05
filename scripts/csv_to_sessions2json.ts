@@ -44,6 +44,7 @@ if (!fs.existsSync(slugDir)) {
 }
 
 const csvPath = path.join(slugDir, "sessions.csv");
+const mockCsvPath = path.join(slugDir, "mock-sessions.csv");
 const mappingPath = path.join(slugDir, "form-mapping.json");
 const outPath = path.join(slugDir, "sessions.json");
 
@@ -104,30 +105,43 @@ function lookupSubjectCode(displaySubject: string): string {
 
 type CsvRow = Record<string, string>;
 
-const csvContent = fs.readFileSync(csvPath, "utf8");
 let capturedHeaders: string[] = [];
-const records = parse(csvContent, {
-  // Source sheets repeat header names (Subject, Tutor, Centre, Level) at the
-  // helper columns AF–AM. csv-parse's default collision behaviour is
-  // "last-wins", which would mask the always-populated first-appearance
-  // columns (D/E/G) behind the formula-driven dup columns ops doesn't
-  // reliably drag down. Suffix duplicates so the first appearance stays at
-  // the unsuffixed key — that's the one we always read.
-  columns: (headers: string[]) => {
-    const seen = new Map<string, number>();
-    const renamed = headers.map((h) => {
-      const t = h.trim();
-      const n = (seen.get(t) ?? 0) + 1;
-      seen.set(t, n);
-      return n === 1 ? t : `${t}__${n}`;
-    });
-    capturedHeaders = renamed;
-    return renamed;
-  },
-  skip_empty_lines: true,
-  relax_column_count: true,
-  trim: true,
-}) as CsvRow[];
+
+function parseCsv(filePath: string): CsvRow[] {
+  const csvContent = fs.readFileSync(filePath, "utf8");
+  return parse(csvContent, {
+    // Source sheets repeat header names (Subject, Tutor, Centre, Level) at the
+    // helper columns AF–AM. csv-parse's default collision behaviour is
+    // "last-wins", which would mask the always-populated first-appearance
+    // columns (D/E/G) behind the formula-driven dup columns ops doesn't
+    // reliably drag down. Suffix duplicates so the first appearance stays at
+    // the unsuffixed key — that's the one we always read.
+    columns: (headers: string[]) => {
+      const seen = new Map<string, number>();
+      const renamed = headers.map((h) => {
+        const t = h.trim();
+        const n = (seen.get(t) ?? 0) + 1;
+        seen.set(t, n);
+        return n === 1 ? t : `${t}__${n}`;
+      });
+      // Both CSVs share the same column shape, so capturing from the last
+      // parsed file is fine — we only use this to resolve the "Timeslot
+      // (+Nhr)" column name, which is identical across them.
+      capturedHeaders = renamed;
+      return renamed;
+    },
+    skip_empty_lines: true,
+    relax_column_count: true,
+    trim: true,
+  }) as CsvRow[];
+}
+
+const records = parseCsv(csvPath);
+// Optional per-slug mock-exam CSV. Same column shape as sessions.csv; rows
+// are tagged via the "Purpose" column (e.g. "Pri Mock Exam") and surface in
+// the UI as a separate type via the config's mockExam block.
+const mockRecords = fs.existsSync(mockCsvPath) ? parseCsv(mockCsvPath) : [];
+const allRecords = records.concat(mockRecords);
 
 // Per-sheet the timeslot column is "Timeslot (+3hr)" (JC) or "Timeslot (+2hr)"
 // (SS, Pri). Resolve by prefix so each new course doesn't have to hardcode it.
@@ -152,7 +166,7 @@ if (!timeslotKey) {
 //     empty prefill is a separate "class full" signal that greys out the
 //     slot, which we still want to support).
 // Any surviving row whose displaySubject isn't in the mapping still throws.
-const validRows = records.filter((row) => {
+const validRows = allRecords.filter((row) => {
   const d = row["Subject(Display)"];
   if (!d || d === "#N/A") return false;
   const code = row["Schedule Codes"] ?? row["Scheduling code"];
@@ -161,7 +175,7 @@ const validRows = records.filter((row) => {
   if (/^closed\b/i.test(formControls)) return false;
   return true;
 });
-const skipped = records.length - validRows.length;
+const skipped = allRecords.length - validRows.length;
 
 // Subject (short code) is derived from displaySubject via subjectCodes in
 // form-mapping.json — never from the AH dup column, since ops doesn't always
@@ -194,7 +208,9 @@ const result = validRows.map((row: CsvRow) => {
 
 fs.writeFileSync(outPath, JSON.stringify(result, null, 2));
 
+const mockCount = result.filter((r) => /mock\s*exam/i.test(r.purpose ?? "")).length;
 console.log(
   `crash-courses/${slug}/sessions.json generated with ${result.length} sessions ` +
-    `(times from "${timeslotKey}", skipped ${skipped} blank/placeholder rows).`
+    `(${mockCount} mock-exam, ${result.length - mockCount} regular; ` +
+    `times from "${timeslotKey}", skipped ${skipped} blank/placeholder rows).`
 );

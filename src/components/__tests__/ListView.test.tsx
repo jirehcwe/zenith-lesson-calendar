@@ -29,6 +29,7 @@ import ListView from "../ListView";
 // date "06 Sep" with config.year 2026 normalizes to "2026-09-06".
 const sampleSessions: Session[] = [
   {
+    purpose: "SS SepCC",
     subject: "Math",
     tutor: "Matthew",
     centre: "Marine Parade",
@@ -42,6 +43,7 @@ const sampleSessions: Session[] = [
     displaySubject: "Math",
   },
   {
+    purpose: "SS SepCC",
     subject: "Math",
     tutor: "Matthew",
     centre: "Marine Parade",

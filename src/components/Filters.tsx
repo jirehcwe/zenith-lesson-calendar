@@ -8,11 +8,16 @@ type FiltersProps = {
   topics: string[];
   centres: string[];
   tutors: string[];
+  // Optional. When non-empty, renders a Type filter pill (e.g. "Crash Course"
+  // vs "Exam Simulation"). Slugs without variants pass [] / omit it and the
+  // pill is hidden.
+  types?: string[];
   filters: {
     subject: string[];
     topic: string[];
     centre: string[];
     tutor: string[];
+    type: string[];
   };
   onFilterChange: (filters: FiltersProps["filters"]) => void;
   // Transform applied to subject option values for display in the UI.
@@ -126,10 +131,12 @@ export default function Filters({
   subjects,
   topics,
   centres,
+  types,
   filters,
   onFilterChange,
   subjectLabel,
 }: FiltersProps) {
+  const hasTypeFilter = (types?.length ?? 0) > 0;
   const [collapsed, setCollapsed] = useState<boolean>(false);
   const [hydrated, setHydrated] = useState(false);
 
@@ -150,7 +157,10 @@ export default function Filters({
   };
 
   const activeCount =
-    filters.subject.length + filters.topic.length + filters.centre.length;
+    filters.subject.length +
+    filters.topic.length +
+    filters.centre.length +
+    (hasTypeFilter ? filters.type.length : 0);
 
   return (
     <div className="mb-6">
@@ -172,6 +182,14 @@ export default function Filters({
       </div>
       {!collapsed && (
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          {hasTypeFilter && (
+            <MultiSelect
+              label="Type"
+              selected={filters.type}
+              options={types ?? []}
+              onChange={(val) => setFilter("type", val)}
+            />
+          )}
           <MultiSelect
             label="Subject"
             selected={filters.subject}

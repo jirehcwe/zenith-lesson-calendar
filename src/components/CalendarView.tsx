@@ -8,7 +8,19 @@ import { Session } from "../types";
 import { useEffect, useState } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { getCrashCourseConfig } from "../../crash-courses";
-import { buildRegistrationUrl } from "@/utils/registration";
+import {
+  getRegistrationUrl,
+  getCtaLabel,
+  isMockExam,
+} from "@/utils/sessionVariant";
+
+function ExamPill() {
+  return (
+    <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-black/75 text-white text-[10px] font-bold tracking-wide leading-none">
+      EXAM
+    </span>
+  );
+}
 
 export default function CalendarView({
   events,
@@ -105,10 +117,18 @@ export default function CalendarView({
           const topic = arg.event.extendedProps.topic;
           const centre = arg.event.extendedProps.centre;
           const hasPrefill = arg.event.extendedProps.prefill;
+          const isMock = isMockExam(
+            arg.event.extendedProps as Session,
+            config
+          );
           return (
             <div className="p-1 overflow-hidden h-full text-xs leading-tight">
-              <div className="font-semibold truncate mb-1" title={arg.event.title}>
-                {arg.event.title}
+              <div
+                className="font-semibold truncate mb-1 flex items-center gap-1"
+                title={arg.event.title}
+              >
+                <span className="truncate">{arg.event.title}</span>
+                {isMock && <ExamPill />}
               </div>
               {topic && (
                 <div className="opacity-80 truncate" title={`Topic: ${topic}`}>
@@ -150,10 +170,19 @@ export default function CalendarView({
             </button>
             {selectedEvent && (
               <>
-                <DialogTitle className="font-bold text-lg mb-2">
-                  {selectedEvent.extendedProps.subject} -{" "}
-                  {selectedEvent.extendedProps.topic} -{" "}
-                  {selectedEvent.extendedProps.level}
+                <DialogTitle className="font-bold text-lg mb-2 flex items-center gap-2">
+                  <span>
+                    {[
+                      selectedEvent.extendedProps.subject,
+                      selectedEvent.extendedProps.topic,
+                      selectedEvent.extendedProps.level,
+                    ]
+                      .filter((part) => part && part.trim().length > 0)
+                      .join(" - ")}
+                  </span>
+                  {isMockExam(selectedEvent.extendedProps, config) && (
+                    <ExamPill />
+                  )}
                 </DialogTitle>
                 <div className="space-y-2">
                   <div className="text-sm">
@@ -175,15 +204,19 @@ export default function CalendarView({
             <div className="flex justify-end mt-4">
               {selectedEvent?.extendedProps.prefill ? (
                 <a
-                  href={buildRegistrationUrl(
-                    config.registrationFormUrl,
-                    selectedEvent.extendedProps
+                  href={getRegistrationUrl(
+                    selectedEvent.extendedProps,
+                    config
                   )}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                    Register (prefilled)
+                    {getCtaLabel(
+                      selectedEvent.extendedProps,
+                      config,
+                      "Register (prefilled)"
+                    )}
                   </button>
                 </a>
               ) : (
