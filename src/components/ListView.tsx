@@ -67,10 +67,6 @@ export default function ListView({
             key={`${s.date}-${s.startTime}-${s.tutor}`}
             className={`p-4 border rounded shadow flex flex-col ${
               s.prefill ? "" : "opacity-60"
-            } ${
-              isMockExam(s, config)
-                ? "bg-[repeating-linear-gradient(45deg,transparent_0,transparent_8px,rgba(0,0,0,0.06)_8px,rgba(0,0,0,0.06)_10px)]"
-                : ""
             }`}
           >
             <div className="font-semibold flex items-center gap-2">

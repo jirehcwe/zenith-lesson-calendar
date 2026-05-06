@@ -17,9 +17,23 @@ const AVATAR_SRCS = [
   "https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65f2786b8a3bd7f56bb2ac99_Screenshot%202024-03-14%20at%2012.09.05%20PM.webp",
 ];
 
+// Render hero.title with literal "\n" sequences as visual line breaks so a
+// config can split the title across two lines without leaking layout into
+// component code (e.g. "Zenith Primary\n2026 June Holiday Programmes").
+function renderTitle(title: string) {
+  const parts = title.split(/\\n|\n/);
+  return parts.map((line, i) => (
+    <span key={i} className="block">
+      {line}
+    </span>
+  ));
+}
+
 export default function SignupBanner() {
   const { hero } = getCrashCourseConfig();
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const showBlurbHeadline =
+    !!hero.blurbHeadline && hero.blurbHeadline.trim().length > 0;
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -62,7 +76,7 @@ export default function SignupBanner() {
                 />
               </svg>
               <h1 className="text-base sm:text-lg font-bold text-white flex-1">
-                {hero.title}
+                {renderTitle(hero.title)}
               </h1>
             </button>
           ) : (
@@ -113,7 +127,7 @@ export default function SignupBanner() {
 
               <div className="text-center">
                 <h1 className="text-2xl sm:text-3xl font-bold leading-tight text-white">
-                  {hero.title}
+                  {renderTitle(hero.title)}
                 </h1>
                 <p className="text-sm sm:text-base text-blue-100 font-medium mt-2">
                   {hero.tagline}
@@ -143,9 +157,11 @@ export default function SignupBanner() {
               </div>
 
               <div className="pt-4 mt-4">
-                <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-3 text-center">
-                  {hero.blurbHeadline}
-                </h2>
+                {showBlurbHeadline && (
+                  <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-3 text-center">
+                    {hero.blurbHeadline}
+                  </h2>
+                )}
                 <p className="text-sm sm:text-base text-blue-100 max-w-2xl mx-auto text-center">
                   {hero.blurbBody}
                 </p>
@@ -182,7 +198,7 @@ export default function SignupBanner() {
           <div className="flex-1 text-white space-y-6">
             <div className="space-y-4">
               <h1 className="text-4xl xl:text-4xl font-bold leading-tight">
-                {hero.title}
+                {renderTitle(hero.title)}
               </h1>
               <p className="text-lg xl:text-lg text-blue-100 font-medium">
                 {hero.tagline}
@@ -212,9 +228,11 @@ export default function SignupBanner() {
             </div>
 
             <div className="pt-6 mt-6">
-              <h2 className="text-2xl xl:text-2xl font-bold text-white mb-3">
-                {hero.blurbHeadline}
-              </h2>
+              {showBlurbHeadline && (
+                <h2 className="text-2xl xl:text-2xl font-bold text-white mb-3">
+                  {hero.blurbHeadline}
+                </h2>
+              )}
               <p className="text-base xl:text-lg text-blue-100 max-w-2xl">
                 {hero.blurbBody}
               </p>

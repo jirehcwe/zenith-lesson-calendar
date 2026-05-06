@@ -36,14 +36,13 @@ const config: CrashCourseConfig = {
     P6Sci: "P6 Science",
   },
   hero: {
-    title: "June 2026 Primary Crash Course",
+    title: "Zenith Primary\n2026 June Holiday Programmes",
     tagline:
       "Flexible scheduling • Expert tutors • Proven results • Book your slots early",
-    blurbHeadline: "Plan Your Crash Course Schedule",
     blurbBody:
-      "Register for the Primary crash course slots you want to attend. Browse the calendar, filter by subject or centre, and sign up for your preferred sessions before they fill up.",
+      "Make this June holiday a fruitful one with Zenith’s two-part programme for P5–P6 students. Start with our FREE Crash Course to strengthen core concepts, then move into our Exam Simulation to apply what they’ve learned under real exam conditions.",
     stats: "Trusted by over 20,000 students since 2019",
-    heroImageSrc: "/zenith-banner.webp",
+    heroImageSrc: "/zenith_banner_alt.webp",
     heroImageAlt: "Zenith Education",
   },
   calendar: {

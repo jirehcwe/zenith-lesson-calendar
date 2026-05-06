@@ -118,11 +118,8 @@ export default function Page() {
       }
       const hsv = hexToHsv(color.backgroundColor);
       const darkerHex = hsvToHex({ h: hsv.h, s: hsv.s, v: hsv.v * 0.8 });
-      const isMock = isMockExam(s, config);
-      // Mock exams keep the subject hue (so subject recognition stays intact)
-      // and are differentiated by a diagonal stripe overlay (CSS) plus an
-      // "EXAM" pill rendered in eventContent. The "full" signal continues to
-      // darken the background; stripes compose on top.
+      // Mock exams keep the subject hue intact and are differentiated solely
+      // by the EXAM pill rendered in eventContent (and on list cards).
       return {
         title: labelFor(s.subject),
         start: new Date(`${s.date} ${config.year} ${s.startTime}`),
@@ -130,7 +127,6 @@ export default function Page() {
         extendedProps: { ...s },
         backgroundColor: isFull ? darkerHex : color.backgroundColor,
         textColor: color.textColor,
-        classNames: isMock ? ["mock-exam-event"] : undefined,
       };
     });
   }, [calendarFilteredSessions]);
@@ -140,9 +136,11 @@ export default function Page() {
       filters.subject.length === 0
         ? sessions
         : sessions.filter((s) => filters.subject.includes(s.subject));
-    const combined = filtered.map(
-      (s) => `[${labelFor(s.subject)}] ${s.topic}`
-    );
+    // Slugs whose data has no topic (e.g. Pri, where every row's topic is
+    // blank) get an empty list; Filters then hides the Topic pill entirely.
+    const combined = filtered
+      .filter((s) => s.topic && s.topic.trim().length > 0)
+      .map((s) => `[${labelFor(s.subject)}] ${s.topic}`);
     return Array.from(new Set(combined)).sort((a, b) => a.localeCompare(b));
   }, [sessions, filters.subject]);
 

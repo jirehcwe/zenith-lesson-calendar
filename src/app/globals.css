@@ -50,20 +50,6 @@ body {
   background: none !important;
 }
 
-/* Mock-exam variant: keep the subject's background colour intact (so subject
-   recognition by hue still works) and overlay a diagonal stripe pattern to
-   signal "different category." Stripes are translucent black so they read on
-   any subject palette. The "EXAM" pill in eventContent reinforces the signal
-   for screen readers and list-view users. */
-.mock-exam-event .fc-event-main {
-  background-image: repeating-linear-gradient(
-    45deg,
-    transparent 0,
-    transparent 6px,
-    rgba(0, 0, 0, 0.14) 6px,
-    rgba(0, 0, 0, 0.14) 8px
-  );
-}
 
 /* FullCalendar header toolbar — lighter buttons, cleaner layout on mobile */
 .fc .fc-button-primary {

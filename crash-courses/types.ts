@@ -10,12 +10,16 @@ export type BannerContent = {
 };
 
 export type HeroContent = {
-  title: string;           // "May 2026 SS Crash Course"
-  tagline: string;         // "Flexible scheduling • Expert tutors • …"
-  blurbHeadline: string;   // "Find Your Perfect Crash Course"
-  blurbBody: string;       // long intro paragraph
-  stats: string;           // "Trusted by over 20,000 students since 2019"
-  heroImageSrc: string;    // e.g. "/zenith-banner.webp"
+  // May contain a literal "\n" to split the visible title across lines
+  // (rendered by SignupBanner via a split-and-block pass).
+  title: string;
+  tagline: string;
+  // Optional. When omitted or empty, the headline above the blurb body
+  // is not rendered.
+  blurbHeadline?: string;
+  blurbBody: string;
+  stats: string;
+  heroImageSrc: string;
   heroImageAlt: string;
 };
 

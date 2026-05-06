@@ -137,6 +137,7 @@ export default function Filters({
   subjectLabel,
 }: FiltersProps) {
   const hasTypeFilter = (types?.length ?? 0) > 0;
+  const hasTopicFilter = topics.length > 0;
   const [collapsed, setCollapsed] = useState<boolean>(false);
   const [hydrated, setHydrated] = useState(false);
 
@@ -158,7 +159,7 @@ export default function Filters({
 
   const activeCount =
     filters.subject.length +
-    filters.topic.length +
+    (hasTopicFilter ? filters.topic.length : 0) +
     filters.centre.length +
     (hasTypeFilter ? filters.type.length : 0);
 
@@ -197,12 +198,14 @@ export default function Filters({
             onChange={(val) => setFilter("subject", val)}
             optionLabel={subjectLabel}
           />
-          <MultiSelect
-            label="Topic"
-            selected={filters.topic}
-            options={topics}
-            onChange={(val) => setFilter("topic", val)}
-          />
+          {hasTopicFilter && (
+            <MultiSelect
+              label="Topic"
+              selected={filters.topic}
+              options={topics}
+              onChange={(val) => setFilter("topic", val)}
+            />
+          )}
           <MultiSelect
             label="Centre"
             selected={filters.centre}
