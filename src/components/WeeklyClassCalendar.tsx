@@ -123,6 +123,34 @@ const secSubjectToColorMap: Record<
     backgroundColor: "#DD7E6B",
     textColor: "#000000",
   },
+  "Pure History": {
+    backgroundColor: "#B6A48E",
+    textColor: "#000000",
+  },
+  "Combined History": {
+    backgroundColor: "#B6A48E",
+    textColor: "#000000",
+  },
+  "Pure Literature": {
+    backgroundColor: "#D5A6BD",
+    textColor: "#000000",
+  },
+  "Combined Literature": {
+    backgroundColor: "#D5A6BD",
+    textColor: "#000000",
+  },
+  "Pure Geography": {
+    backgroundColor: "#A2C4C9",
+    textColor: "#000000",
+  },
+  "Combined Geography": {
+    backgroundColor: "#A2C4C9",
+    textColor: "#000000",
+  },
+  "Social Studies": {
+    backgroundColor: "#C9DAF8",
+    textColor: "#000000",
+  },
 };
 
 const primarySubjectToColorMap: Record<
