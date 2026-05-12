@@ -161,7 +161,7 @@ const primarySubjectToColorMap: Record<
     backgroundColor: "#9FC5E8",
     textColor: "#000000",
   },
-  Math: {
+  Mathematics: {
     backgroundColor: "#F6B26B",
     textColor: "#000000",
   },
