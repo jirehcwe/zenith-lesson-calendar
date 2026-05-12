@@ -71,10 +71,9 @@ Tests are co-located with their source files using the `.test.tsx` / `.test.ts` 
 src/
   utils/
     filters.ts
+    filters.test.ts
     dates.ts
-    __tests__/
-      filters.test.ts
-      dates.test.ts
+    dates.test.ts
   components/
     Filters.tsx
     Filters.test.tsx
@@ -86,6 +85,9 @@ src/
     SignupBanner.test.tsx
     BottomBanner.tsx
     BottomBanner.test.tsx
+__mocks__/
+  @fullcalendar/
+    react.tsx
 ```
 
 ---
@@ -136,7 +138,7 @@ src/
 FullCalendar renders almost nothing in jsdom. It is replaced with a Jest manual mock:
 
 ```tsx
-// src/__mocks__/@fullcalendar/react.tsx
+// __mocks__/@fullcalendar/react.tsx  (root-level, next to node_modules)
 const FullCalendar = ({ eventClick, events }: any) => (
   <div data-testid="fullcalendar">
     {events?.map((e: any, i: number) => (
