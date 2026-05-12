@@ -79,7 +79,7 @@ export default function ListView({
                       <div className="font-bold text-lg text-gray-800">
                         {session.stream}
                         {session.stream?.length > 0 && " - "}
-                        {session.subject}
+                        {session.subjects.join(" + ")}
                       </div>
                       <div className="text-sm font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded-lg">
                         {session.level}

@@ -217,7 +217,9 @@ export default function Page() {
 
     // Get all unique options from stream-filtered data
     const allLevels = [...new Set(streamFilteredData.map((s) => s.level))];
-    const allSubjects = [...new Set(streamFilteredData.map((s) => s.subject))];
+    const allSubjects = [
+      ...new Set(streamFilteredData.flatMap((s) => s.subjects)),
+    ];
     const allCentres = [...new Set(streamFilteredData.map((s) => s.centre))];
     const allTutors = [...new Set(streamFilteredData.map((s) => s.tutor))];
 
@@ -239,7 +241,7 @@ export default function Page() {
           (testFilters.level.length === 0 ||
             testFilters.level.includes(s.level)) &&
           (testFilters.subject.length === 0 ||
-            testFilters.subject.includes(s.subject)) &&
+            s.subjects.some((subj) => testFilters.subject.includes(subj))) &&
           (testFilters.centre.length === 0 ||
             testFilters.centre.includes(s.centre))
         );
@@ -336,7 +338,8 @@ export default function Page() {
       return (
         levelToFilterMapper(filters.stream, s.level, s.stream) &&
         (filters.level.length === 0 || filters.level.includes(s.level)) &&
-        (filters.subject.length === 0 || filters.subject.includes(s.subject)) &&
+        (filters.subject.length === 0 ||
+          s.subjects.some((subj) => filters.subject.includes(subj))) &&
         (filters.centre.length === 0 || filters.centre.includes(s.centre))
       );
     });

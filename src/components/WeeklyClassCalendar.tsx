@@ -26,7 +26,7 @@ export type WeeklyClassSlot = {
   day: number; // 0 (Sunday) to 6 (Saturday)
   startTime: string; // e.g. "10:00"
   endTime: string; // e.g. "12:00"
-  subject: string;
+  subjects: string[];
   tutor: string;
   centre: string;
   stream: string;
@@ -316,9 +316,9 @@ export default function WeeklyClassCalendar({
       const full = isSlotFull(slot);
       const color = full
         ? FULL_SLOT_COLOR
-        : subjectToColor(slot.level, slot.subject);
+        : subjectToColor(slot.level, slot.subjects[0]);
       return {
-        title: `${slot.level} ${slot.subject} ${
+        title: `${slot.level} ${slot.subjects.join(" + ")} ${
           slot.stream ? `(${slot.stream})` : ""
         }`,
         start,
@@ -468,11 +468,11 @@ export default function WeeklyClassCalendar({
                 <div className="text-center space-y-3">
                   <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full">
                     <span className="text-lg text-white font-bold">
-                      {selectedEvent.subject.charAt(0)}
+                      {selectedEvent.subjects[0].charAt(0)}
                     </span>
                   </div>
                   <DialogTitle className="text-xl font-bold text-gray-800">
-                    {selectedEvent.level} {selectedEvent.subject}
+                    {selectedEvent.level} {selectedEvent.subjects.join(" + ")}
                     {selectedEvent.stream && (
                       <span className="block text-base text-blue-600 font-medium mt-1">
                         ({selectedEvent.stream})
