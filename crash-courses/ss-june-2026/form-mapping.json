@@ -39,6 +39,7 @@
 
     "S3 Pure Biology": "SBio(Pure)",
     "S4/5 Pure Biology": "SBio(Pure)",
+    "S3 Combined Biology": "SBio(Comb)",
     "S4/5 Combined Biology": "SBio(Comb)",
 
     "S3 Pure History": "SHis(Pure)",
@@ -81,6 +82,7 @@
     "S4/5 Combined Chemistry": "600100063",
 
     "S3 Pure Biology": "672830523",
+    "S3 Combined Biology": "672830523",
     "S4/5 Pure Biology": "737212271",
     "S4/5 Combined Biology": "737212271",
 

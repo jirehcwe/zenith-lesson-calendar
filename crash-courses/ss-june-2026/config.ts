@@ -62,6 +62,7 @@ const config: CrashCourseConfig = {
     "S4 IP Chemistry": { backgroundColor: CHEMISTRY, textColor: BLACK },
 
     "S3 Pure Biology": { backgroundColor: BIOLOGY, textColor: BLACK },
+    "S3 Combined Biology": { backgroundColor: BIOLOGY, textColor: BLACK },
     "S4/5 Pure Biology": { backgroundColor: BIOLOGY, textColor: BLACK },
     "S4/5 Combined Biology": { backgroundColor: BIOLOGY, textColor: BLACK },
 
