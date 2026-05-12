@@ -17,7 +17,7 @@ Package manager is **Yarn 4.9.2** (via Corepack). No test suite is configured.
 
 ### Data Flow
 
-Schedule data is fetched from `https://lms-api.myzenithstudy.com/schedule` and cached in localStorage for 5 minutes with version-based invalidation. The main `page.tsx` is the central state container — it holds all filter state, fetched data, and passes filtered results down to view components.
+Schedule data is fetched from `https://api.schedule.myzenithstudy.com/schedule?year=<currentYear>` and cached in localStorage for 5 minutes (`CACHE_DURATION`) with version-based invalidation (`CACHE_VERSION` — bump it when the API response shape changes to force all clients to re-fetch). The endpoint is owned by the telebot `db-schedule-updater` Lambda (`telebot/scripts/lambdas/db-schedule-updater/`), reading from `telebot.ClassSlot`; do **not** confuse it with lms-backend's `lms-api.myzenithstudy.com/schedule`, which is a separate Sheet-reading read-through route. Response rows include `classSlotId`, `title`, `day`, `startTime`, `endTime`, `subjects` (array — formerly `subject` singular; bump `CACHE_VERSION` if you depend on the shape), `tutor`, `centre`, `stream`, `level`, plus `prefillTrialLink` / `prefillRegistrationLink`. The main `page.tsx` is the central state container — it holds all filter state, fetched data, and passes filtered results down to view components.
 
 ### Filter System
 
