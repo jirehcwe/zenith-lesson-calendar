@@ -2,7 +2,10 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import CalendarView from "./CalendarView";
 
-jest.mock("@vercel/analytics", () => ({ track: jest.fn() }));
+jest.mock("@/utils/campaign", () => ({
+  replaceCampaignInUrl: (url: string) => url,
+  replacePromocodeInUrl: (url: string) => url,
+}));
 
 const mockEvents = [
   {

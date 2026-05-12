@@ -1,79 +1,75 @@
 import { render, screen } from "@testing-library/react";
 import ListView from "./ListView";
-import { Session } from "../types";
+import type { WeeklyClassSlot } from "./WeeklyClassCalendar";
 
-jest.mock("react-datepicker", () => {
-  const MockDatePicker = ({ placeholderText }: { placeholderText?: string }) => (
-    <input data-testid="date-picker" placeholder={placeholderText} readOnly />
-  );
-  MockDatePicker.displayName = "MockDatePicker";
-  return MockDatePicker;
-});
+jest.mock("./WeeklyClassCalendar", () => ({
+  isSlotFull: (slot: { title: string }) => slot.title.startsWith("[FULL]"),
+}));
 
-const makeSession = (overrides: Partial<Session> = {}): Session => ({
-  subject: "Math",
-  tutor: "Alice",
-  centre: "City",
-  classroom: "Room 1",
-  topic: "Algebra",
-  date: "24 May",
+jest.mock("@/utils/campaign", () => ({
+  replaceCampaignInUrl: (url: string) => url,
+  replacePromocodeInUrl: (url: string) => url,
+}));
+
+jest.mock("@/utils/prefillRegistration", () => ({
+  getFallbackRegistrationLinkByLevel: () => "https://example.com/fallback",
+}));
+
+const makeSlot = (overrides: Partial<WeeklyClassSlot> = {}): WeeklyClassSlot => ({
+  title: "Math class",
+  day: 1,
   startTime: "10:00",
   endTime: "12:00",
-  level: "Secondary",
-  prefill: "",
-  prefillField: "",
+  subjects: ["Math"],
+  tutor: "Alice",
+  centre: "Bishan",
+  stream: "JC",
+  level: "J2",
+  prefillTrialLink: "https://example.com/trial",
+  prefillRegistrationLink: "https://example.com/register",
   ...overrides,
 });
 
 describe("ListView", () => {
+  it("shows empty state when no sessions are provided", () => {
+    render(<ListView sessions={[]} />);
+    expect(screen.getByText(/No classes found/i)).toBeInTheDocument();
+  });
+
   it("renders a card for each session", () => {
     const sessions = [
-      makeSession({ subject: "Math" }),
-      makeSession({ subject: "English", date: "25 May" }),
+      makeSlot({ subjects: ["Math"], day: 1 }),
+      makeSlot({ subjects: ["English"], day: 2 }),
     ];
-    render(
-      <ListView sessions={sessions} calendarFilter={null} onCalendarFilterChange={jest.fn()} />
-    );
-    expect(screen.getByText("Math")).toBeInTheDocument();
-    expect(screen.getByText("English")).toBeInTheDocument();
+    render(<ListView sessions={sessions} />);
+    expect(screen.getByText(/Math/)).toBeInTheDocument();
+    expect(screen.getByText(/English/)).toBeInTheDocument();
   });
 
-  it("shows all sessions when calendarFilter is null", () => {
+  it("groups sessions under day headings", () => {
     const sessions = [
-      makeSession({ date: "24 May" }),
-      makeSession({ subject: "English", date: "25 May" }),
+      makeSlot({ day: 1 }),
+      makeSlot({ subjects: ["English"], day: 3 }),
     ];
-    render(
-      <ListView sessions={sessions} calendarFilter={null} onCalendarFilterChange={jest.fn()} />
-    );
-    expect(screen.getByText("Math")).toBeInTheDocument();
-    expect(screen.getByText("English")).toBeInTheDocument();
+    render(<ListView sessions={sessions} />);
+    expect(screen.getByText("Monday")).toBeInTheDocument();
+    expect(screen.getByText("Wednesday")).toBeInTheDocument();
   });
 
-  it("shows only sessions matching calendarFilter", () => {
-    const sessions = [
-      makeSession({ subject: "Math", date: "24 May" }),
-      makeSession({ subject: "English", date: "25 May" }),
-    ];
-    render(
-      <ListView sessions={sessions} calendarFilter="2025-05-24" onCalendarFilterChange={jest.fn()} />
-    );
-    expect(screen.getByText("Math")).toBeInTheDocument();
-    expect(screen.queryByText("English")).not.toBeInTheDocument();
+  it("renders trial and register buttons for available slots", () => {
+    render(<ListView sessions={[makeSlot()]} />);
+    expect(screen.getByRole("button", { name: /Sign up for FREE Trial/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Register now/i })).toBeInTheDocument();
   });
 
-  it("renders no cards when no sessions match calendarFilter", () => {
-    const sessions = [makeSession({ date: "24 May" })];
-    render(
-      <ListView sessions={sessions} calendarFilter="2025-06-01" onCalendarFilterChange={jest.fn()} />
-    );
-    expect(screen.queryByText("Math")).not.toBeInTheDocument();
+  it("shows full message and hides action buttons for full slots", () => {
+    render(<ListView sessions={[makeSlot({ title: "[FULL] Math class" })]} />);
+    expect(screen.getByText(/This class is currently full/i)).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Sign up for FREE Trial/i })).not.toBeInTheDocument();
   });
 
-  it("renders the date picker", () => {
-    render(
-      <ListView sessions={[]} calendarFilter={null} onCalendarFilterChange={jest.fn()} />
-    );
-    expect(screen.getByTestId("date-picker")).toBeInTheDocument();
+  it("renders centre information on each card", () => {
+    render(<ListView sessions={[makeSlot({ centre: "Clementi" })]} />);
+    expect(screen.getByText("Clementi")).toBeInTheDocument();
   });
 });

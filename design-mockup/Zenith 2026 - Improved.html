@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zenith 2026 — Weekly Schedule (Improved)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div class="mockup-ribbon"><b>Improved UI Mockup</b> · refined banner · result counts · search · richer cards · waitlist · shortlist · resize to test responsive</div>
+
+<!-- ═══ BANNER ═══ -->
+<header class="banner">
+  <div class="container">
+
+    <!-- Desktop -->
+    <div class="banner-row">
+      <div class="banner-photo">
+        <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <pattern id="ph" width="14" height="14" patternUnits="userSpaceOnUse">
+              <rect width="14" height="14" fill="#3950C6"/>
+              <line x1="0" y1="0" x2="14" y2="14" stroke="#4A66D9" stroke-width="1"/>
+            </pattern>
+          </defs>
+          <rect width="220" height="220" fill="url(#ph)"/>
+          <text x="110" y="106" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-family="ui-monospace, monospace" font-size="11" font-weight="600">[ group photo ]</text>
+          <text x="110" y="124" text-anchor="middle" fill="rgba(255,255,255,0.55)" font-family="ui-monospace, monospace" font-size="9">zenith-banner.webp</text>
+        </svg>
+      </div>
+
+      <div class="banner-text">
+        <div class="banner-eyebrow"><span class="dot"></span>Now booking · 2026 academic year</div>
+        <h1 class="banner-h1">Browse every class. <em>Book a free trial</em> in two taps.</h1>
+        <p class="banner-sub">Filter the weekly timetable by your stream, subject, and preferred centre — then sign up for a complimentary trial or register directly.</p>
+        <div class="banner-proof">
+          <div class="banner-avs">
+            <div class="banner-av"><img src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/6620e0830701a7bceb0c7204_Screenshot%202024-04-18%20163444.webp" alt="" /></div>
+            <div class="banner-av"><img src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65f278d68ea311803c30e993_Screenshot%202024-03-14%20at%2012.10.54%20PM.webp" alt="" /></div>
+            <div class="banner-av"><img src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/6620dd4162fa73292402d873_Screenshot%202024-04-18%20163707.webp" alt="" /></div>
+            <div class="banner-av"><img src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65f2786b8a3bd7f56bb2ac99_Screenshot%202024-03-14%20at%2012.09.05%20PM.webp" alt="" /></div>
+          </div>
+          <div class="banner-proof-text"><b>20,000+ students</b> taught since 2019</div>
+        </div>
+      </div>
+
+      <div class="banner-logo">
+        <img src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65ed367b65acaa4acb2bbf72_Zenith-logo.webp" alt="Zenith Education Studio" />
+      </div>
+    </div>
+
+    <!-- Mobile collapsible -->
+    <div class="banner-mobile">
+      <button class="banner-mob-top" id="banner-toggle" aria-expanded="false">
+        <span class="chev" id="banner-mob-chev">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </span>
+        <h1>Zenith 2026 Schedule</h1>
+        <span class="logo-mini"><img src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65ed367b65acaa4acb2bbf72_Zenith-logo.webp" alt="" /></span>
+      </button>
+      <div class="banner-mob-body" id="banner-mob-body">
+        <div class="banner-photo">
+          <svg viewBox="0 0 140 140" preserveAspectRatio="xMidYMid slice">
+            <defs><pattern id="ph2" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#3950C6"/><line x1="0" y1="0" x2="10" y2="10" stroke="#4A66D9" stroke-width="0.8"/></pattern></defs>
+            <rect width="140" height="140" fill="url(#ph2)"/>
+            <text x="70" y="74" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-family="ui-monospace, monospace" font-size="9">[ photo ]</text>
+          </svg>
+        </div>
+        <div>
+          <h1 class="banner-h1">Browse every class. <em>Book a free trial</em> in two taps.</h1>
+          <p class="banner-sub">Filter the timetable by your stream, subject and centre. Trials are complimentary for new students.</p>
+        </div>
+        <div class="banner-proof">
+          <div class="banner-avs">
+            <div class="banner-av"><img src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/6620e0830701a7bceb0c7204_Screenshot%202024-04-18%20163444.webp" alt="" /></div>
+            <div class="banner-av"><img src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65f278d68ea311803c30e993_Screenshot%202024-03-14%20at%2012.10.54%20PM.webp" alt="" /></div>
+            <div class="banner-av"><img src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/6620dd4162fa73292402d873_Screenshot%202024-04-18%20163707.webp" alt="" /></div>
+            <div class="banner-av"><img src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65f2786b8a3bd7f56bb2ac99_Screenshot%202024-03-14%20at%2012.09.05%20PM.webp" alt="" /></div>
+          </div>
+          <div class="banner-proof-text"><b>20,000+ students</b> since 2019</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<!-- ═══ STICKY FILTER BAR ═══ -->
+<div class="filter-bar">
+  <div class="container">
+    <div class="filter-inner">
+
+      <!-- Row 1: Stream pills (primary gate) -->
+      <div class="streams" role="tablist" aria-label="Stream">
+        <span class="streams-label">Stream</span>
+        <button class="stream" data-stream="JC">JC <span class="count">0</span></button>
+        <button class="stream active" data-stream="Sec Express">Sec Express <span class="count">0</span></button>
+        <button class="stream" data-stream="Sec IP">Sec IP <span class="count">0</span></button>
+        <button class="stream" data-stream="Primary">Primary <span class="count">0</span></button>
+      </div>
+
+      <!-- Row 2: Refinements (search + selects + time chips + view toggle) -->
+      <div class="refine">
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input id="search-input" type="search" placeholder="Search subject or centre…" aria-label="Search classes" />
+          <kbd>⌘K</kbd>
+        </div>
+
+        <div class="select">
+          <select id="sel-level" aria-label="Level">
+            <option value="">Level</option>
+            <option>S1</option><option>S2</option><option>S3</option><option>S4</option>
+          </select>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+
+        <div class="select">
+          <select id="sel-subject" aria-label="Subject">
+            <option value="">Subject</option>
+            <option>Mathematics</option>
+            <option>A Math</option>
+            <option>E Math</option>
+            <option>English</option>
+            <option>Pure Physics</option>
+            <option>Pure Chemistry</option>
+            <option>Biology</option>
+            <option>Economics</option>
+            <option>General Paper</option>
+          </select>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+
+        <div class="select">
+          <select id="sel-centre" aria-label="Centre">
+            <option value="">Centre</option>
+            <option>Bishan</option>
+            <option>Clementi</option>
+            <option>Tampines</option>
+            <option>Tan Kah Kee</option>
+            <option>Online</option>
+          </select>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+
+        <div class="view-toggle" role="tablist">
+          <button data-view="calendar" class="active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Calendar
+          </button>
+          <button data-view="list">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            List
+          </button>
+        </div>
+
+        <button class="mob-filter-btn" id="mob-filter-btn" onclick="openSheet()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          Filter <span class="badge" id="mob-filter-badge" style="display:none">0</span>
+        </button>
+      </div>
+
+      <!-- Row 3: Summary -->
+      <div class="summary">
+        <div class="summary-count" id="summary-count"></div>
+        <div class="summary-chips" id="summary-chips"></div>
+        <button class="summary-clear" id="summary-clear" style="display:none">Clear all</button>
+        <button class="summary-shortlist" id="shortlist-btn" style="display:none">
+          <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          Shortlist
+          <span class="count" id="shortlist-count">0</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CONTENT ═══ -->
+<main>
+  <div class="container">
+    <div class="content">
+
+      <!-- Calendar View -->
+      <div class="view-panel active" id="panel-calendar">
+        <div class="calendar">
+          <div class="cal-head" id="cal-head"></div>
+          <div class="cal-grid" id="cal-grid"></div>
+          <div class="cal-legend">
+            <div class="cal-legend-item c-math"><span class="cal-legend-sw"></span> Math</div>
+            <div class="cal-legend-item c-amath"><span class="cal-legend-sw"></span> A Math</div>
+            <div class="cal-legend-item c-physics"><span class="cal-legend-sw"></span> Physics</div>
+            <div class="cal-legend-item c-chem"><span class="cal-legend-sw"></span> Chemistry</div>
+            <div class="cal-legend-item c-english"><span class="cal-legend-sw"></span> English</div>
+            <div class="cal-legend-item c-full"><span class="cal-legend-sw"></span> Full</div>
+            <div style="margin-left:auto; display:inline-flex; align-items:center; gap:6px; color:var(--t3); font-size:11.5px;">
+              <span style="width:8px; height:8px; border-radius:50%; background:#DC2626;"></span> Live · 11:30 AM
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- List View -->
+      <div class="view-panel" id="panel-list">
+        <div id="list-wrap"></div>
+        <div style="text-align:center; padding:18px 0 4px; font-size:12px; color:var(--t3);">
+          * Free trial applies only if you haven't trialled this subject before. Standard fees apply otherwise.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<!-- ═══ MODAL ═══ -->
+<div class="modal-backdrop" id="modal">
+  <div class="modal-panel">
+    <div class="modal-hero" id="modal-hero">
+      <button class="modal-close" id="modal-close" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="modal-meta-top" id="modal-eyebrow"><span class="dot"></span>Secondary Express · S3</div>
+      <div class="modal-title" id="modal-title">Mathematics</div>
+      <div class="modal-sub" id="modal-sub">Monday · 10:00 – 12:00 · Bishan</div>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="modal-info-grid">
+        <div class="info-tile">
+          <div class="info-tile-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Time
+          </div>
+          <div class="info-tile-value" id="m-time">10:00 – 12:00</div>
+        </div>
+        <div class="info-tile">
+          <div class="info-tile-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Venue
+          </div>
+          <div class="info-tile-value" id="m-venue">Bishan</div>
+        </div>
+      </div>
+
+      <div class="modal-seats-card" id="m-seats">
+        <div class="seats-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <div class="seats-text">
+          <div class="top" id="m-seats-top">5 of 14 seats available</div>
+          <div class="bottom" id="m-seats-bot">Plenty of room. First trial is on the house.</div>
+        </div>
+      </div>
+
+      <p style="font-size:11.5px; color:var(--t3); line-height:1.5; margin:0;">
+        * Free trial applies only if you haven’t trialled this subject before. Standard fees apply otherwise.
+      </p>
+
+    </div>
+
+    <div class="modal-actions" id="modal-actions"></div>
+  </div>
+</div>
+
+<!-- ═══ MOBILE FILTER SHEET ═══ -->
+<div class="sheet-backdrop" id="sheet-backdrop">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3>Refine your search</h3>
+
+    <div class="sheet-group">
+      <div class="lbl">Level</div>
+      <div class="row">
+        <button class="sheet-chip" data-group="level" data-value="S1">S1</button>
+        <button class="sheet-chip" data-group="level" data-value="S2">S2</button>
+        <button class="sheet-chip" data-group="level" data-value="S3">S3</button>
+        <button class="sheet-chip" data-group="level" data-value="S4">S4</button>
+      </div>
+    </div>
+
+    <div class="sheet-group">
+      <div class="lbl">Subject</div>
+      <div class="row">
+        <button class="sheet-chip" data-group="subject" data-value="Mathematics">Math</button>
+        <button class="sheet-chip" data-group="subject" data-value="A Math">A Math</button>
+        <button class="sheet-chip" data-group="subject" data-value="English">English</button>
+        <button class="sheet-chip" data-group="subject" data-value="Pure Physics">Physics</button>
+        <button class="sheet-chip" data-group="subject" data-value="Pure Chemistry">Chemistry</button>
+        <button class="sheet-chip" data-group="subject" data-value="Biology">Biology</button>
+      </div>
+    </div>
+
+    <div class="sheet-group">
+      <div class="lbl">Centre</div>
+      <div class="row">
+        <button class="sheet-chip" data-group="centre" data-value="Bishan">Bishan</button>
+        <button class="sheet-chip" data-group="centre" data-value="Clementi">Clementi</button>
+        <button class="sheet-chip" data-group="centre" data-value="Tampines">Tampines</button>
+        <button class="sheet-chip" data-group="centre" data-value="Tan Kah Kee">Tan Kah Kee</button>
+        <button class="sheet-chip" data-group="centre" data-value="Online">Online</button>
+      </div>
+    </div>
+
+    <div class="sheet-cta">
+      <button class="btn btn-tertiary" id="sheet-clear" style="flex:1">Clear all</button>
+      <button class="btn btn-primary" id="sheet-apply" style="flex:1.6">View results</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SHORTLIST DRAWER ═══ -->
+<div class="drawer-backdrop" id="drawer-backdrop"></div>
+<aside class="drawer" id="drawer" aria-label="Shortlist">
+  <div class="drawer-head">
+    <h3>Your shortlist</h3>
+    <button class="close" id="drawer-close" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="drawer-body" id="drawer-body"></div>
+  <div class="drawer-foot" id="drawer-foot">
+    <div style="display:flex; gap:8px;">
+      <button class="btn btn-tertiary" id="drawer-clear" style="flex:1">Clear</button>
+      <button class="btn btn-primary" style="flex:1.6">Email me these classes</button>
+    </div>
+    <p style="font-size:11px; color:var(--t3); text-align:center; margin-top:8px;">Compare in your inbox · no signup required</p>
+  </div>
+</aside>
+
+<!-- ═══ BOTTOM NAV (mobile) ═══ -->
+<nav class="bnav" aria-label="Main">
+  <button class="bnav-btn active" data-bnav="calendar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Calendar
+  </button>
+  <button class="bnav-btn" data-bnav="list">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    List
+  </button>
+  <button class="bnav-btn" data-bnav="filter">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+    Filter
+  </button>
+  <button class="bnav-btn" data-bnav="shortlist" style="position:relative">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+    Saved
+    <span class="badge" id="bnav-shortlist-badge" style="display:none">0</span>
+  </button>
+</nav>
+
+<!-- ═══ TWEAKS ═══ -->
+<button id="tweaks-toggle" style="position:fixed; bottom:80px; right:18px; z-index:201; width:46px; height:46px; border-radius:50%; background:var(--ink); color:#fff; box-shadow:var(--s-3); display:grid; place-items:center;" aria-label="Open tweaks">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+</button>
+
+<div class="tweaks" id="tweaks">
+  <h4>
+    Tweaks
+    <button id="tweaks-close" aria-label="Close">×</button>
+  </h4>
+  <div class="tweak-group">
+    <div class="lbl">Density</div>
+    <div class="tweak-seg">
+      <button data-tweak="density" data-value="compact">Compact</button>
+      <button data-tweak="density" data-value="normal" class="active">Normal</button>
+      <button data-tweak="density" data-value="comfortable">Roomy</button>
+    </div>
+  </div>
+  <div class="tweak-group">
+    <div class="lbl">Primary accent</div>
+    <div class="tweak-seg">
+      <button data-tweak="accent" data-value="amber" class="active">Amber</button>
+      <button data-tweak="accent" data-value="emerald">Emerald</button>
+      <button data-tweak="accent" data-value="rose">Rose</button>
+    </div>
+  </div>
+  <div class="tweak-group">
+    <div class="lbl">Banner theme</div>
+    <div class="tweak-seg">
+      <button data-tweak="theme" data-value="indigo" class="active">Indigo</button>
+      <button data-tweak="theme" data-value="slate">Slate</button>
+      <button data-tweak="theme" data-value="teal">Teal</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

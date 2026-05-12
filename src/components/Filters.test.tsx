@@ -2,30 +2,92 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Filters from "./Filters";
 
-const defaultFilters = { subject: [], topic: [], centre: [], tutor: [] };
+type OptionWithCount = { value: string; count: number; selected: boolean };
+
+const opt = (value: string, count = 1): OptionWithCount => ({ value, count, selected: false });
+
+const defaultFilters = { subject: [], centre: [], tutor: [], level: [], stream: null };
 
 describe("Filters", () => {
-  it("renders Subject, Topic, and Centre dropdown labels", () => {
+  it("renders stream buttons for each stream", () => {
     render(
       <Filters
+        streams={["JC", "Secondary (Express)"]}
+        levels={[]}
         subjects={[]}
-        topics={[]}
         centres={[]}
         tutors={[]}
         filters={defaultFilters}
         onFilterChange={jest.fn()}
       />
     );
+    expect(screen.getByRole("button", { name: "JC" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Secondary (Express)" })).toBeInTheDocument();
+  });
+
+  it("renders Level, Subject, and Centre dropdown labels", () => {
+    render(
+      <Filters
+        streams={[]}
+        levels={[]}
+        subjects={[]}
+        centres={[]}
+        tutors={[]}
+        filters={defaultFilters}
+        onFilterChange={jest.fn()}
+      />
+    );
+    expect(screen.getByText("Level")).toBeInTheDocument();
     expect(screen.getByText("Subject")).toBeInTheDocument();
-    expect(screen.getByText("Topic")).toBeInTheDocument();
     expect(screen.getByText("Centre")).toBeInTheDocument();
   });
 
-  it("shows placeholder text when no option is selected", () => {
+  it("calls onFilterChange with selected stream when a stream button is clicked", async () => {
+    const user = userEvent.setup();
+    const onFilterChange = jest.fn();
     render(
       <Filters
-        subjects={["Math"]}
-        topics={[]}
+        streams={["JC", "Secondary (Express)"]}
+        levels={[]}
+        subjects={[]}
+        centres={[]}
+        tutors={[]}
+        filters={defaultFilters}
+        onFilterChange={onFilterChange}
+      />
+    );
+    await user.click(screen.getByRole("button", { name: "JC" }));
+    expect(onFilterChange).toHaveBeenCalledWith(
+      expect.objectContaining({ stream: "JC" })
+    );
+  });
+
+  it("calls onFilterChange with stream=null when clear stream button is clicked", async () => {
+    const user = userEvent.setup();
+    const onFilterChange = jest.fn();
+    render(
+      <Filters
+        streams={["JC"]}
+        levels={[]}
+        subjects={[]}
+        centres={[]}
+        tutors={[]}
+        filters={{ ...defaultFilters, stream: "JC" }}
+        onFilterChange={onFilterChange}
+      />
+    );
+    await user.click(screen.getByLabelText("Clear stream selection"));
+    expect(onFilterChange).toHaveBeenCalledWith(
+      expect.objectContaining({ stream: null })
+    );
+  });
+
+  it("shows placeholder when no subject is selected", () => {
+    render(
+      <Filters
+        streams={[]}
+        levels={[]}
+        subjects={[opt("Math")]}
         centres={[]}
         tutors={[]}
         filters={defaultFilters}
@@ -35,13 +97,14 @@ describe("Filters", () => {
     expect(screen.getByText("Select Subject")).toBeInTheDocument();
   });
 
-  it("calls onFilterChange with the selected value when an option is clicked", async () => {
+  it("calls onFilterChange with selected subject when a subject option is clicked", async () => {
     const user = userEvent.setup();
     const onFilterChange = jest.fn();
     render(
       <Filters
-        subjects={["Math", "English"]}
-        topics={[]}
+        streams={[]}
+        levels={[]}
+        subjects={[opt("Math"), opt("English")]}
         centres={[]}
         tutors={[]}
         filters={defaultFilters}
@@ -50,39 +113,8 @@ describe("Filters", () => {
     );
     await user.click(screen.getByText("Select Subject"));
     await user.click(screen.getByText("Math"));
-    expect(onFilterChange).toHaveBeenCalledWith({
-      subject: ["Math"],
-      topic: [],
-      centre: [],
-      tutor: [],
-    });
-  });
-
-  it("calls onFilterChange with the value removed when a selected option is clicked again", async () => {
-    const user = userEvent.setup();
-    const onFilterChange = jest.fn();
-    render(
-      <Filters
-        subjects={["Math", "English"]}
-        topics={[]}
-        centres={[]}
-        tutors={[]}
-        filters={{ ...defaultFilters, subject: ["Math"] }}
-        onFilterChange={onFilterChange}
-      />
-    );
-    // The button shows "Math" (current selection) — click to open dropdown
-    await user.click(screen.getByText("Math"));
-    // Find the checked checkbox for "Math" and click its parent li to deselect.
-    // Note: MultiSelect wires both Listbox.onChange AND <li onClick={toggleOption}>,
-    // so onFilterChange fires twice per click (both with the same payload).
-    // Use toHaveBeenCalledWith, not toHaveBeenCalledTimes(1), to stay tolerant of this.
-    const checkedCheckbox = screen
-      .getAllByRole("checkbox")
-      .find((el) => (el as HTMLInputElement).checked);
-    await user.click(checkedCheckbox!.closest("li")!);
     expect(onFilterChange).toHaveBeenCalledWith(
-      expect.objectContaining({ subject: [] })
+      expect.objectContaining({ subject: ["Math"] })
     );
   });
 });
