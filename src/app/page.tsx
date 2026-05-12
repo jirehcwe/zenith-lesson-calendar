@@ -18,7 +18,7 @@ const CACHE_TIME_KEY = "weeklyClassDataTimestamp";
 const CACHE_VERSION_KEY = "weeklyClassDataVersion";
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in ms
 // Increment this version when the API changes to force all clients to invalidate cache
-const CACHE_VERSION = 2;
+const CACHE_VERSION = 3;
 const FILTERS_COLLAPSED_STORAGE_KEY = "filtersCollapsed";
 
 // Collapse db-schedule-updater's venue granularity back into the flat labels
