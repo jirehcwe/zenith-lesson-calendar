@@ -18,6 +18,7 @@ const baseProps = {
   onSearchChange: jest.fn(),
   currentView: "calendar" as const,
   onViewChange: jest.fn(),
+  totalCount: 0,
 };
 
 describe("Filters", () => {
@@ -91,5 +92,54 @@ describe("Filters", () => {
     render(<Filters {...baseProps} onViewChange={onViewChange} />);
     await user.click(screen.getByRole("button", { name: /List/i }));
     expect(onViewChange).toHaveBeenCalledWith("list");
+  });
+
+  it("shows class count in summary row when filters are active", () => {
+    render(
+      <Filters
+        {...baseProps}
+        streams={["JC"]}
+        filters={{ ...defaultFilters, stream: "JC" }}
+        totalCount={5}
+      />
+    );
+    expect(screen.getByText("5")).toBeInTheDocument();
+    expect(screen.getByText(/classes/i)).toBeInTheDocument();
+  });
+
+  it("shows a chip for the active stream filter in the summary row", () => {
+    render(
+      <Filters
+        {...baseProps}
+        streams={["JC"]}
+        filters={{ ...defaultFilters, stream: "JC" }}
+        totalCount={3}
+      />
+    );
+    // "JC" appears as stream button AND as chip in summary row
+    expect(screen.getAllByText("JC").length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("calls onFilterChange to reset all when Clear all is clicked", async () => {
+    const user = userEvent.setup();
+    const onFilterChange = jest.fn();
+    render(
+      <Filters
+        {...baseProps}
+        streams={["JC"]}
+        filters={{ ...defaultFilters, stream: "JC" }}
+        onFilterChange={onFilterChange}
+        totalCount={3}
+      />
+    );
+    await user.click(screen.getByText("Clear all"));
+    expect(onFilterChange).toHaveBeenCalledWith({
+      subject: [], centre: [], tutor: [], level: [], stream: null,
+    });
+  });
+
+  it("does not show summary row when no filters are active", () => {
+    render(<Filters {...baseProps} totalCount={0} />);
+    expect(screen.queryByText("Clear all")).not.toBeInTheDocument();
   });
 });

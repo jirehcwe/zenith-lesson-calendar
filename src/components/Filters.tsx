@@ -28,6 +28,7 @@ type FiltersProps = {
   onSearchChange: (q: string) => void;
   currentView: ViewType;
   onViewChange: (view: ViewType) => void;
+  totalCount: number;
 };
 
 // Helper function to truncate text
@@ -220,6 +221,7 @@ export default function Filters({
   onSearchChange,
   currentView,
   onViewChange,
+  totalCount,
 }: FiltersProps) {
   const setFilter = (
     field: keyof FiltersProps["filters"],
@@ -362,6 +364,63 @@ export default function Filters({
               /> */}
         </div>
       </div>
+
+      {/* Summary row — visible when any filter is active */}
+      {(filters.stream !== null ||
+        filters.level.length > 0 ||
+        filters.subject.length > 0 ||
+        filters.centre.length > 0) && (
+        <div className="flex flex-wrap items-center gap-2 pt-1">
+          <span className="text-sm text-gray-600">
+            <span className="font-bold text-blue-700">{totalCount}</span> classes
+          </span>
+
+          {filters.stream && (
+            <button
+              onClick={() => setFilter("stream", null)}
+              className="bg-white border border-gray-200 rounded-full px-3 py-1 text-xs font-semibold flex items-center gap-1 hover:border-red-300 transition-colors"
+            >
+              {filters.stream} <span className="text-gray-400 ml-0.5">×</span>
+            </button>
+          )}
+          {filters.level.map((l) => (
+            <button
+              key={l}
+              onClick={() => setFilter("level", filters.level.filter((x) => x !== l))}
+              className="bg-white border border-gray-200 rounded-full px-3 py-1 text-xs font-semibold flex items-center gap-1 hover:border-red-300 transition-colors"
+            >
+              {l} <span className="text-gray-400 ml-0.5">×</span>
+            </button>
+          ))}
+          {filters.subject.map((s) => (
+            <button
+              key={s}
+              onClick={() => setFilter("subject", filters.subject.filter((x) => x !== s))}
+              className="bg-white border border-gray-200 rounded-full px-3 py-1 text-xs font-semibold flex items-center gap-1 hover:border-red-300 transition-colors"
+            >
+              {s} <span className="text-gray-400 ml-0.5">×</span>
+            </button>
+          ))}
+          {filters.centre.map((c) => (
+            <button
+              key={c}
+              onClick={() => setFilter("centre", filters.centre.filter((x) => x !== c))}
+              className="bg-white border border-gray-200 rounded-full px-3 py-1 text-xs font-semibold flex items-center gap-1 hover:border-red-300 transition-colors"
+            >
+              {c} <span className="text-gray-400 ml-0.5">×</span>
+            </button>
+          ))}
+
+          <button
+            onClick={() =>
+              onFilterChange({ subject: [], centre: [], tutor: [], level: [], stream: null })
+            }
+            className="text-xs text-gray-400 hover:text-red-500 font-semibold ml-2 transition-colors"
+          >
+            Clear all
+          </button>
+        </div>
+      )}
     </div>
   );
 }

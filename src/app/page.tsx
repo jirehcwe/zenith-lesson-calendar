@@ -448,6 +448,7 @@ export default function Page() {
                       onSearchChange={setSearchQuery}
                       currentView={currentView}
                       onViewChange={setCurrentView}
+                      totalCount={events.length}
                     />
                     <button
                       onClick={toggleFiltersCollapse}
