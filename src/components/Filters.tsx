@@ -262,7 +262,7 @@ export default function Filters({
             onClick={() => onViewChange("calendar")}
             className={`px-3 py-2 text-xs font-semibold rounded-lg transition-all duration-200 flex items-center gap-1.5 ${
               currentView === "calendar"
-                ? "bg-blue-50 text-blue-700"
+                ? "bg-blue-50 text-blue-700 shadow-sm"
                 : "text-gray-600 hover:text-gray-800"
             }`}
           >
@@ -280,7 +280,7 @@ export default function Filters({
             onClick={() => onViewChange("list")}
             className={`px-3 py-2 text-xs font-semibold rounded-lg transition-all duration-200 flex items-center gap-1.5 ${
               currentView === "list"
-                ? "bg-blue-50 text-blue-700"
+                ? "bg-blue-50 text-blue-700 shadow-sm"
                 : "text-gray-600 hover:text-gray-800"
             }`}
           >
