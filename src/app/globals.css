@@ -9,6 +9,16 @@
   --accent-orange: #ffa726;
   --text-dark: #2d3748;
   --text-light: #718096;
+  --brand: #2F4AC0;
+  --brand-50: #EEF2FF;
+  --brand-100: #DCE3FB;
+  --accent: #F59E0B;
+  --surface: #FFFFFF;
+  --bg: #F6F7FB;
+  --t1: #0F172A;
+  --t2: #475569;
+  --t3: #94A3B8;
+  --line: #E5E7EB;
 }
 
 @theme inline {
@@ -37,7 +47,7 @@ body {
 
 /* Hero gradient background */
 .hero-gradient {
-  background: linear-gradient(135deg, #4a90e2 0%, #5b9bd5 50%, #7bb3f0 100%);
+  background: linear-gradient(135deg, #2438A0 0%, #2F4AC0 45%, #4F6BE8 100%);
 }
 
 /* Modern card styling */
