@@ -65,12 +65,30 @@ describe("ListView", () => {
 
   it("shows full message and hides action buttons for full slots", () => {
     render(<ListView sessions={[makeSlot({ title: "[FULL] Math class" })]} />);
-    expect(screen.getByText(/This class is currently full/i)).toBeInTheDocument();
+    expect(screen.getByText(/Class Full/i)).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /Sign up for FREE Trial/i })).not.toBeInTheDocument();
   });
 
   it("renders centre information on each card", () => {
     render(<ListView sessions={[makeSlot({ centre: "Clementi" })]} />);
     expect(screen.getByText("Clementi")).toBeInTheDocument();
+  });
+
+  it("renders tutor initial in the avatar and tutor name", () => {
+    render(<ListView sessions={[makeSlot({ tutor: "Alice" })]} />);
+    expect(screen.getByText("A")).toBeInTheDocument();
+    expect(screen.getByText("Alice")).toBeInTheDocument();
+  });
+
+  it("renders day header with a class count badge", () => {
+    render(
+      <ListView
+        sessions={[
+          makeSlot({ day: 1 }),
+          makeSlot({ day: 1, subjects: ["English"] }),
+        ]}
+      />
+    );
+    expect(screen.getByText("2 classes")).toBeInTheDocument();
   });
 });
