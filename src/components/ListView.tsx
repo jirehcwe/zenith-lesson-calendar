@@ -80,16 +80,6 @@ export default function ListView({ sessions }: { sessions: WeeklyClassSlot[] }) 
                           </svg>
                           <span className="text-gray-600">{session.centre}</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <div
-                            aria-hidden="true"
-                            className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
-                            style={{ background: accentColor }}
-                          >
-                            {session.tutor.charAt(0)}
-                          </div>
-                          <span className="text-gray-600">{session.tutor}</span>
-                        </div>
                       </div>
 
                       {/* Action buttons */}
