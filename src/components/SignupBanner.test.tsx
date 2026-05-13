@@ -34,4 +34,9 @@ describe("SignupBanner", () => {
     await user.click(screen.getByLabelText("Expand banner"));
     expect(screen.getByLabelText("Collapse banner")).toBeInTheDocument();
   });
+
+  it("renders the eyebrow pill in the desktop layout", () => {
+    render(<SignupBanner />);
+    expect(screen.getByText(/Now booking/i)).toBeInTheDocument();
+  });
 });

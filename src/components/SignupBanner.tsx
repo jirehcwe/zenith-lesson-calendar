@@ -99,6 +99,16 @@ export default function SignupBanner() {
             </div>
           </div>
 
+          {/* Eyebrow pill */}
+          <div className="flex justify-center">
+            <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-3 py-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse block flex-shrink-0" />
+              <span className="text-xs font-semibold uppercase tracking-widest text-white/85">
+                Now booking · 2026 academic year
+              </span>
+            </div>
+          </div>
+
           {/* Title Section */}
           <div className="text-center">
             <h1 className="text-2xl sm:text-3xl font-bold leading-tight text-white">
@@ -197,6 +207,13 @@ export default function SignupBanner() {
           {/* Center - Text Content */}
           <div className="flex-1 text-white space-y-6">
             <div className="space-y-4">
+              {/* Eyebrow pill */}
+              <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-3 py-1 w-fit">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse block flex-shrink-0" />
+                <span className="text-xs font-semibold uppercase tracking-widest text-white/85">
+                  Now booking · 2026 academic year
+                </span>
+              </div>
               <h1 className="text-4xl xl:text-4xl font-bold leading-tight">
                 2026 Weekly Class Schedule
               </h1>
