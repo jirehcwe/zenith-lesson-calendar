@@ -102,6 +102,7 @@ export default function Page() {
   const [campaignParam, setCampaignParam] = useState<string>("");
   const [filtersCollapsed, setFiltersCollapsed] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
   const [filters, setFilters] = useState({
     subject: [] as string[],
     centre: [] as string[],
@@ -520,7 +521,56 @@ export default function Page() {
           )}
         </div>
       </div>
-      <BottomNav currentView={currentView} onViewChange={setCurrentView} />
+      <BottomNav
+        currentView={currentView}
+        onViewChange={setCurrentView}
+        onOpenFilter={() => setFilterSheetOpen(true)}
+      />
+
+      {/* Mobile filter sheet */}
+      {filterSheetOpen && (
+        <div
+          className="fixed inset-0 z-50 md:hidden bg-black/40"
+          onClick={() => setFilterSheetOpen(false)}
+        >
+          <div
+            className="absolute inset-x-0 bottom-0 bg-white rounded-t-2xl shadow-2xl max-h-[80vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-4 pt-4 pb-2">
+              <h2 className="text-lg font-bold text-gray-800">Filters</h2>
+              <button
+                onClick={() => setFilterSheetOpen(false)}
+                className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
+                aria-label="Close filter sheet"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="px-4 pb-8">
+              <Filters
+                streams={[
+                  "JC",
+                  "Secondary (Express)",
+                  "Secondary (IP)",
+                  "Primary",
+                ]}
+                levels={filteredOptions.levels}
+                subjects={filteredOptions.subjects}
+                centres={filteredOptions.centres}
+                tutors={filteredOptions.tutors}
+                filters={filters}
+                onFilterChange={handleFilterChange}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                currentView={currentView}
+                onViewChange={setCurrentView}
+                totalCount={events.length}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
