@@ -101,6 +101,7 @@ export default function Page() {
   const [currentView, setCurrentView] = useState<ViewType>("calendar");
   const [campaignParam, setCampaignParam] = useState<string>("");
   const [filtersCollapsed, setFiltersCollapsed] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
     subject: [] as string[],
     centre: [] as string[],
@@ -325,8 +326,8 @@ export default function Page() {
   }, [weeklyClassData, filters]);
 
   const events = useMemo(() => {
-    // If no filters are applied, return empty array
     if (
+      searchQuery === "" &&
       filters.stream === null &&
       filters.level.length === 0 &&
       filters.subject.length === 0 &&
@@ -336,6 +337,11 @@ export default function Page() {
     }
     const filtered = weeklyClassData.filter((s) => {
       return (
+        (searchQuery === "" ||
+          s.subjects.some((subj) =>
+            subj.toLowerCase().includes(searchQuery.toLowerCase())
+          ) ||
+          s.centre.toLowerCase().includes(searchQuery.toLowerCase())) &&
         levelToFilterMapper(filters.stream, s.level, s.stream) &&
         (filters.level.length === 0 || filters.level.includes(s.level)) &&
         (filters.subject.length === 0 ||
@@ -343,12 +349,8 @@ export default function Page() {
         (filters.centre.length === 0 || filters.centre.includes(s.centre))
       );
     });
-
-    // Map to event structure
-    return filtered.map((s) => ({
-      ...s,
-    }));
-  }, [weeklyClassData, filters]);
+    return filtered.map((s) => ({ ...s }));
+  }, [weeklyClassData, filters, searchQuery]);
 
   // Clear dependent filters when parent filter changes
   const handleFilterChange = (newFilters: typeof filters) => {
@@ -444,6 +446,8 @@ export default function Page() {
                       tutors={filteredOptions.tutors}
                       filters={filters}
                       onFilterChange={handleFilterChange}
+                      searchQuery={searchQuery}
+                      onSearchChange={setSearchQuery}
                     />
                     <button
                       onClick={toggleFiltersCollapse}

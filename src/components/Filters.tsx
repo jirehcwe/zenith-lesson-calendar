@@ -23,6 +23,8 @@ type FiltersProps = {
     stream: string | null;
   };
   onFilterChange: (filters: FiltersProps["filters"]) => void;
+  searchQuery: string;
+  onSearchChange: (q: string) => void;
 };
 
 // Helper function to truncate text
@@ -211,6 +213,8 @@ export default function Filters({
   tutors,
   filters,
   onFilterChange,
+  searchQuery,
+  onSearchChange,
 }: FiltersProps) {
   const setFilter = (
     field: keyof FiltersProps["filters"],
@@ -222,6 +226,30 @@ export default function Filters({
 
   return (
     <div className="space-y-4">
+      {/* Search input */}
+      <div className="relative w-full max-w-xs">
+        <svg
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          />
+        </svg>
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => onSearchChange(e.target.value)}
+          placeholder="Search subject or centre…"
+          className="w-full rounded-xl border-2 border-gray-200 pl-9 pr-3 py-2.5 text-sm focus:border-blue-400 focus:outline-none"
+        />
+      </div>
+
       <div className="space-y-4">
         <div className="flex flex-col space-y-3">
           <label className="text-sm font-semibold text-gray-700">
