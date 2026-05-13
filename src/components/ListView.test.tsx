@@ -4,6 +4,7 @@ import type { WeeklyClassSlot } from "./WeeklyClassCalendar";
 
 jest.mock("./WeeklyClassCalendar", () => ({
   isSlotFull: (slot: { title: string }) => slot.title.startsWith("[FULL]"),
+  getSubjectColor: () => "#9ca3af",
 }));
 
 jest.mock("@/utils/campaign", () => ({

@@ -171,6 +171,10 @@ const primarySubjectToColorMap: Record<
   },
 };
 
+export function getSubjectColor(subject: string, level: string): string {
+  return subjectToColor(level, subject).backgroundColor;
+}
+
 // // Function to generate consistent colors from subject names
 // function hashStringToColor(str: string): {
 //   backgroundColor: string;
