@@ -14,7 +14,6 @@ export default function SignupBanner() {
     }
   }, []);
 
-  const blurbText = "Attend a FREE trial or register for your preferred class today. Browse through our comprehensive course offerings and filter by your preferences to find the ideal classes for your academic journey.";
   const toggleCollapse = () => {
     const newState = !isCollapsed;
     setIsCollapsed(newState);
@@ -115,8 +114,10 @@ export default function SignupBanner() {
 
           {/* Title Section */}
           <div className="text-center">
-            <h1 className="text-2xl sm:text-3xl font-bold leading-tight text-white">
-              2026 Weekly Class Schedule
+            <h1 className="text-2xl sm:text-3xl font-extrabold leading-tight text-white">
+              Browse every class.{" "}
+              <span className="text-amber-400">Book a free trial</span>
+              {" "}in two taps.
             </h1>
             <p className="text-sm sm:text-base text-blue-100 font-medium mt-2">
               Flexible scheduling • Expert tutors • Proven results • Free trial for all subjects
@@ -164,17 +165,7 @@ export default function SignupBanner() {
               </div>
             </div>
             <p className="text-blue-100 text-xs sm:text-sm font-medium">
-              Trusted by over 20,000 students since 2019
-            </p>
-          </div>
-
-          {/* Intro Blurb Section - Mobile Only */}
-          <div className="pt-4 mt-4">
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-3 text-center">
-              Find Your Perfect Class Schedule
-            </h2>
-            <p className="text-sm sm:text-base text-blue-100 max-w-2xl mx-auto text-center">
-              {blurbText}
+              <span className="font-bold text-white">20,000+</span> students since 2019
             </p>
           </div>
             </div>
@@ -212,8 +203,10 @@ export default function SignupBanner() {
           <div className="flex-1 text-white space-y-6">
             <div className="space-y-4">
               {eyebrowPill}
-              <h1 className="text-4xl xl:text-4xl font-bold leading-tight">
-                2026 Weekly Class Schedule
+              <h1 className="text-4xl xl:text-5xl font-extrabold leading-tight">
+                Browse every class.{" "}
+                <span className="text-amber-400">Book a free trial</span>
+                {" "}in two taps.
               </h1>
               <p className="text-lg xl:text-lg text-blue-100 font-medium">
                 Flexible scheduling • Expert tutors • Proven results • Free trial for all subjects
@@ -260,17 +253,7 @@ export default function SignupBanner() {
                 </div>
               </div>
               <p className="text-blue-100 text-base font-medium">
-                Trusted by over 20,000 students since 2019
-              </p>
-            </div>
-
-            {/* Intro Blurb Section - Desktop */}
-            <div className="pt-6 mt-6">
-              <h2 className="text-2xl xl:text-2xl font-bold text-white mb-3">
-                Find Your Perfect Class Schedule
-              </h2>
-              <p className="text-base l:text-lg text-blue-100 max-w-2xl">
-                {blurbText}
+                <span className="font-bold text-white">20,000+</span> students since 2019
               </p>
             </div>
           </div>

@@ -20,7 +20,7 @@ describe("SignupBanner", () => {
 
   it("renders the student trust line", () => {
     render(<SignupBanner />);
-    expect(screen.getByText(/20,000 students/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/20,000\+/i).length).toBeGreaterThan(0);
   });
 
   it("shows an expand button on mobile (collapsed by default)", () => {
