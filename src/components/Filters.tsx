@@ -24,8 +24,6 @@ type FiltersProps = {
     stream: string | null;
   };
   onFilterChange: (filters: FiltersProps["filters"]) => void;
-  searchQuery: string;
-  onSearchChange: (q: string) => void;
   currentView: ViewType;
   onViewChange: (view: ViewType) => void;
   totalCount: number;
@@ -92,14 +90,16 @@ function MultiSelect({
           return (
             <div className={compact ? "" : "relative mt-1"}>
               <Listbox.Button
-                className={`relative cursor-default rounded-xl bg-white border-2 border-gray-200 text-left transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-0 focus:border-gray-200 ${
+                className={`relative cursor-default rounded-xl text-left transition-all duration-200 focus:outline-none focus:ring-0 ${
                   compact
-                    ? "flex items-center gap-2 pl-3 pr-2 py-2 text-sm min-w-[110px]"
-                    : "w-full p-3 pr-10"
+                    ? "flex items-center justify-between gap-2 pl-3 pr-2 py-1.5 text-sm min-w-[140px]"
+                    : "w-full p-3 pr-3"
                 } ${
                   disabled
-                    ? "bg-gray-50 text-gray-400 cursor-not-allowed border-gray-100"
-                    : "hover:border-blue-300"
+                    ? "bg-gray-50 text-gray-400 cursor-not-allowed border border-gray-100"
+                    : selected.length > 0
+                    ? "bg-blue-50 border border-blue-400 text-blue-700"
+                    : "bg-white border border-gray-200 hover:border-gray-400"
                 }`}
                 disabled={disabled}
                 title={selected.length > 0 ? selected.map(formatLocationDisplay).join(", ") : undefined}
@@ -126,7 +126,7 @@ function MultiSelect({
                 <Listbox.Options
                   ref={optionsRef}
                   style={{ maxHeight: filterDropdownMaxHeight }}
-                  className="absolute z-10 mt-2 w-full min-w-[160px] rounded-xl bg-white border-2 border-gray-200 shadow-xl list-none overflow-y-auto focus:outline-none"
+                  className="absolute z-10 mt-2 w-full min-w-[160px] rounded-xl bg-white border border-gray-200 shadow-xl list-none overflow-y-auto focus:outline-none text-sm"
                 >
                   {options.map((option) => (
                     <Listbox.Option key={option.value} value={option.value} as={Fragment} disabled={option.count === 0}>
@@ -182,8 +182,6 @@ export default function Filters({
   tutors,
   filters,
   onFilterChange,
-  searchQuery,
-  onSearchChange,
   currentView,
   onViewChange,
   totalCount,
@@ -209,15 +207,17 @@ export default function Filters({
           <button
             key={stream.value}
             onClick={() => setFilter("stream", filters.stream === stream.value ? null : stream.value)}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm font-semibold transition-all duration-150 ${
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-semibold transition-all duration-150 flex-shrink-0 ${
               filters.stream === stream.value
                 ? "bg-gray-900 text-white border-gray-900"
-                : "bg-white text-gray-700 border-gray-300 hover:border-gray-500"
+                : "bg-white text-gray-600 border-gray-200 hover:border-gray-400"
             }`}
           >
             {streamLabel(stream.value)}
-            <span className={`text-xs font-bold tabular-nums ${
-              filters.stream === stream.value ? "text-white/60" : "text-gray-400"
+            <span className={`text-xs font-bold tabular-nums px-1.5 py-px rounded-full ${
+              filters.stream === stream.value
+                ? "bg-white/20 text-white"
+                : "bg-black/5 text-gray-500"
             }`}>
               {stream.count}
             </span>
@@ -225,37 +225,19 @@ export default function Filters({
         ))}
       </div>
 
-      {/* Row 2: Search + dropdowns + view toggle */}
+      {/* Row 2: Dropdowns + view toggle */}
       <div className="flex items-center gap-2 flex-wrap">
-        {/* Search */}
-        <div className="relative">
-          <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
-            fill="none" stroke="currentColor" viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Search subject or centre…"
-            aria-label="Search subject or centre"
-            className="rounded-xl border-2 border-gray-200 pl-9 pr-3 py-2 text-sm focus:border-blue-400 focus:outline-none w-48"
-          />
-        </div>
-
-        {/* Compact dropdowns */}
+        {/* Dropdowns */}
         <MultiSelect compact label="Level" selected={filters.level} options={levels} onChange={(val) => setFilter("level", val)} />
         <MultiSelect compact label="Subject" selected={filters.subject} options={subjects} onChange={(val) => setFilter("subject", val)} />
         <MultiSelect compact label="Centre" selected={filters.centre} options={centres} onChange={(val) => setFilter("centre", val)} />
 
         {/* View toggle */}
-        <div className="ml-auto flex bg-gray-100 rounded-xl p-1 gap-0.5 flex-shrink-0">
+        <div className="ml-auto flex bg-white border border-gray-200 rounded-xl p-0.5 gap-0.5 flex-shrink-0">
           <button
             onClick={() => onViewChange("calendar")}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 flex items-center gap-1.5 ${
-              currentView === "calendar" ? "bg-blue-50 text-blue-700 shadow-sm" : "text-gray-600 hover:text-gray-800"
+              currentView === "calendar" ? "bg-blue-50 text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
             }`}
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -266,7 +248,7 @@ export default function Filters({
           <button
             onClick={() => onViewChange("list")}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 flex items-center gap-1.5 ${
-              currentView === "list" ? "bg-blue-50 text-blue-700 shadow-sm" : "text-gray-600 hover:text-gray-800"
+              currentView === "list" ? "bg-blue-50 text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
             }`}
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

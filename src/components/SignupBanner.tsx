@@ -31,7 +31,7 @@ export default function SignupBanner() {
 
   return (
     <div className="w-full hero-gradient">
-      <div className={`max-w-7xl mx-auto px-2 ${isCollapsed ? 'py-1 sm:py-1' : 'py-4 sm:py-4'}`}>
+      <div className={`max-w-7xl mx-auto px-4 lg:py-8 ${isCollapsed ? 'py-1 sm:py-1' : 'py-8 sm:py-10'}`}>
         {/* Mobile Layout - Stacked */}
         <div className="lg:hidden relative">
           {/* Collapsed State - Mobile Only */}
@@ -119,11 +119,10 @@ export default function SignupBanner() {
           <div className="text-center">
             <h1 className="text-2xl sm:text-3xl font-extrabold leading-tight text-white">
               Browse every class.{" "}
-              <span className="text-amber-400">Book a free trial</span>
-              {" "}in two taps.
+              <span className="text-amber-400">Find Your Perfect Class Schedule.</span>
             </h1>
-            <p className="text-sm sm:text-base text-blue-100 font-medium mt-2">
-              Flexible scheduling • Expert tutors • Proven results • Free trial for all subjects
+            <p className="text-sm sm:text-base text-blue-100 font-medium mt-2 leading-relaxed">
+              Filter by stream, level, and centre to find the right fit — then book a complimentary trial or register directly.
             </p>
           </div>
 
@@ -176,47 +175,46 @@ export default function SignupBanner() {
         </div>
 
         {/* Desktop Layout - Row */}
-        <div className="hidden lg:flex items-center gap-2 relative">
+        <div className="hidden lg:flex items-center gap-9 relative">
           {/* Logo in top right - absolute positioned */}
-          <div className="absolute top-0 right-0 z-10">
-            <div className="w-24 h-24 rounded-lg flex items-center justify-center">
+          <div className="absolute top-4 right-0 z-10">
+            <div className="w-20 h-20 rounded-lg flex items-center justify-center">
               <Image
                 src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65e1a2a65798fb58f1336fe6_education-2.png.webp"
                 alt="Zenith Education Logo"
-                width={80}
-                height={80}
+                width={72}
+                height={72}
               />
             </div>
           </div>
 
           {/* Left - Banner Image */}
           <div className="flex-shrink-0">
-            <div className="relative w-[350px] h-[300px] overflow-hidden rounded-xl">
+            <div className="relative w-[270px] h-[260px] overflow-hidden rounded-2xl">
               <Image
                 src="/zenith-banner.webp"
                 alt="Zenith Education"
                 fill
-                className="object-contain opacity-90"
+                className="object-cover opacity-90"
                 priority
               />
             </div>
           </div>
 
           {/* Center - Text Content */}
-          <div className="flex-1 text-white space-y-6">
-            <div className="space-y-4">
+          <div className="flex-1 text-white space-y-4 pr-24">
+            <div className="space-y-3">
               {eyebrowPill}
-              <h1 className="text-4xl xl:text-5xl font-extrabold leading-tight">
+              <h1 className="text-3xl xl:text-4xl font-extrabold leading-tight">
                 Browse every class.{" "}
-                <span className="text-amber-400">Book a free trial</span>
-                {" "}in two taps.
+                <span className="text-amber-400">Find Your Perfect Class Schedule.</span>
               </h1>
-              <p className="text-lg xl:text-lg text-blue-100 font-medium">
-                Flexible scheduling • Expert tutors • Proven results • Free trial for all subjects
+              <p className="text-base xl:text-lg text-blue-100 font-medium leading-relaxed">
+                Filter by stream, level, and centre to find the right fit — then book a complimentary trial or register directly for any class.
               </p>
             </div>
 
-            <div className="flex items-center gap-4 pt-4">
+            <div className="flex items-center gap-4">
               <div className="flex -space-x-2">
                 <div className="w-12 h-12 rounded-full bg-white/20 border-2 border-white overflow-hidden">
                   <Image
