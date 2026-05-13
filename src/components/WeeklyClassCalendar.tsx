@@ -320,7 +320,7 @@ export default function WeeklyClassCalendar({
       const full = isSlotFull(slot);
       const color = full
         ? FULL_SLOT_COLOR
-        : subjectToColor(slot.level, slot.subjects[0]);
+        : subjectToColor(slot.level, slot.subjects[0] ?? "");
       return {
         title: `${slot.level} ${slot.subjects.join(" + ")} ${
           slot.stream ? `(${slot.stream})` : ""
@@ -447,7 +447,7 @@ export default function WeeklyClassCalendar({
             );
           }}
           eventClick={handleEventClick}
-          // Show only one week, starting from Sunday
+          // Show only one week, starting from Monday
           firstDay={1}
           weekends={true}
         />
@@ -466,7 +466,7 @@ export default function WeeklyClassCalendar({
                 className="px-5 pt-5 pb-4 relative"
                 style={{
                   backgroundColor:
-                    subjectToColor(selectedEvent.level, selectedEvent.subjects[0]).backgroundColor + "33",
+                    subjectToColor(selectedEvent.level, selectedEvent.subjects[0] ?? "").backgroundColor + "33",
                 }}
               >
                 <button
