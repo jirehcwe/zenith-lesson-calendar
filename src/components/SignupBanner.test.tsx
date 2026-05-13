@@ -15,7 +15,7 @@ describe("SignupBanner", () => {
 
   it("renders the schedule heading", () => {
     render(<SignupBanner />);
-    expect(screen.getAllByText(/2026 Weekly Class Schedule/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/Zenith 2026 Schedule/i)).toBeInTheDocument();
   });
 
   it("renders the student trust line", () => {

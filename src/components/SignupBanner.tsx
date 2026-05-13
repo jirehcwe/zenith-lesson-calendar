@@ -38,25 +38,28 @@ export default function SignupBanner() {
           {isCollapsed ? (
             <button
               onClick={toggleCollapse}
-              className="w-full flex items-center gap-2 py-1 px-2 text-left hover:opacity-90 transition-opacity"
+              className="w-full flex items-center gap-3 py-2 px-2 text-left hover:opacity-90 transition-opacity"
               aria-label="Expand banner"
             >
               <svg
-                className="w-5 h-5 text-white flex-shrink-0"
+                className="w-4 h-4 text-white/70 flex-shrink-0"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
-              <h1 className="text-base sm:text-lg font-bold text-white flex-1">
-                2026 Weekly Class Schedule
+              <h1 className="text-sm font-semibold text-white flex-1 tracking-wide">
+                Zenith 2026 Schedule
               </h1>
+              <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center flex-shrink-0">
+                <Image
+                  src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65ed367b65acaa4acb2bbf72_Zenith-logo.webp"
+                  alt="Zenith"
+                  width={22}
+                  height={22}
+                />
+              </div>
             </button>
           ) : (
             <div className="space-y-4 relative">
