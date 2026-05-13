@@ -59,14 +59,14 @@ describe("ListView", () => {
 
   it("renders trial and register buttons for available slots", () => {
     render(<ListView sessions={[makeSlot()]} />);
-    expect(screen.getByRole("button", { name: /Sign up for FREE Trial/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Register now/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Sign up for FREE Trial/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Register now/i })).toBeInTheDocument();
   });
 
   it("shows full message and hides action buttons for full slots", () => {
     render(<ListView sessions={[makeSlot({ title: "[FULL] Math class" })]} />);
     expect(screen.getByText(/Class Full/i)).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /Sign up for FREE Trial/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /Sign up for FREE Trial/i })).not.toBeInTheDocument();
   });
 
   it("renders centre information on each card", () => {

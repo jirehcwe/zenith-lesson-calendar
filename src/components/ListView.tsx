@@ -40,7 +40,7 @@ export default function ListView({ sessions }: { sessions: WeeklyClassSlot[] }) 
               .sort((a, b) => a.startTime.localeCompare(b.startTime))
               .map((session, index) => {
                 const full = isSlotFull(session);
-                const accentColor = getSubjectColor(session.subjects[0], session.level);
+                const accentColor = getSubjectColor(session.subjects[0] ?? "", session.level);
                 return (
                   <div
                     key={`${session.startTime}-${session.tutor}-${session.centre}-${session.day}-${index}`}
@@ -65,14 +65,14 @@ export default function ListView({ sessions }: { sessions: WeeklyClassSlot[] }) 
                       {/* Info rows */}
                       <div className="space-y-2 text-sm">
                         <div className="flex items-center gap-2">
-                          <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-gray-400 flex-shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                               d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                           <span className="font-medium text-gray-700">{session.startTime} – {session.endTime}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-gray-400 flex-shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                               d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -82,6 +82,7 @@ export default function ListView({ sessions }: { sessions: WeeklyClassSlot[] }) 
                         </div>
                         <div className="flex items-center gap-2">
                           <div
+                            aria-hidden="true"
                             className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
                             style={{ background: accentColor }}
                           >
@@ -106,11 +107,9 @@ export default function ListView({ sessions }: { sessions: WeeklyClassSlot[] }) 
                               href={replacePromocodeInUrl(replaceCampaignInUrl(session.prefillTrialLink))}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex-1"
+                              className="flex-1 block bg-amber-400 hover:bg-amber-500 text-gray-900 font-semibold text-xs py-2 px-3 rounded-lg text-center transition-all duration-200"
                             >
-                              <button className="w-full flex-1 bg-amber-400 hover:bg-amber-500 text-gray-900 font-semibold text-xs py-2 px-3 rounded-lg transition-all duration-200">
-                                Sign up for FREE Trial
-                              </button>
+                              Sign up for FREE Trial
                             </a>
                             <a
                               href={replacePromocodeInUrl(replaceCampaignInUrl(
@@ -118,11 +117,9 @@ export default function ListView({ sessions }: { sessions: WeeklyClassSlot[] }) 
                               ))}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex-1"
+                              className="flex-1 block bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs py-2 px-3 rounded-lg text-center transition-all duration-200"
                             >
-                              <button className="w-full flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs py-2 px-3 rounded-lg transition-all duration-200">
-                                Register now
-                              </button>
+                              Register now
                             </a>
                           </div>
                         )}
