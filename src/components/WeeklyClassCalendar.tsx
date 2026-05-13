@@ -459,124 +459,88 @@ export default function WeeklyClassCalendar({
         className="relative z-50"
       >
         <div className="fixed inset-0 flex w-screen items-center justify-center p-3 bg-black/50 backdrop-blur-sm">
-          <DialogPanel className="max-w-sm w-full space-y-4 bg-white p-5 rounded-2xl shadow-2xl relative border-0">
-            <button
-              className="absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onClick={() => setIsDialogOpen(false)}
-              aria-label="Close"
-            >
-              ✕
-            </button>
+          <DialogPanel className="max-w-sm w-full bg-white rounded-2xl shadow-2xl relative overflow-hidden border-0">
+            {/* Hero header band */}
             {selectedEvent && (
-              <>
-                <div className="text-center space-y-3">
-                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full">
-                    <span className="text-lg text-white font-bold">
-                      {selectedEvent.subjects[0].charAt(0)}
-                    </span>
-                  </div>
-                  <DialogTitle className="text-xl font-bold text-gray-800">
-                    {selectedEvent.level} {selectedEvent.subjects.join(" + ")}
-                    {selectedEvent.stream && (
-                      <span className="block text-base text-blue-600 font-medium mt-1">
-                        ({selectedEvent.stream})
-                      </span>
-                    )}
-                  </DialogTitle>
+              <div
+                className="px-5 pt-5 pb-4 relative"
+                style={{
+                  backgroundColor:
+                    subjectToColor(selectedEvent.level, selectedEvent.subjects[0]).backgroundColor + "33",
+                }}
+              >
+                <button
+                  className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-gray-500 hover:bg-gray-900 hover:text-white transition-colors focus:outline-none"
+                  onClick={() => setIsDialogOpen(false)}
+                  aria-label="Close"
+                >
+                  <svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+                <div className="text-xs font-bold uppercase tracking-wide text-gray-500 mb-1 pr-10">
+                  {selectedEvent.stream} · {selectedEvent.level}
                 </div>
-
-                <div className="space-y-3">
-                  <div className="bg-gray-50 rounded-xl p-3 space-y-2.5">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-4 h-4 bg-blue-100 rounded-full flex items-center justify-center">
-                        <span className="text-[10px] text-blue-600">📅</span>
-                      </div>
-                      <div>
-                        <span className="font-semibold text-gray-700">
-                          Day:
-                        </span>
-                        <span className="ml-2 text-gray-600">
-                          {
-                            [
-                              "Sunday",
-                              "Monday",
-                              "Tuesday",
-                              "Wednesday",
-                              "Thursday",
-                              "Friday",
-                              "Saturday",
-                            ][selectedEvent.day]
-                          }
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-4 h-4 bg-blue-100 rounded-full flex items-center justify-center">
-                        <span className="text-[10px] text-blue-600">🏢</span>
-                      </div>
-                      <div>
-                        <span className="font-semibold text-gray-700">
-                          Venue:
-                        </span>
-                        <span className="ml-2 text-gray-600">
-                          {formatLocationDisplay(selectedEvent.centre)}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-4 h-4 bg-blue-100 rounded-full flex items-center justify-center">
-                        <span className="text-[10px] text-blue-600">⏰</span>
-                      </div>
-                      <div>
-                        <span className="font-semibold text-gray-700">
-                          Time:
-                        </span>
-                        <span className="ml-2 text-gray-600">
-                          {selectedEvent.startTime} - {selectedEvent.endTime}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-
-            {selectedEvent && isSlotFull(selectedEvent) ? (
-              <div className="pt-3">
-                <div className="w-full bg-gray-100 text-gray-500 font-medium py-2.5 px-4 rounded-lg text-sm text-center">
-                  This class is currently full
+                <DialogTitle className="text-2xl font-extrabold text-gray-900 mb-1">
+                  {selectedEvent.subjects.join(" + ")}
+                </DialogTitle>
+                <div className="text-sm text-gray-500">
+                  {["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][selectedEvent.day]}
+                  {" · "}{selectedEvent.startTime} – {selectedEvent.endTime}
+                  {" · "}{selectedEvent.centre}
                 </div>
               </div>
-            ) : (
-              <div className="flex gap-2.5 pt-3">
-                {selectedEvent?.prefillTrialLink && (
-                  <a
-                    href={replacePromocodeInUrl(replaceCampaignInUrl(selectedEvent.prefillTrialLink))}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => {
-                      console.log("form_click_prefilled");
-                    }}
-                    className="flex-1"
+            )}
+
+            {/* Info tiles + CTAs */}
+            {selectedEvent && (
+              <div className="p-5 space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-white border border-gray-200 rounded-lg p-3">
+                    <div className="text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wide">Time</div>
+                    <div className="font-bold text-gray-800 text-sm">
+                      {selectedEvent.startTime} – {selectedEvent.endTime}
+                    </div>
+                  </div>
+                  <div className="bg-white border border-gray-200 rounded-lg p-3">
+                    <div className="text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wide">Venue</div>
+                    <div className="font-bold text-gray-800 text-sm">{selectedEvent.centre}</div>
+                  </div>
+                </div>
+
+                {isSlotFull(selectedEvent) ? (
+                  <button
+                    disabled
+                    className="w-full bg-gray-100 text-gray-500 font-medium py-2.5 px-4 rounded-lg text-sm cursor-not-allowed"
                   >
-                    <button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition-all duration-200 text-sm">
-                      Sign up for FREE Trial
-                    </button>
-                  </a>
-                )}
-                <a
-                  href={replacePromocodeInUrl(replaceCampaignInUrl(
-                    selectedEvent?.prefillRegistrationLink ?? getFallbackRegistrationLinkByLevel(selectedEvent?.level ?? "Unknown")
-                  ))}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <button className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition-all duration-200 text-sm">
-                    Register now
+                    This class is currently full
                   </button>
-                </a>
+                ) : (
+                  <div className="flex gap-2.5">
+                    {selectedEvent.prefillTrialLink && (
+                      <a
+                        href={replacePromocodeInUrl(replaceCampaignInUrl(selectedEvent.prefillTrialLink))}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => console.log("form_click_prefilled")}
+                        className="flex-1 block bg-amber-400 hover:bg-amber-500 text-gray-900 font-semibold text-sm py-2.5 px-4 rounded-lg text-center transition-all duration-200"
+                      >
+                        Sign up for FREE Trial
+                      </a>
+                    )}
+                    <a
+                      href={replacePromocodeInUrl(replaceCampaignInUrl(
+                        selectedEvent.prefillRegistrationLink ??
+                          getFallbackRegistrationLinkByLevel(selectedEvent.level ?? "Unknown")
+                      ))}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 block bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm py-2.5 px-4 rounded-lg text-center transition-all duration-200"
+                    >
+                      Register now
+                    </a>
+                  </div>
+                )}
               </div>
             )}
           </DialogPanel>
