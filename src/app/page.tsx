@@ -7,7 +7,7 @@ import WeeklyClassCalendar, {
   WeeklyClassSlot,
 } from "@/components/WeeklyClassCalendar";
 import ListView from "@/components/ListView";
-import ViewSelector, { ViewType } from "@/components/ViewSelector";
+import { ViewType } from "@/components/ViewSelector";
 import BottomNav from "@/components/BottomNav";
 import TestimonialCarousel from "@/components/TestimonialCarousel";
 import TestimonialGrid from "@/components/TestimonialGrid";
@@ -396,9 +396,7 @@ export default function Page() {
             </div>
           ) : (
             <>
-              <ViewSelector currentView={currentView} onViewChange={setCurrentView} />
-
-               <div className="md:static sticky top-0 z-[60] bg-gray-50 rounded-b-xl shadow-lg md:shadow-none">
+              <div className="md:static sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200">
                  <div className="max-w-7xl mx-auto px-2 p-2">
                   {/* Collapsed state - mobile only */}
                   {filtersCollapsed && (
@@ -448,6 +446,8 @@ export default function Page() {
                       onFilterChange={handleFilterChange}
                       searchQuery={searchQuery}
                       onSearchChange={setSearchQuery}
+                      currentView={currentView}
+                      onViewChange={setCurrentView}
                     />
                     <button
                       onClick={toggleFiltersCollapse}

@@ -16,6 +16,8 @@ const baseProps = {
   onFilterChange: jest.fn(),
   searchQuery: "",
   onSearchChange: jest.fn(),
+  currentView: "calendar" as const,
+  onViewChange: jest.fn(),
 };
 
 describe("Filters", () => {
@@ -75,5 +77,19 @@ describe("Filters", () => {
     render(<Filters {...baseProps} onSearchChange={onSearchChange} />);
     await user.type(screen.getByPlaceholderText("Search subject or centre…"), "Math");
     expect(onSearchChange).toHaveBeenCalled();
+  });
+
+  it("renders Calendar and List view toggle buttons", () => {
+    render(<Filters {...baseProps} />);
+    expect(screen.getByRole("button", { name: /Calendar/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /List/i })).toBeInTheDocument();
+  });
+
+  it("calls onViewChange with 'list' when List button is clicked", async () => {
+    const user = userEvent.setup();
+    const onViewChange = jest.fn();
+    render(<Filters {...baseProps} onViewChange={onViewChange} />);
+    await user.click(screen.getByRole("button", { name: /List/i }));
+    expect(onViewChange).toHaveBeenCalledWith("list");
   });
 });
