@@ -7,7 +7,7 @@ const opt = (value: string, count = 1): OptionWithCount => ({ value, count, sele
 const defaultFilters = { subject: [], centre: [], tutor: [], level: [], stream: null };
 
 const baseProps = {
-  streams: [] as string[],
+  streams: [] as OptionWithCount[],
   levels: [] as OptionWithCount[],
   subjects: [] as OptionWithCount[],
   centres: [] as OptionWithCount[],
@@ -23,9 +23,10 @@ const baseProps = {
 
 describe("Filters", () => {
   it("renders stream buttons for each stream", () => {
-    render(<Filters {...baseProps} streams={["JC", "Secondary (Express)"]} />);
-    expect(screen.getByRole("button", { name: "JC" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Secondary (Express)" })).toBeInTheDocument();
+    render(<Filters {...baseProps} streams={[opt("JC"), opt("Secondary (Express)")]} />);
+    // Pill text is "JC 1" and "Sec Express 1" (label + count); use regex
+    expect(screen.getByRole("button", { name: /^JC/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Sec Express/ })).toBeInTheDocument();
   });
 
   it("renders Level, Subject, and Centre dropdown labels", () => {
@@ -38,31 +39,37 @@ describe("Filters", () => {
   it("calls onFilterChange with selected stream when a stream button is clicked", async () => {
     const user = userEvent.setup();
     const onFilterChange = jest.fn();
-    render(<Filters {...baseProps} streams={["JC", "Secondary (Express)"]} onFilterChange={onFilterChange} />);
-    await user.click(screen.getByRole("button", { name: "JC" }));
+    render(<Filters {...baseProps} streams={[opt("JC"), opt("Secondary (Express)")]} onFilterChange={onFilterChange} />);
+    await user.click(screen.getByRole("button", { name: /^JC/ }));
     expect(onFilterChange).toHaveBeenCalledWith(expect.objectContaining({ stream: "JC" }));
   });
 
-  it("calls onFilterChange with stream=null when clear stream button is clicked", async () => {
+  it("calls onFilterChange with stream=null when the active stream pill is clicked again", async () => {
     const user = userEvent.setup();
     const onFilterChange = jest.fn();
     render(
-      <Filters {...baseProps} streams={["JC"]} filters={{ ...defaultFilters, stream: "JC" }} onFilterChange={onFilterChange} />
+      <Filters
+        {...baseProps}
+        streams={[opt("JC")]}
+        filters={{ ...defaultFilters, stream: "JC" }}
+        onFilterChange={onFilterChange}
+      />
     );
-    await user.click(screen.getByLabelText("Clear stream selection"));
+    // Clicking the already-active stream pill toggles it off (pill is first match; chip is second)
+    await user.click(screen.getAllByRole("button", { name: /^JC/ })[0]);
     expect(onFilterChange).toHaveBeenCalledWith(expect.objectContaining({ stream: null }));
   });
 
   it("shows placeholder when no subject is selected", () => {
     render(<Filters {...baseProps} subjects={[opt("Math")]} />);
-    expect(screen.getByText("Select Subject")).toBeInTheDocument();
+    expect(screen.getByText("Subject")).toBeInTheDocument();
   });
 
   it("calls onFilterChange with selected subject when a subject option is clicked", async () => {
     const user = userEvent.setup();
     const onFilterChange = jest.fn();
     render(<Filters {...baseProps} subjects={[opt("Math"), opt("English")]} onFilterChange={onFilterChange} />);
-    await user.click(screen.getByText("Select Subject"));
+    await user.click(screen.getByText("Subject"));
     await user.click(screen.getByText("Math"));
     expect(onFilterChange).toHaveBeenCalledWith(expect.objectContaining({ subject: ["Math"] }));
   });
@@ -98,7 +105,7 @@ describe("Filters", () => {
     render(
       <Filters
         {...baseProps}
-        streams={["JC"]}
+        streams={[opt("JC")]}
         filters={{ ...defaultFilters, stream: "JC" }}
         totalCount={5}
       />
@@ -111,13 +118,13 @@ describe("Filters", () => {
     render(
       <Filters
         {...baseProps}
-        streams={["JC"]}
+        streams={[opt("JC")]}
         filters={{ ...defaultFilters, stream: "JC" }}
         totalCount={3}
       />
     );
-    // "JC" appears as stream button AND as chip in summary row
-    expect(screen.getAllByText("JC").length).toBeGreaterThanOrEqual(2);
+    // "JC" appears in the stream pill AND in the summary row chip
+    expect(screen.getAllByText(/JC/).length).toBeGreaterThanOrEqual(2);
   });
 
   it("calls onFilterChange to reset all when Clear all is clicked", async () => {
@@ -126,7 +133,7 @@ describe("Filters", () => {
     render(
       <Filters
         {...baseProps}
-        streams={["JC"]}
+        streams={[opt("JC")]}
         filters={{ ...defaultFilters, stream: "JC" }}
         onFilterChange={onFilterChange}
         totalCount={3}

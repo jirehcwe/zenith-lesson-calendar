@@ -326,6 +326,16 @@ export default function Page() {
     };
   }, [weeklyClassData, filters]);
 
+  const STREAM_VALUES = ["JC", "Secondary (Express)", "Secondary (IP)", "Primary"] as const;
+
+  const streamOptions = useMemo(() =>
+    STREAM_VALUES.map((stream) => ({
+      value: stream,
+      count: weeklyClassData.filter((s) => levelToFilterMapper(stream, s.level, s.stream)).length,
+      selected: filters.stream === stream,
+    })),
+  [weeklyClassData, filters.stream]);
+
   const events = useMemo(() => {
     if (
       searchQuery === "" &&
@@ -433,12 +443,7 @@ export default function Page() {
                       </h3>
                     </div>
                     <Filters
-                      streams={[
-                        "JC",
-                        "Secondary (Express)",
-                        "Secondary (IP)",
-                        "Primary",
-                      ]}
+                      streams={streamOptions}
                       levels={filteredOptions.levels}
                       subjects={filteredOptions.subjects}
                       centres={filteredOptions.centres}
@@ -549,12 +554,7 @@ export default function Page() {
             </div>
             <div className="px-4 pb-8">
               <Filters
-                streams={[
-                  "JC",
-                  "Secondary (Express)",
-                  "Secondary (IP)",
-                  "Primary",
-                ]}
+                streams={streamOptions}
                 levels={filteredOptions.levels}
                 subjects={filteredOptions.subjects}
                 centres={filteredOptions.centres}
