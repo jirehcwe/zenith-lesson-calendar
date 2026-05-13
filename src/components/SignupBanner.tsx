@@ -52,7 +52,7 @@ export default function SignupBanner() {
               <h1 className="text-sm font-semibold text-white flex-1 tracking-wide">
                 Zenith 2026 Schedule
               </h1>
-              <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center flex-shrink-0">
                 <Image
                   src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65ed367b65acaa4acb2bbf72_Zenith-logo.webp"
                   alt="Zenith"
