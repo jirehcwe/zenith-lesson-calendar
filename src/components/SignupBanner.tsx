@@ -21,6 +21,15 @@ export default function SignupBanner() {
     localStorage.setItem(STORAGE_KEY, newState.toString());
   };
 
+  const eyebrowPill = (
+    <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-3 py-1">
+      <span className="w-1.5 h-1.5 rounded-full bg-green-400 motion-safe:animate-pulse block flex-shrink-0" />
+      <span className="text-xs font-semibold uppercase tracking-widest text-white/85">
+        Now booking · 2026 academic year
+      </span>
+    </div>
+  );
+
   return (
     <div className="w-full hero-gradient">
       <div className={`max-w-7xl mx-auto px-2 ${isCollapsed ? 'py-1 sm:py-1' : 'py-4 sm:py-4'}`}>
@@ -101,12 +110,7 @@ export default function SignupBanner() {
 
           {/* Eyebrow pill */}
           <div className="flex justify-center">
-            <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-3 py-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse block flex-shrink-0" />
-              <span className="text-xs font-semibold uppercase tracking-widest text-white/85">
-                Now booking · 2026 academic year
-              </span>
-            </div>
+            {eyebrowPill}
           </div>
 
           {/* Title Section */}
@@ -207,13 +211,7 @@ export default function SignupBanner() {
           {/* Center - Text Content */}
           <div className="flex-1 text-white space-y-6">
             <div className="space-y-4">
-              {/* Eyebrow pill */}
-              <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-3 py-1 w-fit">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse block flex-shrink-0" />
-                <span className="text-xs font-semibold uppercase tracking-widest text-white/85">
-                  Now booking · 2026 academic year
-                </span>
-              </div>
+              {eyebrowPill}
               <h1 className="text-4xl xl:text-4xl font-bold leading-tight">
                 2026 Weekly Class Schedule
               </h1>
