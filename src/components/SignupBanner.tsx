@@ -89,9 +89,9 @@ export default function SignupBanner() {
               <Image
                 src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65ed367b65acaa4acb2bbf72_Zenith-logo.webp"
                 alt="Zenith Education Logo"
-                width={50}
-                height={50}
-                className="sm:w-[60px] sm:h-[60px]"
+                width={56}
+                height={56}
+                className="object-contain"
               />
             </div>
           </div>
