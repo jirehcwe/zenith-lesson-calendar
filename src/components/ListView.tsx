@@ -49,7 +49,7 @@ export default function ListView({ sessions }: { sessions: WeeklyClassSlot[] }) 
                     }`}
                   >
                     {/* Accent bar */}
-                    <div className="h-1 w-full" style={{ background: accentColor }} />
+                    <div className="h-1 w-full rounded-t-xl" style={{ background: accentColor }} />
 
                     <div className="p-5 flex flex-col space-y-3">
                       {/* Header: subject + level pill */}
@@ -94,9 +94,12 @@ export default function ListView({ sessions }: { sessions: WeeklyClassSlot[] }) 
                       {/* Action buttons */}
                       <div className="pt-2 border-t border-gray-100">
                         {full ? (
-                          <div className="w-full bg-gray-200 text-gray-500 font-medium py-2.5 px-4 rounded-lg text-sm text-center">
+                          <button
+                            disabled
+                            className="w-full bg-gray-200 text-gray-500 font-medium py-2.5 px-4 rounded-lg text-sm cursor-not-allowed"
+                          >
                             Class Full
-                          </div>
+                          </button>
                         ) : (
                           <div className="flex gap-2">
                             <a
@@ -105,7 +108,7 @@ export default function ListView({ sessions }: { sessions: WeeklyClassSlot[] }) 
                               rel="noopener noreferrer"
                               className="flex-1"
                             >
-                              <button className="w-full bg-amber-400 hover:bg-amber-500 text-gray-900 font-semibold text-xs py-2 px-3 rounded-lg transition-all duration-200">
+                              <button className="w-full flex-1 bg-amber-400 hover:bg-amber-500 text-gray-900 font-semibold text-xs py-2 px-3 rounded-lg transition-all duration-200">
                                 Sign up for FREE Trial
                               </button>
                             </a>
@@ -117,7 +120,7 @@ export default function ListView({ sessions }: { sessions: WeeklyClassSlot[] }) 
                               rel="noopener noreferrer"
                               className="flex-1"
                             >
-                              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs py-2 px-3 rounded-lg transition-all duration-200">
+                              <button className="w-full flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs py-2 px-3 rounded-lg transition-all duration-200">
                                 Register now
                               </button>
                             </a>
