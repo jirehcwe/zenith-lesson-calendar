@@ -32,7 +32,7 @@ These vars are used by the updated components below.
 
 ## 2. SignupBanner.tsx
 
-**Goal:** Richer hero matching the mockup — deeper indigo, eyebrow pill, headline with amber accent, keep existing collapsible behaviour.
+**Goal:** Richer hero matching the mockup — deeper indigo, eyebrow pill, keep existing collapsible behaviour and all existing text.
 
 **Changes:**
 - The gradient already comes from `hero-gradient` class — handled by the globals.css token change above. No direct style changes needed in the component for the gradient.
@@ -40,9 +40,7 @@ These vars are used by the updated components below.
   - Content: `● Now booking · 2026 academic year`
   - Style: small pill with `bg-white/10 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-widest text-white/85`
   - The `●` dot is a green pulse: `w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse`
-- Update desktop headline from `"2026 Weekly Class Schedule"` to `"Browse every class. Book a free trial in two taps."` with *"Book a free trial"* wrapped in `<em>` styled `text-amber-300 not-italic font-extrabold`
-- Update mobile collapsed headline stays short: keep `"2026 Weekly Class Schedule"` (compact)
-- Subtitle below headline: `"Filter the timetable by your stream, subject and centre. Trials are complimentary for new students."`
+- **All existing text stays unchanged** — keep "2026 Weekly Class Schedule" headline, existing subtitle ("Flexible scheduling • Expert tutors • Proven results • Free trial for all subjects"), "Find Your Perfect Class Schedule" section heading, and blurb text. No copy changes.
 - Keep existing social proof avatars + trust line — no change
 
 **Files changed:** `src/components/SignupBanner.tsx`, `src/app/globals.css`
@@ -135,9 +133,11 @@ Replace the current card `<div>` with this layout:
 
 **Tutor avatar:** `w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold` with background from `getSubjectColor`. Initials: first letter of tutor name.
 
-**Buttons:**
+**Buttons (equal visual weight — both filled, no primary/secondary hierarchy):**
 - Free Trial: `bg-amber-400 hover:bg-amber-500 text-gray-900 font-semibold text-xs py-2 px-3 rounded-lg flex-1`
-- Register: `border-2 border-blue-500 text-blue-600 hover:bg-blue-50 font-semibold text-xs py-2 px-3 rounded-lg flex-1`
+- Register: `bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs py-2 px-3 rounded-lg flex-1`
+
+Both buttons are solid-fill of identical sizing — the amber/blue colour difference distinguishes action type (trial vs. enrolment) without implying one is more important than the other.
 
 **Full state:**
 - Card: `opacity-60 bg-gray-50`
@@ -205,7 +205,7 @@ Replace the current card `<div>` with this layout:
 - `ListView.test.tsx` — card structure assertions (accent bar, tutor avatar, button labels)
 - `BottomBanner.test.tsx` — no changes needed
 - `CalendarView.test.tsx` — dialog hero structure, button label remains "Register (prefilled)"
-- `SignupBanner.test.tsx` — eyebrow text, new headline copy
+- `SignupBanner.test.tsx` — eyebrow pill text ("Now booking · 2026 academic year"); existing headline/subtitle text assertions stay as-is
 
 ---
 
