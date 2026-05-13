@@ -44,7 +44,7 @@ const jcSubjectToColorMap: Record<
     textColor: "#000000",
   },
   Biology: {
-    backgroundColor: "#95B0F0",
+    backgroundColor: "#818CF8",
     textColor: "#000000",
   },
   Physics: {
@@ -52,15 +52,15 @@ const jcSubjectToColorMap: Record<
     textColor: "#000000",
   },
   Chemistry: {
-    backgroundColor: "#FFFF02",
+    backgroundColor: "#FDE047",
     textColor: "#000000",
   },
   Mathematics: {
-    backgroundColor: "#BFFCFF",
+    backgroundColor: "#67E8F9",
     textColor: "#000000",
   },
   Economics: {
-    backgroundColor: "#7BFF85",
+    backgroundColor: "#4ADE80",
     textColor: "#000000",
   },
 };
@@ -70,15 +70,15 @@ const secSubjectToColorMap: Record<
   { backgroundColor: string; textColor: string }
 > = {
   Mathematics: {
-    backgroundColor: "#FED966",
+    backgroundColor: "#FCD34D",
     textColor: "#000000",
   },
   "A Math": {
-    backgroundColor: "#CFE2F3",
+    backgroundColor: "#93C5FD",
     textColor: "#000000",
   },
   "E Math": {
-    backgroundColor: "#CFE2F3",
+    backgroundColor: "#93C5FD",
     textColor: "#000000",
   },
   "Pure Physics": {
@@ -91,7 +91,7 @@ const secSubjectToColorMap: Record<
   },
   // IP
   Chemistry: {
-    backgroundColor: "#F4CCCC",
+    backgroundColor: "#FCA5A5",
     textColor: "#000000",
   },
   Physics: {
@@ -104,19 +104,19 @@ const secSubjectToColorMap: Record<
     textColor: "#000000",
   },
   "Pure Chemistry": {
-    backgroundColor: "#F4CCCC",
+    backgroundColor: "#FCA5A5",
     textColor: "#000000",
   },
   "Combined Chemistry": {
-    backgroundColor: "#F4CCCC",
+    backgroundColor: "#FCA5A5",
     textColor: "#000000",
   },
   "Pure Biology": {
-    backgroundColor: "#D9EAD3",
+    backgroundColor: "#86EFAC",
     textColor: "#000000",
   },
   "Combined Biology": {
-    backgroundColor: "#D9EAD3",
+    backgroundColor: "#86EFAC",
     textColor: "#000000",
   },
   English: {
@@ -124,31 +124,31 @@ const secSubjectToColorMap: Record<
     textColor: "#000000",
   },
   "Pure History": {
-    backgroundColor: "#B6A48E",
+    backgroundColor: "#D4A76A",
     textColor: "#000000",
   },
   "Combined History": {
-    backgroundColor: "#B6A48E",
+    backgroundColor: "#D4A76A",
     textColor: "#000000",
   },
   "Pure Literature": {
-    backgroundColor: "#D5A6BD",
+    backgroundColor: "#F9A8D4",
     textColor: "#000000",
   },
   "Combined Literature": {
-    backgroundColor: "#D5A6BD",
+    backgroundColor: "#F9A8D4",
     textColor: "#000000",
   },
   "Pure Geography": {
-    backgroundColor: "#A2C4C9",
+    backgroundColor: "#5EEAD4",
     textColor: "#000000",
   },
   "Combined Geography": {
-    backgroundColor: "#A2C4C9",
+    backgroundColor: "#5EEAD4",
     textColor: "#000000",
   },
   "Social Studies": {
-    backgroundColor: "#C9DAF8",
+    backgroundColor: "#C4B5FD",
     textColor: "#000000",
   },
 };
@@ -158,7 +158,7 @@ const primarySubjectToColorMap: Record<
   { backgroundColor: string; textColor: string }
 > = {
   English: {
-    backgroundColor: "#9FC5E8",
+    backgroundColor: "#7DD3FC",
     textColor: "#000000",
   },
   Mathematics: {
@@ -166,7 +166,7 @@ const primarySubjectToColorMap: Record<
     textColor: "#000000",
   },
   Science: {
-    backgroundColor: "#B6D7A8",
+    backgroundColor: "#34D399",
     textColor: "#000000",
   },
 };
@@ -466,7 +466,7 @@ export default function WeeklyClassCalendar({
                 className="px-5 pt-5 pb-4 relative"
                 style={{
                   backgroundColor:
-                    subjectToColor(selectedEvent.level, selectedEvent.subjects[0] ?? "").backgroundColor + "33",
+                    subjectToColor(selectedEvent.level, selectedEvent.subjects[0] ?? "").backgroundColor + "66",
                 }}
               >
                 <button
@@ -481,30 +481,54 @@ export default function WeeklyClassCalendar({
                 <div className="text-xs font-bold uppercase tracking-wide text-gray-500 mb-1 pr-10">
                   {selectedEvent.stream} · {selectedEvent.level}
                 </div>
-                <DialogTitle className="text-2xl font-extrabold text-gray-900 mb-1">
+                <DialogTitle className="text-2xl font-extrabold text-gray-900">
                   {selectedEvent.subjects.join(" + ")}
                 </DialogTitle>
-                <div className="text-sm text-gray-500">
-                  {["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][selectedEvent.day]}
-                  {" · "}{selectedEvent.startTime} – {selectedEvent.endTime}
-                  {" · "}{selectedEvent.centre}
-                </div>
               </div>
             )}
 
-            {/* Info tiles + CTAs */}
+            {/* Details + CTAs */}
             {selectedEvent && (
-              <div className="p-5 space-y-4">
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-white border border-gray-200 rounded-lg p-3">
-                    <div className="text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wide">Time</div>
-                    <div className="font-bold text-gray-800 text-sm">
-                      {selectedEvent.startTime} – {selectedEvent.endTime}
+              <div className="px-5 pt-4 pb-5 space-y-4">
+                {/* Icon-row details */}
+                <div
+                  className="rounded-xl p-3.5 space-y-3"
+                  style={{
+                    backgroundColor:
+                      subjectToColor(selectedEvent.level, selectedEvent.subjects[0] ?? "").backgroundColor + "33",
+                  }}
+                >
+                  {/* Day */}
+                  <div className="flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-full bg-white/80 shadow-sm flex items-center justify-center flex-shrink-0">
+                      <svg className="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
                     </div>
+                    <span className="text-sm font-semibold text-gray-800">
+                      {["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][selectedEvent.day]}
+                    </span>
                   </div>
-                  <div className="bg-white border border-gray-200 rounded-lg p-3">
-                    <div className="text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wide">Venue</div>
-                    <div className="font-bold text-gray-800 text-sm">{selectedEvent.centre}</div>
+                  {/* Time */}
+                  <div className="flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-full bg-white/80 shadow-sm flex items-center justify-center flex-shrink-0">
+                      <svg className="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <span className="text-sm font-semibold text-gray-800">
+                      {selectedEvent.startTime} – {selectedEvent.endTime}
+                    </span>
+                  </div>
+                  {/* Venue */}
+                  <div className="flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-full bg-white/80 shadow-sm flex items-center justify-center flex-shrink-0">
+                      <svg className="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    </div>
+                    <span className="text-sm font-semibold text-gray-800">{selectedEvent.centre}</span>
                   </div>
                 </div>
 
@@ -523,7 +547,7 @@ export default function WeeklyClassCalendar({
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={() => console.log("form_click_prefilled")}
-                        className="flex-1 block bg-amber-400 hover:bg-amber-500 text-gray-900 font-semibold text-sm py-2.5 px-4 rounded-lg text-center transition-all duration-200"
+                        className="flex-1 flex items-center justify-center bg-amber-400 hover:bg-amber-500 text-gray-900 font-semibold text-sm py-2.5 px-4 rounded-lg text-center transition-all duration-200"
                       >
                         Sign up for FREE Trial
                       </a>
@@ -535,7 +559,7 @@ export default function WeeklyClassCalendar({
                       ))}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 block bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm py-2.5 px-4 rounded-lg text-center transition-all duration-200"
+                      className="flex-1 flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm py-2.5 px-4 rounded-lg text-center transition-all duration-200"
                     >
                       Register now
                     </a>
