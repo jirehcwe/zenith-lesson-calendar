@@ -246,6 +246,7 @@ export default function Filters({
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search subject or centre…"
+          aria-label="Search subject or centre"
           className="w-full rounded-xl border-2 border-gray-200 pl-9 pr-3 py-2.5 text-sm focus:border-blue-400 focus:outline-none"
         />
       </div>
