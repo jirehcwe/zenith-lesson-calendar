@@ -36,11 +36,13 @@ Clicking a class links to Google Forms with prefilled fields. Prefill URLs are m
 ```typescript
 type WeeklyClassSlot = {
   day: number; startTime: string; endTime: string;
-  subject: string; tutor: string; centre: string;
+  subjects: string[]; tutor: string; centre: string;
   stream: string; level: string;
   prefillTrialLink: string; prefillRegistrationLink?: string;
 };
 ```
+
+`subjects` is an array to support combined classes (e.g. Combined + Pure Humanities, A Math + E Math taught in one session). Render with `subjects.join(" + ")`; use `subjects[0]` only for icon/color anchoring (see `WeeklyClassCalendar.tsx:319,471`).
 
 ## Path Alias
 
