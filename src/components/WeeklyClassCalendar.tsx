@@ -196,12 +196,13 @@ export default function WeeklyClassCalendar({
         :global(.fc-v-event) {
           cursor: pointer !important;
           transition: all 0.2s ease !important;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+          background: transparent !important;
+          border: none !important;
         }
         :global(.fc-v-event:hover) {
-          transform: scale(1.05) translateY(-1px) !important;
-          filter: brightness(0.9) !important;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25) !important;
+          transform: translateY(-1px) scale(1.02) !important;
+          filter: brightness(1.04) !important;
+          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12) !important;
         }
       `}</style>
 
