@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useRef, useEffect, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { ViewType } from "./ViewSelector";
 
@@ -34,10 +34,6 @@ function truncateText(text: string, maxLength: number = 25): string {
   return text.substring(0, maxLength) + "...";
 }
 
-function formatLocationDisplay(location: string): string {
-  return location;
-}
-
 function streamLabel(stream: string): string {
   if (stream === "Secondary (Express)") return "Sec Express";
   if (stream === "Secondary (IP)") return "Sec IP";
@@ -59,25 +55,21 @@ function MultiSelect({
   disabled?: boolean;
   compact?: boolean;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
   const [filterDropdownMaxHeight, setFilterDropdownMaxHeight] = useState<string>("320px");
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const optionsRef = useRef<HTMLUListElement>(null);
 
   const displayText =
     selected.length > 0
-      ? selected.map((s) => truncateText(formatLocationDisplay(s), 20)).join(", ")
+      ? selected.map((s) => truncateText(s, 20)).join(", ")
       : label;
 
-  useEffect(() => {
-    if (isOpen && dropdownRef.current) {
-      const dropdown = dropdownRef.current;
-      const dropdownRect = dropdown.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-      const availableHeight = viewportHeight - dropdownRect.bottom - 20;
-      setFilterDropdownMaxHeight(`${Math.max(100, availableHeight)}px`);
+  const recalcHeight = () => {
+    if (dropdownRef.current) {
+      const rect = dropdownRef.current.getBoundingClientRect();
+      const available = window.innerHeight - rect.bottom - 20;
+      setFilterDropdownMaxHeight(`${Math.max(100, available)}px`);
     }
-  }, [isOpen]);
+  };
 
   return (
     <div className={compact ? "relative" : "flex flex-col space-y-2"} ref={dropdownRef}>
@@ -85,8 +77,7 @@ function MultiSelect({
         <label className="text-sm font-semibold text-gray-700">{label}</label>
       )}
       <Listbox value={selected} onChange={onChange} multiple disabled={disabled}>
-        {({ open }) => {
-          if (open !== isOpen) setIsOpen(open);
+        {() => {
           return (
             <div className={compact ? "" : "relative mt-1"}>
               <Listbox.Button
@@ -102,20 +93,23 @@ function MultiSelect({
                     : "bg-white border border-gray-200 hover:border-gray-400"
                 }`}
                 disabled={disabled}
-                title={selected.length > 0 ? selected.map(formatLocationDisplay).join(", ") : undefined}
+                title={selected.length > 0 ? selected.join(", ") : undefined}
+                onMouseDown={recalcHeight}
               >
                 <span className={`truncate flex-1 ${selected.length > 0 ? "text-gray-800" : "text-gray-400"}`}>
                   {displayText}
                 </span>
                 {selected.length > 0 && !disabled ? (
-                  <button
-                    type="button"
+                  <span
+                    role="button"
+                    tabIndex={0}
                     onClick={(e) => { e.stopPropagation(); onChange([]); }}
-                    className="text-gray-400 hover:text-gray-600 text-lg leading-none flex-shrink-0"
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.stopPropagation(); onChange([]); } }}
+                    className="text-gray-400 hover:text-gray-600 text-lg leading-none flex-shrink-0 cursor-pointer"
                     aria-label="Clear selection"
                   >
                     ×
-                  </button>
+                  </span>
                 ) : (
                   <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -124,7 +118,6 @@ function MultiSelect({
               </Listbox.Button>
               <Transition as={Fragment}>
                 <Listbox.Options
-                  ref={optionsRef}
                   style={{ maxHeight: filterDropdownMaxHeight }}
                   className="absolute z-10 mt-2 w-full min-w-[160px] rounded-xl bg-white border border-gray-200 shadow-xl list-none overflow-y-auto focus:outline-none text-sm"
                 >
@@ -145,7 +138,7 @@ function MultiSelect({
                           } ${active && option.count > 0 ? "bg-blue-100" : ""} ${
                             disabled ? "text-gray-400 cursor-not-allowed" : ""
                           } ${option.selected ? "bg-blue-50 font-medium" : ""}`}
-                          title={formatLocationDisplay(option.value)}
+                          title={option.value}
                         >
                           <div className="flex-shrink-0 w-4 h-4 border border-gray-300 rounded flex items-center justify-center bg-white">
                             {option.selected && (
@@ -156,7 +149,7 @@ function MultiSelect({
                           </div>
                           <div className="flex-1 flex justify-between items-center min-w-0">
                             <span className={`truncate ${option.count === 0 ? "line-through" : ""}`}>
-                              {formatLocationDisplay(option.value)}
+                              {option.value}
                             </span>
                           </div>
                         </li>

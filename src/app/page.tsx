@@ -385,7 +385,7 @@ export default function Page() {
     <div className="min-h-screen bg-gray-50">
       <SignupBanner />
       {!isLoading && (
-        <div className="md:static sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200">
+        <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 py-4">
             {/* Collapsed state - mobile only */}
             {filtersCollapsed && (
@@ -468,9 +468,9 @@ export default function Page() {
             </div>
           ) : (
             <>
-              <div className="modern-card p-3 sm:p-6">
+              <div className={currentView === "calendar" ? "modern-card -mx-2 p-0 overflow-hidden" : "modern-card p-3 sm:p-6"}>
                 {currentView === "calendar" ? (
-                  <WeeklyClassCalendar slots={events} filters={filters} />
+                  <WeeklyClassCalendar slots={events} />
                 ) : (
                   <ListView sessions={events} />
                 )}

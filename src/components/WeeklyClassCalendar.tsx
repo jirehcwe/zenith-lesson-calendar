@@ -3,15 +3,10 @@
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import scrollGridPlugin from "@fullcalendar/scrollgrid";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { replaceCampaignInUrl, replacePromocodeInUrl } from "@/utils/campaign";
 import { getFallbackRegistrationLinkByLevel } from "@/utils/prefillRegistration";
-
-// Helper function to format location display text
-function formatLocationDisplay(location: string): string {
-  return location;
-}
 
 // Check if a slot is full based on [FULL] prefix in the title
 export function isSlotFull(slot: WeeklyClassSlot): boolean {
@@ -125,41 +120,24 @@ function getFixedWeekdayDate(weekday: number): Date {
 
 const PRO_TIP_STORAGE_KEY = "proTipDismissed";
 
-export default function WeeklyClassCalendar({
-  slots,
-}: // filters,
-{
-  slots: WeeklyClassSlot[];
-  filters: {
-    subject: string[];
-    centre: string[];
-    tutor: string[];
-    level: string[];
-    stream: string | null;
-  };
-}) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [isMobile, setIsMobile] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState<WeeklyClassSlot | null>(
-    null
-  );
+export default function WeeklyClassCalendar({ slots }: { slots: WeeklyClassSlot[] }) {
+  const [selectedEvent, setSelectedEvent] = useState<WeeklyClassSlot | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isProTipDismissed, setIsProTipDismissed] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const calendarRef = useRef<FullCalendar>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem(PRO_TIP_STORAGE_KEY);
     if (stored === "true") {
       setIsProTipDismissed(true);
     }
+  }, []);
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      calendarRef.current?.getApi().updateSize();
+    });
+    return () => cancelAnimationFrame(id);
   }, []);
 
   const handleDismissProTip = () => {
@@ -220,6 +198,12 @@ export default function WeeklyClassCalendar({
           filter: brightness(1.04) !important;
           box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12) !important;
         }
+        :global(.fc) {
+          --fc-border-color: #CBD5E1;
+        }
+        :global(.fc-col-header) {
+          background-color: #F9FAFB;
+        }
       `}</style>
 
       {!isProTipDismissed && (
@@ -254,17 +238,14 @@ export default function WeeklyClassCalendar({
         </div>
       )}
 
-      <div className="relative overflow-hidden rounded-2xl border border-slate-200" style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+      <div className="relative overflow-hidden rounded-2xl" style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
         <FullCalendar
+          ref={calendarRef}
           schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
           plugins={[timeGridPlugin, scrollGridPlugin]}
           initialView="timeGridWeek"
           initialDate="2024-01-08" // Fixed reference date (Monday)
-          headerToolbar={{
-            left: "",
-            center: "",
-            right: "",
-          }}
+          headerToolbar={false}
           views={{}}
           events={events}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -272,7 +253,7 @@ export default function WeeklyClassCalendar({
             const dayName = args.date.toLocaleDateString(undefined, { weekday: "short" }).toUpperCase();
             const count = events.filter((e) => e.start.toDateString() === args.date.toDateString()).length;
             return (
-              <div style={{ textAlign: "center", lineHeight: 1.2 }}>
+              <div style={{ textAlign: "center", lineHeight: 1.2, padding: "10px 0" }}>
                 <div style={{ fontWeight: 700, letterSpacing: "0.06em" }}>{dayName}</div>
                 {count > 0 && (
                   <div style={{ fontSize: "10px", color: "#94a3b8", fontWeight: 400, marginTop: "1px" }}>
@@ -289,7 +270,7 @@ export default function WeeklyClassCalendar({
           displayEventEnd={true}
           // Disable navigation since this is a template view
           navLinks={false}
-          stickyHeaderDates={true}
+          stickyHeaderDates={false}
           dayMinWidth={100}
           eventContent={(arg) => {
             const slotData = arg.event.extendedProps as WeeklyClassSlot;
@@ -343,7 +324,7 @@ export default function WeeklyClassCalendar({
                       <path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" />
                     </svg>
                     <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", minWidth: 0 }}>
-                      {formatLocationDisplay(slotData.centre)}
+                      {slotData.centre}
                     </span>
                   </div>
                 )}
@@ -360,7 +341,7 @@ export default function WeeklyClassCalendar({
           firstDay={1}
           weekends={true}
         />
-        <div className="flex flex-wrap gap-x-4 gap-y-2 px-3 py-2.5 border border-gray-200 rounded-xl bg-gray-50">
+        <div className="flex flex-wrap gap-x-4 gap-y-2 px-3 py-2.5 border-t border-slate-200 bg-gray-50">
           {LEGEND_ITEMS.map(({ label, color, tint }) => (
             <div key={label} style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "11px", color, fontFamily: "var(--font-manrope), 'Manrope', sans-serif", fontWeight: 600 }}>
               <span style={{ display: "inline-block", width: "12px", height: "12px", background: tint, borderLeft: `2px solid ${color}`, borderRadius: "2px", flexShrink: 0 }} />
