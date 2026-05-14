@@ -136,7 +136,7 @@ const secSubjectToColorMap: Record<string, { color: string; tint: string }> = {
   "Combined Literature":{ color: "#831843", tint: "#FCE7F3" },
   "Pure Geography":     { color: "#065F46", tint: "#ECFDF5" },
   "Combined Geography": { color: "#065F46", tint: "#ECFDF5" },
-  "Social Studies":     { color: "#4338CA", tint: "#E0E7FF" },
+  "Social Studies":     { color: "#6B21A8", tint: "#F3E8FF" },
 };
 
 const primarySubjectToColorMap: Record<string, { color: string; tint: string }> = {
@@ -336,6 +336,7 @@ Replace with:
                   flexDirection: "column",
                   gap: "2px",
                   boxSizing: "border-box",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.07)",
                 }}
               >
                 <div style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -426,6 +427,7 @@ Find:
 
 Replace with:
 ```typescript
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           dayHeaderContent={(args: any) => {
             const dayName = args.date
               .toLocaleDateString(undefined, { weekday: "short" })
@@ -542,15 +544,19 @@ After the `primarySubjectToColorMap` declaration (around line 172), add:
 
 ```typescript
 const LEGEND_ITEMS = [
-  { label: "Math",      color: "#B45309", tint: "#FEF3C7" },
-  { label: "A Math",    color: "#1E40AF", tint: "#DBEAFE" },
-  { label: "Physics",   color: "#BE123C", tint: "#FECDD3" },
-  { label: "Chemistry", color: "#15803D", tint: "#DCFCE7" },
-  { label: "Biology",   color: "#166534", tint: "#BBFBD0" },
-  { label: "English",   color: "#0369A1", tint: "#BAE6FD" },
-  { label: "GP",        color: "#9A3412", tint: "#FED7AA" },
-  { label: "Econ",      color: "#4338CA", tint: "#E0E7FF" },
-  { label: "Full",      color: "#64748B", tint: "#E5E7EB" },
+  { label: "Math",         color: "#B45309", tint: "#FEF3C7" },
+  { label: "A Math",       color: "#1E40AF", tint: "#DBEAFE" },
+  { label: "Physics",      color: "#BE123C", tint: "#FECDD3" },
+  { label: "Chemistry",    color: "#15803D", tint: "#DCFCE7" },
+  { label: "Biology",      color: "#166534", tint: "#BBFBD0" },
+  { label: "English",      color: "#0369A1", tint: "#BAE6FD" },
+  { label: "GP",           color: "#9A3412", tint: "#FED7AA" },
+  { label: "Econ",         color: "#4338CA", tint: "#E0E7FF" },
+  { label: "History",      color: "#92400E", tint: "#FFEDD5" },
+  { label: "Literature",   color: "#831843", tint: "#FCE7F3" },
+  { label: "Geography",    color: "#065F46", tint: "#ECFDF5" },
+  { label: "Soc. Studies", color: "#6B21A8", tint: "#F3E8FF" },
+  { label: "Full",         color: "#64748B", tint: "#E5E7EB" },
 ] as const;
 ```
 
@@ -599,7 +605,7 @@ yarn lint
 
 - [ ] **Step 4: Visually verify in browser**
 
-Confirm the legend row appears below the calendar grid showing all 9 subjects with matching tint + border swatches.
+Confirm the legend row appears below the calendar grid showing all 13 subject swatches with matching tint + border colors.
 
 - [ ] **Step 5: Commit**
 
