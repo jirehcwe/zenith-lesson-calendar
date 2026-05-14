@@ -18,7 +18,7 @@ export function isSlotFull(slot: WeeklyClassSlot): boolean {
   return slot.title.startsWith("[FULL]");
 }
 
-const FULL_SLOT_COLOR = { backgroundColor: "#d1d5db", textColor: "#6b7280" };
+const FULL_SLOT_COLOR = { color: "#64748B", tint: "#E5E7EB" };
 
 // Define a new type for weekly class slots (no topic, no date)
 export type WeeklyClassSlot = {
@@ -35,217 +35,66 @@ export type WeeklyClassSlot = {
   prefillRegistrationLink?: string;
 };
 
-const jcSubjectToColorMap: Record<
-  string,
-  { backgroundColor: string; textColor: string }
-> = {
-  "General Paper": {
-    backgroundColor: "#FBBC03",
-    textColor: "#000000",
-  },
-  Biology: {
-    backgroundColor: "#818CF8",
-    textColor: "#000000",
-  },
-  Physics: {
-    backgroundColor: "#FC696A",
-    textColor: "#000000",
-  },
-  Chemistry: {
-    backgroundColor: "#FDE047",
-    textColor: "#000000",
-  },
-  Mathematics: {
-    backgroundColor: "#67E8F9",
-    textColor: "#000000",
-  },
-  Economics: {
-    backgroundColor: "#4ADE80",
-    textColor: "#000000",
-  },
+const jcSubjectToColorMap: Record<string, { color: string; tint: string }> = {
+  "General Paper": { color: "#9A3412", tint: "#FED7AA" },
+  Biology:         { color: "#166534", tint: "#BBFBD0" },
+  Physics:         { color: "#BE123C", tint: "#FECDD3" },
+  Chemistry:       { color: "#15803D", tint: "#DCFCE7" },
+  Mathematics:     { color: "#B45309", tint: "#FEF3C7" },
+  Economics:       { color: "#4338CA", tint: "#E0E7FF" },
 };
 
-const secSubjectToColorMap: Record<
-  string,
-  { backgroundColor: string; textColor: string }
-> = {
-  Mathematics: {
-    backgroundColor: "#FCD34D",
-    textColor: "#000000",
-  },
-  "A Math": {
-    backgroundColor: "#93C5FD",
-    textColor: "#000000",
-  },
-  "E Math": {
-    backgroundColor: "#93C5FD",
-    textColor: "#000000",
-  },
-  "Pure Physics": {
-    backgroundColor: "#C27BA0",
-    textColor: "#000000",
-  },
-  "Combined Physics": {
-    backgroundColor: "#C27BA0",
-    textColor: "#000000",
-  },
-  // IP
-  Chemistry: {
-    backgroundColor: "#FCA5A5",
-    textColor: "#000000",
-  },
-  Physics: {
-    backgroundColor: "#C27BA0",
-    textColor: "#000000",
-  },
-  // Lower sec science
-  Science: {
-    backgroundColor: "#C27BA0",
-    textColor: "#000000",
-  },
-  "Pure Chemistry": {
-    backgroundColor: "#FCA5A5",
-    textColor: "#000000",
-  },
-  "Combined Chemistry": {
-    backgroundColor: "#FCA5A5",
-    textColor: "#000000",
-  },
-  "Pure Biology": {
-    backgroundColor: "#86EFAC",
-    textColor: "#000000",
-  },
-  "Combined Biology": {
-    backgroundColor: "#86EFAC",
-    textColor: "#000000",
-  },
-  English: {
-    backgroundColor: "#DD7E6B",
-    textColor: "#000000",
-  },
-  "Pure History": {
-    backgroundColor: "#D4A76A",
-    textColor: "#000000",
-  },
-  "Combined History": {
-    backgroundColor: "#D4A76A",
-    textColor: "#000000",
-  },
-  "Pure Literature": {
-    backgroundColor: "#F9A8D4",
-    textColor: "#000000",
-  },
-  "Combined Literature": {
-    backgroundColor: "#F9A8D4",
-    textColor: "#000000",
-  },
-  "Pure Geography": {
-    backgroundColor: "#5EEAD4",
-    textColor: "#000000",
-  },
-  "Combined Geography": {
-    backgroundColor: "#5EEAD4",
-    textColor: "#000000",
-  },
-  "Social Studies": {
-    backgroundColor: "#C4B5FD",
-    textColor: "#000000",
-  },
+const secSubjectToColorMap: Record<string, { color: string; tint: string }> = {
+  Mathematics:          { color: "#B45309", tint: "#FEF3C7" },
+  "A Math":             { color: "#1E40AF", tint: "#DBEAFE" },
+  "E Math":             { color: "#B45309", tint: "#FEF3C7" },
+  "Pure Physics":       { color: "#BE123C", tint: "#FECDD3" },
+  "Combined Physics":   { color: "#BE123C", tint: "#FECDD3" },
+  Chemistry:            { color: "#15803D", tint: "#DCFCE7" },
+  Physics:              { color: "#BE123C", tint: "#FECDD3" },
+  Science:              { color: "#BE123C", tint: "#FECDD3" },
+  "Pure Chemistry":     { color: "#15803D", tint: "#DCFCE7" },
+  "Combined Chemistry": { color: "#15803D", tint: "#DCFCE7" },
+  "Pure Biology":       { color: "#166534", tint: "#BBFBD0" },
+  "Combined Biology":   { color: "#166534", tint: "#BBFBD0" },
+  English:              { color: "#0369A1", tint: "#BAE6FD" },
+  "Pure History":       { color: "#92400E", tint: "#FFEDD5" },
+  "Combined History":   { color: "#92400E", tint: "#FFEDD5" },
+  "Pure Literature":    { color: "#831843", tint: "#FCE7F3" },
+  "Combined Literature":{ color: "#831843", tint: "#FCE7F3" },
+  "Pure Geography":     { color: "#065F46", tint: "#ECFDF5" },
+  "Combined Geography": { color: "#065F46", tint: "#ECFDF5" },
+  "Social Studies":     { color: "#6B21A8", tint: "#F3E8FF" },
 };
 
-const primarySubjectToColorMap: Record<
-  string,
-  { backgroundColor: string; textColor: string }
-> = {
-  English: {
-    backgroundColor: "#7DD3FC",
-    textColor: "#000000",
-  },
-  Mathematics: {
-    backgroundColor: "#F6B26B",
-    textColor: "#000000",
-  },
-  Science: {
-    backgroundColor: "#34D399",
-    textColor: "#000000",
-  },
+const primarySubjectToColorMap: Record<string, { color: string; tint: string }> = {
+  English:     { color: "#0369A1", tint: "#BAE6FD" },
+  Mathematics: { color: "#B45309", tint: "#FEF3C7" },
+  Science:     { color: "#BE123C", tint: "#FECDD3" },
 };
 
 export function getSubjectColor(subject: string, level: string): string {
-  return subjectToColor(level, subject).backgroundColor;
+  return subjectToColor(level, subject).color;
 }
-
-// // Function to generate consistent colors from subject names
-// function hashStringToColor(str: string): {
-//   backgroundColor: string;
-//   textColor: string;
-// } {
-//   // Simple hash function
-//   let hash = 0;
-//   for (let i = 0; i < str.length; i++) {
-//     const char = str.charCodeAt(i);
-//     hash = (hash << 5) - hash + char;
-//     hash = hash & hash; // Convert to 32-bit integer
-//   }
-
-//   // Use the hash to generate HSL values for better color distribution
-//   const hue = Math.abs(hash) % 270;
-//   const saturation = 75 + (Math.abs(hash) % 20); // 75-95%
-//   const lightness = 55 + (Math.abs(hash) % 15); // 55-70%
-
-//   const backgroundColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-
-//   // Choose text color based on lightness
-//   const textColor = lightness > 30 ? "#000000" : "#ffffff";
-
-//   return { backgroundColor, textColor };
-// }
 
 function subjectToColor(
   level: string,
   subject: string
-): {
-  backgroundColor: string;
-  textColor: string;
-} {
-  // IP-stream subjects arrive from the schedule API prefixed ("IP Mathematics",
-  // "IP Chemistry", …). Strip the prefix so they pick up the same colour as
-  // their non-IP counterparts in the maps below.
+): { color: string; tint: string } {
   const normalisedSubject = subject.startsWith("IP ")
     ? subject.slice(3)
     : subject;
 
   if (level.includes("J")) {
-    return (
-      jcSubjectToColorMap[normalisedSubject] || {
-        backgroundColor: "#ffffff",
-        textColor: "#000000",
-      }
-    );
+    return jcSubjectToColorMap[normalisedSubject] || FULL_SLOT_COLOR;
   }
-
   if (level.includes("S")) {
-    return (
-      secSubjectToColorMap[normalisedSubject] || {
-        backgroundColor: "#ffffff",
-        textColor: "#000000",
-      }
-    );
+    return secSubjectToColorMap[normalisedSubject] || FULL_SLOT_COLOR;
   }
-
   if (level.includes("P")) {
-    return (
-      primarySubjectToColorMap[normalisedSubject] || {
-        backgroundColor: "#ffffff",
-        textColor: "#000000",
-      }
-    );
+    return primarySubjectToColorMap[normalisedSubject] || FULL_SLOT_COLOR;
   }
-
-  return {
-    backgroundColor: "#ffffff",
-    textColor: "#000000",
-  };
+  return FULL_SLOT_COLOR;
 }
 
 // Helper to get a fixed date for a weekday (using a reference week)
@@ -318,7 +167,7 @@ export default function WeeklyClassCalendar({
       const end = new Date(baseDate);
       end.setHours(endHour, endMinute, 0, 0);
       const full = isSlotFull(slot);
-      const color = full
+      const colors = full
         ? FULL_SLOT_COLOR
         : subjectToColor(slot.level, slot.subjects[0] ?? "");
       return {
@@ -328,8 +177,8 @@ export default function WeeklyClassCalendar({
         start,
         end,
         extendedProps: slot,
-        backgroundColor: color.backgroundColor,
-        textColor: color.textColor,
+        backgroundColor: colors.tint,
+        textColor: colors.color,
       };
     });
   }, [slots]);
@@ -466,7 +315,7 @@ export default function WeeklyClassCalendar({
                 className="px-5 pt-5 pb-4 relative"
                 style={{
                   backgroundColor:
-                    subjectToColor(selectedEvent.level, selectedEvent.subjects[0] ?? "").backgroundColor + "66",
+                    subjectToColor(selectedEvent.level, selectedEvent.subjects[0] ?? "").tint + "66",
                 }}
               >
                 <button
@@ -495,7 +344,7 @@ export default function WeeklyClassCalendar({
                   className="rounded-xl p-3.5 space-y-3"
                   style={{
                     backgroundColor:
-                      subjectToColor(selectedEvent.level, selectedEvent.subjects[0] ?? "").backgroundColor + "33",
+                      subjectToColor(selectedEvent.level, selectedEvent.subjects[0] ?? "").tint + "33",
                   }}
                 >
                   {/* Day */}
