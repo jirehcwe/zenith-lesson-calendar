@@ -314,11 +314,12 @@ export default function WeeklyClassCalendar({
                       height="10"
                       viewBox="0 0 10 13"
                       fill="currentColor"
+                      aria-hidden="true"
                       style={{ flexShrink: 0 }}
                     >
                       <path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" />
                     </svg>
-                    <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", minWidth: 0 }}>
                       {formatLocationDisplay(slotData.centre)}
                     </span>
                   </div>
