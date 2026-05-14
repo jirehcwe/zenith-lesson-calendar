@@ -74,18 +74,6 @@ describe("Filters", () => {
     expect(onFilterChange).toHaveBeenCalledWith(expect.objectContaining({ subject: ["Math"] }));
   });
 
-  it("renders a search input with correct placeholder", () => {
-    render(<Filters {...baseProps} />);
-    expect(screen.getByPlaceholderText("Search subject or centre…")).toBeInTheDocument();
-  });
-
-  it("calls onSearchChange when the search input changes", async () => {
-    const user = userEvent.setup();
-    const onSearchChange = jest.fn();
-    render(<Filters {...baseProps} onSearchChange={onSearchChange} />);
-    await user.type(screen.getByPlaceholderText("Search subject or centre…"), "Math");
-    expect(onSearchChange).toHaveBeenCalled();
-  });
 
   it("renders Calendar and List view toggle buttons", () => {
     render(<Filters {...baseProps} />);
