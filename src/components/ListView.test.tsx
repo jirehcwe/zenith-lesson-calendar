@@ -74,6 +74,11 @@ describe("ListView", () => {
     expect(screen.getByText("Clementi")).toBeInTheDocument();
   });
 
+  it("never renders the tutor name in the output", () => {
+    render(<ListView sessions={[makeSlot({ tutor: "Alice" })]} />);
+    expect(screen.queryByText("Alice")).not.toBeInTheDocument();
+  });
+
 
   it("renders day header with a class count badge", () => {
     render(

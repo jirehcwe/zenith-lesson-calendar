@@ -62,4 +62,28 @@ describe("applyFilters", () => {
     const result = applyFilters(sessions, { ...emptyFilters, subject: ["English"] });
     expect(result).toHaveLength(0);
   });
+
+  it("returns empty array when sessions is empty", () => {
+    expect(applyFilters([], { ...emptyFilters, subject: ["Math"] })).toHaveLength(0);
+  });
+
+  it("filters by tutor", () => {
+    const sessions = [makeSession({ tutor: "Alice" }), makeSession({ tutor: "Bob" })];
+    const result = applyFilters(sessions, { ...emptyFilters, tutor: ["Alice"] });
+    expect(result).toHaveLength(1);
+    expect(result[0].tutor).toBe("Alice");
+  });
+
+  it("matches multiple topics within the same subject (OR within topic filter)", () => {
+    const sessions = [
+      makeSession({ subject: "Math", topic: "Algebra" }),
+      makeSession({ subject: "Math", topic: "Calculus" }),
+      makeSession({ subject: "Math", topic: "Statistics" }),
+    ];
+    const result = applyFilters(sessions, {
+      ...emptyFilters,
+      topic: ["[Math] Algebra", "[Math] Calculus"],
+    });
+    expect(result).toHaveLength(2);
+  });
 });
