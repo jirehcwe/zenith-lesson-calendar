@@ -254,7 +254,7 @@ export default function WeeklyClassCalendar({
         </div>
       )}
 
-      <div className="relative overflow-hidden rounded-xl border border-gray-200 shadow-sm">
+      <div className="relative overflow-hidden rounded-2xl border border-slate-200" style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
         <FullCalendar
           schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
           plugins={[timeGridPlugin, scrollGridPlugin]}
