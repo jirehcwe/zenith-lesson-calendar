@@ -269,27 +269,63 @@ export default function WeeklyClassCalendar({
           stickyHeaderDates={true}
           dayMinWidth={100}
           eventContent={(arg) => {
-            const centre = arg.event.extendedProps.centre;
-            const full = isSlotFull(arg.event.extendedProps as WeeklyClassSlot);
+            const slotData = arg.event.extendedProps as WeeklyClassSlot;
+            const full = isSlotFull(slotData);
+            const colors = full
+              ? FULL_SLOT_COLOR
+              : subjectToColor(slotData.level, slotData.subjects[0] ?? "");
             return (
-              <div className="p-1 h-full flex flex-col justify-between overflow-hidden">
-                <div className="flex-1 min-h-0">
-                  <div className="font-semibold truncate text-sm">
-                    {arg.event.title}
-                  </div>
-                  {centre && (
-                    <div className="text-xs opacity-80 truncate">
-                      {formatLocationDisplay(centre)}
-                    </div>
-                  )}
+              <div
+                style={{
+                  height: "100%",
+                  background: colors.tint,
+                  borderLeft: `3px solid ${colors.color}`,
+                  borderRadius: "2px",
+                  padding: "4px 6px",
+                  color: colors.color,
+                  fontFamily: "var(--font-manrope), 'Manrope', sans-serif",
+                  fontSize: "11px",
+                  fontWeight: 700,
+                  overflow: "hidden",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "2px",
+                  boxSizing: "border-box",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.07)",
+                }}
+              >
+                <div style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {arg.event.title}
                 </div>
-                {full ? (
-                  <div className="text-xs font-semibold opacity-90 truncate flex-shrink-0">
-                    FULL
+                {slotData.centre && (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "3px",
+                      fontSize: "10px",
+                      fontWeight: 400,
+                      opacity: 0.78,
+                      overflow: "hidden",
+                    }}
+                  >
+                    <svg
+                      width="8"
+                      height="10"
+                      viewBox="0 0 10 13"
+                      fill="currentColor"
+                      style={{ flexShrink: 0 }}
+                    >
+                      <path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" />
+                    </svg>
+                    <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {formatLocationDisplay(slotData.centre)}
+                    </span>
                   </div>
-                ) : (
-                  <div className="text-xs underline opacity-90 truncate flex-shrink-0">
-                    Free Trial/Registration
+                )}
+                {full && (
+                  <div style={{ fontSize: "10px", fontWeight: 600, opacity: 0.7 }}>
+                    Class is full
                   </div>
                 )}
               </div>
