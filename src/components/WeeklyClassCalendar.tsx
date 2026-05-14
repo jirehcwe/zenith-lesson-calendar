@@ -252,10 +252,18 @@ export default function WeeklyClassCalendar({
           events={events}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           dayHeaderContent={(args: any) => {
-            // Show only the day name, not the date
-            return args.date.toLocaleDateString(undefined, {
-              weekday: "short",
-            });
+            const dayName = args.date.toLocaleDateString(undefined, { weekday: "short" }).toUpperCase();
+            const count = events.filter((e) => e.start.toDateString() === args.date.toDateString()).length;
+            return (
+              <div style={{ textAlign: "center", lineHeight: 1.2 }}>
+                <div style={{ fontWeight: 700, letterSpacing: "0.06em" }}>{dayName}</div>
+                {count > 0 && (
+                  <div style={{ fontSize: "10px", color: "#94a3b8", fontWeight: 400, marginTop: "1px" }}>
+                    {count} class{count !== 1 ? "es" : ""}
+                  </div>
+                )}
+              </div>
+            );
           }}
           height="auto"
           slotMinTime="09:00:00"
@@ -264,8 +272,6 @@ export default function WeeklyClassCalendar({
           displayEventEnd={true}
           // Disable navigation since this is a template view
           navLinks={false}
-          // Hide the date numbers, only show day names
-          dayHeaderFormat={{ weekday: "short" }}
           stickyHeaderDates={true}
           dayMinWidth={100}
           eventContent={(arg) => {
