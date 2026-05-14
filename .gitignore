@@ -25,7 +25,6 @@
 
 # misc
 .DS_Store
-.superpowers/
 *.pem
 
 # debug
