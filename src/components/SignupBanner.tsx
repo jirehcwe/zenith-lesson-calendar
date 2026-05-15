@@ -129,40 +129,40 @@ export default function SignupBanner() {
           {/* Student Testimonials */}
           <div className="flex items-center justify-center gap-3">
             <div className="flex -space-x-1">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/20 border-2 border-white overflow-hidden">
+              <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/20 border-2 border-white overflow-hidden">
                 <Image
                   className="rounded-full"
                   src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/6620e0830701a7bceb0c7204_Screenshot%202024-04-18%20163444.webp"
                   alt=""
-                  width={40}
-                  height={40}
+                  width={36}
+                  height={36}
                 />
               </div>
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/20 border-2 border-white overflow-hidden">
+              <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/20 border-2 border-white overflow-hidden">
                 <Image
                   className="rounded-full"
                   src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65f278d68ea311803c30e993_Screenshot%202024-03-14%20at%2012.10.54%20PM.webp"
                   alt=""
-                  width={40}
-                  height={40}
+                  width={36}
+                  height={36}
                 />
               </div>
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/20 border-2 border-white overflow-hidden">
+              <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/20 border-2 border-white overflow-hidden">
                 <Image
                   className="rounded-full"
                   src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/6620dd4162fa73292402d873_Screenshot%202024-04-18%20163707.webp"
                   alt=""
-                  width={40}
-                  height={40}
+                  width={36}
+                  height={36}
                 />
               </div>
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/20 border-2 border-white overflow-hidden">
+              <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/20 border-2 border-white overflow-hidden">
                 <Image
                   className="rounded-full"
                   src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65f2786b8a3bd7f56bb2ac99_Screenshot%202024-03-14%20at%2012.09.05%20PM.webp"
                   alt=""
-                  width={40}
-                  height={40}
+                  width={36}
+                  height={36}
                 />
               </div>
             </div>
@@ -209,47 +209,47 @@ export default function SignupBanner() {
                 Browse every class.{" "}
                 <span className="text-amber-400">Find Your Perfect Class Schedule.</span>
               </h1>
-              <p className="text-base xl:text-lg text-blue-100 font-medium leading-relaxed">
+              <p className="text-base text-blue-100 font-medium leading-relaxed">
                 Filter by stream, level, and centre to find the right fit — then book a complimentary trial or register directly.
               </p>
             </div>
 
             <div className="flex items-center gap-4">
-              <div className="flex -space-x-2">
-                <div className="w-12 h-12 rounded-full bg-white/20 border-2 border-white overflow-hidden">
+              <div className="flex -space-x-1.5">
+                <div className="w-10 h-10 rounded-full bg-white/20 border-2 border-white overflow-hidden">
                   <Image
                     className="rounded-full"
                     src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/6620e0830701a7bceb0c7204_Screenshot%202024-04-18%20163444.webp"
                     alt=""
-                    width={48}
-                    height={48}
+                    width={40}
+                    height={40}
                   />
                 </div>
-                <div className="w-12 h-12 rounded-full bg-white/20 border-2 border-white overflow-hidden">
+                <div className="w-10 h-10 rounded-full bg-white/20 border-2 border-white overflow-hidden">
                   <Image
                     className="rounded-full"
                     src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65f278d68ea311803c30e993_Screenshot%202024-03-14%20at%2012.10.54%20PM.webp"
                     alt=""
-                    width={48}
-                    height={48}
+                    width={40}
+                    height={40}
                   />
                 </div>
-                <div className="w-12 h-12 rounded-full bg-white/20 border-2 border-white overflow-hidden">
+                <div className="w-10 h-10 rounded-full bg-white/20 border-2 border-white overflow-hidden">
                   <Image
                     className="rounded-full"
                     src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/6620dd4162fa73292402d873_Screenshot%202024-04-18%20163707.webp"
                     alt=""
-                    width={48}
-                    height={48}
+                    width={40}
+                    height={40}
                   />
                 </div>
-                <div className="w-12 h-12 rounded-full bg-white/20 border-2 border-white overflow-hidden">
+                <div className="w-10 h-10 rounded-full bg-white/20 border-2 border-white overflow-hidden">
                   <Image
                     className="rounded-full"
                     src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65f2786b8a3bd7f56bb2ac99_Screenshot%202024-03-14%20at%2012.09.05%20PM.webp"
                     alt=""
-                    width={48}
-                    height={48}
+                    width={40}
+                    height={40}
                   />
                 </div>
               </div>
