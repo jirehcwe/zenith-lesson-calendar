@@ -177,7 +177,7 @@ export default function SignupBanner() {
         {/* Desktop Layout - Row */}
         <div className="hidden lg:flex items-center gap-9 relative">
           {/* Logo in top right - absolute positioned */}
-          <div className="absolute top-4 right-0 z-10">
+          <div className="absolute top-2 right-0 z-10">
             <div className="w-20 h-20 rounded-lg flex items-center justify-center">
               <Image
                 src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65e1a2a65798fb58f1336fe6_education-2.png.webp"
