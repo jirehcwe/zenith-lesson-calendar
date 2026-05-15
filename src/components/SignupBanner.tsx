@@ -31,7 +31,7 @@ export default function SignupBanner() {
 
   return (
     <div className="w-full hero-gradient">
-      <div className={`max-w-7xl mx-auto px-4 lg:py-8 ${isCollapsed ? 'py-1 sm:py-1' : 'py-8 sm:py-10'}`}>
+      <div className={`max-w-7xl mx-auto px-4 lg:py-10 ${isCollapsed ? 'py-1 sm:py-1' : 'py-8 sm:py-10'}`}>
         {/* Mobile Layout - Stacked */}
         <div className="lg:hidden relative">
           {/* Collapsed State - Mobile Only */}
@@ -210,7 +210,7 @@ export default function SignupBanner() {
                 <span className="text-amber-400">Find Your Perfect Class Schedule.</span>
               </h1>
               <p className="text-base xl:text-lg text-blue-100 font-medium leading-relaxed">
-                Filter by stream, level, and centre to find the right fit — then book a complimentary trial or register directly for any class.
+                Filter by stream, level, and centre to find the right fit — then book a complimentary trial or register directly.
               </p>
             </div>
 

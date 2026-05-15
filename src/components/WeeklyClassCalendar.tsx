@@ -120,7 +120,7 @@ function getFixedWeekdayDate(weekday: number): Date {
 
 const PRO_TIP_STORAGE_KEY = "proTipDismissed";
 
-export default function WeeklyClassCalendar({ slots }: { slots: WeeklyClassSlot[] }) {
+export default function WeeklyClassCalendar({ slots, isVisible = true }: { slots: WeeklyClassSlot[]; isVisible?: boolean }) {
   const [selectedEvent, setSelectedEvent] = useState<WeeklyClassSlot | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isProTipDismissed, setIsProTipDismissed] = useState(false);
@@ -139,6 +139,15 @@ export default function WeeklyClassCalendar({ slots }: { slots: WeeklyClassSlot[
     });
     return () => cancelAnimationFrame(id);
   }, []);
+
+  // Re-measure after becoming visible — scrollGrid loses its column widths when hidden
+  useEffect(() => {
+    if (!isVisible) return;
+    const id = requestAnimationFrame(() => {
+      calendarRef.current?.getApi().updateSize();
+    });
+    return () => cancelAnimationFrame(id);
+  }, [isVisible]);
 
   const handleDismissProTip = () => {
     setIsProTipDismissed(true);
@@ -177,6 +186,33 @@ export default function WeeklyClassCalendar({ slots }: { slots: WeeklyClassSlot[
     });
   }, [slots]);
 
+  const emptyDayStyles = useMemo(() => {
+    if (slots.length === 0) return '';
+    const dayClassMap: Record<number, string> = {
+      0: 'sun', 1: 'mon', 2: 'tue', 3: 'wed', 4: 'thu', 5: 'fri', 6: 'sat',
+    };
+    const activeDays = new Set(slots.map(s => s.day));
+    return [0, 1, 2, 3, 4, 5, 6]
+      .filter(d => !activeDays.has(d))
+      .map(d => {
+        const c = dayClassMap[d];
+        return `.fc-col-header-cell.fc-day-${c}{opacity:0.35}.fc-timegrid-col.fc-day-${c}{background:rgba(248,250,252,0.7)!important}`;
+      })
+      .join('');
+  }, [slots]);
+
+  useEffect(() => {
+    const styleId = 'zenith-fc-empty-day-styles';
+    let el = document.getElementById(styleId) as HTMLStyleElement | null;
+    if (!el) {
+      el = document.createElement('style');
+      el.id = styleId;
+      document.head.appendChild(el);
+    }
+    el.textContent = emptyDayStyles;
+    return () => { if (el) el.textContent = ''; };
+  }, [emptyDayStyles]);
+
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   const handleEventClick = (arg: any) => {
     setSelectedEvent(arg.event.extendedProps);
@@ -203,6 +239,10 @@ export default function WeeklyClassCalendar({ slots }: { slots: WeeklyClassSlot[
         }
         :global(.fc-col-header) {
           background-color: #F9FAFB;
+        }
+        :global(.fc-timegrid-slot-label-cushion) {
+          font-size: 11px !important;
+          color: #94a3b8 !important;
         }
       `}</style>
 
@@ -288,7 +328,7 @@ export default function WeeklyClassCalendar({ slots }: { slots: WeeklyClassSlot[
                   padding: "4px 6px",
                   color: colors.color,
                   fontFamily: "var(--font-manrope), 'Manrope', sans-serif",
-                  fontSize: "11px",
+                  fontSize: "12px",
                   fontWeight: 700,
                   overflow: "hidden",
                   display: "flex",
@@ -307,7 +347,7 @@ export default function WeeklyClassCalendar({ slots }: { slots: WeeklyClassSlot[
                       display: "flex",
                       alignItems: "center",
                       gap: "3px",
-                      fontSize: "10px",
+                      fontSize: "11px",
                       fontWeight: 400,
                       opacity: 0.78,
                       overflow: "hidden",
@@ -364,7 +404,7 @@ export default function WeeklyClassCalendar({ slots }: { slots: WeeklyClassSlot[
                 className="px-5 pt-5 pb-4 relative"
                 style={{
                   backgroundColor:
-                    subjectToColor(selectedEvent.level, selectedEvent.subjects[0] ?? "").tint + "66",
+                    subjectToColor(selectedEvent.level, selectedEvent.subjects[0] ?? "").tint,
                 }}
               >
                 <button
@@ -393,12 +433,12 @@ export default function WeeklyClassCalendar({ slots }: { slots: WeeklyClassSlot[
                   className="rounded-xl p-3.5 space-y-3"
                   style={{
                     backgroundColor:
-                      subjectToColor(selectedEvent.level, selectedEvent.subjects[0] ?? "").tint + "33",
+                      subjectToColor(selectedEvent.level, selectedEvent.subjects[0] ?? "").tint + "55",
                   }}
                 >
                   {/* Day */}
                   <div className="flex items-center gap-3">
-                    <div className="w-7 h-7 rounded-full bg-white/80 shadow-sm flex items-center justify-center flex-shrink-0">
+                    <div className="w-7 h-7 rounded-full bg-white shadow-sm flex items-center justify-center flex-shrink-0" style={{ border: `1px solid ${subjectToColor(selectedEvent.level, selectedEvent.subjects[0] ?? "").color}4D` }}>
                       <svg className="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
@@ -409,7 +449,7 @@ export default function WeeklyClassCalendar({ slots }: { slots: WeeklyClassSlot[
                   </div>
                   {/* Time */}
                   <div className="flex items-center gap-3">
-                    <div className="w-7 h-7 rounded-full bg-white/80 shadow-sm flex items-center justify-center flex-shrink-0">
+                    <div className="w-7 h-7 rounded-full bg-white shadow-sm flex items-center justify-center flex-shrink-0" style={{ border: `1px solid ${subjectToColor(selectedEvent.level, selectedEvent.subjects[0] ?? "").color}4D` }}>
                       <svg className="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
@@ -420,7 +460,7 @@ export default function WeeklyClassCalendar({ slots }: { slots: WeeklyClassSlot[
                   </div>
                   {/* Venue */}
                   <div className="flex items-center gap-3">
-                    <div className="w-7 h-7 rounded-full bg-white/80 shadow-sm flex items-center justify-center flex-shrink-0">
+                    <div className="w-7 h-7 rounded-full bg-white shadow-sm flex items-center justify-center flex-shrink-0" style={{ border: `1px solid ${subjectToColor(selectedEvent.level, selectedEvent.subjects[0] ?? "").color}4D` }}>
                       <svg className="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />

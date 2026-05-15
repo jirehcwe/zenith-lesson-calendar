@@ -29,7 +29,7 @@ export default function ListView({ sessions }: { sessions: WeeklyClassSlot[] }) 
       {sortedDays.map((day) => (
         <div key={day} className="space-y-4">
           <div className="flex items-center justify-between border-b-2 border-blue-200 pb-2">
-            <h3 className="text-xl font-extrabold text-gray-800">{dayNames[day]}</h3>
+            <h3 className="text-lg font-extrabold text-gray-800">{dayNames[day]}</h3>
             <span className="bg-blue-50 text-blue-700 text-xs font-bold px-2.5 py-0.5 rounded-full">
               {sessionsByDay[day].length} classes
             </span>
@@ -54,7 +54,7 @@ export default function ListView({ sessions }: { sessions: WeeklyClassSlot[] }) 
                     <div className="p-5 flex flex-col space-y-3">
                       {/* Header: subject + level pill */}
                       <div className="flex items-start justify-between">
-                        <div className="font-bold text-lg text-gray-800">
+                        <div className="font-bold text-base text-gray-800">
                           {session.subjects.join(" + ")}
                         </div>
                         <span className="bg-gray-100 text-gray-600 text-xs font-bold px-2 py-0.5 rounded-md border border-gray-200 ml-2 flex-shrink-0">

@@ -386,7 +386,7 @@ export default function Page() {
       <SignupBanner />
       {!isLoading && (
         <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="max-w-7xl mx-auto px-4 py-2 md:px-8 md:py-4">
             {/* Collapsed state - mobile only */}
             {filtersCollapsed && (
               <button
@@ -452,7 +452,7 @@ export default function Page() {
           </div>
         </div>
       )}
-      <div className="max-w-7xl mx-auto px-2 pt-2 pb-safe">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 pt-2 md:pt-4 pb-safe">
         <div className="space-y-2 sm:space-y-2">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-12 sm:py-24 space-y-4 sm:space-y-6">
@@ -468,12 +468,11 @@ export default function Page() {
             </div>
           ) : (
             <>
-              <div className={currentView === "calendar" ? "modern-card -mx-2 p-0 overflow-hidden" : "modern-card p-3 sm:p-6"}>
-                {currentView === "calendar" ? (
-                  <WeeklyClassCalendar slots={events} />
-                ) : (
-                  <ListView sessions={events} />
-                )}
+              <div className={currentView !== "calendar" ? "hidden" : "modern-card -mx-2 p-0 overflow-hidden"}>
+                <WeeklyClassCalendar slots={events} isVisible={currentView === "calendar"} />
+              </div>
+              <div className={currentView !== "list" ? "hidden" : "modern-card p-3 sm:p-6"}>
+                <ListView sessions={events} />
               </div>
 
               {/* Terms and Conditions Footer */}

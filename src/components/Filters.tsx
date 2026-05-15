@@ -200,14 +200,14 @@ export default function Filters({
           <button
             key={stream.value}
             onClick={() => setFilter("stream", filters.stream === stream.value ? null : stream.value)}
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-semibold transition-all duration-150 flex-shrink-0 ${
+            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-semibold transition-all duration-150 flex-shrink-0 ${
               filters.stream === stream.value
                 ? "bg-gray-900 text-white border-gray-900"
                 : "bg-white text-gray-600 border-gray-200 hover:border-gray-400"
             }`}
           >
             {streamLabel(stream.value)}
-            <span className={`text-xs font-bold tabular-nums px-1.5 py-px rounded-full ${
+            <span className={`text-[10px] font-bold tabular-nums px-1 py-px rounded-full ${
               filters.stream === stream.value
                 ? "bg-white/20 text-white"
                 : "bg-black/5 text-gray-500"
