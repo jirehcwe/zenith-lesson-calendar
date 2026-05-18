@@ -6,6 +6,7 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { replaceCampaignInUrl, replacePromocodeInUrl } from "@/utils/campaign";
 import { getFallbackRegistrationLinkByLevel } from "@/utils/prefillRegistration";
+import { to12hr } from "@/utils/time";
 
 // Check if a slot is full based on [FULL] prefix in the title
 export function isSlotFull(slot: WeeklyClassSlot): boolean {
@@ -306,6 +307,7 @@ export default function WeeklyClassCalendar({ slots, isVisible = true, hasActive
           height="auto"
           slotMinTime="09:00:00"
           slotMaxTime="22:00:00"
+          slotLabelFormat={{ hour: "numeric", minute: "2-digit", hour12: true } as object}
           allDaySlot={false}
           displayEventEnd={true}
           // Disable navigation since this is a template view
@@ -471,7 +473,7 @@ export default function WeeklyClassCalendar({ slots, isVisible = true, hasActive
                       </svg>
                     </div>
                     <span className="text-sm font-semibold text-gray-800">
-                      {selectedEvent.startTime} – {selectedEvent.endTime}
+                      {to12hr(selectedEvent.startTime)} – {to12hr(selectedEvent.endTime)}
                     </span>
                   </div>
                   {/* Venue */}
