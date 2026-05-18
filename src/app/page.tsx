@@ -115,10 +115,6 @@ export default function Page() {
   });
 
   useEffect(() => {
-    setFiltersCollapsed(localStorage.getItem(FILTERS_COLLAPSED_STORAGE_KEY) === "true");
-  }, []);
-
-  useEffect(() => {
     const check = () =>
       setIsMobilePhone(Math.min(window.screen.width, window.screen.height) < 640);
     check();
@@ -494,7 +490,7 @@ export default function Page() {
           ) : (
             <>
               <div className={currentView !== "calendar" ? "hidden" : "modern-card -mx-2 p-0 overflow-hidden"}>
-                <WeeklyClassCalendar slots={events} isVisible={currentView === "calendar"} />
+                <WeeklyClassCalendar slots={events} isVisible={currentView === "calendar"} hasActiveFilters={hasActiveFilters} />
               </div>
               <div className={currentView !== "list" ? "hidden" : "modern-card p-3 sm:p-6"}>
                 <ListView sessions={events} />

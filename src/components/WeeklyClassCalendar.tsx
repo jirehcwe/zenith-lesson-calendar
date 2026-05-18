@@ -119,7 +119,7 @@ function getFixedWeekdayDate(weekday: number): Date {
 
 const PRO_TIP_STORAGE_KEY = "proTipDismissed";
 
-export default function WeeklyClassCalendar({ slots, isVisible = true }: { slots: WeeklyClassSlot[]; isVisible?: boolean }) {
+export default function WeeklyClassCalendar({ slots, isVisible = true, hasActiveFilters = false }: { slots: WeeklyClassSlot[]; isVisible?: boolean; hasActiveFilters?: boolean }) {
   const [selectedEvent, setSelectedEvent] = useState<WeeklyClassSlot | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isProTipDismissed, setIsProTipDismissed] = useState(false);
@@ -277,7 +277,8 @@ export default function WeeklyClassCalendar({ slots, isVisible = true }: { slots
         </div>
       )}
 
-      <div className="relative overflow-x-auto rounded-xl border border-slate-200" style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+      <div className="relative">
+      <div className="overflow-x-auto rounded-xl border border-slate-200" style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
         <div className="min-w-[720px]">
         <FullCalendar
           ref={calendarRef}
@@ -388,6 +389,22 @@ export default function WeeklyClassCalendar({ slots, isVisible = true }: { slots
           ))}
         </div>
         </div>
+      </div>
+
+      {/* Empty-state overlay — shown when no filters are selected */}
+      {slots.length === 0 && !hasActiveFilters && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="text-center px-6">
+            <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-blue-50 flex items-center justify-center">
+              <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
+              </svg>
+            </div>
+            <p className="text-sm font-semibold text-gray-600">Select a stream to see classes</p>
+            <p className="text-xs text-gray-400 mt-1">Filter by stream, level, subject, or centre</p>
+          </div>
+        </div>
+      )}
       </div>
 
       <Dialog
