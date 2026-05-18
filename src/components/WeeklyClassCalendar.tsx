@@ -165,11 +165,13 @@ export default function WeeklyClassCalendar({
   isVisible = true,
   hasActiveFilters = false,
   selectedStream = null,
+  onEmptyStateClick,
 }: {
   slots: WeeklyClassSlot[];
   isVisible?: boolean;
   hasActiveFilters?: boolean;
   selectedStream?: string | null;
+  onEmptyStateClick?: () => void;
 }) {
   const [selectedEvent, setSelectedEvent] = useState<WeeklyClassSlot | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -445,7 +447,13 @@ export default function WeeklyClassCalendar({
 
       {/* Empty-state overlay — shown when no filters are selected */}
       {slots.length === 0 && !hasActiveFilters && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+        <div
+          className={`absolute inset-0 z-10 flex items-center justify-center ${onEmptyStateClick ? "cursor-pointer" : "pointer-events-none"}`}
+          onClick={onEmptyStateClick}
+          role={onEmptyStateClick ? "button" : undefined}
+          tabIndex={onEmptyStateClick ? 0 : undefined}
+          onKeyDown={onEmptyStateClick ? (e) => { if (e.key === "Enter" || e.key === " ") onEmptyStateClick(); } : undefined}
+        >
           <div className="text-center px-6">
             <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-blue-50 flex items-center justify-center">
               <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -454,6 +462,9 @@ export default function WeeklyClassCalendar({
             </div>
             <p className="text-sm font-semibold text-gray-600">Select a stream to see classes</p>
             <p className="text-xs text-gray-400 mt-1">Filter by stream, level, subject, or centre</p>
+            {onEmptyStateClick && (
+              <p className="text-xs text-blue-500 mt-2 font-medium">Open filters →</p>
+            )}
           </div>
         </div>
       )}
