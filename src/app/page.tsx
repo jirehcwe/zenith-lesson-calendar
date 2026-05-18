@@ -101,6 +101,7 @@ export default function Page() {
   const [currentView, setCurrentView] = useState<ViewType>("calendar");
   const [campaignParam, setCampaignParam] = useState<string>("");
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
+  const [streamHighlighted, setStreamHighlighted] = useState(false);
   const [filtersCollapsed, setFiltersCollapsed] = useState(false);
   // Use screen dimensions (orientation-independent) to detect phones vs tablets/desktops.
   // window.innerWidth changes with orientation; screen.width/height does not.
@@ -430,6 +431,7 @@ export default function Page() {
                     onViewChange={setCurrentView}
                     totalCount={events.length}
                     showViewToggle={false}
+                    streamHighlighted={streamHighlighted}
                   />
                 </div>
                 <div className="flex-shrink-0 flex flex-col justify-between items-end gap-2">
@@ -495,6 +497,14 @@ export default function Page() {
                   isVisible={currentView === "calendar"}
                   hasActiveFilters={hasActiveFilters}
                   selectedStream={filters.stream}
+                  onEmptyStateClick={
+                    isMobilePhone
+                      ? () => setFilterSheetOpen(true)
+                      : () => {
+                          setStreamHighlighted(true);
+                          setTimeout(() => setStreamHighlighted(false), 2000);
+                        }
+                  }
                 />
               </div>
               <div className={currentView !== "list" ? "hidden" : "modern-card p-3 sm:p-6"}>

@@ -29,6 +29,7 @@ type FiltersProps = {
   totalCount: number;
   showViewToggle?: boolean;
   openUpward?: boolean;
+  streamHighlighted?: boolean;
 };
 
 function truncateText(text: string, maxLength: number = 25): string {
@@ -193,6 +194,7 @@ export default function Filters({
   totalCount,
   showViewToggle = true,
   openUpward = false,
+  streamHighlighted = false,
 }: FiltersProps) {
   const setFilter = (field: keyof FiltersProps["filters"], value: string[] | string | null) => {
     onFilterChange({ ...filters, [field]: value });
@@ -211,7 +213,7 @@ export default function Filters({
         <span className="text-xs font-bold uppercase tracking-widest text-gray-600 flex-shrink-0">
           Stream
         </span>
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className={`flex items-center gap-2 flex-wrap rounded-xl transition-all duration-300 ${streamHighlighted ? "ring-2 ring-blue-400 px-2 py-1 animate-pulse" : ""}`}>
           {streams.map((stream) => (
             <button
               key={stream.value}
