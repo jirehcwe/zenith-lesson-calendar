@@ -7,7 +7,7 @@ import WeeklyClassCalendar, {
   WeeklyClassSlot,
 } from "@/components/WeeklyClassCalendar";
 import ListView from "@/components/ListView";
-import { ViewType } from "@/components/ViewSelector";
+import { ViewType } from "@/types";
 import BottomNav from "@/components/BottomNav";
 import TestimonialCarousel from "@/components/TestimonialCarousel";
 import TestimonialGrid from "@/components/TestimonialGrid";
@@ -265,31 +265,18 @@ export default function Page() {
 
     // Create options with counts and sort them
     const levelsWithCounts = allLevels
-      .map((level, index) => ({
+      .map((level) => ({
         value: level,
         count: getResultCount("level", level),
         selected: filters.level.includes(level),
-        originalIndex: index,
       }))
-      .sort((a, b) => {
-        // Only push zero-count options to the bottom, preserve original order otherwise
-        // if (a.count === 0 && b.count > 0) return 1;
-        // if (a.count > 0 && b.count === 0) return -1;
-        // if (a.count === 0 && b.count === 0)
-        //   return a.value.localeCompare(b.value);
-        // // For non-zero counts, preserve original order
-        // return a.originalIndex - b.originalIndex;
-
-        // Sort reverse alphabetically by name
-        return b.value.localeCompare(a.value);
-      });
+      .sort((a, b) => b.value.localeCompare(a.value));
 
     const subjectsWithCounts = allSubjects
-      .map((subject, index) => ({
+      .map((subject) => ({
         value: subject,
         count: getResultCount("subject", subject),
         selected: filters.subject.includes(subject),
-        originalIndex: index,
       }))
       .sort((a, b) => {
         // Only push zero-count options to the bottom, preserve original order otherwise
@@ -300,11 +287,10 @@ export default function Page() {
       });
 
     const centresWithCounts = allCentres
-      .map((centre, index) => ({
+      .map((centre) => ({
         value: centre,
         count: getResultCount("centre", centre),
         selected: filters.centre.includes(centre),
-        originalIndex: index,
       }))
       .sort((a, b) => {
         // Only push zero-count options to the bottom, preserve original order otherwise
@@ -315,11 +301,10 @@ export default function Page() {
       });
 
     const tutorsWithCounts = allTutors
-      .map((tutor, index) => ({
+      .map((tutor) => ({
         value: tutor,
         count: getResultCount("tutor", tutor),
         selected: filters.tutor.includes(tutor),
-        originalIndex: index,
       }))
       .sort((a, b) => {
         // Only push zero-count options to the bottom, preserve original order otherwise

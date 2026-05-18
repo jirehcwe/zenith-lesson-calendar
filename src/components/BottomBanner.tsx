@@ -16,9 +16,6 @@ export default function BottomBanner() {
           target="_blank"
           rel="noopener noreferrer"
           className="text-blue-600 underline"
-          onClick={() => {
-            console.log("form_click");
-          }}
         >
           Click here to sign up!
         </a>

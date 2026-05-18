@@ -1,6 +1,6 @@
 "use client";
 
-import { ViewType } from "./ViewSelector";
+import { ViewType } from "@/types";
 
 interface BottomNavProps {
   currentView: ViewType;

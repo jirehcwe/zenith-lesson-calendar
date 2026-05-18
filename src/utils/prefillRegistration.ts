@@ -1,5 +1,4 @@
 export function getFallbackRegistrationLinkByLevel(level: string) {
-  console.log("prefillRegistration level", level);
   switch (level) {
     
     case "J1":

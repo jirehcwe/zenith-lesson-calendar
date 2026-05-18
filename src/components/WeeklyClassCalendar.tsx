@@ -562,7 +562,6 @@ export default function WeeklyClassCalendar({
                         href={replacePromocodeInUrl(replaceCampaignInUrl(selectedEvent.prefillTrialLink))}
                         target="_blank"
                         rel="noopener noreferrer"
-                        onClick={() => console.log("form_click_prefilled")}
                         className="flex-1 flex items-center justify-center bg-amber-400 hover:bg-amber-500 text-gray-900 font-semibold text-sm py-2.5 px-4 rounded-lg text-center transition-all duration-200"
                       >
                         Sign up for FREE Trial
