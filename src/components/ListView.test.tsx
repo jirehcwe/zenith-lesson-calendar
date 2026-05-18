@@ -91,4 +91,9 @@ describe("ListView", () => {
     );
     expect(screen.getByText("2 classes")).toBeInTheDocument();
   });
+
+  it("renders time in 12-hour format", () => {
+    render(<ListView sessions={[makeSlot({ startTime: "14:00", endTime: "16:00" })]} />);
+    expect(screen.getByText("2:00 PM – 4:00 PM")).toBeInTheDocument();
+  });
 });

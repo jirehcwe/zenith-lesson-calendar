@@ -3,6 +3,7 @@
 import { WeeklyClassSlot, isSlotFull, getSubjectColor } from "./WeeklyClassCalendar";
 import { replaceCampaignInUrl, replacePromocodeInUrl } from "@/utils/campaign";
 import { getFallbackRegistrationLinkByLevel } from "@/utils/prefillRegistration";
+import { to12hr } from "@/utils/time";
 
 export default function ListView({ sessions }: { sessions: WeeklyClassSlot[] }) {
   if (sessions.length === 0) {
@@ -69,7 +70,7 @@ export default function ListView({ sessions }: { sessions: WeeklyClassSlot[] }) 
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                               d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
-                          <span className="font-medium text-gray-700">{session.startTime} – {session.endTime}</span>
+                          <span className="font-medium text-gray-700">{to12hr(session.startTime)} – {to12hr(session.endTime)}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <svg className="w-4 h-4 text-gray-400 flex-shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
