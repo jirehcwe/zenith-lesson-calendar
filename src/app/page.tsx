@@ -490,7 +490,12 @@ export default function Page() {
           ) : (
             <>
               <div className={currentView !== "calendar" ? "hidden" : "modern-card -mx-2 p-0 overflow-hidden"}>
-                <WeeklyClassCalendar slots={events} isVisible={currentView === "calendar"} hasActiveFilters={hasActiveFilters} />
+                <WeeklyClassCalendar
+                  slots={events}
+                  isVisible={currentView === "calendar"}
+                  hasActiveFilters={hasActiveFilters}
+                  selectedStream={filters.stream}
+                />
               </div>
               <div className={currentView !== "list" ? "hidden" : "modern-card p-3 sm:p-6"}>
                 <ListView sessions={events} />

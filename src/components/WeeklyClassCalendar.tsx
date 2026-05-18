@@ -160,7 +160,17 @@ function getFixedWeekdayDate(weekday: number): Date {
 
 const PRO_TIP_STORAGE_KEY = "proTipDismissed";
 
-export default function WeeklyClassCalendar({ slots, isVisible = true, hasActiveFilters = false }: { slots: WeeklyClassSlot[]; isVisible?: boolean; hasActiveFilters?: boolean }) {
+export default function WeeklyClassCalendar({
+  slots,
+  isVisible = true,
+  hasActiveFilters = false,
+  selectedStream = null,
+}: {
+  slots: WeeklyClassSlot[];
+  isVisible?: boolean;
+  hasActiveFilters?: boolean;
+  selectedStream?: string | null;
+}) {
   const [selectedEvent, setSelectedEvent] = useState<WeeklyClassSlot | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isProTipDismissed, setIsProTipDismissed] = useState(false);
@@ -423,7 +433,7 @@ export default function WeeklyClassCalendar({ slots, isVisible = true, hasActive
           weekends={true}
         />
         <div className="flex flex-wrap gap-x-4 gap-y-2 px-3 py-2.5 border-t border-slate-200 bg-gray-50">
-          {LEGEND_ITEMS.map(({ label, color, tint }) => (
+          {getLegendItemsForStream(selectedStream).map(({ label, color, tint }) => (
             <div key={label} style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "11px", color, fontFamily: "var(--font-manrope), 'Manrope', sans-serif", fontWeight: 600 }}>
               <span style={{ display: "inline-block", width: "12px", height: "12px", background: tint, borderLeft: `2px solid ${color}`, borderRadius: "2px", flexShrink: 0 }} />
               {label}
