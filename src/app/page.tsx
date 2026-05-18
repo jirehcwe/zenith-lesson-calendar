@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import Filters from "../components/Filters";
 import SignupBanner from "../components/SignupBanner";
 import WeeklyClassCalendar, {
@@ -102,6 +102,7 @@ export default function Page() {
   const [campaignParam, setCampaignParam] = useState<string>("");
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
   const [streamHighlighted, setStreamHighlighted] = useState(false);
+  const highlightTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [filtersCollapsed, setFiltersCollapsed] = useState(false);
   // Use screen dimensions (orientation-independent) to detect phones vs tablets/desktops.
   // window.innerWidth changes with orientation; screen.width/height does not.
@@ -219,6 +220,12 @@ export default function Page() {
   useEffect(() => {
     localStorage.setItem(FILTERS_COLLAPSED_STORAGE_KEY, filtersCollapsed.toString());
   }, [filtersCollapsed]);
+
+  useEffect(() => {
+    return () => {
+      if (highlightTimerRef.current) clearTimeout(highlightTimerRef.current);
+    };
+  }, []);
 
   // Compute filtered options for progressive disclosure with counts
   const filteredOptions = useMemo(() => {
@@ -501,8 +508,9 @@ export default function Page() {
                     isMobilePhone
                       ? () => setFilterSheetOpen(true)
                       : () => {
+                          if (highlightTimerRef.current) clearTimeout(highlightTimerRef.current);
                           setStreamHighlighted(true);
-                          setTimeout(() => setStreamHighlighted(false), 2000);
+                          highlightTimerRef.current = setTimeout(() => setStreamHighlighted(false), 2000);
                         }
                   }
                 />
