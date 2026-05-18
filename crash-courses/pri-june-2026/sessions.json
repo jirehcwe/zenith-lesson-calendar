@@ -352,6 +352,38 @@
     "displaySubject": "P6 Science"
   },
   {
+    "purpose": "Pri JunCC",
+    "subject": "P6Eng",
+    "level": "P6 2026",
+    "topic": "",
+    "tutor": "Kayley",
+    "centre": "King Albert Park",
+    "classroom": "KAP-2",
+    "capacity": "15",
+    "date": "19 Jun",
+    "startTime": "10:00 AM",
+    "endTime": "12:00 PM",
+    "prefill": "[P6 English] King Albert Park | 19 Jun (Fri) | 10:00AM - 12:00PM",
+    "prefillField": "2096830254",
+    "displaySubject": "P6 English"
+  },
+  {
+    "purpose": "Pri JunCC",
+    "subject": "P5Eng",
+    "level": "P5 2026",
+    "topic": "",
+    "tutor": "Kayley",
+    "centre": "King Albert Park",
+    "classroom": "KAP-2",
+    "capacity": "15",
+    "date": "19 Jun",
+    "startTime": "12:30 PM",
+    "endTime": "2:30 PM",
+    "prefill": "[P5 English] King Albert Park | 19 Jun (Fri) | 12:30PM - 02:30PM",
+    "prefillField": "822255076",
+    "displaySubject": "P5 English"
+  },
+  {
     "purpose": "Pri Mock Exam",
     "subject": "P5Sci",
     "level": "P5 2026",
