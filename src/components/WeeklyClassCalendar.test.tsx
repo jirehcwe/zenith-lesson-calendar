@@ -1,4 +1,4 @@
-import { isSlotFull, getSubjectColor, WeeklyClassSlot } from "./WeeklyClassCalendar";
+import { isSlotFull, getSubjectColor, getLegendItemsForStream, WeeklyClassSlot } from "./WeeklyClassCalendar";
 
 jest.mock("@fullcalendar/react", () => ({ __esModule: true, default: () => null }));
 jest.mock("@fullcalendar/timegrid", () => ({}));
@@ -74,5 +74,59 @@ describe("getSubjectColor", () => {
 
   it("returns fallback color when the level does not match any stream", () => {
     expect(getSubjectColor("Mathematics", "Unknown")).toBe(FALLBACK_COLOR);
+  });
+});
+
+describe("getLegendItemsForStream", () => {
+  it("returns only JC subjects for JC stream", () => {
+    const items = getLegendItemsForStream("JC");
+    const labels = items.map((i) => i.label);
+    expect(labels).toEqual(
+      expect.arrayContaining(["Math", "Physics", "Chemistry", "Biology", "GP", "Econ", "Full"])
+    );
+    expect(labels).not.toContain("A Math");
+    expect(labels).not.toContain("History");
+    expect(labels).not.toContain("Science");
+  });
+
+  it("returns Secondary subjects for Secondary (Express)", () => {
+    const items = getLegendItemsForStream("Secondary (Express)");
+    const labels = items.map((i) => i.label);
+    expect(labels).toEqual(
+      expect.arrayContaining([
+        "Math", "A Math", "Physics", "Chemistry", "Biology",
+        "English", "History", "Literature", "Geography", "Soc. Studies", "Full",
+      ])
+    );
+    expect(labels).not.toContain("GP");
+    expect(labels).not.toContain("Econ");
+    expect(labels).not.toContain("Science");
+  });
+
+  it("returns the same Secondary items for Secondary (IP)", () => {
+    const express = getLegendItemsForStream("Secondary (Express)").map((i) => i.label);
+    const ip = getLegendItemsForStream("Secondary (IP)").map((i) => i.label);
+    expect(ip).toEqual(express);
+  });
+
+  it("returns Primary subjects for Primary stream", () => {
+    const items = getLegendItemsForStream("Primary");
+    const labels = items.map((i) => i.label);
+    expect(labels).toEqual(
+      expect.arrayContaining(["English", "Math", "Science", "Full"])
+    );
+    expect(labels).not.toContain("A Math");
+    expect(labels).not.toContain("GP");
+    expect(labels).not.toContain("Physics");
+  });
+
+  it("returns all items when stream is null", () => {
+    const items = getLegendItemsForStream(null);
+    const labels = items.map((i) => i.label);
+    expect(labels).toContain("GP");
+    expect(labels).toContain("A Math");
+    expect(labels).toContain("Econ");
+    expect(labels).toContain("History");
+    expect(items.length).toBeGreaterThan(10);
   });
 });

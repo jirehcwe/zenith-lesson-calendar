@@ -31,6 +31,46 @@ const LEGEND_ITEMS = [
   { label: "Full",         color: "#64748B", tint: "#E5E7EB" },
 ] as const;
 
+const JC_LEGEND_ITEMS = [
+  { label: "Math",      color: "#B45309", tint: "#FEF3C7" },
+  { label: "Physics",   color: "#BE123C", tint: "#FECDD3" },
+  { label: "Chemistry", color: "#15803D", tint: "#DCFCE7" },
+  { label: "Biology",   color: "#166534", tint: "#BBFBD0" },
+  { label: "GP",        color: "#9A3412", tint: "#FED7AA" },
+  { label: "Econ",      color: "#4338CA", tint: "#E0E7FF" },
+  { label: "Full",      color: "#64748B", tint: "#E5E7EB" },
+] as const;
+
+const SEC_LEGEND_ITEMS = [
+  { label: "Math",         color: "#B45309", tint: "#FEF3C7" },
+  { label: "A Math",       color: "#1E40AF", tint: "#DBEAFE" },
+  { label: "Physics",      color: "#BE123C", tint: "#FECDD3" },
+  { label: "Chemistry",    color: "#15803D", tint: "#DCFCE7" },
+  { label: "Biology",      color: "#166534", tint: "#BBFBD0" },
+  { label: "English",      color: "#0369A1", tint: "#BAE6FD" },
+  { label: "History",      color: "#92400E", tint: "#FFEDD5" },
+  { label: "Literature",   color: "#831843", tint: "#FCE7F3" },
+  { label: "Geography",    color: "#065F46", tint: "#ECFDF5" },
+  { label: "Soc. Studies", color: "#6B21A8", tint: "#F3E8FF" },
+  { label: "Full",         color: "#64748B", tint: "#E5E7EB" },
+] as const;
+
+const PRIMARY_LEGEND_ITEMS = [
+  { label: "English", color: "#0369A1", tint: "#BAE6FD" },
+  { label: "Math",    color: "#B45309", tint: "#FEF3C7" },
+  { label: "Science", color: "#BE123C", tint: "#FECDD3" },
+  { label: "Full",    color: "#64748B", tint: "#E5E7EB" },
+] as const;
+
+export function getLegendItemsForStream(
+  stream: string | null
+): { label: string; color: string; tint: string }[] {
+  if (stream === "JC") return [...JC_LEGEND_ITEMS];
+  if (stream?.startsWith("Secondary")) return [...SEC_LEGEND_ITEMS];
+  if (stream === "Primary") return [...PRIMARY_LEGEND_ITEMS];
+  return [...LEGEND_ITEMS];
+}
+
 // Define a new type for weekly class slots (no topic, no date)
 export type WeeklyClassSlot = {
   title: string;
