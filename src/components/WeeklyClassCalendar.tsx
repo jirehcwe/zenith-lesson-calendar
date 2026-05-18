@@ -2,7 +2,6 @@
 
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import scrollGridPlugin from "@fullcalendar/scrollgrid";
 import { useEffect, useRef, useState, useMemo } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { replaceCampaignInUrl, replacePromocodeInUrl } from "@/utils/campaign";
@@ -253,7 +252,7 @@ export default function WeeklyClassCalendar({ slots, isVisible = true }: { slots
           </div>
           <div className="text-sm text-gray-700 flex-1">
             <span className="font-semibold text-blue-800">Pro Tip:</span> Use the
-            filters above to reduce overlap and see specific classes more clearly.
+            filters to reduce overlap and see specific classes more clearly.
             Click on any class for a free trial or register directly!
           </div>
           <button
@@ -278,11 +277,11 @@ export default function WeeklyClassCalendar({ slots, isVisible = true }: { slots
         </div>
       )}
 
-      <div className="relative overflow-hidden rounded-2xl" style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+      <div className="relative overflow-x-auto rounded-xl border border-slate-200" style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+        <div className="min-w-[720px]">
         <FullCalendar
           ref={calendarRef}
-          schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
-          plugins={[timeGridPlugin, scrollGridPlugin]}
+          plugins={[timeGridPlugin]}
           initialView="timeGridWeek"
           initialDate="2024-01-08" // Fixed reference date (Monday)
           headerToolbar={false}
@@ -311,7 +310,6 @@ export default function WeeklyClassCalendar({ slots, isVisible = true }: { slots
           // Disable navigation since this is a template view
           navLinks={false}
           stickyHeaderDates={false}
-          dayMinWidth={100}
           eventContent={(arg) => {
             const slotData = arg.event.extendedProps as WeeklyClassSlot;
             const full = isSlotFull(slotData);
@@ -388,6 +386,7 @@ export default function WeeklyClassCalendar({ slots, isVisible = true }: { slots
               {label}
             </div>
           ))}
+        </div>
         </div>
       </div>
 

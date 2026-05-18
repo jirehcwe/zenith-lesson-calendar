@@ -6,12 +6,13 @@ interface BottomNavProps {
   currentView: ViewType;
   onViewChange: (view: ViewType) => void;
   onOpenFilter: () => void;
+  hasActiveFilters?: boolean;
 }
 
-export default function BottomNav({ currentView, onViewChange, onOpenFilter }: BottomNavProps) {
+export default function BottomNav({ currentView, onViewChange, onOpenFilter, hasActiveFilters }: BottomNavProps) {
   return (
     <nav
-      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg"
+      className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg"
       style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 0.5rem)" }}
     >
       <div className="flex items-center justify-around h-16 px-2">
@@ -68,10 +69,15 @@ export default function BottomNav({ currentView, onViewChange, onOpenFilter }: B
           onClick={onOpenFilter}
           className="relative flex flex-col items-center justify-center gap-1 flex-1 h-full text-gray-500 transition-all duration-200"
         >
-          <svg aria-hidden="true" className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-              d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
-          </svg>
+          <div className="relative">
+            <svg aria-hidden="true" className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
+            </svg>
+            {hasActiveFilters && (
+              <span className="absolute -top-1 -right-1 w-2 h-2 bg-blue-600 rounded-full border-2 border-white" />
+            )}
+          </div>
           <span className="text-xs font-medium">Filter</span>
         </button>
       </div>

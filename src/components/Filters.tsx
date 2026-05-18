@@ -27,6 +27,8 @@ type FiltersProps = {
   currentView: ViewType;
   onViewChange: (view: ViewType) => void;
   totalCount: number;
+  showViewToggle?: boolean;
+  openUpward?: boolean;
 };
 
 function truncateText(text: string, maxLength: number = 25): string {
@@ -47,6 +49,7 @@ function MultiSelect({
   onChange,
   disabled = false,
   compact = false,
+  openUpward = false,
 }: {
   label: string;
   selected: string[];
@@ -54,6 +57,7 @@ function MultiSelect({
   onChange: (newSelected: string[]) => void;
   disabled?: boolean;
   compact?: boolean;
+  openUpward?: boolean;
 }) {
   const [filterDropdownMaxHeight, setFilterDropdownMaxHeight] = useState<string>("320px");
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -66,7 +70,9 @@ function MultiSelect({
   const recalcHeight = () => {
     if (dropdownRef.current) {
       const rect = dropdownRef.current.getBoundingClientRect();
-      const available = window.innerHeight - rect.bottom - 20;
+      const available = openUpward
+        ? rect.top - 20
+        : window.innerHeight - rect.bottom - 20;
       setFilterDropdownMaxHeight(`${Math.max(100, available)}px`);
     }
   };
@@ -83,8 +89,8 @@ function MultiSelect({
               <Listbox.Button
                 className={`relative cursor-default rounded-xl text-left transition-all duration-200 focus:outline-none focus:ring-0 ${
                   compact
-                    ? "flex items-center justify-between gap-2 pl-3 pr-2 py-1.5 text-sm min-w-[140px]"
-                    : "w-full p-3 pr-3"
+                    ? "flex items-center justify-between gap-2 pl-3 pr-2 py-1.5 text-sm min-w-[100px] max-w-[180px]"
+                    : "w-full flex items-center gap-2 p-3 pr-3"
                 } ${
                   disabled
                     ? "bg-gray-50 text-gray-400 cursor-not-allowed border border-gray-100"
@@ -119,7 +125,9 @@ function MultiSelect({
               <Transition as={Fragment}>
                 <Listbox.Options
                   style={{ maxHeight: filterDropdownMaxHeight }}
-                  className="absolute z-10 mt-2 w-full min-w-[160px] rounded-xl bg-white border border-gray-200 shadow-xl list-none overflow-y-auto focus:outline-none text-sm"
+                  className={`absolute z-50 w-full min-w-[160px] rounded-xl bg-white border border-gray-200 shadow-xl list-none overflow-y-auto focus:outline-none text-sm ${
+                    openUpward ? "bottom-full mb-2" : "mt-2"
+                  }`}
                 >
                   {options.map((option) => (
                     <Listbox.Option key={option.value} value={option.value} as={Fragment} disabled={option.count === 0}>
@@ -178,6 +186,8 @@ export default function Filters({
   currentView,
   onViewChange,
   totalCount,
+  showViewToggle = true,
+  openUpward = false,
 }: FiltersProps) {
   const setFilter = (field: keyof FiltersProps["filters"], value: string[] | string | null) => {
     onFilterChange({ ...filters, [field]: value });
@@ -190,67 +200,83 @@ export default function Filters({
     filters.centre.length > 0;
 
   return (
-    <div className="flex flex-col gap-3.5">
-      {/* Row 1: Stream pills */}
-      <div className="flex items-center gap-2 flex-wrap">
+    <div className={`flex flex-col ${openUpward ? "gap-5" : "gap-3.5"}`}>
+      {/* Stream pills */}
+      <div className={openUpward ? "flex flex-col gap-2.5" : "flex items-center gap-2 flex-wrap"}>
         <span className="text-xs font-bold uppercase tracking-widest text-gray-400 flex-shrink-0">
           Stream
         </span>
-        {streams.map((stream) => (
-          <button
-            key={stream.value}
-            onClick={() => setFilter("stream", filters.stream === stream.value ? null : stream.value)}
-            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-semibold transition-all duration-150 flex-shrink-0 ${
-              filters.stream === stream.value
-                ? "bg-gray-900 text-white border-gray-900"
-                : "bg-white text-gray-600 border-gray-200 hover:border-gray-400"
-            }`}
-          >
-            {streamLabel(stream.value)}
-            <span className={`text-[10px] font-bold tabular-nums px-1 py-px rounded-full ${
-              filters.stream === stream.value
-                ? "bg-white/20 text-white"
-                : "bg-black/5 text-gray-500"
-            }`}>
-              {stream.count}
-            </span>
-          </button>
-        ))}
-      </div>
-
-      {/* Row 2: Dropdowns + view toggle */}
-      <div className="flex items-center gap-2 flex-wrap">
-        {/* Dropdowns */}
-        <MultiSelect compact label="Level" selected={filters.level} options={levels} onChange={(val) => setFilter("level", val)} />
-        <MultiSelect compact label="Subject" selected={filters.subject} options={subjects} onChange={(val) => setFilter("subject", val)} />
-        <MultiSelect compact label="Centre" selected={filters.centre} options={centres} onChange={(val) => setFilter("centre", val)} />
-
-        {/* View toggle */}
-        <div className="ml-auto flex bg-white border border-gray-200 rounded-xl p-0.5 gap-0.5 flex-shrink-0">
-          <button
-            onClick={() => onViewChange("calendar")}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 flex items-center gap-1.5 ${
-              currentView === "calendar" ? "bg-blue-50 text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
-            }`}
-          >
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            Calendar
-          </button>
-          <button
-            onClick={() => onViewChange("list")}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 flex items-center gap-1.5 ${
-              currentView === "list" ? "bg-blue-50 text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
-            }`}
-          >
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-            </svg>
-            List
-          </button>
+        <div className="flex items-center gap-2 flex-wrap">
+          {streams.map((stream) => (
+            <button
+              key={stream.value}
+              onClick={() => setFilter("stream", filters.stream === stream.value ? null : stream.value)}
+              className={`inline-flex items-center gap-2 rounded-full border font-semibold transition-all duration-150 flex-shrink-0 ${
+                openUpward ? "px-4 py-2 text-sm" : "px-3 py-1.5 text-xs"
+              } ${
+                filters.stream === stream.value
+                  ? "bg-gray-900 text-white border-gray-900"
+                  : "bg-white text-gray-600 border-gray-200 hover:border-gray-400"
+              }`}
+            >
+              {streamLabel(stream.value)}
+              <span className={`font-bold tabular-nums px-1 py-px rounded-full ${
+                openUpward ? "text-xs" : "text-[10px]"
+              } ${
+                filters.stream === stream.value
+                  ? "bg-white/20 text-white"
+                  : "bg-black/5 text-gray-500"
+              }`}>
+                {stream.count}
+              </span>
+            </button>
+          ))}
         </div>
       </div>
+
+      {/* Dropdowns */}
+      {openUpward ? (
+        // Mobile: each filter on its own labelled row, full width
+        <div className="flex flex-col gap-4">
+          <MultiSelect label="Level" selected={filters.level} options={levels} onChange={(val) => setFilter("level", val)} openUpward={openUpward} />
+          <MultiSelect label="Subject" selected={filters.subject} options={subjects} onChange={(val) => setFilter("subject", val)} openUpward={openUpward} />
+          <MultiSelect label="Centre" selected={filters.centre} options={centres} onChange={(val) => setFilter("centre", val)} openUpward={openUpward} />
+        </div>
+      ) : (
+        // Desktop: compact pills in one row + optional view toggle
+        <div className="flex items-center gap-2 flex-wrap">
+          <MultiSelect compact label="Level" selected={filters.level} options={levels} onChange={(val) => setFilter("level", val)} openUpward={openUpward} />
+          <MultiSelect compact label="Subject" selected={filters.subject} options={subjects} onChange={(val) => setFilter("subject", val)} openUpward={openUpward} />
+          <MultiSelect compact label="Centre" selected={filters.centre} options={centres} onChange={(val) => setFilter("centre", val)} openUpward={openUpward} />
+
+          {showViewToggle && (
+            <div className="ml-auto flex bg-white border border-gray-200 rounded-xl p-0.5 gap-0.5 flex-shrink-0">
+              <button
+                onClick={() => onViewChange("calendar")}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 flex items-center gap-1.5 ${
+                  currentView === "calendar" ? "bg-blue-50 text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Calendar
+              </button>
+              <button
+                onClick={() => onViewChange("list")}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 flex items-center gap-1.5 ${
+                  currentView === "list" ? "bg-blue-50 text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
+                List
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Summary row — visible when any filter is active */}
       {hasActiveFilters && (
@@ -288,7 +314,7 @@ export default function Filters({
 
           <button
             onClick={() => onFilterChange({ subject: [], centre: [], tutor: [], level: [], stream: null })}
-            className="text-xs text-gray-400 hover:text-red-500 font-semibold ml-2 transition-colors"
+            className="text-xs text-gray-400 hover:text-red-500 font-semibold ml-2 transition-colors underline"
           >
             Clear all
           </button>
