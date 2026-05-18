@@ -296,44 +296,57 @@ export default function Filters({
 
       {/* Summary row — visible when any filter is active */}
       {hasActiveFilters && (
-        <div className="flex flex-wrap items-center gap-2 pt-1">
-          <span className="text-xs text-gray-500">
-            <span className="font-bold text-blue-600">{totalCount}</span> classes
-          </span>
+        <div className="pt-2 sm:pt-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-sm sm:text-xs text-gray-500">
+              <span className="font-bold text-blue-600">{totalCount}</span> classes
+            </span>
 
-          {filters.stream && (
+            {filters.stream && (
+              <button
+                onClick={() => setFilter("stream", null)}
+                className="bg-white border border-gray-200 rounded-full px-3 py-1 sm:px-2.5 sm:py-0.5 text-sm sm:text-xs font-medium flex items-center gap-1 hover:border-red-300 transition-colors"
+              >
+                {streamLabel(filters.stream)} <span className="text-gray-400 ml-0.5">×</span>
+              </button>
+            )}
+            {filters.level.map((l) => (
+              <button key={l} onClick={() => setFilter("level", filters.level.filter((x) => x !== l))}
+                className="bg-white border border-gray-200 rounded-full px-3 py-1 sm:px-2.5 sm:py-0.5 text-sm sm:text-xs font-medium flex items-center gap-1 hover:border-red-300 transition-colors">
+                {l} <span className="text-gray-400 ml-0.5">×</span>
+              </button>
+            ))}
+            {filters.subject.map((s) => (
+              <button key={s} onClick={() => setFilter("subject", filters.subject.filter((x) => x !== s))}
+                className="bg-white border border-gray-200 rounded-full px-3 py-1 sm:px-2.5 sm:py-0.5 text-sm sm:text-xs font-medium flex items-center gap-1 hover:border-red-300 transition-colors">
+                {s} <span className="text-gray-400 ml-0.5">×</span>
+              </button>
+            ))}
+            {filters.centre.map((c) => (
+              <button key={c} onClick={() => setFilter("centre", filters.centre.filter((x) => x !== c))}
+                className="bg-white border border-gray-200 rounded-full px-3 py-1 sm:px-2.5 sm:py-0.5 text-sm sm:text-xs font-medium flex items-center gap-1 hover:border-red-300 transition-colors">
+                {c} <span className="text-gray-400 ml-0.5">×</span>
+              </button>
+            ))}
+
+            {/* Desktop: inline in the tag flow */}
             <button
-              onClick={() => setFilter("stream", null)}
-              className="bg-white border border-gray-200 rounded-full px-2.5 py-0.5 text-xs font-medium flex items-center gap-1 hover:border-red-300 transition-colors"
+              onClick={() => onFilterChange({ subject: [], centre: [], tutor: [], level: [], stream: null })}
+              className="hidden sm:inline text-xs text-gray-400 hover:text-red-500 font-medium ml-1 transition-colors underline"
             >
-              {streamLabel(filters.stream)} <span className="text-gray-400 ml-0.5">×</span>
+              Clear all
             </button>
-          )}
-          {filters.level.map((l) => (
-            <button key={l} onClick={() => setFilter("level", filters.level.filter((x) => x !== l))}
-              className="bg-white border border-gray-200 rounded-full px-2.5 py-0.5 text-xs font-medium flex items-center gap-1 hover:border-red-300 transition-colors">
-              {l} <span className="text-gray-400 ml-0.5">×</span>
-            </button>
-          ))}
-          {filters.subject.map((s) => (
-            <button key={s} onClick={() => setFilter("subject", filters.subject.filter((x) => x !== s))}
-              className="bg-white border border-gray-200 rounded-full px-2.5 py-0.5 text-xs font-medium flex items-center gap-1 hover:border-red-300 transition-colors">
-              {s} <span className="text-gray-400 ml-0.5">×</span>
-            </button>
-          ))}
-          {filters.centre.map((c) => (
-            <button key={c} onClick={() => setFilter("centre", filters.centre.filter((x) => x !== c))}
-              className="bg-white border border-gray-200 rounded-full px-2.5 py-0.5 text-xs font-medium flex items-center gap-1 hover:border-red-300 transition-colors">
-              {c} <span className="text-gray-400 ml-0.5">×</span>
-            </button>
-          ))}
+          </div>
 
-          <button
-            onClick={() => onFilterChange({ subject: [], centre: [], tutor: [], level: [], stream: null })}
-            className="text-xs text-gray-400 hover:text-red-500 font-medium ml-1 transition-colors underline"
-          >
-            Clear all
-          </button>
+          {/* Mobile: own row, pinned to the right, always below tags */}
+          <div className="flex justify-end mt-1.5 sm:hidden">
+            <button
+              onClick={() => onFilterChange({ subject: [], centre: [], tutor: [], level: [], stream: null })}
+              className="text-sm text-gray-400 hover:text-red-500 font-medium transition-colors underline"
+            >
+              Clear all
+            </button>
+          </div>
         </div>
       )}
     </div>

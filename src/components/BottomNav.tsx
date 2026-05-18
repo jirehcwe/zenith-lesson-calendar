@@ -20,11 +20,11 @@ export default function BottomNav({ currentView, onViewChange, onOpenFilter, has
         <button
           onClick={() => onViewChange("calendar")}
           className={`relative flex flex-col items-center justify-center gap-1 flex-1 h-full transition-all duration-200 ${
-            currentView === "calendar" ? "text-blue-600" : "text-gray-500"
+            currentView === "calendar" ? "text-blue-400" : "text-gray-500"
           }`}
         >
           {currentView === "calendar" && (
-            <span className="absolute top-0 inset-x-[25%] h-0.5 bg-blue-600 rounded-b-full" />
+            <span className="absolute top-0 inset-x-[25%] h-0.5 bg-blue-400 rounded-b-full" />
           )}
           <svg
             aria-hidden="true"
@@ -44,11 +44,11 @@ export default function BottomNav({ currentView, onViewChange, onOpenFilter, has
         <button
           onClick={() => onViewChange("list")}
           className={`relative flex flex-col items-center justify-center gap-1 flex-1 h-full transition-all duration-200 ${
-            currentView === "list" ? "text-blue-600" : "text-gray-500"
+            currentView === "list" ? "text-blue-400" : "text-gray-500"
           }`}
         >
           {currentView === "list" && (
-            <span className="absolute top-0 inset-x-[25%] h-0.5 bg-blue-600 rounded-b-full" />
+            <span className="absolute top-0 inset-x-[25%] h-0.5 bg-blue-400 rounded-b-full" />
           )}
           <svg
             aria-hidden="true"
@@ -75,7 +75,7 @@ export default function BottomNav({ currentView, onViewChange, onOpenFilter, has
                 d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
             </svg>
             {hasActiveFilters && (
-              <span className="absolute -top-1 -right-1 w-2 h-2 bg-blue-600 rounded-full border-2 border-white" />
+              <span className="absolute -top-1 -right-1 w-2 h-2 bg-blue-400 rounded-full border-2 border-white" />
             )}
           </div>
           <span className="text-xs font-medium">Filter</span>
