@@ -42,7 +42,7 @@ body {
 
 /* Hero gradient background */
 .hero-gradient {
-  background: linear-gradient(135deg, #2438A0 0%, #2F4AC0 45%, #4F6BE8 100%);
+  background: linear-gradient(135deg, #3580cc 0%, #4a90e2 50%, #5fa3f0 100%);
 }
 
 /* Modern card styling */

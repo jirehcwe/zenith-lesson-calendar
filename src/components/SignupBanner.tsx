@@ -21,7 +21,7 @@ export default function SignupBanner() {
   };
 
   const eyebrowPill = (
-    <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-3 py-1">
+    <div className="self-start inline-flex items-center gap-2 bg-white/10 rounded-full px-3 py-1">
       <span className="w-1.5 h-1.5 rounded-full bg-green-400 motion-safe:animate-pulse block flex-shrink-0" />
       <span className="text-xs font-semibold uppercase tracking-widest text-white/85">
         Now booking · 2026 academic year
@@ -49,7 +49,7 @@ export default function SignupBanner() {
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
-              <h1 className="text-sm font-semibold text-white flex-1 tracking-wide">
+              <h1 className="text-base font-semibold text-white flex-1 tracking-wide">
                 Zenith 2026 Schedule
               </h1>
               <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center flex-shrink-0">
@@ -119,7 +119,7 @@ export default function SignupBanner() {
           <div className="text-center">
             <h1 className="text-2xl sm:text-3xl font-extrabold leading-tight text-white">
               Browse every class.{" "}
-              <span className="text-amber-400">Find Your Perfect Class Schedule.</span>
+              <span className="text-yellow-300 font-black">Find Your Perfect Class Schedule.</span>
             </h1>
             <p className="text-sm sm:text-base text-blue-100 font-medium mt-2 leading-relaxed">
               Filter by stream, level, and centre to find the right fit — then book a complimentary trial or register directly.
@@ -207,7 +207,7 @@ export default function SignupBanner() {
               {eyebrowPill}
               <h1 className="text-3xl xl:text-4xl font-extrabold leading-tight">
                 Browse every class.{" "}
-                <span className="text-amber-400">Find Your Perfect Class Schedule.</span>
+                <span className="text-yellow-300 font-black">Find Your Perfect Class Schedule.</span>
               </h1>
               <p className="text-base text-blue-100 font-medium leading-relaxed">
                 Filter by stream, level, and centre to find the right fit — then book a complimentary trial or register directly.

@@ -89,7 +89,7 @@ function MultiSelect({
               <Listbox.Button
                 className={`relative cursor-default rounded-xl text-left transition-all duration-200 focus:outline-none focus:ring-0 ${
                   compact
-                    ? "flex items-center justify-between gap-2 pl-3 pr-2 py-1.5 text-sm min-w-[100px] max-w-[180px]"
+                    ? "flex items-center justify-between gap-2 pl-3.5 pr-2.5 py-2 text-sm min-w-[90px] max-w-[190px]"
                     : "w-full flex items-center gap-2 p-3 pr-3"
                 } ${
                   disabled
@@ -200,10 +200,10 @@ export default function Filters({
     filters.centre.length > 0;
 
   return (
-    <div className={`flex flex-col ${openUpward ? "gap-5" : "gap-3.5"}`}>
+    <div className={`flex flex-col ${openUpward ? "gap-5" : "gap-4"}`}>
       {/* Stream pills */}
       <div className={openUpward ? "flex flex-col gap-2.5" : "flex items-center gap-2 flex-wrap"}>
-        <span className="text-xs font-bold uppercase tracking-widest text-gray-400 flex-shrink-0">
+        <span className="text-xs font-bold uppercase tracking-widest text-gray-600 flex-shrink-0">
           Stream
         </span>
         <div className="flex items-center gap-2 flex-wrap">
@@ -212,7 +212,7 @@ export default function Filters({
               key={stream.value}
               onClick={() => setFilter("stream", filters.stream === stream.value ? null : stream.value)}
               className={`inline-flex items-center gap-2 rounded-full border font-semibold transition-all duration-150 flex-shrink-0 ${
-                openUpward ? "px-4 py-2 text-sm" : "px-3 py-1.5 text-xs"
+                openUpward ? "px-4 py-2 text-sm" : "px-3.5 py-2 text-sm"
               } ${
                 filters.stream === stream.value
                   ? "bg-gray-900 text-white border-gray-900"
@@ -221,7 +221,7 @@ export default function Filters({
             >
               {streamLabel(stream.value)}
               <span className={`font-bold tabular-nums px-1 py-px rounded-full ${
-                openUpward ? "text-xs" : "text-[10px]"
+                openUpward ? "text-xs" : "text-xs"
               } ${
                 filters.stream === stream.value
                   ? "bg-white/20 text-white"
@@ -253,7 +253,7 @@ export default function Filters({
             <div className="ml-auto flex bg-white border border-gray-200 rounded-xl p-0.5 gap-0.5 flex-shrink-0">
               <button
                 onClick={() => onViewChange("calendar")}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 flex items-center gap-1.5 ${
+                className={`px-3.5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 flex items-center gap-1.5 ${
                   currentView === "calendar" ? "bg-blue-50 text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
                 }`}
               >
@@ -264,7 +264,7 @@ export default function Filters({
               </button>
               <button
                 onClick={() => onViewChange("list")}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 flex items-center gap-1.5 ${
+                className={`px-3.5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 flex items-center gap-1.5 ${
                   currentView === "list" ? "bg-blue-50 text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
                 }`}
               >
@@ -281,40 +281,40 @@ export default function Filters({
       {/* Summary row — visible when any filter is active */}
       {hasActiveFilters && (
         <div className="flex flex-wrap items-center gap-2 pt-1">
-          <span className="text-sm text-gray-600">
-            <span className="font-bold text-blue-700">{totalCount}</span> classes
+          <span className="text-xs text-gray-500">
+            <span className="font-bold text-blue-600">{totalCount}</span> classes
           </span>
 
           {filters.stream && (
             <button
               onClick={() => setFilter("stream", null)}
-              className="bg-white border border-gray-200 rounded-full px-3 py-1 text-xs font-semibold flex items-center gap-1 hover:border-red-300 transition-colors"
+              className="bg-white border border-gray-200 rounded-full px-2.5 py-0.5 text-xs font-medium flex items-center gap-1 hover:border-red-300 transition-colors"
             >
               {streamLabel(filters.stream)} <span className="text-gray-400 ml-0.5">×</span>
             </button>
           )}
           {filters.level.map((l) => (
             <button key={l} onClick={() => setFilter("level", filters.level.filter((x) => x !== l))}
-              className="bg-white border border-gray-200 rounded-full px-3 py-1 text-xs font-semibold flex items-center gap-1 hover:border-red-300 transition-colors">
+              className="bg-white border border-gray-200 rounded-full px-2.5 py-0.5 text-xs font-medium flex items-center gap-1 hover:border-red-300 transition-colors">
               {l} <span className="text-gray-400 ml-0.5">×</span>
             </button>
           ))}
           {filters.subject.map((s) => (
             <button key={s} onClick={() => setFilter("subject", filters.subject.filter((x) => x !== s))}
-              className="bg-white border border-gray-200 rounded-full px-3 py-1 text-xs font-semibold flex items-center gap-1 hover:border-red-300 transition-colors">
+              className="bg-white border border-gray-200 rounded-full px-2.5 py-0.5 text-xs font-medium flex items-center gap-1 hover:border-red-300 transition-colors">
               {s} <span className="text-gray-400 ml-0.5">×</span>
             </button>
           ))}
           {filters.centre.map((c) => (
             <button key={c} onClick={() => setFilter("centre", filters.centre.filter((x) => x !== c))}
-              className="bg-white border border-gray-200 rounded-full px-3 py-1 text-xs font-semibold flex items-center gap-1 hover:border-red-300 transition-colors">
+              className="bg-white border border-gray-200 rounded-full px-2.5 py-0.5 text-xs font-medium flex items-center gap-1 hover:border-red-300 transition-colors">
               {c} <span className="text-gray-400 ml-0.5">×</span>
             </button>
           ))}
 
           <button
             onClick={() => onFilterChange({ subject: [], centre: [], tutor: [], level: [], stream: null })}
-            className="text-xs text-gray-400 hover:text-red-500 font-semibold ml-2 transition-colors underline"
+            className="text-xs text-gray-400 hover:text-red-500 font-medium ml-1 transition-colors underline"
           >
             Clear all
           </button>
