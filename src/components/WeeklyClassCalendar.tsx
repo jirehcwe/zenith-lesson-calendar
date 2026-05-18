@@ -463,7 +463,7 @@ export default function WeeklyClassCalendar({
             <p className="text-sm font-semibold text-gray-600">Select a stream to see classes</p>
             <p className="text-xs text-gray-400 mt-1">Filter by stream, level, subject, or centre</p>
             {onEmptyStateClick && (
-              <p className="text-xs text-blue-500 mt-2 font-medium">Open filters →</p>
+              <p className="text-sm underline text-blue-500 mt-4 font-bold">Click to open filters</p>
             )}
           </div>
         </div>

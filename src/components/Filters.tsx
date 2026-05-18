@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { ViewType } from "./ViewSelector";
 
@@ -29,7 +29,7 @@ type FiltersProps = {
   totalCount: number;
   showViewToggle?: boolean;
   openUpward?: boolean;
-  streamHighlighted?: boolean;
+  triggerLevelOpen?: boolean;
 };
 
 function truncateText(text: string, maxLength: number = 25): string {
@@ -51,6 +51,7 @@ function MultiSelect({
   disabled = false,
   compact = false,
   openUpward = false,
+  triggerOpen = false,
 }: {
   label: string;
   selected: string[];
@@ -59,9 +60,17 @@ function MultiSelect({
   disabled?: boolean;
   compact?: boolean;
   openUpward?: boolean;
+  triggerOpen?: boolean;
 }) {
   const [filterDropdownMaxHeight, setFilterDropdownMaxHeight] = useState<string>("320px");
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (triggerOpen) {
+      const btn = dropdownRef.current?.querySelector<HTMLButtonElement>("button");
+      btn?.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, cancelable: true, button: 0 }));
+    }
+  }, [triggerOpen]);
 
   const displayText =
     selected.length > 0
@@ -194,7 +203,7 @@ export default function Filters({
   totalCount,
   showViewToggle = true,
   openUpward = false,
-  streamHighlighted = false,
+  triggerLevelOpen = false,
 }: FiltersProps) {
   const setFilter = (field: keyof FiltersProps["filters"], value: string[] | string | null) => {
     onFilterChange({ ...filters, [field]: value });
@@ -213,7 +222,7 @@ export default function Filters({
         <span className="text-xs font-bold uppercase tracking-widest text-gray-600 flex-shrink-0">
           Stream
         </span>
-        <div className={`flex items-center gap-2 flex-wrap rounded-xl transition-all duration-300 ${streamHighlighted ? "ring-2 ring-blue-400 px-2 py-1 animate-pulse" : ""}`}>
+        <div className="flex items-center gap-2 flex-wrap">
           {streams.map((stream) => (
             <button
               key={stream.value}
@@ -252,7 +261,7 @@ export default function Filters({
       ) : (
         // Desktop: compact pills in one row + optional view toggle
         <div className="flex items-center gap-2 flex-wrap">
-          <MultiSelect compact label="Level" selected={filters.level} options={levels} onChange={(val) => setFilter("level", val)} openUpward={openUpward} />
+          <MultiSelect compact label="Level" selected={filters.level} options={levels} onChange={(val) => setFilter("level", val)} openUpward={openUpward} triggerOpen={triggerLevelOpen} />
           <MultiSelect compact label="Subject" selected={filters.subject} options={subjects} onChange={(val) => setFilter("subject", val)} openUpward={openUpward} />
           <MultiSelect compact label="Centre" selected={filters.centre} options={centres} onChange={(val) => setFilter("centre", val)} openUpward={openUpward} />
 

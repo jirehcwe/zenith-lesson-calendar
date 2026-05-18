@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Filters from "../components/Filters";
 import SignupBanner from "../components/SignupBanner";
 import WeeklyClassCalendar, {
@@ -101,8 +101,7 @@ export default function Page() {
   const [currentView, setCurrentView] = useState<ViewType>("calendar");
   const [campaignParam, setCampaignParam] = useState<string>("");
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
-  const [streamHighlighted, setStreamHighlighted] = useState(false);
-  const highlightTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [levelDropdownOpen, setLevelDropdownOpen] = useState(false);
   const [filtersCollapsed, setFiltersCollapsed] = useState(false);
   // Use screen dimensions (orientation-independent) to detect phones vs tablets/desktops.
   // window.innerWidth changes with orientation; screen.width/height does not.
@@ -221,11 +220,6 @@ export default function Page() {
     localStorage.setItem(FILTERS_COLLAPSED_STORAGE_KEY, filtersCollapsed.toString());
   }, [filtersCollapsed]);
 
-  useEffect(() => {
-    return () => {
-      if (highlightTimerRef.current) clearTimeout(highlightTimerRef.current);
-    };
-  }, []);
 
   // Compute filtered options for progressive disclosure with counts
   const filteredOptions = useMemo(() => {
@@ -438,7 +432,7 @@ export default function Page() {
                     onViewChange={setCurrentView}
                     totalCount={events.length}
                     showViewToggle={false}
-                    streamHighlighted={streamHighlighted}
+                    triggerLevelOpen={levelDropdownOpen}
                   />
                 </div>
                 <div className="flex-shrink-0 flex flex-col justify-between items-end gap-2">
@@ -508,15 +502,24 @@ export default function Page() {
                     isMobilePhone
                       ? () => setFilterSheetOpen(true)
                       : () => {
-                          if (highlightTimerRef.current) clearTimeout(highlightTimerRef.current);
-                          setStreamHighlighted(true);
-                          highlightTimerRef.current = setTimeout(() => setStreamHighlighted(false), 2000);
+                          setLevelDropdownOpen(true);
+                          setTimeout(() => setLevelDropdownOpen(false), 50);
                         }
                   }
                 />
               </div>
               <div className={currentView !== "list" ? "hidden" : "modern-card p-3 sm:p-6"}>
-                <ListView sessions={events} />
+                <ListView
+                  sessions={events}
+                  onEmptyStateClick={
+                    isMobilePhone
+                      ? () => setFilterSheetOpen(true)
+                      : () => {
+                          setLevelDropdownOpen(true);
+                          setTimeout(() => setLevelDropdownOpen(false), 50);
+                        }
+                  }
+                />
               </div>
 
               {/* Terms and Conditions Footer */}

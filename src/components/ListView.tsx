@@ -5,12 +5,21 @@ import { replaceCampaignInUrl, replacePromocodeInUrl } from "@/utils/campaign";
 import { getFallbackRegistrationLinkByLevel } from "@/utils/prefillRegistration";
 import { to12hr } from "@/utils/time";
 
-export default function ListView({ sessions }: { sessions: WeeklyClassSlot[] }) {
+export default function ListView({ sessions, onEmptyStateClick }: { sessions: WeeklyClassSlot[]; onEmptyStateClick?: () => void }) {
   if (sessions.length === 0) {
     return (
       <div className="text-center py-12">
-        <div className="text-gray-500 text-lg mb-4">No classes found matching your criteria</div>
-        <p className="text-gray-400">Try adjusting your filters to see more classes</p>
+        <div className="text-5xl mb-4">📚</div>
+        <div className="text-gray-700 text-lg font-semibold mb-2">Select a stream to get started</div>
+        <p className="text-gray-400 text-sm mb-6">Choose JC, Secondary, or Primary to see available classes</p>
+        {onEmptyStateClick && (
+          <button
+            onClick={onEmptyStateClick}
+            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-all duration-200 shadow-sm hover:shadow-md"
+          >
+            Open filters →
+          </button>
+        )}
       </div>
     );
   }

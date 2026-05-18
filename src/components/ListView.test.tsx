@@ -34,7 +34,20 @@ const makeSlot = (overrides: Partial<WeeklyClassSlot> = {}): WeeklyClassSlot => 
 describe("ListView", () => {
   it("shows empty state when no sessions are provided", () => {
     render(<ListView sessions={[]} />);
-    expect(screen.getByText(/No classes found/i)).toBeInTheDocument();
+    expect(screen.getByText(/Select a stream to get started/i)).toBeInTheDocument();
+  });
+
+  it("renders Open filters button in empty state when onEmptyStateClick is provided", async () => {
+    const handleClick = jest.fn();
+    render(<ListView sessions={[]} onEmptyStateClick={handleClick} />);
+    const btn = screen.getByRole("button", { name: /Open filters/i });
+    btn.click();
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not render Open filters button in empty state when onEmptyStateClick is omitted", () => {
+    render(<ListView sessions={[]} />);
+    expect(screen.queryByRole("button", { name: /Open filters/i })).not.toBeInTheDocument();
   });
 
   it("renders a card for each session", () => {

@@ -140,6 +140,18 @@ describe("Filters", () => {
     render(<Filters {...baseProps} totalCount={0} />);
     expect(screen.queryByText("Clear all")).not.toBeInTheDocument();
   });
+
+  it("opens the Level dropdown when triggerLevelOpen is true", async () => {
+    render(
+      <Filters
+        {...baseProps}
+        levels={[opt("J1"), opt("J2")]}
+        triggerLevelOpen
+      />
+    );
+    expect(await screen.findByText("J1")).toBeInTheDocument();
+    expect(screen.getByText("J2")).toBeInTheDocument();
+  });
 });
 
 describe("Filters — mobile layout (openUpward=true)", () => {
