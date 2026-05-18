@@ -453,9 +453,9 @@ export default function Page() {
         </div>
       )}
       <div className="max-w-7xl mx-auto px-4 md:px-8 pt-2 md:pt-4 pb-safe">
-        <div className="space-y-2 sm:space-y-2">
+        <div className="flex flex-col gap-2">
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-12 sm:py-24 space-y-4 sm:space-y-6">
+            <div className="flex flex-col items-center justify-center py-12 sm:py-24 gap-4">
               <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600"></div>
               <div className="text-center">
                 <p className="text-xl font-semibold text-gray-700">

@@ -220,7 +220,7 @@ export default function WeeklyClassCalendar({ slots, isVisible = true }: { slots
   };
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-6">
       {/* Custom CSS for FullCalendar hover effects */}
       <style jsx>{`
         :global(.fc-v-event) {
@@ -427,10 +427,10 @@ export default function WeeklyClassCalendar({ slots, isVisible = true }: { slots
 
             {/* Details + CTAs */}
             {selectedEvent && (
-              <div className="px-5 pt-4 pb-5 space-y-4">
+              <div className="px-5 pt-4 pb-5 flex flex-col gap-4">
                 {/* Icon-row details */}
                 <div
-                  className="rounded-xl p-3.5 space-y-3"
+                  className="rounded-xl p-3.5 flex flex-col gap-3"
                   style={{
                     backgroundColor:
                       subjectToColor(selectedEvent.level, selectedEvent.subjects[0] ?? "").tint + "55",

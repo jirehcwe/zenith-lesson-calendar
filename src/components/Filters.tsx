@@ -72,7 +72,7 @@ function MultiSelect({
   };
 
   return (
-    <div className={compact ? "relative" : "flex flex-col space-y-2"} ref={dropdownRef}>
+    <div className={compact ? "relative" : "flex flex-col gap-2"} ref={dropdownRef}>
       {!compact && (
         <label className="text-sm font-semibold text-gray-700">{label}</label>
       )}
@@ -190,7 +190,7 @@ export default function Filters({
     filters.centre.length > 0;
 
   return (
-    <div className="space-y-2">
+    <div className="flex flex-col gap-3.5">
       {/* Row 1: Stream pills */}
       <div className="flex items-center gap-2 flex-wrap">
         <span className="text-xs font-bold uppercase tracking-widest text-gray-400 flex-shrink-0">

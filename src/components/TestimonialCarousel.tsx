@@ -33,7 +33,7 @@ function TestimonialCard({ testimonial }: TestimonialCardProps) {
       </div>
 
       {/* Testimonials */}
-      <div className="text-left space-y-4">
+      <div className="text-left flex flex-col gap-4">
         {testimonial.testimonials.map((item, index) => (
           <div key={index}>
             <h4 className="font-bold text-lg text-gray-800 mb-3">

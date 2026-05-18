@@ -65,3 +65,28 @@ body {
     padding-bottom: 2rem;
   }
 }
+
+/* Avatar overlap stacks — replaces -space-x-* which uses CSS nesting (broken on older Safari) */
+.avatar-stack > * + * {
+  margin-left: -0.25rem;
+}
+.avatar-stack-lg > * + * {
+  margin-left: -0.375rem;
+}
+
+/* List view grid: 1 col on phone, 2 on tablet/iPad, 3 on desktop */
+.list-view-grid {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media (min-width: 640px) {
+  .list-view-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+  .list-view-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

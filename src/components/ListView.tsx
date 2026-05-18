@@ -25,9 +25,9 @@ export default function ListView({ sessions }: { sessions: WeeklyClassSlot[] }) 
   const sortedDays = Object.keys(sessionsByDay).map(Number).sort((a, b) => a - b);
 
   return (
-    <div className="space-y-8">
+    <div className="flex flex-col gap-8">
       {sortedDays.map((day) => (
-        <div key={day} className="space-y-4">
+        <div key={day} className="flex flex-col gap-4">
           <div className="flex items-center justify-between border-b-2 border-blue-200 pb-2">
             <h3 className="text-lg font-extrabold text-gray-800">{dayNames[day]}</h3>
             <span className="bg-blue-50 text-blue-700 text-xs font-bold px-2.5 py-0.5 rounded-full">
@@ -35,7 +35,7 @@ export default function ListView({ sessions }: { sessions: WeeklyClassSlot[] }) 
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid list-view-grid gap-4">
             {sessionsByDay[day]
               .sort((a, b) => a.startTime.localeCompare(b.startTime))
               .map((session, index) => {
@@ -51,7 +51,7 @@ export default function ListView({ sessions }: { sessions: WeeklyClassSlot[] }) 
                     {/* Accent bar */}
                     <div className="h-1 w-full rounded-t-xl" style={{ background: accentColor }} />
 
-                    <div className="p-5 flex flex-col space-y-3">
+                    <div className="p-6 flex flex-col gap-4">
                       {/* Header: subject + level pill */}
                       <div className="flex items-start justify-between">
                         <div className="font-bold text-base text-gray-800">
@@ -63,7 +63,7 @@ export default function ListView({ sessions }: { sessions: WeeklyClassSlot[] }) 
                       </div>
 
                       {/* Info rows */}
-                      <div className="space-y-2 text-sm">
+                      <div className="flex flex-col gap-2 text-sm">
                         <div className="flex items-center gap-2">
                           <svg className="w-4 h-4 text-gray-400 flex-shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}

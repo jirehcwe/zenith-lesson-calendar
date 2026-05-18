@@ -62,7 +62,7 @@ export default function SignupBanner() {
               </div>
             </button>
           ) : (
-            <div className="space-y-4 relative">
+            <div className="flex flex-col gap-4 relative">
               {/* Collapse Button */}
               <button
                 onClick={toggleCollapse}
@@ -128,7 +128,7 @@ export default function SignupBanner() {
 
           {/* Student Testimonials */}
           <div className="flex items-center justify-center gap-3">
-            <div className="flex -space-x-1">
+            <div className="flex avatar-stack">
               <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/20 border-2 border-white overflow-hidden">
                 <Image
                   className="rounded-full"
@@ -202,8 +202,8 @@ export default function SignupBanner() {
           </div>
 
           {/* Center - Text Content */}
-          <div className="flex-1 text-white space-y-4 pr-24">
-            <div className="space-y-3">
+          <div className="flex-1 text-white flex flex-col gap-4 pr-24">
+            <div className="flex flex-col gap-3">
               {eyebrowPill}
               <h1 className="text-3xl xl:text-4xl font-extrabold leading-tight">
                 Browse every class.{" "}
@@ -215,7 +215,7 @@ export default function SignupBanner() {
             </div>
 
             <div className="flex items-center gap-4">
-              <div className="flex -space-x-1.5">
+              <div className="flex avatar-stack-lg">
                 <div className="w-10 h-10 rounded-full bg-white/20 border-2 border-white overflow-hidden">
                   <Image
                     className="rounded-full"
