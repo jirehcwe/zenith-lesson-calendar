@@ -45,4 +45,3 @@ next-env.d.ts
 .vscode/settings.json
 scripts/credentials.json
 scripts/form_option_extractor/lambda.zip
-*-handoff.md
