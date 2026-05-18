@@ -435,7 +435,7 @@ export default function WeeklyClassCalendar({ slots, isVisible = true, hasActive
                   </svg>
                 </button>
                 <div className="text-xs font-bold uppercase tracking-wide text-gray-500 mb-1 pr-10">
-                  {selectedEvent.stream} · {selectedEvent.level}
+                  {selectedEvent.stream && `${selectedEvent.stream} · `}{selectedEvent.level}
                 </div>
                 <DialogTitle className="text-2xl font-extrabold text-gray-900">
                   {selectedEvent.subjects.join(" + ")}
