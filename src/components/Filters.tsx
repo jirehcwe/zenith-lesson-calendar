@@ -83,7 +83,7 @@ function MultiSelect({
         <label className="text-sm font-semibold text-gray-700">{label}</label>
       )}
       <Listbox value={selected} onChange={onChange} multiple disabled={disabled}>
-        {() => {
+        {({ open }) => {
           return (
             <div className={compact ? "" : "relative mt-1"}>
               <Listbox.Button
@@ -117,8 +117,13 @@ function MultiSelect({
                     ×
                   </span>
                 ) : (
-                  <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  <svg
+                    className={`w-3.5 h-3.5 text-gray-400 flex-shrink-0 transition-transform duration-200 ${
+                      openUpward ? (open ? "rotate-180" : "rotate-0") : (open ? "rotate-0" : "rotate-180")
+                    }`}
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
                   </svg>
                 )}
               </Listbox.Button>
