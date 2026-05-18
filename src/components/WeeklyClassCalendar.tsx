@@ -447,14 +447,8 @@ export default function WeeklyClassCalendar({
 
       {/* Empty-state overlay — shown when no filters are selected */}
       {slots.length === 0 && !hasActiveFilters && (
-        <div
-          className={`absolute inset-0 z-10 flex items-center justify-center ${onEmptyStateClick ? "cursor-pointer" : "pointer-events-none"}`}
-          onClick={onEmptyStateClick}
-          role={onEmptyStateClick ? "button" : undefined}
-          tabIndex={onEmptyStateClick ? 0 : undefined}
-          onKeyDown={onEmptyStateClick ? (e) => { if (e.key === "Enter" || e.key === " ") onEmptyStateClick(); } : undefined}
-        >
-          <div className="text-center px-6">
+        <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+          <div className="text-center px-6 pointer-events-auto">
             <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-blue-50 flex items-center justify-center">
               <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
@@ -463,7 +457,12 @@ export default function WeeklyClassCalendar({
             <p className="text-sm font-semibold text-gray-600">Select a stream to see classes</p>
             <p className="text-xs text-gray-400 mt-1">Filter by stream, level, subject, or centre</p>
             {onEmptyStateClick && (
-              <p className="text-sm underline text-blue-500 mt-4 font-bold">Click to open filters</p>
+              <button
+                onClick={onEmptyStateClick}
+                className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-all duration-200 shadow-sm hover:shadow-md mt-4"
+              >
+                Open filters
+              </button>
             )}
           </div>
         </div>

@@ -9,15 +9,19 @@ export default function ListView({ sessions, onEmptyStateClick }: { sessions: We
   if (sessions.length === 0) {
     return (
       <div className="text-center py-12">
-        <div className="text-5xl mb-4">📚</div>
-        <div className="text-gray-700 text-lg font-semibold mb-2">Select a stream to get started</div>
-        <p className="text-gray-400 text-sm mb-6">Choose JC, Secondary, or Primary to see available classes</p>
+        <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-blue-50 flex items-center justify-center">
+          <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
+          </svg>
+        </div>
+        <p className="text-sm font-semibold text-gray-600 mt-3">Select a stream to see classes</p>
+        <p className="text-xs text-gray-400 mt-1">Filter by stream, level, subject, or centre</p>
         {onEmptyStateClick && (
           <button
             onClick={onEmptyStateClick}
-            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-all duration-200 shadow-sm hover:shadow-md"
+            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-all duration-200 shadow-sm hover:shadow-md mt-4"
           >
-            Open filters →
+            Open filters
           </button>
         )}
       </div>
