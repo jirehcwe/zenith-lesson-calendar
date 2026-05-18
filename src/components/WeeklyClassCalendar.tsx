@@ -393,7 +393,7 @@ export default function WeeklyClassCalendar({ slots, isVisible = true, hasActive
 
       {/* Empty-state overlay — shown when no filters are selected */}
       {slots.length === 0 && !hasActiveFilters && (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
           <div className="text-center px-6">
             <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-blue-50 flex items-center justify-center">
               <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
