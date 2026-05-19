@@ -63,12 +63,15 @@ function MultiSelect({
   triggerOpen?: boolean;
 }) {
   const [filterDropdownMaxHeight, setFilterDropdownMaxHeight] = useState<string>("320px");
+  const [isHighlighted, setIsHighlighted] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (triggerOpen) {
       const btn = dropdownRef.current?.querySelector<HTMLButtonElement>("button");
       btn?.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, cancelable: true, button: 0 }));
+      setIsHighlighted(true);
+      setTimeout(() => setIsHighlighted(false), 1800);
     }
   }, [triggerOpen]);
 
@@ -142,7 +145,7 @@ function MultiSelect({
                   style={{ maxHeight: filterDropdownMaxHeight }}
                   className={`absolute z-50 w-full min-w-[160px] rounded-xl bg-white border border-gray-200 shadow-xl list-none overflow-y-auto focus:outline-none text-sm ${
                     openUpward ? "bottom-full mb-2" : "mt-2"
-                  }`}
+                  } ${isHighlighted ? "animate-ring-pulse-dark-panel" : ""}`}
                 >
                   {options.map((option) => (
                     <Listbox.Option key={option.value} value={option.value} as={Fragment} disabled={option.count === 0}>
