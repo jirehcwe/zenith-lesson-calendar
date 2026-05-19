@@ -86,19 +86,29 @@ export default function SignupBanner() {
                 <Image
                   src="/zenith_logo.png"
                   alt="Zenith Education Logo"
-                  width={225}
-                  height={63}
+                  width={191}
+                  height={54}
                   className="object-contain"
                 />
               </div>
 
               <div className="flex justify-center">
+                {/* Mobile */}
                 <Image
                   src="/zenith-banner.webp"
                   alt="Zenith Education"
-                  width={245}
-                  height={210}
-                  className="rounded-xl opacity-90"
+                  width={324}
+                  height={278}
+                  className="rounded-xl opacity-90 sm:hidden"
+                  priority
+                />
+                {/* iPad (sm+) */}
+                <Image
+                  src="/zenith-banner.webp"
+                  alt="Zenith Education"
+                  width={324}
+                  height={278}
+                  className="rounded-xl opacity-90 hidden sm:block"
                   priority
                 />
               </div>
@@ -108,12 +118,12 @@ export default function SignupBanner() {
               </div>
 
               <div className="text-center">
-                <h1 className="text-2xl sm:text-3xl font-extrabold leading-tight text-white">
+                <h1 className="text-xl sm:text-3xl font-extrabold leading-tight text-white">
                   Browse every class.{" "}
                   <span className="font-black" style={{ color: "#f4ab25" }}>Find Your Perfect Class Schedule.</span>
                 </h1>
                 <p className="text-sm sm:text-base text-blue-100 font-medium mt-2 leading-relaxed">
-                  Filter by stream, level, and centre to find the right fit — then book a FREE trial or register directly.
+                  Filter by stream, level, and centre to find the right fit — then book a <strong>FREE</strong> trial or register directly.
                 </p>
               </div>
 
