@@ -238,6 +238,28 @@ export default function WeeklyClassCalendar({
     });
   }, [slots]);
 
+  const legendItems = useMemo(() => {
+    if (slots.length === 0) return getLegendItemsForStream(selectedStream);
+    const allItems = getLegendItemsForStream(selectedStream);
+    const seen = new Set<string>();
+    const result: { label: string; color: string; tint: string }[] = [];
+    for (const slot of slots) {
+      if (isSlotFull(slot)) continue;
+      const { color } = subjectToColor(slot.level, slot.subjects[0] ?? "");
+      if (!seen.has(color)) {
+        seen.add(color);
+        const match = allItems.find((item) => item.color === color);
+        if (match) result.push(match);
+      }
+    }
+    if (slots.some(isSlotFull)) {
+      const fullItem = allItems.find((item) => item.label === "Full");
+      if (fullItem) result.push(fullItem);
+    }
+    const order = allItems.map((item) => item.color);
+    return result.sort((a, b) => order.indexOf(a.color) - order.indexOf(b.color));
+  }, [slots, selectedStream]);
+
   const emptyDayStyles = useMemo(() => {
     if (slots.length === 0) return '';
     const dayClassMap: Record<number, string> = {
@@ -435,7 +457,7 @@ export default function WeeklyClassCalendar({
           weekends={true}
         />
         <div className="flex flex-wrap gap-x-4 gap-y-2 px-3 py-2.5 border-t border-slate-200 bg-gray-50">
-          {getLegendItemsForStream(selectedStream).map(({ label, color, tint }) => (
+          {legendItems.map(({ label, color, tint }) => (
             <div key={label} style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "11px", color, fontFamily: "var(--font-manrope), 'Manrope', sans-serif", fontWeight: 600 }}>
               <span style={{ display: "inline-block", width: "12px", height: "12px", background: tint, borderLeft: `2px solid ${color}`, borderRadius: "2px", flexShrink: 0 }} />
               {label}
