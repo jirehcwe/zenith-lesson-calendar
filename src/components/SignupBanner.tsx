@@ -1,11 +1,12 @@
 "use client";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const STORAGE_KEY = "signupBannerCollapsed";
 
 export default function SignupBanner() {
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const bannerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -14,10 +15,30 @@ export default function SignupBanner() {
     }
   }, []);
 
+  // Auto-collapse when user scrolls past the banner
+  useEffect(() => {
+    const el = bannerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
+          setIsCollapsed(true);
+        }
+      },
+      { threshold: 0 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   const toggleCollapse = () => {
     const newState = !isCollapsed;
     setIsCollapsed(newState);
-    localStorage.setItem(STORAGE_KEY, newState.toString());
+    if (newState) {
+      localStorage.setItem(STORAGE_KEY, "true");
+    } else {
+      localStorage.removeItem(STORAGE_KEY);
+    }
   };
 
   const eyebrowPill = (
@@ -30,7 +51,7 @@ export default function SignupBanner() {
   );
 
   return (
-    <div className="w-full hero-gradient">
+    <div ref={bannerRef} className="w-full hero-gradient">
       <div className={`max-w-7xl mx-auto px-4 lg:py-10 ${isCollapsed ? 'py-1 sm:py-1' : 'py-8 sm:py-10'}`}>
         {/* Mobile Layout - Stacked */}
         <div className="lg:hidden relative">
