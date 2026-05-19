@@ -83,17 +83,15 @@ export default function SignupBanner() {
                   />
                 </svg>
               </button>
-          {/* Logo in top right - absolute positioned */}
-          <div className="absolute top-0 right-0 z-10">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg flex items-center justify-center">
-              <Image
-                src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65ed367b65acaa4acb2bbf72_Zenith-logo.webp"
-                alt="Zenith Education Logo"
-                width={56}
-                height={56}
-                className="object-contain"
-              />
-            </div>
+          {/* Logo prominently centered at top */}
+          <div className="flex justify-center pt-6">
+            <Image
+              src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65e1a2a65798fb58f1336fe6_education-2.png.webp"
+              alt="Zenith Education Logo"
+              width={100}
+              height={100}
+              className="object-contain"
+            />
           </div>
 
           {/* Banner Image */}
@@ -175,34 +173,19 @@ export default function SignupBanner() {
         </div>
 
         {/* Desktop Layout - Row */}
-        <div className="hidden lg:flex items-center gap-9 relative">
-          {/* Logo in top right - absolute positioned */}
-          <div className="absolute top-2 right-0 z-10">
-            <div className="w-20 h-20 rounded-lg flex items-center justify-center">
+        <div className="hidden lg:flex items-center gap-9">
+          {/* Left - Text Content */}
+          <div className="flex-1 text-white flex flex-col gap-4">
+            {/* Logo above eyebrow pill, left-aligned */}
+            <div className="flex">
               <Image
                 src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65e1a2a65798fb58f1336fe6_education-2.png.webp"
                 alt="Zenith Education Logo"
-                width={72}
-                height={72}
+                width={100}
+                height={100}
+                className="object-contain"
               />
             </div>
-          </div>
-
-          {/* Left - Banner Image */}
-          <div className="flex-shrink-0">
-            <div className="relative w-[270px] h-[260px] overflow-hidden rounded-2xl">
-              <Image
-                src="/zenith-banner.webp"
-                alt="Zenith Education"
-                fill
-                className="object-cover opacity-90"
-                priority
-              />
-            </div>
-          </div>
-
-          {/* Center - Text Content */}
-          <div className="flex-1 text-white flex flex-col gap-4 pr-24">
             <div className="flex flex-col gap-3">
               {eyebrowPill}
               <h1 className="text-3xl xl:text-4xl font-extrabold leading-tight">
@@ -256,6 +239,19 @@ export default function SignupBanner() {
               <p className="text-blue-100 text-base font-medium">
                 <span className="font-bold text-white">20,000+</span> students since 2019
               </p>
+            </div>
+          </div>
+
+          {/* Right - Banner Image */}
+          <div className="flex-shrink-0">
+            <div className="relative w-[270px] h-[260px] overflow-hidden rounded-2xl">
+              <Image
+                src="/zenith-banner.webp"
+                alt="Zenith Education"
+                fill
+                className="object-cover opacity-90"
+                priority
+              />
             </div>
           </div>
         </div>
