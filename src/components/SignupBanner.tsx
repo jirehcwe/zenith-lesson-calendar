@@ -42,7 +42,7 @@ export default function SignupBanner() {
   };
 
   const eyebrowPill = (
-    <div className="self-start inline-flex items-center gap-2 bg-white/10 rounded-full px-3 py-1">
+    <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-3 py-1">
       <span className="w-1.5 h-1.5 rounded-full bg-green-400 motion-safe:animate-pulse block flex-shrink-0" />
       <span className="text-xs font-semibold uppercase tracking-widest text-white/85">
         Now booking · 2026 academic year
@@ -52,7 +52,7 @@ export default function SignupBanner() {
 
   return (
     <div ref={bannerRef} className="w-full hero-gradient">
-      <div className={`max-w-7xl mx-auto px-4 lg:py-10 ${isCollapsed ? 'py-1 sm:py-1' : 'py-8 sm:py-10'}`}>
+      <div className={`max-w-7xl mx-auto px-4 lg:py-10 ${isCollapsed ? 'py-1' : 'py-4 sm:py-10'}`}>
         {/* Mobile Layout - Stacked */}
         <div className="lg:hidden relative">
           {isCollapsed ? (
@@ -107,9 +107,9 @@ export default function SignupBanner() {
                 <Image
                   src="/zenith_logo.png"
                   alt="Zenith Education Logo"
-                  width={191}
-                  height={54}
-                  className="object-contain"
+                  width={239}
+                  height={68}
+                  className="object-contain w-[191px] h-[54px] sm:w-[239px] sm:h-[68px]"
                 />
               </div>
 
@@ -123,12 +123,12 @@ export default function SignupBanner() {
                   className="rounded-xl opacity-90 sm:hidden"
                   priority
                 />
-                {/* iPad (sm+) */}
+                {/* iPad (sm+) — 1.25× mobile */}
                 <Image
                   src="/zenith-banner.webp"
                   alt="Zenith Education"
-                  width={324}
-                  height={278}
+                  width={405}
+                  height={348}
                   className="rounded-xl opacity-90 hidden sm:block"
                   priority
                 />
@@ -150,45 +150,20 @@ export default function SignupBanner() {
 
               <div className="flex items-center justify-center gap-3">
                 <div className="flex avatar-stack">
-                  <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/20 border-2 border-white overflow-hidden">
-                    <Image
-                      className="rounded-full"
-                      src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/6620e0830701a7bceb0c7204_Screenshot%202024-04-18%20163444.webp"
-                      alt=""
-                      width={36}
-                      height={36}
-                    />
-                  </div>
-                  <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/20 border-2 border-white overflow-hidden">
-                    <Image
-                      className="rounded-full"
-                      src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65f278d68ea311803c30e993_Screenshot%202024-03-14%20at%2012.10.54%20PM.webp"
-                      alt=""
-                      width={36}
-                      height={36}
-                    />
-                  </div>
-                  <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/20 border-2 border-white overflow-hidden">
-                    <Image
-                      className="rounded-full"
-                      src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/6620dd4162fa73292402d873_Screenshot%202024-04-18%20163707.webp"
-                      alt=""
-                      width={36}
-                      height={36}
-                    />
-                  </div>
-                  <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/20 border-2 border-white overflow-hidden">
-                    <Image
-                      className="rounded-full"
-                      src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65f2786b8a3bd7f56bb2ac99_Screenshot%202024-03-14%20at%2012.09.05%20PM.webp"
-                      alt=""
-                      width={36}
-                      height={36}
-                    />
-                  </div>
+                  {["/avatars/avatar_01.jpg", "/avatars/avatar_02.jpg", "/avatars/avatar_03.jpg", "/avatars/avatar_04.jpg"].map((src, i) => (
+                    <div key={i} className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/20 border-2 border-white overflow-hidden">
+                      <Image
+                        className="w-full h-full object-cover object-top scale-[1.5] origin-top"
+                        src={src}
+                        alt=""
+                        width={36}
+                        height={36}
+                      />
+                    </div>
+                  ))}
                 </div>
                 <p className="text-blue-100 text-xs sm:text-sm font-medium">
-                  <span className="font-bold text-white">20,000+</span> students since 2019
+                  <span className="font-bold text-white">20,000+ students since 2019</span>
                 </p>
               </div>
             </div>
@@ -199,15 +174,17 @@ export default function SignupBanner() {
         <div className="hidden lg:flex items-center gap-9">
           {/* Left - Text Content */}
           <div className="flex-1 text-white flex flex-col gap-4">
-            <Image
-              src="/zenith_logo.png"
-              alt="Zenith Education Logo"
-              width={306}
-              height={85}
-              className="object-contain"
-            />
-            <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-4">
+              <Image
+                src="/zenith_logo.png"
+                alt="Zenith Education Logo"
+                width={291}
+                height={81}
+                className="object-contain flex-shrink-0"
+              />
               {eyebrowPill}
+            </div>
+            <div className="flex flex-col gap-3">
               <h1 className="text-3xl xl:text-4xl font-extrabold leading-tight">
                 Browse every class.{" "}
                 <span className="font-black" style={{ color: "#f4ab25" }}>Find Your Perfect Class Schedule.</span>
@@ -219,42 +196,17 @@ export default function SignupBanner() {
 
             <div className="flex items-center gap-4">
               <div className="flex avatar-stack-lg">
-                <div className="w-10 h-10 rounded-full bg-white/20 border-2 border-white overflow-hidden">
-                  <Image
-                    className="rounded-full"
-                    src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/6620e0830701a7bceb0c7204_Screenshot%202024-04-18%20163444.webp"
-                    alt=""
-                    width={40}
-                    height={40}
-                  />
-                </div>
-                <div className="w-10 h-10 rounded-full bg-white/20 border-2 border-white overflow-hidden">
-                  <Image
-                    className="rounded-full"
-                    src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65f278d68ea311803c30e993_Screenshot%202024-03-14%20at%2012.10.54%20PM.webp"
-                    alt=""
-                    width={40}
-                    height={40}
-                  />
-                </div>
-                <div className="w-10 h-10 rounded-full bg-white/20 border-2 border-white overflow-hidden">
-                  <Image
-                    className="rounded-full"
-                    src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/6620dd4162fa73292402d873_Screenshot%202024-04-18%20163707.webp"
-                    alt=""
-                    width={40}
-                    height={40}
-                  />
-                </div>
-                <div className="w-10 h-10 rounded-full bg-white/20 border-2 border-white overflow-hidden">
-                  <Image
-                    className="rounded-full"
-                    src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65f2786b8a3bd7f56bb2ac99_Screenshot%202024-03-14%20at%2012.09.05%20PM.webp"
-                    alt=""
-                    width={40}
-                    height={40}
-                  />
-                </div>
+                {["/avatars/avatar_01.jpg", "/avatars/avatar_02.jpg", "/avatars/avatar_03.jpg", "/avatars/avatar_04.jpg"].map((src, i) => (
+                  <div key={i} className="w-10 h-10 rounded-full bg-white/20 border-2 border-white overflow-hidden">
+                    <Image
+                      className="w-full h-full object-cover object-top scale-[1.5] origin-top"
+                      src={src}
+                      alt=""
+                      width={40}
+                      height={40}
+                    />
+                  </div>
+                ))}
               </div>
               <p className="text-blue-100 text-base font-medium">
                 <span className="font-bold text-white">20,000+</span> students since 2019
