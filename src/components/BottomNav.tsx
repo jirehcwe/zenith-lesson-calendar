@@ -1,6 +1,6 @@
 "use client";
 
-import { ViewType } from "@/types";
+type ViewType = "calendar" | "list";
 
 interface BottomNavProps {
   currentView: ViewType;

@@ -2,7 +2,7 @@
 
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
-import { ViewType } from "@/types";
+type ViewType = "calendar" | "list";
 
 type OptionWithCount = {
   value: string;

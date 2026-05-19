@@ -7,7 +7,7 @@ import WeeklyClassCalendar, {
   WeeklyClassSlot,
 } from "@/components/WeeklyClassCalendar";
 import ListView from "@/components/ListView";
-import { ViewType } from "@/types";
+type ViewType = "calendar" | "list";
 import BottomNav from "@/components/BottomNav";
 import TestimonialCarousel from "@/components/TestimonialCarousel";
 import TestimonialGrid from "@/components/TestimonialGrid";
