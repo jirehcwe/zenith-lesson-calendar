@@ -332,17 +332,17 @@ export default function Filters({
               </button>
             ))}
 
-            {/* Desktop: inline in the tag flow */}
+            {/* iPad + desktop: inline immediately after last chip */}
             <button
               onClick={() => onFilterChange({ subject: [], centre: [], tutor: [], level: [], stream: null })}
-              className="hidden sm:inline text-xs text-gray-400 hover:text-red-500 font-medium ml-1 transition-colors underline"
+              className="max-sm:hidden text-xs text-gray-400 hover:text-red-500 font-medium ml-1 transition-colors underline"
             >
               Clear all
             </button>
           </div>
 
-          {/* Mobile: own row, pinned to the right, always below tags */}
-          <div className="flex justify-end mt-1.5 sm:hidden">
+          {/* Mobile only: own row, pinned right */}
+          <div className="hidden max-sm:flex justify-end mt-1.5">
             <button
               onClick={() => onFilterChange({ subject: [], centre: [], tutor: [], level: [], stream: null })}
               className="text-sm text-gray-400 hover:text-red-500 font-medium transition-colors underline"

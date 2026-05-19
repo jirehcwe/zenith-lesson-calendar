@@ -34,7 +34,6 @@ export default function SignupBanner() {
       <div className={`max-w-7xl mx-auto px-4 lg:py-10 ${isCollapsed ? 'py-1 sm:py-1' : 'py-8 sm:py-10'}`}>
         {/* Mobile Layout - Stacked */}
         <div className="lg:hidden relative">
-          {/* Collapsed State - Mobile Only */}
           {isCollapsed ? (
             <button
               onClick={toggleCollapse}
@@ -63,7 +62,6 @@ export default function SignupBanner() {
             </button>
           ) : (
             <div className="flex flex-col gap-4 relative">
-              {/* Collapse Button */}
               <button
                 onClick={toggleCollapse}
                 className="absolute top-0 left-0 z-20 text-white hover:text-blue-100 transition-colors p-2 bg-white/10 rounded-lg"
@@ -83,91 +81,85 @@ export default function SignupBanner() {
                   />
                 </svg>
               </button>
-          {/* Logo prominently centered at top */}
-          <div className="flex justify-center pt-6">
-            <Image
-              src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65e1a2a65798fb58f1336fe6_education-2.png.webp"
-              alt="Zenith Education Logo"
-              width={100}
-              height={100}
-              className="object-contain"
-            />
-          </div>
 
-          {/* Banner Image */}
-          <div className="flex justify-center">
-            <div className="relative">
-              <Image
-                src="/zenith-banner.webp"
-                alt="Zenith Education"
-                width={245}
-                height={210}
-                className="rounded-xl opacity-90"
-                priority
-              />
-            </div>
-          </div>
-
-          {/* Eyebrow pill */}
-          <div className="flex justify-center">
-            {eyebrowPill}
-          </div>
-
-          {/* Title Section */}
-          <div className="text-center">
-            <h1 className="text-2xl sm:text-3xl font-extrabold leading-tight text-white">
-              Browse every class.{" "}
-              <span className="text-yellow-300 font-black">Find Your Perfect Class Schedule.</span>
-            </h1>
-            <p className="text-sm sm:text-base text-blue-100 font-medium mt-2 leading-relaxed">
-              Filter by stream, level, and centre to find the right fit — then book a complimentary trial or register directly.
-            </p>
-          </div>
-
-          {/* Student Testimonials */}
-          <div className="flex items-center justify-center gap-3">
-            <div className="flex avatar-stack">
-              <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/20 border-2 border-white overflow-hidden">
+              <div className="flex justify-center pt-6">
                 <Image
-                  className="rounded-full"
-                  src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/6620e0830701a7bceb0c7204_Screenshot%202024-04-18%20163444.webp"
-                  alt=""
-                  width={36}
-                  height={36}
+                  src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65e1a2a65798fb58f1336fe6_education-2.png.webp"
+                  alt="Zenith Education Logo"
+                  width={100}
+                  height={100}
+                  className="object-contain"
                 />
               </div>
-              <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/20 border-2 border-white overflow-hidden">
+
+              <div className="flex justify-center">
                 <Image
-                  className="rounded-full"
-                  src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65f278d68ea311803c30e993_Screenshot%202024-03-14%20at%2012.10.54%20PM.webp"
-                  alt=""
-                  width={36}
-                  height={36}
+                  src="/zenith-banner.webp"
+                  alt="Zenith Education"
+                  width={245}
+                  height={210}
+                  className="rounded-xl opacity-90"
+                  priority
                 />
               </div>
-              <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/20 border-2 border-white overflow-hidden">
-                <Image
-                  className="rounded-full"
-                  src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/6620dd4162fa73292402d873_Screenshot%202024-04-18%20163707.webp"
-                  alt=""
-                  width={36}
-                  height={36}
-                />
+
+              <div className="flex justify-center">
+                {eyebrowPill}
               </div>
-              <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/20 border-2 border-white overflow-hidden">
-                <Image
-                  className="rounded-full"
-                  src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65f2786b8a3bd7f56bb2ac99_Screenshot%202024-03-14%20at%2012.09.05%20PM.webp"
-                  alt=""
-                  width={36}
-                  height={36}
-                />
+
+              <div className="text-center">
+                <h1 className="text-2xl sm:text-3xl font-extrabold leading-tight text-white">
+                  Browse every class.{" "}
+                  <span className="text-yellow-300 font-black">Find Your Perfect Class Schedule.</span>
+                </h1>
+                <p className="text-sm sm:text-base text-blue-100 font-medium mt-2 leading-relaxed">
+                  Filter by stream, level, and centre to find the right fit — then book a complimentary trial or register directly.
+                </p>
               </div>
-            </div>
-            <p className="text-blue-100 text-xs sm:text-sm font-medium">
-              <span className="font-bold text-white">20,000+</span> students since 2019
-            </p>
-          </div>
+
+              <div className="flex items-center justify-center gap-3">
+                <div className="flex avatar-stack">
+                  <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/20 border-2 border-white overflow-hidden">
+                    <Image
+                      className="rounded-full"
+                      src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/6620e0830701a7bceb0c7204_Screenshot%202024-04-18%20163444.webp"
+                      alt=""
+                      width={36}
+                      height={36}
+                    />
+                  </div>
+                  <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/20 border-2 border-white overflow-hidden">
+                    <Image
+                      className="rounded-full"
+                      src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65f278d68ea311803c30e993_Screenshot%202024-03-14%20at%2012.10.54%20PM.webp"
+                      alt=""
+                      width={36}
+                      height={36}
+                    />
+                  </div>
+                  <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/20 border-2 border-white overflow-hidden">
+                    <Image
+                      className="rounded-full"
+                      src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/6620dd4162fa73292402d873_Screenshot%202024-04-18%20163707.webp"
+                      alt=""
+                      width={36}
+                      height={36}
+                    />
+                  </div>
+                  <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/20 border-2 border-white overflow-hidden">
+                    <Image
+                      className="rounded-full"
+                      src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65f2786b8a3bd7f56bb2ac99_Screenshot%202024-03-14%20at%2012.09.05%20PM.webp"
+                      alt=""
+                      width={36}
+                      height={36}
+                    />
+                  </div>
+                </div>
+                <p className="text-blue-100 text-xs sm:text-sm font-medium">
+                  <span className="font-bold text-white">20,000+</span> students since 2019
+                </p>
+              </div>
             </div>
           )}
         </div>
@@ -176,16 +168,13 @@ export default function SignupBanner() {
         <div className="hidden lg:flex items-center gap-9">
           {/* Left - Text Content */}
           <div className="flex-1 text-white flex flex-col gap-4">
-            {/* Logo above eyebrow pill, left-aligned */}
-            <div className="flex">
-              <Image
-                src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65e1a2a65798fb58f1336fe6_education-2.png.webp"
-                alt="Zenith Education Logo"
-                width={100}
-                height={100}
-                className="object-contain"
-              />
-            </div>
+            <Image
+              src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65e1a2a65798fb58f1336fe6_education-2.png.webp"
+              alt="Zenith Education Logo"
+              width={100}
+              height={100}
+              className="object-contain"
+            />
             <div className="flex flex-col gap-3">
               {eyebrowPill}
               <h1 className="text-3xl xl:text-4xl font-extrabold leading-tight">
