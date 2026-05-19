@@ -84,10 +84,10 @@ export default function SignupBanner() {
 
               <div className="flex justify-center pt-6">
                 <Image
-                  src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65e1a2a65798fb58f1336fe6_education-2.png.webp"
+                  src="/zenith_logo.png"
                   alt="Zenith Education Logo"
-                  width={100}
-                  height={100}
+                  width={225}
+                  height={63}
                   className="object-contain"
                 />
               </div>
@@ -169,10 +169,10 @@ export default function SignupBanner() {
           {/* Left - Text Content */}
           <div className="flex-1 text-white flex flex-col gap-4">
             <Image
-              src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65e1a2a65798fb58f1336fe6_education-2.png.webp"
+              src="/zenith_logo.png"
               alt="Zenith Education Logo"
-              width={100}
-              height={100}
+              width={306}
+              height={85}
               className="object-contain"
             />
             <div className="flex flex-col gap-3">
