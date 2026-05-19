@@ -334,6 +334,26 @@ export default function WeeklyClassCalendar({
           font-size: 11px !important;
           color: #94a3b8 !important;
         }
+        @media (max-width: 1023px) {
+          :global(.fc-scrollgrid-section-header td) {
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 20 !important;
+            background: #F9FAFB !important;
+          }
+          :global(.fc-timegrid-slot-label) {
+            position: sticky !important;
+            left: 0 !important;
+            z-index: 5 !important;
+            background: white !important;
+          }
+          :global(.fc-timegrid-axis) {
+            position: sticky !important;
+            left: 0 !important;
+            z-index: 25 !important;
+            background: #F9FAFB !important;
+          }
+        }
       `}</style>
 
       {!isProTipDismissed && (
@@ -369,10 +389,11 @@ export default function WeeklyClassCalendar({
       )}
 
       <div className="relative">
-        {scrollShadows.left  && <div className="lg:hidden pointer-events-none absolute inset-y-0 left-0  w-6 z-10 rounded-l-xl" style={{ background: "linear-gradient(to right, rgba(0,0,0,0.15), transparent)" }} />}
-        {scrollShadows.right && <div className="lg:hidden pointer-events-none absolute inset-y-0 right-0 w-6 z-10 rounded-r-xl" style={{ background: "linear-gradient(to left,  rgba(0,0,0,0.15), transparent)" }} />}
-      <div ref={scrollContainerRef} className="overflow-x-auto rounded-xl border border-slate-200" style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
-        <div className="min-w-[720px]">
+        <div className="relative">
+          {scrollShadows.left  && <div className="lg:hidden pointer-events-none absolute inset-y-0 left-0  w-6 z-10 rounded-l-xl" style={{ background: "linear-gradient(to right, rgba(0,0,0,0.15), transparent)" }} />}
+          {scrollShadows.right && <div className="lg:hidden pointer-events-none absolute inset-y-0 right-0 w-6 z-10 rounded-r-xl" style={{ background: "linear-gradient(to left,  rgba(0,0,0,0.15), transparent)" }} />}
+          <div ref={scrollContainerRef} className="overflow-x-auto rounded-t-xl border border-b-0 border-slate-200" style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.06)", overflowY: "clip" }}>
+            <div className="min-w-[720px]">
         <FullCalendar
           ref={calendarRef}
           plugins={[timeGridPlugin]}
@@ -474,7 +495,10 @@ export default function WeeklyClassCalendar({
           firstDay={1}
           weekends={true}
         />
-        <div className="flex flex-wrap gap-x-4 gap-y-2 px-3 py-2.5 border-t border-slate-200 bg-gray-50">
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-x-4 gap-y-2 px-3 py-2.5 border-x border-b border-slate-200 bg-gray-50 rounded-b-xl">
           {legendItems.map(({ label, color, tint }) => (
             <div key={label} style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "11px", color, fontFamily: "var(--font-manrope), 'Manrope', sans-serif", fontWeight: 600 }}>
               <span style={{ display: "inline-block", width: "12px", height: "12px", background: tint, borderLeft: `2px solid ${color}`, borderRadius: "2px", flexShrink: 0 }} />
@@ -482,8 +506,6 @@ export default function WeeklyClassCalendar({
             </div>
           ))}
         </div>
-        </div>
-      </div>
 
       {/* Empty-state overlay — shown when no filters are selected */}
       {slots.length === 0 && !hasActiveFilters && (

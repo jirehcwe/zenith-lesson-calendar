@@ -110,10 +110,10 @@ export default function SignupBanner() {
               <div className="text-center">
                 <h1 className="text-2xl sm:text-3xl font-extrabold leading-tight text-white">
                   Browse every class.{" "}
-                  <span className="text-yellow-300 font-black">Find Your Perfect Class Schedule.</span>
+                  <span className="font-black" style={{ color: "#f4ab25" }}>Find Your Perfect Class Schedule.</span>
                 </h1>
                 <p className="text-sm sm:text-base text-blue-100 font-medium mt-2 leading-relaxed">
-                  Filter by stream, level, and centre to find the right fit — then book a complimentary trial or register directly.
+                  Filter by stream, level, and centre to find the right fit — then book a FREE trial or register directly.
                 </p>
               </div>
 
@@ -179,10 +179,10 @@ export default function SignupBanner() {
               {eyebrowPill}
               <h1 className="text-3xl xl:text-4xl font-extrabold leading-tight">
                 Browse every class.{" "}
-                <span className="text-yellow-300 font-black">Find Your Perfect Class Schedule.</span>
+                <span className="font-black" style={{ color: "#f4ab25" }}>Find Your Perfect Class Schedule.</span>
               </h1>
               <p className="text-base text-blue-100 font-medium leading-relaxed">
-                Filter by stream, level, and centre to find the right fit — then book a complimentary trial or register directly.
+                Filter by stream, level, and centre to find the right fit — then book a FREE trial or register directly.
               </p>
             </div>
 
