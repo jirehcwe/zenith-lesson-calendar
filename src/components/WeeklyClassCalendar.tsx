@@ -177,6 +177,22 @@ export default function WeeklyClassCalendar({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isProTipDismissed, setIsProTipDismissed] = useState(false);
   const calendarRef = useRef<FullCalendar>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [scrollShadows, setScrollShadows] = useState({ left: false, right: false });
+
+  useEffect(() => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const update = () => setScrollShadows({
+      left: el.scrollLeft > 0,
+      right: el.scrollLeft < el.scrollWidth - el.clientWidth - 1,
+    });
+    update();
+    el.addEventListener("scroll", update, { passive: true });
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => { el.removeEventListener("scroll", update); ro.disconnect(); };
+  }, []);
 
   useEffect(() => {
     const stored = localStorage.getItem(PRO_TIP_STORAGE_KEY);
@@ -322,7 +338,7 @@ export default function WeeklyClassCalendar({
 
       {!isProTipDismissed && (
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 flex items-center gap-3 relative">
-          <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+          <div className="flex-shrink-0 w-6 h-10 bg-blue-100 rounded-full flex items-center justify-center">
             <span className="text-xl">💡</span>
           </div>
           <div className="text-sm text-gray-700 flex-1">
@@ -353,7 +369,9 @@ export default function WeeklyClassCalendar({
       )}
 
       <div className="relative">
-      <div className="overflow-x-auto rounded-xl border border-slate-200" style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+        {scrollShadows.left  && <div className="lg:hidden pointer-events-none absolute inset-y-0 left-0  w-6 z-10 rounded-l-xl" style={{ background: "linear-gradient(to right, rgba(0,0,0,0.15), transparent)" }} />}
+        {scrollShadows.right && <div className="lg:hidden pointer-events-none absolute inset-y-0 right-0 w-6 z-10 rounded-r-xl" style={{ background: "linear-gradient(to left,  rgba(0,0,0,0.15), transparent)" }} />}
+      <div ref={scrollContainerRef} className="overflow-x-auto rounded-xl border border-slate-200" style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
         <div className="min-w-[720px]">
         <FullCalendar
           ref={calendarRef}
@@ -471,7 +489,7 @@ export default function WeeklyClassCalendar({
       {slots.length === 0 && !hasActiveFilters && (
         <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
           <div className="text-center px-6 pointer-events-auto">
-            <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-blue-50 flex items-center justify-center">
+            <div className="w-6 h-12 mx-auto mb-3 rounded-full bg-blue-50 flex items-center justify-center">
               <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
               </svg>
