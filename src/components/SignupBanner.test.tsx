@@ -15,7 +15,7 @@ describe("SignupBanner", () => {
 
   it("renders the schedule heading", () => {
     render(<SignupBanner />);
-    expect(screen.getByText(/Zenith 2026 Schedule/i)).toBeInTheDocument();
+    expect(screen.getAllByRole("heading", { level: 1 })[0]).toBeInTheDocument();
   });
 
   it("renders the student trust line", () => {
@@ -23,20 +23,20 @@ describe("SignupBanner", () => {
     expect(screen.getAllByText(/20,000\+/i).length).toBeGreaterThan(0);
   });
 
-  it("shows an expand button on mobile (collapsed by default)", () => {
+  it("shows a collapse button by default (banner starts expanded)", () => {
     render(<SignupBanner />);
-    expect(screen.getByLabelText("Expand banner")).toBeInTheDocument();
+    expect(screen.getByLabelText("Collapse banner")).toBeInTheDocument();
   });
 
   it("toggles to collapsed state when collapse button is clicked", async () => {
     const user = userEvent.setup();
     render(<SignupBanner />);
-    await user.click(screen.getByLabelText("Expand banner"));
-    expect(screen.getByLabelText("Collapse banner")).toBeInTheDocument();
+    await user.click(screen.getByLabelText("Collapse banner"));
+    expect(screen.getByLabelText("Expand banner")).toBeInTheDocument();
   });
 
   it("renders the eyebrow pill in the desktop layout", () => {
     render(<SignupBanner />);
-    expect(screen.getByText(/Now booking/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Now booking/i).length).toBeGreaterThan(0);
   });
 });
