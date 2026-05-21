@@ -341,17 +341,17 @@ export default function WeeklyClassCalendar({
             z-index: 20 !important;
             background: #F9FAFB !important;
           }
-          :global(.fc-timegrid-slot-label) {
-            position: sticky !important;
-            left: 0 !important;
-            z-index: 5 !important;
-            background: white !important;
-          }
           :global(.fc-timegrid-axis) {
             position: sticky !important;
             left: 0 !important;
             z-index: 25 !important;
             background: #F9FAFB !important;
+          }
+          :global(.fc-scrollgrid-section > td:first-child) {
+            position: sticky !important;
+            left: 0 !important;
+            z-index: 10 !important;
+            background: white !important;
           }
         }
       `}</style>
