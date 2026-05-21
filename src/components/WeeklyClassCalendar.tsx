@@ -335,22 +335,10 @@ export default function WeeklyClassCalendar({
           color: #94a3b8 !important;
         }
         @media (max-width: 1023px) {
-          :global(.fc-scrollgrid-section-header td) {
+          :global(.fc-scrollgrid-section-header td:not(.fc-timegrid-axis)) {
             position: sticky !important;
             top: 0 !important;
             z-index: 20 !important;
-            background: #F9FAFB !important;
-          }
-          :global(.fc-timegrid-slot-label) {
-            position: sticky !important;
-            left: 0 !important;
-            z-index: 5 !important;
-            background: white !important;
-          }
-          :global(.fc-timegrid-axis) {
-            position: sticky !important;
-            left: 0 !important;
-            z-index: 25 !important;
             background: #F9FAFB !important;
           }
         }

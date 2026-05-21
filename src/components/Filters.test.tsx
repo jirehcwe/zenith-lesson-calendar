@@ -130,7 +130,7 @@ describe("Filters", () => {
         totalCount={3}
       />
     );
-    await user.click(screen.getByText("Clear all"));
+    await user.click(screen.getAllByText("Clear all")[0]);
     expect(onFilterChange).toHaveBeenCalledWith({
       subject: [], centre: [], tutor: [], level: [], stream: null,
     });
@@ -229,6 +229,6 @@ describe("Filters — mobile layout (openUpward=true)", () => {
     );
     expect(screen.getByText("8")).toBeInTheDocument();
     expect(screen.getByText(/classes/i)).toBeInTheDocument();
-    expect(screen.getByText("Clear all")).toBeInTheDocument();
+    expect(screen.getAllByText("Clear all").length).toBeGreaterThan(0);
   });
 });

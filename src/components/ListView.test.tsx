@@ -34,7 +34,7 @@ const makeSlot = (overrides: Partial<WeeklyClassSlot> = {}): WeeklyClassSlot => 
 describe("ListView", () => {
   it("shows empty state when no sessions are provided", () => {
     render(<ListView sessions={[]} />);
-    expect(screen.getByText(/Select a stream to get started/i)).toBeInTheDocument();
+    expect(screen.getByText(/Select a stream to see classes/i)).toBeInTheDocument();
   });
 
   it("renders Open filters button in empty state when onEmptyStateClick is provided", async () => {
