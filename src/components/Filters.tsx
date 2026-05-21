@@ -69,12 +69,8 @@ function MultiSelect({
 
   useEffect(() => {
     if (label !== "Level") return;
-    console.log("[Filters] triggerOpen changed:", triggerOpen);
     if (triggerOpen) {
-      const btn = dropdownRef.current?.querySelector<HTMLButtonElement>("button");
-      console.log("[Filters] btn found:", !!btn, "disabled:", btn?.disabled);
       setForcedOpen(true);
-      console.log("[Filters] forcedOpen set true");
       setIsHighlighted(true);
       setTimeout(() => setIsHighlighted(false), 1800);
     }
@@ -111,7 +107,6 @@ function MultiSelect({
       )}
       <Listbox value={selected} onChange={onChange} multiple disabled={disabled}>
         {({ open }) => {
-          if (label === "Level") console.log("[Filters] Level open:", open, "forcedOpen:", forcedOpen);
           const visible = open || forcedOpen;
           return (
             <div className={compact ? "" : "relative mt-1"}>
@@ -129,7 +124,7 @@ function MultiSelect({
                 }`}
                 disabled={disabled}
                 title={selected.length > 0 ? selected.join(", ") : undefined}
-                onMouseDown={(e) => { if (label === "Level") console.log("[Filters] Level btn mousedown, isTrusted:", e.nativeEvent.isTrusted, "forcedOpen:", forcedOpen); if (forcedOpen) setForcedOpen(false); recalcHeight(); }}
+                onMouseDown={() => { if (forcedOpen) setForcedOpen(false); recalcHeight(); }}
               >
                 <span className={`truncate flex-1 ${selected.length > 0 ? "text-gray-800" : "text-gray-400"}`}>
                   {displayText}
