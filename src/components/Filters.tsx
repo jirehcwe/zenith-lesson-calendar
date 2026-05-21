@@ -64,16 +64,26 @@ function MultiSelect({
 }) {
   const [filterDropdownMaxHeight, setFilterDropdownMaxHeight] = useState<string>("320px");
   const [isHighlighted, setIsHighlighted] = useState(false);
+  const [forcedOpen, setForcedOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (label !== "Level") return;
     if (triggerOpen) {
-      const btn = dropdownRef.current?.querySelector<HTMLButtonElement>("button");
-      btn?.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, cancelable: true, button: 0 }));
+      setForcedOpen(true);
       setIsHighlighted(true);
       setTimeout(() => setIsHighlighted(false), 1800);
     }
-  }, [triggerOpen]);
+  }, [triggerOpen, label]);
+
+  useEffect(() => {
+    if (!forcedOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (!dropdownRef.current?.contains(e.target as Node)) setForcedOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [forcedOpen]);
 
   const displayText =
     selected.length > 0
@@ -97,6 +107,7 @@ function MultiSelect({
       )}
       <Listbox value={selected} onChange={onChange} multiple disabled={disabled}>
         {({ open }) => {
+          const visible = open || forcedOpen;
           return (
             <div className={compact ? "" : "relative mt-1"}>
               <Listbox.Button
@@ -113,7 +124,7 @@ function MultiSelect({
                 }`}
                 disabled={disabled}
                 title={selected.length > 0 ? selected.join(", ") : undefined}
-                onMouseDown={recalcHeight}
+                onMouseDown={() => { if (forcedOpen) setForcedOpen(false); recalcHeight(); }}
               >
                 <span className={`truncate flex-1 ${selected.length > 0 ? "text-gray-800" : "text-gray-400"}`}>
                   {displayText}
@@ -132,7 +143,7 @@ function MultiSelect({
                 ) : (
                   <svg
                     className={`w-3.5 h-3.5 text-gray-400 flex-shrink-0 transition-transform duration-200 ${
-                      openUpward ? (open ? "rotate-180" : "rotate-0") : (open ? "rotate-0" : "rotate-180")
+                      openUpward ? (visible ? "rotate-180" : "rotate-0") : (visible ? "rotate-0" : "rotate-180")
                     }`}
                     fill="none" stroke="currentColor" viewBox="0 0 24 24"
                   >
@@ -140,8 +151,9 @@ function MultiSelect({
                   </svg>
                 )}
               </Listbox.Button>
-              <Transition as={Fragment}>
+              <Transition as={Fragment} show={visible}>
                 <Listbox.Options
+                  static
                   style={{ maxHeight: filterDropdownMaxHeight }}
                   className={`absolute z-50 w-full min-w-[160px] rounded-xl bg-white border border-gray-200 shadow-xl list-none overflow-y-auto focus:outline-none text-sm ${
                     openUpward ? "bottom-full mb-2" : "mt-2"
@@ -149,10 +161,11 @@ function MultiSelect({
                 >
                   {options.map((option) => (
                     <Listbox.Option key={option.value} value={option.value} as={Fragment} disabled={option.count === 0}>
-                      {({ active }) => (
+                      {({ active }: { active: boolean }) => (
                         <li
                           onClick={(e) => {
                             if (option.count === 0 || disabled) { e.preventDefault(); e.stopPropagation(); return; }
+                            if (forcedOpen) setForcedOpen(false);
                             onChange(
                               selected.includes(option.value)
                                 ? selected.filter((s) => s !== option.value)
