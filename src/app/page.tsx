@@ -7,7 +7,7 @@ import WeeklyClassCalendar, {
   WeeklyClassSlot,
 } from "@/components/WeeklyClassCalendar";
 import ListView from "@/components/ListView";
-import ViewSelector, { ViewType } from "@/components/ViewSelector";
+type ViewType = "calendar" | "list";
 import BottomNav from "@/components/BottomNav";
 import TestimonialCarousel from "@/components/TestimonialCarousel";
 import TestimonialGrid from "@/components/TestimonialGrid";
@@ -17,9 +17,9 @@ const CACHE_KEY = "weeklyClassData";
 const CACHE_TIME_KEY = "weeklyClassDataTimestamp";
 const CACHE_VERSION_KEY = "weeklyClassDataVersion";
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in ms
+const FILTERS_COLLAPSED_STORAGE_KEY = "filtersCollapsed";
 // Increment this version when the API changes to force all clients to invalidate cache
 const CACHE_VERSION = 3;
-const FILTERS_COLLAPSED_STORAGE_KEY = "filtersCollapsed";
 
 // Collapse db-schedule-updater's venue granularity back into the flat labels
 // the calendar has always used: "Zoom" → "Online", and strip any parenthetical
@@ -100,7 +100,13 @@ export default function Page() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentView, setCurrentView] = useState<ViewType>("calendar");
   const [campaignParam, setCampaignParam] = useState<string>("");
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
+  const [levelDropdownOpen, setLevelDropdownOpen] = useState(false);
   const [filtersCollapsed, setFiltersCollapsed] = useState(false);
+  // Use screen dimensions (orientation-independent) to detect phones vs tablets/desktops.
+  // window.innerWidth changes with orientation; screen.width/height does not.
+  // Smallest iPad short side is 768px; largest phone short side is ~430px.
+  const [isMobilePhone, setIsMobilePhone] = useState(false);
   const [filters, setFilters] = useState({
     subject: [] as string[],
     centre: [] as string[],
@@ -108,6 +114,14 @@ export default function Page() {
     level: [] as string[],
     stream: null as string | null,
   });
+
+  useEffect(() => {
+    const check = () =>
+      setIsMobilePhone(Math.min(window.screen.width, window.screen.height) < 640);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   // Effect to read filters and view from URL on component mount
   useEffect(() => {
@@ -125,12 +139,6 @@ export default function Page() {
     const viewParam = params.get("view") as ViewType;
     if (viewParam === "list" || viewParam === "calendar") {
       setCurrentView(viewParam);
-    }
-
-    // Read filters collapsed state
-    const stored = localStorage.getItem(FILTERS_COLLAPSED_STORAGE_KEY);
-    if (stored === "true") {
-      setFiltersCollapsed(true);
     }
 
     // Set campaign parameter
@@ -208,6 +216,11 @@ export default function Page() {
     window.history.replaceState({}, "", newUrl);
   }, [currentView]);
 
+  useEffect(() => {
+    localStorage.setItem(FILTERS_COLLAPSED_STORAGE_KEY, filtersCollapsed.toString());
+  }, [filtersCollapsed]);
+
+
   // Compute filtered options for progressive disclosure with counts
   const filteredOptions = useMemo(() => {
     // Base data filtered by stream only
@@ -252,31 +265,18 @@ export default function Page() {
 
     // Create options with counts and sort them
     const levelsWithCounts = allLevels
-      .map((level, index) => ({
+      .map((level) => ({
         value: level,
         count: getResultCount("level", level),
         selected: filters.level.includes(level),
-        originalIndex: index,
       }))
-      .sort((a, b) => {
-        // Only push zero-count options to the bottom, preserve original order otherwise
-        // if (a.count === 0 && b.count > 0) return 1;
-        // if (a.count > 0 && b.count === 0) return -1;
-        // if (a.count === 0 && b.count === 0)
-        //   return a.value.localeCompare(b.value);
-        // // For non-zero counts, preserve original order
-        // return a.originalIndex - b.originalIndex;
-
-        // Sort reverse alphabetically by name
-        return b.value.localeCompare(a.value);
-      });
+      .sort((a, b) => b.value.localeCompare(a.value));
 
     const subjectsWithCounts = allSubjects
-      .map((subject, index) => ({
+      .map((subject) => ({
         value: subject,
         count: getResultCount("subject", subject),
         selected: filters.subject.includes(subject),
-        originalIndex: index,
       }))
       .sort((a, b) => {
         // Only push zero-count options to the bottom, preserve original order otherwise
@@ -287,11 +287,10 @@ export default function Page() {
       });
 
     const centresWithCounts = allCentres
-      .map((centre, index) => ({
+      .map((centre) => ({
         value: centre,
         count: getResultCount("centre", centre),
         selected: filters.centre.includes(centre),
-        originalIndex: index,
       }))
       .sort((a, b) => {
         // Only push zero-count options to the bottom, preserve original order otherwise
@@ -302,11 +301,10 @@ export default function Page() {
       });
 
     const tutorsWithCounts = allTutors
-      .map((tutor, index) => ({
+      .map((tutor) => ({
         value: tutor,
         count: getResultCount("tutor", tutor),
         selected: filters.tutor.includes(tutor),
-        originalIndex: index,
       }))
       .sort((a, b) => {
         // Only push zero-count options to the bottom, preserve original order otherwise
@@ -324,8 +322,17 @@ export default function Page() {
     };
   }, [weeklyClassData, filters]);
 
+  const STREAM_VALUES = ["JC", "Secondary (Express)", "Secondary (IP)", "Primary"] as const;
+
+  const streamOptions = useMemo(() =>
+    STREAM_VALUES.map((stream) => ({
+      value: stream,
+      count: weeklyClassData.filter((s) => levelToFilterMapper(stream, s.level, s.stream)).length,
+      selected: filters.stream === stream,
+    })),
+  [weeklyClassData, filters.stream]);
+
   const events = useMemo(() => {
-    // If no filters are applied, return empty array
     if (
       filters.stream === null &&
       filters.level.length === 0 &&
@@ -343,11 +350,7 @@ export default function Page() {
         (filters.centre.length === 0 || filters.centre.includes(s.centre))
       );
     });
-
-    // Map to event structure
-    return filtered.map((s) => ({
-      ...s,
-    }));
+    return filtered.map((s) => ({ ...s }));
   }, [weeklyClassData, filters]);
 
   // Clear dependent filters when parent filter changes
@@ -369,19 +372,99 @@ export default function Page() {
     setFilters(newFilters);
   };
 
-  const toggleFiltersCollapse = () => {
-    const newState = !filtersCollapsed;
-    setFiltersCollapsed(newState);
-    localStorage.setItem(FILTERS_COLLAPSED_STORAGE_KEY, newState.toString());
-  };
+  const hasActiveFilters =
+    filters.stream !== null ||
+    filters.level.length > 0 ||
+    filters.subject.length > 0 ||
+    filters.centre.length > 0;
 
   return (
     <div className="min-h-screen bg-gray-50">
       <SignupBanner />
-      <div className="max-w-7xl mx-auto px-2 pb-safe">
-        <div className="space-y-2 sm:space-y-2">
+      {!isLoading && !isMobilePhone && (
+        <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 py-2 md:px-8 md:py-4">
+            {filtersCollapsed ? (
+              <div className="flex justify-end py-0.5">
+                <button
+                  onClick={() => setFiltersCollapsed(false)}
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 text-sm font-semibold text-gray-600 hover:text-gray-800 rounded-xl hover:bg-gray-50 border border-gray-200 transition-all duration-200"
+                  aria-label="Show filters"
+                >
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                  Filters
+                  {hasActiveFilters && (
+                    <span className="bg-blue-600 text-white text-[10px] font-bold px-1.5 py-px rounded-full tabular-nums">
+                      {[filters.stream, ...filters.level, ...filters.subject, ...filters.centre].filter(Boolean).length}
+                    </span>
+                  )}
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-stretch gap-3">
+                <div className="flex-1 min-w-0">
+                  <Filters
+                    streams={streamOptions}
+                    levels={filteredOptions.levels}
+                    subjects={filteredOptions.subjects}
+                    centres={filteredOptions.centres}
+                    tutors={filteredOptions.tutors}
+                    filters={filters}
+                    onFilterChange={handleFilterChange}
+                    currentView={currentView}
+                    onViewChange={setCurrentView}
+                    totalCount={events.length}
+                    showViewToggle={false}
+                    triggerLevelOpen={levelDropdownOpen}
+                  />
+                </div>
+                <div className="flex-shrink-0 flex flex-col justify-between items-end gap-2">
+                  <div className="flex bg-white border border-gray-200 rounded-xl p-0.5 gap-0.5">
+                    <button
+                      onClick={() => setCurrentView("calendar")}
+                      className={`px-3.5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 flex items-center gap-1.5 ${
+                        currentView === "calendar" ? "bg-blue-50 text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                      }`}
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      Calendar
+                    </button>
+                    <button
+                      onClick={() => setCurrentView("list")}
+                      className={`px-3.5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 flex items-center gap-1.5 ${
+                        currentView === "list" ? "bg-blue-50 text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                      }`}
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                      </svg>
+                      List
+                    </button>
+                  </div>
+                  <button
+                    onClick={() => setFiltersCollapsed(true)}
+                    className="flex items-center gap-1.5 px-3.5 py-1.5 text-sm font-semibold text-gray-500 hover:text-gray-700 rounded-xl hover:bg-gray-50 border border-gray-200 transition-all duration-200"
+                    aria-label="Hide filters"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                    </svg>
+                    Hide
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      <div className="max-w-7xl mx-auto px-4 md:px-8 pt-2 md:pt-4 pb-safe">
+        <div className="flex flex-col gap-2">
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-12 sm:py-24 space-y-4 sm:space-y-6">
+            <div className="flex flex-col items-center justify-center py-12 sm:py-24 gap-4">
               <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600"></div>
               <div className="text-center">
                 <p className="text-xl font-semibold text-gray-700">
@@ -394,89 +477,34 @@ export default function Page() {
             </div>
           ) : (
             <>
-              <ViewSelector currentView={currentView} onViewChange={setCurrentView} />
-
-               <div className="md:static sticky top-0 z-[60] bg-gray-50 rounded-b-xl shadow-lg md:shadow-none">
-                 <div className="max-w-7xl mx-auto px-2 p-2">
-                  {/* Collapsed state - mobile only */}
-                  {filtersCollapsed && (
-                    <button
-                      onClick={toggleFiltersCollapse}
-                      className="lg:hidden w-full flex items-center justify-between gap-2 py-1 text-right hover:bg-gray-100 transition-colors rounded"
-                      aria-label="Expand filters"
-                    >
-                      <h3 className="text-base sm:text-lg font-bold text-gray-800 flex-1 text-right">
-                        Show Filters
-                      </h3>
-                      <svg
-                        className="w-5 h-5 text-gray-600 flex-shrink-0"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
-                    </button>
-                  )}
-                  
-                  {/* Expanded state - always show on desktop, conditional on mobile */}
-                  <div className={filtersCollapsed ? "hidden lg:block" : ""}>
-                    <div className="hidden lg:flex items-center gap-2 mb-4 py-1">
-                      <h3 className="text-base sm:text-lg font-bold text-gray-800 flex-1">
-                        Filters
-                      </h3>
-                    </div>
-                    <Filters
-                      streams={[
-                        "JC",
-                        "Secondary (Express)",
-                        "Secondary (IP)",
-                        "Primary",
-                      ]}
-                      levels={filteredOptions.levels}
-                      subjects={filteredOptions.subjects}
-                      centres={filteredOptions.centres}
-                      tutors={filteredOptions.tutors}
-                      filters={filters}
-                      onFilterChange={handleFilterChange}
-                    />
-                    <button
-                      onClick={toggleFiltersCollapse}
-                      className="lg:hidden w-full flex items-center justify-end gap-2 mt-4 py-1 text-right hover:bg-gray-100 transition-colors rounded"
-                      aria-label="Collapse filters"
-                    >
-                      <h3 className="text-base sm:text-lg font-bold text-gray-800">
-                        Hide Filters
-                      </h3>
-                      <svg
-                        className="w-5 h-5 text-gray-600 flex-shrink-0"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 15l7-7 7 7"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
+              <div className={currentView !== "calendar" ? "hidden" : "modern-card -mx-2 p-0 overflow-hidden"}>
+                <WeeklyClassCalendar
+                  slots={events}
+                  isVisible={currentView === "calendar"}
+                  hasActiveFilters={hasActiveFilters}
+                  selectedStream={filters.stream}
+                  onEmptyStateClick={
+                    isMobilePhone
+                      ? () => setFilterSheetOpen(true)
+                      : () => {
+                          setLevelDropdownOpen(true);
+                          setTimeout(() => setLevelDropdownOpen(false), 50);
+                        }
+                  }
+                />
               </div>
-
-              <div className="modern-card p-3 sm:p-6">
-                {currentView === "calendar" ? (
-                  <WeeklyClassCalendar slots={events} filters={filters} />
-                ) : (
-                  <ListView sessions={events} />
-                )}
+              <div className={currentView !== "list" ? "hidden" : "modern-card p-3 sm:p-6"}>
+                <ListView
+                  sessions={events}
+                  onEmptyStateClick={
+                    isMobilePhone
+                      ? () => setFilterSheetOpen(true)
+                      : () => {
+                          setLevelDropdownOpen(true);
+                          setTimeout(() => setLevelDropdownOpen(false), 50);
+                        }
+                  }
+                />
               </div>
 
               {/* Terms and Conditions Footer */}
@@ -515,7 +543,54 @@ export default function Page() {
           )}
         </div>
       </div>
-      <BottomNav currentView={currentView} onViewChange={setCurrentView} />
+      {isMobilePhone && (
+        <BottomNav
+          currentView={currentView}
+          onViewChange={setCurrentView}
+          onOpenFilter={() => setFilterSheetOpen(true)}
+          hasActiveFilters={hasActiveFilters}
+        />
+      )}
+
+      {/* Mobile filter sheet */}
+      {filterSheetOpen && (
+        <div
+          className="fixed inset-0 z-50 md:hidden bg-black/40"
+          onClick={() => setFilterSheetOpen(false)}
+        >
+          <div
+            className="absolute inset-x-0 bottom-0 bg-white rounded-t-2xl shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-gray-100">
+              <h2 className="text-lg font-bold text-gray-800">Filters</h2>
+              <button
+                onClick={() => setFilterSheetOpen(false)}
+                className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
+                aria-label="Close filter sheet"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="px-5 py-5 pb-10">
+              <Filters
+                streams={streamOptions}
+                levels={filteredOptions.levels}
+                subjects={filteredOptions.subjects}
+                centres={filteredOptions.centres}
+                tutors={filteredOptions.tutors}
+                filters={filters}
+                onFilterChange={handleFilterChange}
+                currentView={currentView}
+                onViewChange={setCurrentView}
+                totalCount={events.length}
+                showViewToggle={false}
+                openUpward={true}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,7 +1,8 @@
 "use client";
 
-import { Fragment, useRef, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
+type ViewType = "calendar" | "list";
 
 type OptionWithCount = {
   value: string;
@@ -10,7 +11,7 @@ type OptionWithCount = {
 };
 
 type FiltersProps = {
-  streams: string[];
+  streams: OptionWithCount[];
   levels: OptionWithCount[];
   subjects: OptionWithCount[];
   centres: OptionWithCount[];
@@ -23,17 +24,23 @@ type FiltersProps = {
     stream: string | null;
   };
   onFilterChange: (filters: FiltersProps["filters"]) => void;
+  currentView: ViewType;
+  onViewChange: (view: ViewType) => void;
+  totalCount: number;
+  showViewToggle?: boolean;
+  openUpward?: boolean;
+  triggerLevelOpen?: boolean;
 };
 
-// Helper function to truncate text
 function truncateText(text: string, maxLength: number = 25): string {
   if (text.length <= maxLength) return text;
   return text.substring(0, maxLength) + "...";
 }
 
-// Helper function to format location display text
-function formatLocationDisplay(location: string): string {
-  return location;
+function streamLabel(stream: string): string {
+  if (stream === "Secondary (Express)") return "Sec Express";
+  if (stream === "Secondary (IP)") return "Sec IP";
+  return stream;
 }
 
 function MultiSelect({
@@ -42,108 +49,110 @@ function MultiSelect({
   options,
   onChange,
   disabled = false,
+  compact = false,
+  openUpward = false,
+  triggerOpen = false,
 }: {
   label: string;
   selected: string[];
   options: OptionWithCount[];
   onChange: (newSelected: string[]) => void;
   disabled?: boolean;
+  compact?: boolean;
+  openUpward?: boolean;
+  triggerOpen?: boolean;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
   const [filterDropdownMaxHeight, setFilterDropdownMaxHeight] = useState<string>("320px");
+  const [isHighlighted, setIsHighlighted] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const optionsRef = useRef<HTMLUListElement>(null);
+
+  useEffect(() => {
+    if (triggerOpen) {
+      const btn = dropdownRef.current?.querySelector<HTMLButtonElement>("button");
+      btn?.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, cancelable: true, button: 0 }));
+      setIsHighlighted(true);
+      setTimeout(() => setIsHighlighted(false), 1800);
+    }
+  }, [triggerOpen]);
 
   const displayText =
     selected.length > 0
-      ? selected
-          .map((s) => truncateText(formatLocationDisplay(s), 20))
-          .join(", ")
-      : `Select ${label}`;
+      ? selected.map((s) => truncateText(s, 20)).join(", ")
+      : label;
 
-  // Calculate max height based on available space from dropdown to bottom of screen
-  useEffect(() => {
-    if (isOpen && dropdownRef.current) {
-      const dropdown = dropdownRef.current;
-      const dropdownRect = dropdown.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-      
-      // Calculate available space from dropdown bottom to viewport bottom
-      // Leave some padding (e.g., 20px) for spacing
-      const availableHeight = viewportHeight - dropdownRect.bottom - 20;
-      
-      // Set max height to available space, with a minimum of 100px
-      const calculatedMaxHeight = Math.max(100, availableHeight);
-      setFilterDropdownMaxHeight(`${calculatedMaxHeight}px`);
+  const recalcHeight = () => {
+    if (dropdownRef.current) {
+      const rect = dropdownRef.current.getBoundingClientRect();
+      const available = openUpward
+        ? rect.top - 20
+        : window.innerHeight - rect.bottom - 20;
+      setFilterDropdownMaxHeight(`${Math.max(100, available)}px`);
     }
-  }, [isOpen]);
+  };
 
   return (
-    <div className="flex flex-col space-y-2" ref={dropdownRef}>
-      <label className="text-sm font-semibold text-gray-700">{label}</label>
-      <Listbox
-        value={selected}
-        onChange={onChange}
-        multiple
-        disabled={disabled}
-      >
+    <div className={compact ? "relative" : "flex flex-col gap-2"} ref={dropdownRef}>
+      {!compact && (
+        <label className="text-sm font-semibold text-gray-700">{label}</label>
+      )}
+      <Listbox value={selected} onChange={onChange} multiple disabled={disabled}>
         {({ open }) => {
-          // Track open state
-          if (open !== isOpen) {
-            setIsOpen(open);
-          }
-
           return (
-            <div className="relative mt-1">
+            <div className={compact ? "" : "relative mt-1"}>
               <Listbox.Button
-                className={`relative w-full cursor-default rounded-xl bg-white border-2 border-gray-200 p-3 text-left pr-10 transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-0 focus:border-gray-200 ${
+                className={`relative cursor-default rounded-xl text-left transition-all duration-200 focus:outline-none focus:ring-0 ${
+                  compact
+                    ? "flex items-center justify-between gap-2 pl-3.5 pr-2.5 py-2 text-sm min-w-[90px] max-w-[190px]"
+                    : "w-full flex items-center gap-2 p-3 pr-3"
+                } ${
                   disabled
-                    ? "bg-gray-50 text-gray-400 cursor-not-allowed border-gray-100"
-                    : "hover:border-blue-300"
+                    ? "bg-gray-50 text-gray-400 cursor-not-allowed border border-gray-100"
+                    : selected.length > 0
+                    ? "bg-blue-50 border border-blue-400 text-blue-700"
+                    : "bg-white border border-gray-200 hover:border-gray-400"
                 }`}
                 disabled={disabled}
-                title={
-                  selected.length > 0
-                    ? selected.map(formatLocationDisplay).join(", ")
-                    : undefined
-                }
+                title={selected.length > 0 ? selected.join(", ") : undefined}
+                onMouseDown={recalcHeight}
               >
-                <span className="block truncate">{displayText}</span>
-                {selected.length > 0 && !disabled && (
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onChange([]);
-                    }}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 text-lg leading-none"
+                <span className={`truncate flex-1 ${selected.length > 0 ? "text-gray-800" : "text-gray-400"}`}>
+                  {displayText}
+                </span>
+                {selected.length > 0 && !disabled ? (
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    onClick={(e) => { e.stopPropagation(); onChange([]); }}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.stopPropagation(); onChange([]); } }}
+                    className="text-gray-400 hover:text-gray-600 text-lg leading-none flex-shrink-0 cursor-pointer"
                     aria-label="Clear selection"
                   >
                     ×
-                  </button>
+                  </span>
+                ) : (
+                  <svg
+                    className={`w-3.5 h-3.5 text-gray-400 flex-shrink-0 transition-transform duration-200 ${
+                      openUpward ? (open ? "rotate-180" : "rotate-0") : (open ? "rotate-0" : "rotate-180")
+                    }`}
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                  </svg>
                 )}
               </Listbox.Button>
               <Transition as={Fragment}>
                 <Listbox.Options
-                  ref={optionsRef}
                   style={{ maxHeight: filterDropdownMaxHeight }}
-                  className="absolute z-10 mt-2 w-full rounded-xl bg-white border-2 border-gray-200 shadow-xl list-none overflow-y-auto focus:outline-none"
+                  className={`absolute z-50 w-full min-w-[160px] rounded-xl bg-white border border-gray-200 shadow-xl list-none overflow-y-auto focus:outline-none text-sm ${
+                    openUpward ? "bottom-full mb-2" : "mt-2"
+                  } ${isHighlighted ? "animate-ring-pulse-dark-panel" : ""}`}
                 >
                   {options.map((option) => (
-                    <Listbox.Option
-                      key={option.value}
-                      value={option.value}
-                      as={Fragment}
-                      disabled={option.count === 0}
-                    >
+                    <Listbox.Option key={option.value} value={option.value} as={Fragment} disabled={option.count === 0}>
                       {({ active }) => (
                         <li
                           onClick={(e) => {
-                            if (option.count === 0 || disabled) {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              return;
-                            }
+                            if (option.count === 0 || disabled) { e.preventDefault(); e.stopPropagation(); return; }
                             onChange(
                               selected.includes(option.value)
                                 ? selected.filter((s) => s !== option.value)
@@ -151,41 +160,22 @@ function MultiSelect({
                             );
                           }}
                           className={`select-none p-2 flex items-center gap-2 ${
-                            option.count === 0
-                              ? "text-gray-400 cursor-not-allowed"
-                              : "cursor-pointer"
-                          } ${
-                            active && option.count > 0 ? "bg-blue-100" : ""
-                          } ${
+                            option.count === 0 ? "text-gray-400 cursor-not-allowed" : "cursor-pointer"
+                          } ${active && option.count > 0 ? "bg-blue-100" : ""} ${
                             disabled ? "text-gray-400 cursor-not-allowed" : ""
                           } ${option.selected ? "bg-blue-50 font-medium" : ""}`}
-                          title={formatLocationDisplay(option.value)}
+                          title={option.value}
                         >
-                          {/* Checkbox indicator */}
                           <div className="flex-shrink-0 w-4 h-4 border border-gray-300 rounded flex items-center justify-center bg-white">
                             {option.selected && (
-                              <svg
-                                className="w-3 h-3 text-blue-600"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                  clipRule="evenodd"
-                                />
+                              <svg className="w-3 h-3 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                               </svg>
                             )}
                           </div>
-
-                          {/* Text content */}
                           <div className="flex-1 flex justify-between items-center min-w-0">
-                            <span
-                              className={`truncate ${
-                                option.count === 0 ? "line-through" : ""
-                              }`}
-                            >
-                              {formatLocationDisplay(option.value)}
+                            <span className={`truncate ${option.count === 0 ? "line-through" : ""}`}>
+                              {option.value}
                             </span>
                           </div>
                         </li>
@@ -211,82 +201,157 @@ export default function Filters({
   tutors,
   filters,
   onFilterChange,
+  currentView,
+  onViewChange,
+  totalCount,
+  showViewToggle = true,
+  openUpward = false,
+  triggerLevelOpen = false,
 }: FiltersProps) {
-  const setFilter = (
-    field: keyof FiltersProps["filters"],
-    value: string[] | string | null
-  ) => {
-    const newFilters = { ...filters, [field]: value };
-    onFilterChange(newFilters);
+  const setFilter = (field: keyof FiltersProps["filters"], value: string[] | string | null) => {
+    onFilterChange({ ...filters, [field]: value });
   };
 
+  const hasActiveFilters =
+    filters.stream !== null ||
+    filters.level.length > 0 ||
+    filters.subject.length > 0 ||
+    filters.centre.length > 0;
+
   return (
-    <div className="space-y-4">
-      <div className="space-y-4">
-        <div className="flex flex-col space-y-3">
-          <label className="text-sm font-semibold text-gray-700">
-            Select Stream
-          </label>
-          <div className="flex flex-wrap gap-3">
-            {streams.map((stream) => (
+    <div className={`flex flex-col ${openUpward ? "gap-5" : "gap-4"}`}>
+      {/* Stream pills */}
+      <div className={openUpward ? "flex flex-col gap-2.5" : "flex items-center gap-2 flex-wrap"}>
+        <span className="text-xs font-bold uppercase tracking-widest text-gray-600 flex-shrink-0">
+          Stream
+        </span>
+        <div className="flex items-center gap-2 flex-wrap">
+          {streams.map((stream) => (
+            <button
+              key={stream.value}
+              onClick={() => setFilter("stream", filters.stream === stream.value ? null : stream.value)}
+              className={`inline-flex items-center gap-2 rounded-full border font-semibold transition-all duration-150 flex-shrink-0 ${
+                openUpward ? "px-4 py-2 text-sm" : "px-3.5 py-2 text-sm"
+              } ${
+                filters.stream === stream.value
+                  ? "bg-gray-900 text-white border-gray-900"
+                  : "bg-white text-gray-600 border-gray-200 hover:border-gray-400"
+              }`}
+            >
+              {streamLabel(stream.value)}
+              <span className={`font-bold tabular-nums px-1 py-px rounded-full ${
+                openUpward ? "text-xs" : "text-xs"
+              } ${
+                filters.stream === stream.value
+                  ? "bg-white/20 text-white"
+                  : "bg-black/5 text-gray-500"
+              }`}>
+                {stream.count}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Dropdowns */}
+      {openUpward ? (
+        // Mobile: each filter on its own labelled row, full width
+        <div className="flex flex-col gap-4">
+          <MultiSelect label="Level" selected={filters.level} options={levels} onChange={(val) => setFilter("level", val)} openUpward={openUpward} />
+          <MultiSelect label="Subject" selected={filters.subject} options={subjects} onChange={(val) => setFilter("subject", val)} openUpward={openUpward} />
+          <MultiSelect label="Centre" selected={filters.centre} options={centres} onChange={(val) => setFilter("centre", val)} openUpward={openUpward} />
+        </div>
+      ) : (
+        // Desktop: compact pills in one row + optional view toggle
+        <div className="flex items-center gap-2 flex-wrap">
+          <MultiSelect compact label="Level" selected={filters.level} options={levels} onChange={(val) => setFilter("level", val)} openUpward={openUpward} triggerOpen={triggerLevelOpen} />
+          <MultiSelect compact label="Subject" selected={filters.subject} options={subjects} onChange={(val) => setFilter("subject", val)} openUpward={openUpward} />
+          <MultiSelect compact label="Centre" selected={filters.centre} options={centres} onChange={(val) => setFilter("centre", val)} openUpward={openUpward} />
+
+          {showViewToggle && (
+            <div className="ml-auto flex bg-white border border-gray-200 rounded-xl p-0.5 gap-0.5 flex-shrink-0">
               <button
-                key={stream}
-                onClick={() => setFilter("stream", stream)}
-                className={`px-6 py-3 rounded-xl border-2 transition-all duration-200 font-semibold text-sm shadow-sm hover:shadow-md transform hover:-translate-y-0.5 ${
-                  filters.stream === stream
-                    ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white border-blue-600 shadow-lg"
-                    : "bg-white text-gray-700 border-gray-200 hover:border-blue-400 hover:bg-blue-50"
+                onClick={() => onViewChange("calendar")}
+                className={`px-3.5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 flex items-center gap-1.5 ${
+                  currentView === "calendar" ? "bg-blue-50 text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
                 }`}
               >
-                {stream}
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Calendar
               </button>
-            ))}
+              <button
+                onClick={() => onViewChange("list")}
+                className={`px-3.5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 flex items-center gap-1.5 ${
+                  currentView === "list" ? "bg-blue-50 text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
+                List
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Summary row — visible when any filter is active */}
+      {hasActiveFilters && (
+        <div className="pt-2 sm:pt-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-sm sm:text-xs text-gray-500">
+              <span className="font-bold text-blue-600">{totalCount}</span> classes
+            </span>
+
             {filters.stream && (
               <button
-                type="button"
                 onClick={() => setFilter("stream", null)}
-                className="px-3 py-2 rounded-lg border-2 border-gray-200 bg-white text-gray-700 hover:border-red-400 hover:bg-red-50 transition-all duration-200 font-semibold text-sm shadow-sm hover:shadow-md"
-                aria-label="Clear stream selection"
+                className="bg-white border border-gray-200 rounded-full px-3 py-1 sm:px-2.5 sm:py-0.5 text-sm sm:text-xs font-medium flex items-center gap-1 hover:border-red-300 transition-colors"
               >
-                ✕
+                {streamLabel(filters.stream)} <span className="text-gray-400 ml-0.5">×</span>
               </button>
             )}
+            {filters.level.map((l) => (
+              <button key={l} onClick={() => setFilter("level", filters.level.filter((x) => x !== l))}
+                className="bg-white border border-gray-200 rounded-full px-3 py-1 sm:px-2.5 sm:py-0.5 text-sm sm:text-xs font-medium flex items-center gap-1 hover:border-red-300 transition-colors">
+                {l} <span className="text-gray-400 ml-0.5">×</span>
+              </button>
+            ))}
+            {filters.subject.map((s) => (
+              <button key={s} onClick={() => setFilter("subject", filters.subject.filter((x) => x !== s))}
+                className="bg-white border border-gray-200 rounded-full px-3 py-1 sm:px-2.5 sm:py-0.5 text-sm sm:text-xs font-medium flex items-center gap-1 hover:border-red-300 transition-colors">
+                {s} <span className="text-gray-400 ml-0.5">×</span>
+              </button>
+            ))}
+            {filters.centre.map((c) => (
+              <button key={c} onClick={() => setFilter("centre", filters.centre.filter((x) => x !== c))}
+                className="bg-white border border-gray-200 rounded-full px-3 py-1 sm:px-2.5 sm:py-0.5 text-sm sm:text-xs font-medium flex items-center gap-1 hover:border-red-300 transition-colors">
+                {c} <span className="text-gray-400 ml-0.5">×</span>
+              </button>
+            ))}
+
+            {/* iPad + desktop: inline immediately after last chip */}
+            <button
+              onClick={() => onFilterChange({ subject: [], centre: [], tutor: [], level: [], stream: null })}
+              className="max-sm:hidden text-xs text-gray-400 hover:text-red-500 font-medium ml-1 transition-colors underline"
+            >
+              Clear all
+            </button>
+          </div>
+
+          {/* Mobile only: own row, pinned right */}
+          <div className="hidden max-sm:flex justify-end mt-1.5">
+            <button
+              onClick={() => onFilterChange({ subject: [], centre: [], tutor: [], level: [], stream: null })}
+              className="text-sm text-gray-400 hover:text-red-500 font-medium transition-colors underline"
+            >
+              Clear all
+            </button>
           </div>
         </div>
-      </div>
-
-      <div className="space-y-4">
-        {/* Level Filter - Always show when stream is selected */}
-        <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
-          <MultiSelect
-            label="Level"
-            selected={filters.level}
-            options={levels}
-            onChange={(val) => setFilter("level", val)}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <MultiSelect
-            label="Subject"
-            selected={filters.subject}
-            options={subjects}
-            onChange={(val) => setFilter("subject", val)}
-          />
-          <MultiSelect
-            label="Centre"
-            selected={filters.centre}
-            options={centres}
-            onChange={(val) => setFilter("centre", val)}
-          />
-          {/* <MultiSelect
-                label="Tutor"
-                selected={filters.tutor}
-                options={tutors}
-                onChange={(val) => setFilter("tutor", val)}
-              /> */}
-        </div>
-      </div>
+      )}
     </div>
   );
 }

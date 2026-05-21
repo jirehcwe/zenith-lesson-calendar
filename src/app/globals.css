@@ -4,11 +4,16 @@
 :root {
   --background: #ffffff;
   --foreground: #2d3748;
-  --primary-blue: #4a90e2;
-  --secondary-blue: #5b9bd5;
-  --accent-orange: #ffa726;
-  --text-dark: #2d3748;
-  --text-light: #718096;
+  --brand: #2F4AC0;
+  --brand-50: #EEF2FF;
+  --brand-100: #DCE3FB;
+  --accent: #F59E0B;
+  --surface: #FFFFFF;
+  --bg: #F6F7FB;
+  --t1: #0F172A;
+  --t2: #475569;
+  --t3: #94A3B8;
+  --line: #E5E7EB;
 }
 
 @theme inline {
@@ -37,7 +42,7 @@ body {
 
 /* Hero gradient background */
 .hero-gradient {
-  background: linear-gradient(135deg, #4a90e2 0%, #5b9bd5 50%, #7bb3f0 100%);
+  background: #23477d;
 }
 
 /* Modern card styling */
@@ -58,5 +63,40 @@ body {
 @media (min-width: 768px) {
   .pb-safe {
     padding-bottom: 2rem;
+  }
+}
+
+/* Avatar overlap stacks — replaces -space-x-* which uses CSS nesting (broken on older Safari) */
+.avatar-stack > * + * {
+  margin-left: -0.25rem;
+}
+.avatar-stack-lg > * + * {
+  margin-left: -0.375rem;
+}
+
+/* Near-black ring pulse for drawing attention to the filter dropdown panel */
+@keyframes ring-pulse-dark-panel {
+  0%   { box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1), 0 0 0 0 rgba(15, 23, 42, 0.55); }
+  60%  { box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1), 0 0 0 7px rgba(15, 23, 42, 0); }
+  100% { box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1), 0 0 0 0 rgba(15, 23, 42, 0); }
+}
+.animate-ring-pulse-dark-panel {
+  animation: ring-pulse-dark-panel 0.55s ease-out 3;
+}
+
+/* List view grid: 1 col on phone, 2 on tablet/iPad, 3 on desktop */
+.list-view-grid {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media (min-width: 640px) {
+  .list-view-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+  .list-view-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
