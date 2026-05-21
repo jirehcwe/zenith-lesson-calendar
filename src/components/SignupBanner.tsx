@@ -174,7 +174,7 @@ export default function SignupBanner() {
         <div className="hidden lg:flex items-center gap-9">
           {/* Left - Text Content */}
           <div className="flex-1 text-white flex flex-col gap-4">
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col items-start gap-3">
               <Image
                 src="/zenith_logo.png"
                 alt="Zenith Education Logo"
