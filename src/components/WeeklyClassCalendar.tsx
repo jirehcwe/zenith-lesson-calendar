@@ -498,8 +498,8 @@ export default function WeeklyClassCalendar({
       {/* Empty-state overlay — shown when no filters are selected */}
       {slots.length === 0 && !hasActiveFilters && (
         <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
-          <div className="text-center px-6 pointer-events-auto">
-            <div className="w-6 h-12 mx-auto mb-3 rounded-full bg-blue-50 flex items-center justify-center">
+          <div className="text-center px-12 py-6 pointer-events-auto bg-white rounded-2xl shadow-sm border border-gray-100">
+            <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-blue-50 flex items-center justify-center">
               <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
               </svg>
