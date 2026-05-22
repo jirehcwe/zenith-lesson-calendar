@@ -140,7 +140,8 @@ export default function SignupBanner() {
 
               <div className="text-center">
                 <h1 className="text-xl sm:text-3xl font-extrabold leading-tight text-white">
-                  Browse every class.{" "}
+                  Browse every class.
+                  <br />
                   <span className="font-black" style={{ color: "#f4ab25" }}>Find Your Perfect Class Schedule.</span>
                 </h1>
                 <p className="text-sm sm:text-base text-blue-100 font-medium mt-2 leading-relaxed">
@@ -186,7 +187,8 @@ export default function SignupBanner() {
             </div>
             <div className="flex flex-col gap-3">
               <h1 className="text-3xl xl:text-4xl font-extrabold leading-tight">
-                Browse every class.{" "}
+                Browse every class.
+                <br />
                 <span className="font-black" style={{ color: "#f4ab25" }}>Find Your Perfect Class Schedule.</span>
               </h1>
               <p className="text-base text-blue-100 font-medium leading-relaxed">
