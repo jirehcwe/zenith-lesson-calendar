@@ -15,6 +15,9 @@ const config = getCrashCourseConfig();
 const labelFor = (code: string): string =>
   config.subjectLabels?.[code] ?? code;
 
+// Strip trailing year ("S4 2026" → "S4", "P5 2026" → "P5").
+const levelOf = (raw: string): string => raw.replace(/\s*\d{4}\s*$/, "");
+
 const REGULAR_TYPE_LABEL = "Crash Course";
 
 function hexToHsv(hex: string) {
@@ -82,6 +85,7 @@ export default function Page() {
     centre: [] as string[],
     tutor: [] as string[],
     type: [] as string[],
+    level: [] as string[],
   });
   const [viewMode, setViewMode] = useState<"calendar" | "list">("calendar");
   const [calendarFilter, setCalendarFilter] = useState<string | null>(null);
@@ -93,7 +97,8 @@ export default function Page() {
         (filters.topic.length === 0 ||
           filters.topic.includes(`[${labelFor(s.subject)}] ${s.topic}`)) &&
         (filters.centre.length === 0 || filters.centre.includes(s.centre)) &&
-        (filters.type.length === 0 || filters.type.includes(typeOf(s)))
+        (filters.type.length === 0 || filters.type.includes(typeOf(s))) &&
+        (filters.level.length === 0 || filters.level.includes(levelOf(s.level)))
     );
 
   const calendarFilteredSessions = useMemo(
@@ -131,6 +136,22 @@ export default function Page() {
     });
   }, [calendarFilteredSessions]);
 
+  const levelOptions = useMemo(() => {
+    if (!config.levelFilter?.enabled) return [];
+    const seen = [...new Set(sessions.map((s) => levelOf(s.level)))];
+    const order = config.levelFilter.order;
+    if (order && order.length > 0) {
+      // Sort by config order; unknown levels go last in alpha order.
+      const rank = new Map(order.map((v, i) => [v, i]));
+      return seen.sort((a, b) => {
+        const ra = rank.get(a) ?? order.length;
+        const rb = rank.get(b) ?? order.length;
+        return ra === rb ? a.localeCompare(b) : ra - rb;
+      });
+    }
+    return seen.sort((a, b) => a.localeCompare(b));
+  }, [sessions]);
+
   const topicOptions = useMemo(() => {
     const filtered =
       filters.subject.length === 0
@@ -162,6 +183,7 @@ export default function Page() {
             a.localeCompare(b)
           )}
           types={typeOptions}
+          levels={levelOptions}
           filters={filters}
           onFilterChange={setFilters}
           subjectLabel={labelFor}

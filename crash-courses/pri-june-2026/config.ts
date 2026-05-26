@@ -59,6 +59,7 @@ const config: CrashCourseConfig = {
   registrationFormUrl:
     "https://docs.google.com/forms/d/e/1FAIpQLSf7DBZ-j35Yd3XkzqZfntLPjJEqqm0q0J3mVx2-loTdz0euQg/viewform?entry.1157532004=SCHEDULE",
   campaignField: "entry.1157532004",
+  levelFilter: { enabled: true },
   sessions,
   mockExam: {
     purposeMatch: "Pri Mock Exam",

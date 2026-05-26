@@ -135,6 +135,7 @@ const config: CrashCourseConfig = {
   registrationFormUrl:
     "https://docs.google.com/forms/d/e/1FAIpQLSd67XsTW9RiNHFBoP4R0-j0y3yPIBO2syghkbPmt6bzyUViPw/viewform?entry.1157532004=SCHEDULE",
   campaignField: "entry.1157532004",
+  levelFilter: { enabled: true },
   sessions,
 };
 

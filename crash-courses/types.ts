@@ -72,6 +72,13 @@ export type CrashCourseConfig = {
   promocodeField?: string;
   sessions: Session[];
   mockExam?: MockExamConfig;
+  // Optional. When enabled, the Filters bar renders a Level dropdown
+  // (e.g. "S1"…"S4", "P5"/"P6") derived from each session's `level` field
+  // with the trailing year stripped. `order` overrides the default sort if
+  // the natural ordering is wrong; omit it to alpha-sort.
+  // Slugs with a single level (e.g. JC = J1 only) should omit this block —
+  // the filter would be a no-op pill.
+  levelFilter?: { enabled: boolean; order?: string[] };
   // Set to true when a slug folder exists ahead of the source data. Lets the
   // config ship through type-check + bundle while waiting for the schedule
   // CSV; the config-integrity "non-empty sessions" assertion is skipped, and

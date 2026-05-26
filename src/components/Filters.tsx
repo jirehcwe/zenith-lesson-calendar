@@ -12,12 +12,16 @@ type FiltersProps = {
   // vs "Exam Simulation"). Slugs without variants pass [] / omit it and the
   // pill is hidden.
   types?: string[];
+  // Optional. When non-empty, renders a Level pill (e.g. "S1"…"S4", "P5"/"P6").
+  // Slugs with a single level (JC) pass [] / omit and the pill is hidden.
+  levels?: string[];
   filters: {
     subject: string[];
     topic: string[];
     centre: string[];
     tutor: string[];
     type: string[];
+    level: string[];
   };
   onFilterChange: (filters: FiltersProps["filters"]) => void;
   // Transform applied to subject option values for display in the UI.
@@ -132,11 +136,13 @@ export default function Filters({
   topics,
   centres,
   types,
+  levels,
   filters,
   onFilterChange,
   subjectLabel,
 }: FiltersProps) {
   const hasTypeFilter = (types?.length ?? 0) > 0;
+  const hasLevelFilter = (levels?.length ?? 0) > 0;
   const hasTopicFilter = topics.length > 0;
   const [collapsed, setCollapsed] = useState<boolean>(false);
   const [hydrated, setHydrated] = useState(false);
@@ -161,7 +167,8 @@ export default function Filters({
     filters.subject.length +
     (hasTopicFilter ? filters.topic.length : 0) +
     filters.centre.length +
-    (hasTypeFilter ? filters.type.length : 0);
+    (hasTypeFilter ? filters.type.length : 0) +
+    (hasLevelFilter ? filters.level.length : 0);
 
   return (
     <div className="mb-6">
@@ -189,6 +196,14 @@ export default function Filters({
               selected={filters.type}
               options={types ?? []}
               onChange={(val) => setFilter("type", val)}
+            />
+          )}
+          {hasLevelFilter && (
+            <MultiSelect
+              label="Level"
+              selected={filters.level}
+              options={levels ?? []}
+              onChange={(val) => setFilter("level", val)}
             />
           )}
           <MultiSelect
