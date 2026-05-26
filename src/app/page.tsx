@@ -19,7 +19,12 @@ const CACHE_VERSION_KEY = "weeklyClassDataVersion";
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in ms
 const FILTERS_COLLAPSED_STORAGE_KEY = "filtersCollapsed";
 // Increment this version when the API changes to force all clients to invalidate cache
-const CACHE_VERSION = 3;
+// Bumped to 4 (2026-05-26): db-schedule-updater MR 3.3 flipped its /schedule
+// response shape from `{success, data:{data:[...]}, message}` to the resource
+// directly `{data:[...], total, pageSize, currentPage}`. Cached payloads from
+// the old shape would still parse but downstream code now reads `res.data`
+// (not `res.data.data`), so we invalidate to force a fresh fetch.
+const CACHE_VERSION = 4;
 
 // Collapse db-schedule-updater's venue granularity back into the flat labels
 // the calendar has always used: "Zoom" → "Online", and strip any parenthetical
@@ -156,8 +161,13 @@ export default function Page() {
       `https://api.schedule.myzenithstudy.com/schedule?year=${new Date().getFullYear()}`
     )
       .then((res) => res.json())
-      .then((res: { data: { data: WeeklyClassSlot[] } }) => {
-        const normalised = res.data.data.map(normaliseSlot);
+      // db-schedule-updater MR 3.3 (2026-05-26) flipped the response envelope:
+      //   was → { success, data: { data: WeeklyClassSlot[], total, ... }, message }
+      //   now → { data: WeeklyClassSlot[], total, pageSize, currentPage }
+      // Cached payloads from the old shape are invalidated by the
+      // CACHE_VERSION bump above.
+      .then((res: { data: WeeklyClassSlot[] }) => {
+        const normalised = res.data.map(normaliseSlot);
         setWeeklyClassData(normalised);
         setCachedData(normalised);
         setIsLoading(false);
