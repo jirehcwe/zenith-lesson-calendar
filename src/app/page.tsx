@@ -157,9 +157,9 @@ export default function Page() {
     }
 
     setIsLoading(true);
-    // Endpoint is env-configured (prod/preview set in Cloudflare); year appended here.
-    // `!` is safe: next.config.ts fails the build if the var is missing.
-    const scheduleUrl = new URL(process.env.NEXT_PUBLIC_SCHEDULE_ENDPOINT!);
+    // API base is env-configured (prod/preview set in Cloudflare); /schedule path
+    // + year are added here. `!` is safe: next.config.ts fails the build if unset.
+    const scheduleUrl = new URL("/schedule", process.env.NEXT_PUBLIC_SCHEDULE_API_BASE_URL!);
     scheduleUrl.searchParams.set("year", String(new Date().getFullYear()));
     fetch(scheduleUrl)
       .then((res) => res.json())

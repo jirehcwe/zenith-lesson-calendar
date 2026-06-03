@@ -4,15 +4,15 @@ import type { NextConfig } from "next";
 // isn't configured, before a broken static export ships. Skipped under tests,
 // which load this config via next/jest without an endpoint set.
 if (process.env.NODE_ENV !== "test") {
-  const endpoint = process.env.NEXT_PUBLIC_SCHEDULE_ENDPOINT;
-  if (!endpoint) {
+  const apiBaseUrl = process.env.NEXT_PUBLIC_SCHEDULE_API_BASE_URL;
+  if (!apiBaseUrl) {
     throw new Error(
-      "Build aborted: NEXT_PUBLIC_SCHEDULE_ENDPOINT is not set.\n" +
+      "Build aborted: NEXT_PUBLIC_SCHEDULE_API_BASE_URL is not set.\n" +
         "Set it in Cloudflare Pages → Settings → Variables and Secrets for BOTH " +
         "the Production and Preview environments, or in .env.local for local builds."
     );
   }
-  console.log(`✓ NEXT_PUBLIC_SCHEDULE_ENDPOINT = ${endpoint}`);
+  console.log(`✓ NEXT_PUBLIC_SCHEDULE_API_BASE_URL = ${apiBaseUrl}`);
 }
 
 const nextConfig: NextConfig = {
