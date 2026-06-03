@@ -36,9 +36,9 @@ const LEGEND_ITEMS = [
 ] as const;
 
 const JC_LEGEND_ITEMS = [
-  { label: "Math",      color: "#00757B", tint: "#BFFCFF" },
+  { label: "Math",      color: "#00757B", tint: "#8AE8EF" },
   { label: "Physics",   color: "#650000", tint: "#FF6969" },
-  { label: "Chemistry", color: "#717100", tint: "#FFFF00" },
+  { label: "Chemistry", color: "#717100", tint: "#FFF176" },
   { label: "Biology",   color: "#133586", tint: "#95B0F0" },
   { label: "GP",        color: "#654B01", tint: "#FBBC04" },
   { label: "Econ",      color: "#007209", tint: "#7BFF85" },
@@ -94,12 +94,15 @@ export type WeeklyClassSlot = {
 // Colors synced to the ops scheduling sheet ("2026 Schedule"). `tint` is the
 // exact ops cell fill; `color` is a darkened shade of the same hue, used for
 // the block text / left-border accent so it stays legible on the pale fill.
+// Exception: JC Chemistry (#FFF176) and Mathematics (#8AE8EF) tints are
+// intentionally softened/deepened from the ops cell fills (#FFFF00 / #BFFCFF)
+// for legibility on screen — keep these and do not re-sync to the sheet.
 const jcSubjectToColorMap: Record<string, { color: string; tint: string }> = {
   "General Paper": { color: "#654B01", tint: "#FBBC04" },
   Biology:         { color: "#133586", tint: "#95B0F0" },
   Physics:         { color: "#650000", tint: "#FF6969" },
-  Chemistry:       { color: "#717100", tint: "#FFFF00" },
-  Mathematics:     { color: "#00757B", tint: "#BFFCFF" },
+  Chemistry:       { color: "#717100", tint: "#FFF176" },
+  Mathematics:     { color: "#00757B", tint: "#8AE8EF" },
   Economics:       { color: "#007209", tint: "#7BFF85" },
 };
 
