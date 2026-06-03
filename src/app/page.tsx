@@ -157,9 +157,11 @@ export default function Page() {
     }
 
     setIsLoading(true);
-    fetch(
-      `https://api.schedule.myzenithstudy.com/schedule?year=${new Date().getFullYear()}`
-    )
+    // Endpoint is env-configured (prod/preview set in Cloudflare); year appended here.
+    // `!` is safe: next.config.ts fails the build if the var is missing.
+    const scheduleUrl = new URL(process.env.NEXT_PUBLIC_SCHEDULE_ENDPOINT!);
+    scheduleUrl.searchParams.set("year", String(new Date().getFullYear()));
+    fetch(scheduleUrl)
       .then((res) => res.json())
       // db-schedule-updater MR 3.3 (2026-05-26) flipped the response envelope:
       //   was → { success, data: { data: WeeklyClassSlot[], total, ... }, message }
