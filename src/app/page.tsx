@@ -152,9 +152,11 @@ export default function Page() {
     }
 
     setIsLoading(true);
-    fetch(
-      `https://api.schedule.myzenithstudy.com/schedule?year=${new Date().getFullYear()}`
-    )
+    // API base is env-configured (prod/preview set in Cloudflare); /schedule path
+    // + year are added here. `!` is safe: next.config.ts fails the build if unset.
+    const scheduleUrl = new URL("/schedule", process.env.NEXT_PUBLIC_SCHEDULE_API_BASE_URL!);
+    scheduleUrl.searchParams.set("year", String(new Date().getFullYear()));
+    fetch(scheduleUrl)
       .then((res) => res.json())
       .then((res: { data: { data: WeeklyClassSlot[] } }) => {
         const normalised = res.data.data.map(normaliseSlot);
