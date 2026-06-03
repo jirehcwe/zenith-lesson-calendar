@@ -15,55 +15,50 @@ export function isSlotFull(slot: WeeklyClassSlot): boolean {
 
 const FULL_SLOT_COLOR = { color: "#64748B", tint: "#E5E7EB" };
 
-// Combined "all streams" legend (shown when no stream is selected). Ops uses
-// different colors per stream for shared subjects (e.g. Math is cyan in JC,
-// blue in Secondary), so this is a best-effort single swatch per subject:
-// Secondary colors for shared science subjects, JC colors for GP/Econ.
 const LEGEND_ITEMS = [
-  { label: "Math",         color: "#1F4F7A", tint: "#CFE2F3" },
-  { label: "A Math",       color: "#1F4F7A", tint: "#CFE2F3" },
-  { label: "Physics",      color: "#44132D", tint: "#C27BA0" },
-  { label: "Chemistry",    color: "#7E1B1B", tint: "#F4CCCC" },
-  { label: "Biology",      color: "#346F20", tint: "#D9EAD3" },
-  { label: "English",      color: "#4F1C12", tint: "#DD7E6B" },
-  { label: "GP",           color: "#654B01", tint: "#FBBC04" },
-  { label: "Econ",         color: "#007209", tint: "#7BFF85" },
-  { label: "History",      color: "#6C5900", tint: "#FFD504" },
-  { label: "Literature",   color: "#567300", tint: "#DCFF74" },
-  { label: "Geography",    color: "#64748B", tint: "#FFFFFF" },
-  { label: "Soc. Studies", color: "#7E0099", tint: "#F0ABFF" },
+  { label: "Math",         color: "#B45309", tint: "#FEF3C7" },
+  { label: "A Math",       color: "#1E40AF", tint: "#DBEAFE" },
+  { label: "Physics",      color: "#BE123C", tint: "#FECDD3" },
+  { label: "Chemistry",    color: "#15803D", tint: "#DCFCE7" },
+  { label: "Biology",      color: "#166534", tint: "#BBFBD0" },
+  { label: "English",      color: "#0369A1", tint: "#BAE6FD" },
+  { label: "GP",           color: "#9A3412", tint: "#FED7AA" },
+  { label: "Econ",         color: "#4338CA", tint: "#E0E7FF" },
+  { label: "History",      color: "#92400E", tint: "#FFEDD5" },
+  { label: "Literature",   color: "#831843", tint: "#FCE7F3" },
+  { label: "Geography",    color: "#065F46", tint: "#ECFDF5" },
+  { label: "Soc. Studies", color: "#6B21A8", tint: "#F3E8FF" },
   { label: "Full",         color: "#64748B", tint: "#E5E7EB" },
 ] as const;
 
 const JC_LEGEND_ITEMS = [
-  { label: "Math",      color: "#00757B", tint: "#BFFCFF" },
-  { label: "Physics",   color: "#650000", tint: "#FF6969" },
-  { label: "Chemistry", color: "#717100", tint: "#FFFF00" },
-  { label: "Biology",   color: "#133586", tint: "#95B0F0" },
-  { label: "GP",        color: "#654B01", tint: "#FBBC04" },
-  { label: "Econ",      color: "#007209", tint: "#7BFF85" },
+  { label: "Math",      color: "#B45309", tint: "#FEF3C7" },
+  { label: "Physics",   color: "#BE123C", tint: "#FECDD3" },
+  { label: "Chemistry", color: "#15803D", tint: "#DCFCE7" },
+  { label: "Biology",   color: "#166534", tint: "#BBFBD0" },
+  { label: "GP",        color: "#9A3412", tint: "#FED7AA" },
+  { label: "Econ",      color: "#4338CA", tint: "#E0E7FF" },
   { label: "Full",      color: "#64748B", tint: "#E5E7EB" },
 ] as const;
 
 const SEC_LEGEND_ITEMS = [
-  { label: "Math",         color: "#1F4F7A", tint: "#CFE2F3" },
-  { label: "A Math",       color: "#1F4F7A", tint: "#CFE2F3" },
-  { label: "Physics",      color: "#44132D", tint: "#C27BA0" },
-  { label: "Chemistry",    color: "#7E1B1B", tint: "#F4CCCC" },
-  { label: "Biology",      color: "#346F20", tint: "#D9EAD3" },
-  { label: "Science",      color: "#990000", tint: "#FFC2C2" },
-  { label: "English",      color: "#4F1C12", tint: "#DD7E6B" },
-  { label: "History",      color: "#6C5900", tint: "#FFD504" },
-  { label: "Literature",   color: "#567300", tint: "#DCFF74" },
-  { label: "Geography",    color: "#64748B", tint: "#FFFFFF" },
-  { label: "Soc. Studies", color: "#7E0099", tint: "#F0ABFF" },
+  { label: "Math",         color: "#B45309", tint: "#FEF3C7" },
+  { label: "A Math",       color: "#1E40AF", tint: "#DBEAFE" },
+  { label: "Physics",      color: "#BE123C", tint: "#FECDD3" },
+  { label: "Chemistry",    color: "#15803D", tint: "#DCFCE7" },
+  { label: "Biology",      color: "#166534", tint: "#BBFBD0" },
+  { label: "English",      color: "#0369A1", tint: "#BAE6FD" },
+  { label: "History",      color: "#92400E", tint: "#FFEDD5" },
+  { label: "Literature",   color: "#831843", tint: "#FCE7F3" },
+  { label: "Geography",    color: "#065F46", tint: "#ECFDF5" },
+  { label: "Soc. Studies", color: "#6B21A8", tint: "#F3E8FF" },
   { label: "Full",         color: "#64748B", tint: "#E5E7EB" },
 ] as const;
 
 const PRIMARY_LEGEND_ITEMS = [
-  { label: "English", color: "#1E4E7B", tint: "#9FC5E8" },
-  { label: "Math",    color: "#713D07", tint: "#F6B26B" },
-  { label: "Science", color: "#2F5E1B", tint: "#B6D7A8" },
+  { label: "English", color: "#0369A1", tint: "#BAE6FD" },
+  { label: "Math",    color: "#B45309", tint: "#FEF3C7" },
+  { label: "Science", color: "#BE123C", tint: "#FECDD3" },
   { label: "Full",    color: "#64748B", tint: "#E5E7EB" },
 ] as const;
 
@@ -91,46 +86,42 @@ export type WeeklyClassSlot = {
   prefillRegistrationLink?: string;
 };
 
-// Colors synced to the ops scheduling sheet ("2026 Schedule"). `tint` is the
-// exact ops cell fill; `color` is a darkened shade of the same hue, used for
-// the block text / left-border accent so it stays legible on the pale fill.
 const jcSubjectToColorMap: Record<string, { color: string; tint: string }> = {
-  "General Paper": { color: "#654B01", tint: "#FBBC04" },
-  Biology:         { color: "#133586", tint: "#95B0F0" },
-  Physics:         { color: "#650000", tint: "#FF6969" },
-  Chemistry:       { color: "#717100", tint: "#FFFF00" },
-  Mathematics:     { color: "#00757B", tint: "#BFFCFF" },
-  Economics:       { color: "#007209", tint: "#7BFF85" },
+  "General Paper": { color: "#9A3412", tint: "#FED7AA" },
+  Biology:         { color: "#166534", tint: "#BBFBD0" },
+  Physics:         { color: "#BE123C", tint: "#FECDD3" },
+  Chemistry:       { color: "#15803D", tint: "#DCFCE7" },
+  Mathematics:     { color: "#B45309", tint: "#FEF3C7" },
+  Economics:       { color: "#4338CA", tint: "#E0E7FF" },
 };
 
 const secSubjectToColorMap: Record<string, { color: string; tint: string }> = {
-  Mathematics:          { color: "#1F4F7A", tint: "#CFE2F3" },
-  "A Math":             { color: "#1F4F7A", tint: "#CFE2F3" },
-  "E Math":             { color: "#1F4F7A", tint: "#CFE2F3" },
-  "Pure Physics":       { color: "#44132D", tint: "#C27BA0" },
-  "Combined Physics":   { color: "#44132D", tint: "#C27BA0" },
-  Chemistry:            { color: "#7E1B1B", tint: "#F4CCCC" },
-  Physics:              { color: "#44132D", tint: "#C27BA0" },
-  Science:              { color: "#990000", tint: "#FFC2C2" },
-  "Pure Chemistry":     { color: "#7E1B1B", tint: "#F4CCCC" },
-  "Combined Chemistry": { color: "#7E1B1B", tint: "#F4CCCC" },
-  "Pure Biology":       { color: "#346F20", tint: "#D9EAD3" },
-  "Combined Biology":   { color: "#346F20", tint: "#D9EAD3" },
-  English:              { color: "#4F1C12", tint: "#DD7E6B" },
-  "Pure History":       { color: "#6C5900", tint: "#FFD504" },
-  "Combined History":   { color: "#6C5900", tint: "#FFD504" },
-  "Pure Literature":    { color: "#567300", tint: "#DCFF74" },
-  "Combined Literature":{ color: "#567300", tint: "#DCFF74" },
-  // Geography is not offered in 2026; kept white until ops assigns a color.
-  "Pure Geography":     { color: "#64748B", tint: "#FFFFFF" },
-  "Combined Geography": { color: "#64748B", tint: "#FFFFFF" },
-  "Social Studies":     { color: "#7E0099", tint: "#F0ABFF" },
+  Mathematics:          { color: "#B45309", tint: "#FEF3C7" },
+  "A Math":             { color: "#1E40AF", tint: "#DBEAFE" },
+  "E Math":             { color: "#B45309", tint: "#FEF3C7" },
+  "Pure Physics":       { color: "#BE123C", tint: "#FECDD3" },
+  "Combined Physics":   { color: "#BE123C", tint: "#FECDD3" },
+  Chemistry:            { color: "#15803D", tint: "#DCFCE7" },
+  Physics:              { color: "#BE123C", tint: "#FECDD3" },
+  Science:              { color: "#BE123C", tint: "#FECDD3" },
+  "Pure Chemistry":     { color: "#15803D", tint: "#DCFCE7" },
+  "Combined Chemistry": { color: "#15803D", tint: "#DCFCE7" },
+  "Pure Biology":       { color: "#166534", tint: "#BBFBD0" },
+  "Combined Biology":   { color: "#166534", tint: "#BBFBD0" },
+  English:              { color: "#0369A1", tint: "#BAE6FD" },
+  "Pure History":       { color: "#92400E", tint: "#FFEDD5" },
+  "Combined History":   { color: "#92400E", tint: "#FFEDD5" },
+  "Pure Literature":    { color: "#831843", tint: "#FCE7F3" },
+  "Combined Literature":{ color: "#831843", tint: "#FCE7F3" },
+  "Pure Geography":     { color: "#065F46", tint: "#ECFDF5" },
+  "Combined Geography": { color: "#065F46", tint: "#ECFDF5" },
+  "Social Studies":     { color: "#6B21A8", tint: "#F3E8FF" },
 };
 
 const primarySubjectToColorMap: Record<string, { color: string; tint: string }> = {
-  English:     { color: "#1E4E7B", tint: "#9FC5E8" },
-  Mathematics: { color: "#713D07", tint: "#F6B26B" },
-  Science:     { color: "#2F5E1B", tint: "#B6D7A8" },
+  English:     { color: "#0369A1", tint: "#BAE6FD" },
+  Mathematics: { color: "#B45309", tint: "#FEF3C7" },
+  Science:     { color: "#BE123C", tint: "#FECDD3" },
 };
 
 export function getSubjectColor(subject: string, level: string): string {
