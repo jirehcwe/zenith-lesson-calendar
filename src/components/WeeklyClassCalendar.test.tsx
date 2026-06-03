@@ -43,28 +43,28 @@ describe("isSlotFull", () => {
 
 describe("getSubjectColor", () => {
   it("returns correct color for JC subjects", () => {
-    expect(getSubjectColor("Mathematics", "J2")).toBe("#B45309");
-    expect(getSubjectColor("General Paper", "J1")).toBe("#9A3412");
-    expect(getSubjectColor("Chemistry", "J2")).toBe("#15803D");
-    expect(getSubjectColor("Economics", "J2")).toBe("#4338CA");
+    expect(getSubjectColor("Mathematics", "J2")).toBe("#00757B");
+    expect(getSubjectColor("General Paper", "J1")).toBe("#654B01");
+    expect(getSubjectColor("Chemistry", "J2")).toBe("#717100");
+    expect(getSubjectColor("Economics", "J2")).toBe("#007209");
   });
 
   it("returns correct color for Secondary subjects", () => {
-    expect(getSubjectColor("A Math", "Sec 4")).toBe("#1E40AF");
-    expect(getSubjectColor("E Math", "Sec 3")).toBe("#B45309");
-    expect(getSubjectColor("Physics", "Sec 4")).toBe("#BE123C");
-    expect(getSubjectColor("English", "Sec 2")).toBe("#0369A1");
+    expect(getSubjectColor("A Math", "Sec 4")).toBe("#1F4F7A");
+    expect(getSubjectColor("E Math", "Sec 3")).toBe("#1F4F7A");
+    expect(getSubjectColor("Physics", "Sec 4")).toBe("#44132D");
+    expect(getSubjectColor("English", "Sec 2")).toBe("#4F1C12");
   });
 
   it("returns correct color for Primary subjects", () => {
-    expect(getSubjectColor("Mathematics", "P6")).toBe("#B45309");
-    expect(getSubjectColor("English", "P5")).toBe("#0369A1");
-    expect(getSubjectColor("Science", "P4")).toBe("#BE123C");
+    expect(getSubjectColor("Mathematics", "P6")).toBe("#713D07");
+    expect(getSubjectColor("English", "P5")).toBe("#1E4E7B");
+    expect(getSubjectColor("Science", "P4")).toBe("#2F5E1B");
   });
 
   it("strips the IP prefix before color lookup", () => {
-    expect(getSubjectColor("IP Mathematics", "Sec 3")).toBe("#B45309");
-    expect(getSubjectColor("IP Chemistry", "Sec 4")).toBe("#15803D");
+    expect(getSubjectColor("IP Mathematics", "Sec 3")).toBe("#1F4F7A");
+    expect(getSubjectColor("IP Chemistry", "Sec 4")).toBe("#7E1B1B");
   });
 
   it("returns fallback color for an unknown subject in a known level", () => {
