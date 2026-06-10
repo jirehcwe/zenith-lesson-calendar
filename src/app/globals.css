@@ -45,9 +45,19 @@ body {
   @apply bg-white rounded-xl shadow-lg border border-gray-100 transition-all duration-200 hover:shadow-xl;
 }
 
-/* Remove yellow highlight from FullCalendar's today cell */
+/* Highlight today across the timegrid + month views with a soft blue
+   tint and a stronger header pill. Replaces FullCalendar's default
+   yellow band, which clashed with the brand. */
 .fc-day-today {
-  background: none !important;
+  background: rgba(59, 130, 246, 0.06) !important;
+}
+.fc-col-header-cell.fc-day-today .fc-col-header-cell-cushion {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background: rgb(59, 130, 246);
+  color: #fff;
+  font-weight: 600;
 }
 
 

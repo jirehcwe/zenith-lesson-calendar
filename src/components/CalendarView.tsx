@@ -5,7 +5,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import scrollGridPlugin from "@fullcalendar/scrollgrid";
 import { Session } from "../types";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { getCrashCourseConfig } from "../../crash-courses";
 import {
@@ -35,6 +35,7 @@ export default function CalendarView({
   }[];
 }) {
   const config = getCrashCourseConfig();
+  const calendarRef = useRef<FullCalendar | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<{
     title: string;
@@ -52,6 +53,19 @@ export default function CalendarView({
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Jump to the current week on mount when today falls inside the
+  // configured dateRange. Static export means initialDate is baked in at
+  // build time — without this, every visitor lands on the first week of
+  // the run regardless of when they open the page.
+  useEffect(() => {
+    const api = calendarRef.current?.getApi();
+    if (!api) return;
+    const today = new Date();
+    const start = new Date(config.dateRange.start);
+    const end = new Date(config.dateRange.end);
+    if (today >= start && today <= end) api.gotoDate(today);
+  }, [config.dateRange.start, config.dateRange.end]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleEventClick = (arg: any) => {
@@ -83,6 +97,7 @@ export default function CalendarView({
         </div>
       )}
       <FullCalendar
+        ref={calendarRef}
         plugins={[timeGridPlugin, dayGridPlugin, scrollGridPlugin]}
         initialView="timeGridWeek"
         validRange={{
