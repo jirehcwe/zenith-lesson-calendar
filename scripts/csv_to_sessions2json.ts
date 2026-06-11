@@ -160,11 +160,10 @@ if (!timeslotKey) {
 //   - Schedule Codes (col A — header is "Schedule Codes" in JC/SS,
 //     "Scheduling code" in Pri) empty (Pri waitlist placeholders, which DO
 //     have Subject(Display) populated but no real schedule).
-//   - Form Controls starting with "Closed" (e.g. "Closed - Not running") —
-//     ops manually closes a class by flipping this dropdown; we drop the
-//     row entirely so it doesn't render on the calendar at all (note: an
-//     empty prefill is a separate "class full" signal that greys out the
-//     slot, which we still want to support).
+//   - Form Controls == "Closed - Not running" — class is cancelled, drop
+//     entirely. "Closed - Running" rows survive but get an empty prefill
+//     in the mapping step below so they render as "Class Full" (greyed,
+//     disabled Register button) instead of disappearing from the calendar.
 // Any surviving row whose displaySubject isn't in the mapping still throws.
 const validRows = allRecords.filter((row) => {
   const d = row["Subject(Display)"];
@@ -172,7 +171,7 @@ const validRows = allRecords.filter((row) => {
   const code = row["Schedule Codes"] ?? row["Scheduling code"];
   if (!code || !code.trim()) return false;
   const formControls = (row["Form Controls"] ?? "").trim();
-  if (/^closed\b/i.test(formControls)) return false;
+  if (/^closed\s*-\s*not\s+running\b/i.test(formControls)) return false;
   return true;
 });
 const skipped = allRecords.length - validRows.length;
@@ -186,6 +185,14 @@ const result = validRows.map((row: CsvRow) => {
   const prefillField = lookupPrefillField(displaySubject);
   const subject = lookupSubjectCode(displaySubject);
   const { startTime, endTime } = parseTimeslot(row[timeslotKey]);
+  // "Closed - Running" = class still happening but registration shut
+  // (almost always because it's full). Surface it on the calendar as
+  // "Class Full" by forcing the empty-prefill signal the UI already
+  // honours — instead of letting the raw Form Option string through and
+  // letting visitors land on a locked form.
+  const formControls = (row["Form Controls"] ?? "").trim();
+  const closedRunning = /^closed\s*-\s*running\b/i.test(formControls);
+  const prefill = closedRunning ? "" : row["Form Option to Display"];
 
   return {
     purpose: row["Purpose"],
@@ -200,7 +207,7 @@ const result = validRows.map((row: CsvRow) => {
     date: row["Date (text)"]?.replace(/\s*\(.*\)/, ""),
     startTime,
     endTime,
-    prefill: row["Form Option to Display"],
+    prefill,
     prefillField,
     displaySubject,
   };
