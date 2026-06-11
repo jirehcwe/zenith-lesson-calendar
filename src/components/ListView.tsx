@@ -8,6 +8,11 @@ import {
   getCtaLabel,
   isMockExam,
 } from "@/utils/sessionVariant";
+import {
+  getSessionAvailability,
+  getAvailabilityLabel,
+  isRegisterable,
+} from "@/utils/sessionAvailability";
 
 const config = getCrashCourseConfig();
 const labelFor = (code: string): string =>
@@ -62,51 +67,55 @@ export default function ListView({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {filtered.map((s) => (
-          <div
-            key={`${s.date}-${s.startTime}-${s.tutor}`}
-            className={`p-4 border rounded shadow flex flex-col ${
-              s.prefill ? "" : "opacity-60"
-            }`}
-          >
-            <div className="font-semibold flex items-center gap-2">
-              <span>{labelFor(s.subject)}</span>
-              {isMockExam(s, config) && (
-                <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-black/75 text-white text-[10px] font-bold tracking-wide leading-none">
-                  EXAM
-                </span>
+        {filtered.map((s) => {
+          const availability = getSessionAvailability(s, config);
+          const registerable = isRegisterable(availability);
+          return (
+            <div
+              key={`${s.date}-${s.startTime}-${s.tutor}`}
+              className={`p-4 border rounded shadow flex flex-col ${
+                registerable ? "" : "opacity-60"
+              }`}
+            >
+              <div className="font-semibold flex items-center gap-2">
+                <span>{labelFor(s.subject)}</span>
+                {isMockExam(s, config) && (
+                  <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-black/75 text-white text-[10px] font-bold tracking-wide leading-none">
+                    EXAM
+                  </span>
+                )}
+              </div>
+              {s.topic && s.topic.trim().length > 0 && (
+                <div className="text-sm opacity-80">Topic: {s.topic}</div>
               )}
-            </div>
-            {s.topic && s.topic.trim().length > 0 && (
-              <div className="text-sm opacity-80">Topic: {s.topic}</div>
-            )}
-            <div className="text-sm opacity-80">Centre: {s.centre}</div>
-            <div className="text-sm opacity-80">Date: {s.date}</div>
-            <div className="text-sm opacity-80">
-              Time: {s.startTime} - {s.endTime}
-            </div>
-            <div className="mt-4 flex justify-end">
-              {s.prefill ? (
-                <a
-                  href={getRegistrationUrl(s, config)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
-                    {getCtaLabel(s, config, "Register (prefilled)")}
+              <div className="text-sm opacity-80">Centre: {s.centre}</div>
+              <div className="text-sm opacity-80">Date: {s.date}</div>
+              <div className="text-sm opacity-80">
+                Time: {s.startTime} - {s.endTime}
+              </div>
+              <div className="mt-4 flex justify-end">
+                {registerable ? (
+                  <a
+                    href={getRegistrationUrl(s, config)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
+                      {getCtaLabel(s, config, "Register (prefilled)")}
+                    </button>
+                  </a>
+                ) : (
+                  <button
+                    className="px-4 py-2 bg-gray-300 text-gray-500 rounded cursor-not-allowed text-sm"
+                    disabled
+                  >
+                    {getAvailabilityLabel(availability)}
                   </button>
-                </a>
-              ) : (
-                <button
-                  className="px-4 py-2 bg-gray-300 text-gray-500 rounded cursor-not-allowed text-sm"
-                  disabled
-                >
-                  Class Full
-                </button>
-              )}
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

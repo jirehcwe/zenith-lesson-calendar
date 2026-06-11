@@ -13,6 +13,11 @@ import {
   getCtaLabel,
   isMockExam,
 } from "@/utils/sessionVariant";
+import {
+  getSessionAvailability,
+  getAvailabilityLabel,
+  isRegisterable,
+} from "@/utils/sessionAvailability";
 
 function ExamPill() {
   return (
@@ -131,11 +136,10 @@ export default function CalendarView({
         eventContent={(arg) => {
           const topic = arg.event.extendedProps.topic;
           const centre = arg.event.extendedProps.centre;
-          const hasPrefill = arg.event.extendedProps.prefill;
-          const isMock = isMockExam(
-            arg.event.extendedProps as Session,
-            config
-          );
+          const session = arg.event.extendedProps as Session;
+          const availability = getSessionAvailability(session, config);
+          const registerable = isRegisterable(availability);
+          const isMock = isMockExam(session, config);
           return (
             <div className="p-1 overflow-hidden h-full text-xs leading-tight">
               <div
@@ -157,12 +161,12 @@ export default function CalendarView({
               )}
               <div
                 className={`mt-1 truncate ${
-                  hasPrefill
+                  registerable
                     ? "underline cursor-pointer"
                     : "text-gray-500 cursor-not-allowed"
                 }`}
               >
-                {hasPrefill ? "Click to register" : "Class Full"}
+                {getAvailabilityLabel(availability)}
               </div>
             </div>
           );
@@ -217,31 +221,41 @@ export default function CalendarView({
               </>
             )}
             <div className="flex justify-end mt-4">
-              {selectedEvent?.extendedProps.prefill ? (
-                <a
-                  href={getRegistrationUrl(
-                    selectedEvent.extendedProps,
-                    config
-                  )}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                    {getCtaLabel(
-                      selectedEvent.extendedProps,
-                      config,
-                      "Register (prefilled)"
-                    )}
+              {(() => {
+                if (!selectedEvent) return null;
+                const availability = getSessionAvailability(
+                  selectedEvent.extendedProps,
+                  config
+                );
+                if (isRegisterable(availability)) {
+                  return (
+                    <a
+                      href={getRegistrationUrl(
+                        selectedEvent.extendedProps,
+                        config
+                      )}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                        {getCtaLabel(
+                          selectedEvent.extendedProps,
+                          config,
+                          "Register (prefilled)"
+                        )}
+                      </button>
+                    </a>
+                  );
+                }
+                return (
+                  <button
+                    className="px-4 py-2 bg-gray-300 text-gray-500 rounded cursor-not-allowed"
+                    disabled
+                  >
+                    {getAvailabilityLabel(availability)}
                   </button>
-                </a>
-              ) : (
-                <button
-                  className="px-4 py-2 bg-gray-300 text-gray-500 rounded cursor-not-allowed"
-                  disabled
-                >
-                  Class Full
-                </button>
-              )}
+                );
+              })()}
             </div>
           </DialogPanel>
         </div>

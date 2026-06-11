@@ -98,6 +98,13 @@ beforeEach(() => {
   mockConfig = baseMockConfig;
   capturedProps = {};
   window.history.pushState({}, "", "/");
+  // Pin "now" comfortably before the May 06 test sessions so the
+  // session-availability check doesn't flag them as "Class Ended".
+  jest.useFakeTimers().setSystemTime(new Date("2026-05-01T09:00:00"));
+});
+
+afterEach(() => {
+  jest.useRealTimers();
 });
 
 describe("CalendarView — tip banner", () => {
