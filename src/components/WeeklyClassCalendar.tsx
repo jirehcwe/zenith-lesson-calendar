@@ -78,6 +78,7 @@ export function getLegendItemsForStream(
 
 // Define a new type for weekly class slots (no topic, no date)
 export type WeeklyClassSlot = {
+  classSlotId?: string;
   title: string;
   day: number; // 0 (Sunday) to 6 (Saturday)
   startTime: string; // e.g. "10:00"
