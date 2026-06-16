@@ -11,6 +11,9 @@ type ViewType = "calendar" | "list";
 import BottomNav from "@/components/BottomNav";
 import TestimonialCarousel from "@/components/TestimonialCarousel";
 import TestimonialGrid from "@/components/TestimonialGrid";
+import PinnedBanner from "@/components/PinnedBanner";
+import ViewToggle from "@/components/ViewToggle";
+import { parseClassesParam, matchPinnedSlots } from "@/utils/pinnedClasses";
 import { getCampaignParam } from "@/utils/campaign";
 
 const CACHE_KEY = "weeklyClassData";
@@ -119,6 +122,7 @@ export default function Page() {
     level: [] as string[],
     stream: null as string | null,
   });
+  const [pinnedClassIds, setPinnedClassIds] = useState<string[]>([]);
 
   useEffect(() => {
     const check = () =>
@@ -139,6 +143,7 @@ export default function Page() {
       stream: params.get("stream") || null,
     };
     setFilters(initialFilters);
+    setPinnedClassIds(parseClassesParam(window.location.search));
 
     // Read view from URL
     const viewParam = params.get("view") as ViewType;
@@ -344,7 +349,16 @@ export default function Page() {
     })),
   [weeklyClassData, filters.stream]);
 
+  const pinnedSlots = useMemo(
+    () => matchPinnedSlots(weeklyClassData, pinnedClassIds),
+    [weeklyClassData, pinnedClassIds],
+  );
+  const isPinned = pinnedSlots.length > 0;
+
   const events = useMemo(() => {
+    if (isPinned) {
+      return pinnedSlots.map((s) => ({ ...s }));
+    }
     if (
       filters.stream === null &&
       filters.level.length === 0 &&
@@ -363,7 +377,7 @@ export default function Page() {
       );
     });
     return filtered.map((s) => ({ ...s }));
-  }, [weeklyClassData, filters]);
+  }, [weeklyClassData, filters, isPinned, pinnedSlots]);
 
   // Clear dependent filters when parent filter changes
   const handleFilterChange = (newFilters: typeof filters) => {
@@ -384,6 +398,19 @@ export default function Page() {
     setFilters(newFilters);
   };
 
+  const handleExitPinned = () => {
+    const params = new URLSearchParams(window.location.search);
+    params.delete("classes");
+    const qs = params.toString();
+    window.history.replaceState(
+      {},
+      "",
+      qs ? `${window.location.pathname}?${qs}` : window.location.pathname,
+    );
+    setPinnedClassIds([]);
+    setFilters({ subject: [], centre: [], tutor: [], level: [], stream: null });
+  };
+
   const hasActiveFilters =
     filters.stream !== null ||
     filters.level.length > 0 ||
@@ -393,7 +420,17 @@ export default function Page() {
   return (
     <div className="min-h-screen bg-gray-50">
       <SignupBanner />
-      {!isLoading && !isMobilePhone && (
+      {!isLoading && isPinned && (
+        <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200">
+          <PinnedBanner count={events.length} onShowAll={handleExitPinned} />
+          {!isMobilePhone && (
+            <div className="max-w-7xl mx-auto px-4 py-2 md:px-8 md:py-3 flex justify-end">
+              <ViewToggle currentView={currentView} onViewChange={setCurrentView} />
+            </div>
+          )}
+        </div>
+      )}
+      {!isLoading && !isMobilePhone && !isPinned && (
         <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 py-2 md:px-8 md:py-4">
             {filtersCollapsed ? (
@@ -561,6 +598,7 @@ export default function Page() {
           onViewChange={setCurrentView}
           onOpenFilter={() => setFilterSheetOpen(true)}
           hasActiveFilters={hasActiveFilters}
+          showFilterButton={!isPinned}
         />
       )}
 
