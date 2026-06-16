@@ -94,13 +94,12 @@ describe("getLegendItemsForStream", () => {
     const labels = items.map((i) => i.label);
     expect(labels).toEqual(
       expect.arrayContaining([
-        "Math", "A Math", "Physics", "Chemistry", "Biology",
+        "Math", "A Math", "Physics", "Chemistry", "Biology", "Science",
         "English", "History", "Literature", "Geography", "Soc. Studies", "Full",
       ])
     );
     expect(labels).not.toContain("GP");
     expect(labels).not.toContain("Econ");
-    expect(labels).not.toContain("Science");
   });
 
   it("returns the same Secondary items for Secondary (IP)", () => {
