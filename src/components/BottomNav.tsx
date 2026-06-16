@@ -7,9 +7,10 @@ interface BottomNavProps {
   onViewChange: (view: ViewType) => void;
   onOpenFilter: () => void;
   hasActiveFilters?: boolean;
+  showFilterButton?: boolean;
 }
 
-export default function BottomNav({ currentView, onViewChange, onOpenFilter, hasActiveFilters }: BottomNavProps) {
+export default function BottomNav({ currentView, onViewChange, onOpenFilter, hasActiveFilters, showFilterButton = true }: BottomNavProps) {
   return (
     <nav
       className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg"
@@ -65,6 +66,7 @@ export default function BottomNav({ currentView, onViewChange, onOpenFilter, has
         </button>
 
         {/* Filter tab */}
+        {showFilterButton && (
         <button
           onClick={onOpenFilter}
           className="relative flex flex-col items-center justify-center gap-1 flex-1 h-full text-gray-500 transition-all duration-200"
@@ -80,6 +82,7 @@ export default function BottomNav({ currentView, onViewChange, onOpenFilter, has
           </div>
           <span className="text-xs font-medium">Filter</span>
         </button>
+        )}
       </div>
     </nav>
   );
