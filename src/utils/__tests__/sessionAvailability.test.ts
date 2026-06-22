@@ -2,6 +2,7 @@ import {
   getSessionAvailability,
   getAvailabilityLabel,
   isRegisterable,
+  getTrialRedirect,
 } from "../sessionAvailability";
 import type { Session } from "@/types";
 
@@ -165,5 +166,54 @@ describe("isRegisterable", () => {
     expect(isRegisterable("ended")).toBe(false);
     expect(isRegisterable("full")).toBe(false);
     expect(isRegisterable("registration-closed")).toBe(false);
+  });
+});
+
+describe("getTrialRedirect", () => {
+  const trialConfig = {
+    dateRange: { start: "2026-06-01", end: "2026-06-30" },
+    subjectLabels: { CHEM: "Chemistry", MATH: "Math" },
+    trialRedirect: {
+      baseUrl: "https://schedule.zenitheducationstudio.com/",
+      stream: "JC",
+      subjectOverrides: { Math: "Mathematics" },
+    },
+  };
+
+  it("returns null on dateRange.end (cutoff is the day after)", () => {
+    expect(
+      getTrialRedirect({ subject: "CHEM" }, trialConfig, new Date(2026, 5, 30))
+    ).toBeNull();
+  });
+
+  it("returns a subject+stream deep link the day after dateRange.end", () => {
+    const r = getTrialRedirect(
+      { subject: "CHEM" },
+      trialConfig,
+      new Date(2026, 6, 1)
+    );
+    expect(r?.href).toBe(
+      "https://schedule.zenitheducationstudio.com/?subject=Chemistry&stream=JC"
+    );
+  });
+
+  it("applies subjectOverrides (Math → Mathematics)", () => {
+    const r = getTrialRedirect(
+      { subject: "MATH" },
+      trialConfig,
+      new Date(2026, 6, 1)
+    );
+    expect(r?.href).toContain("subject=Mathematics");
+    expect(r?.href).toContain("stream=JC");
+  });
+
+  it("returns null when the slug has no trialRedirect", () => {
+    const noTrial = {
+      dateRange: trialConfig.dateRange,
+      subjectLabels: trialConfig.subjectLabels,
+    };
+    expect(
+      getTrialRedirect({ subject: "CHEM" }, noTrial, new Date(2026, 6, 1))
+    ).toBeNull();
   });
 });
