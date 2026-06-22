@@ -12,6 +12,7 @@ import {
   getSessionAvailability,
   getAvailabilityLabel,
   isRegisterable,
+  getTrialRedirect,
 } from "@/utils/sessionAvailability";
 
 const config = getCrashCourseConfig();
@@ -22,10 +23,12 @@ export default function ListView({
   sessions,
   calendarFilter,
   onCalendarFilterChange,
+  now,
 }: {
   sessions: Session[];
   calendarFilter: string | null;
   onCalendarFilterChange: (date: string | null) => void;
+  now: Date;
 }) {
   const normalizeDate = (raw: string): string | null => {
     const parsed = Date.parse(`${raw} ${config.year}`);
@@ -68,13 +71,14 @@ export default function ListView({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filtered.map((s) => {
-          const availability = getSessionAvailability(s, config);
+          const availability = getSessionAvailability(s, config, now);
           const registerable = isRegisterable(availability);
+          const trial = registerable ? null : getTrialRedirect(s, config, now);
           return (
             <div
               key={`${s.date}-${s.startTime}-${s.tutor}`}
               className={`p-4 border rounded shadow flex flex-col ${
-                registerable ? "" : "opacity-60"
+                registerable || trial ? "" : "opacity-60"
               }`}
             >
               <div className="font-semibold flex items-center gap-2">
@@ -102,6 +106,12 @@ export default function ListView({
                   >
                     <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
                       {getCtaLabel(s, config, "Register (prefilled)")}
+                    </button>
+                  </a>
+                ) : trial ? (
+                  <a href={trial.href} target="_blank" rel="noopener noreferrer">
+                    <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
+                      {trial.label}
                     </button>
                   </a>
                 ) : (

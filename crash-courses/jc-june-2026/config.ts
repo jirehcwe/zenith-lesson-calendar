@@ -8,7 +8,7 @@ const config: CrashCourseConfig = {
   slug: "jc-june-2026",
   metadata: {
     title: "Zenith June JC Crash Course Scheduler",
-    description: "Sign up for Zenith JC Crash Course now!",
+    description: "Browse the June 2026 Zenith JC Crash Course schedule.",
   },
   dateRange: { start: "2026-06-01", end: "2026-06-30" },
   year: 2026,
@@ -30,20 +30,36 @@ const config: CrashCourseConfig = {
   },
   hero: {
     title: "June 2026 JC Crash Course",
-    tagline:
-      "Flexible scheduling • Expert tutors • Proven results • Lock in your promo rates",
-    blurbHeadline: "Plan Your Crash Course Schedule",
+    tagline: "Expert tutors • Proven results • Trusted since 2019",
+    blurbHeadline: "Crash Course Schedule",
     blurbBody:
-      "Register for the JC crash course slots you want to attend. Browse the calendar, filter by subject or centre, and sign up for your preferred sessions before they fill up.",
+      "The June 2026 JC crash course has concluded. Browse the schedule below to review the sessions that ran — and explore our regular JC classes with a free trial lesson.",
     stats: "Trusted by over 20,000 students since 2019",
     heroImageSrc: "/zenith-banner.webp",
     heroImageAlt: "Zenith Education",
   },
+  // Course has ended: top banner announces it and redirects to the regular
+  // free-trial schedule (filtered to JC). When SS/Pri end, add the same block
+  // to their configs — no component or page changes needed.
+  closingBanner: {
+    headline: "The June 2026 JC Crash Course has ended.",
+    body: "Thank you for joining us! Continue your prep with a free trial lesson in our regular JC programme.",
+    ctaLabel: "Browse free JC trial classes →",
+    ctaHref: "https://schedule.zenitheducationstudio.com/?stream=JC",
+  },
   bottomBanner: {
-    body: "Ready to lock in for promos?",
-    ctaLabel: "Click here to sign up!",
-    ctaHref:
-      "https://docs.google.com/forms/d/e/1FAIpQLSf0WPe24FSB4ix2R8LgWHdgjns098Nthn1zFYLtR3zIeDCG-A/viewform?usp=dialog&entry.1157532004=SCHEDULE",
+    body: "Looking for regular JC classes?",
+    ctaLabel: "Try a free trial lesson →",
+    ctaHref: "https://schedule.zenitheducationstudio.com/?stream=JC",
+  },
+  // After the course ends (from 1 Jul, the day after dateRange.end), each
+  // ended slot links to the regular free-trial schedule for its subject.
+  // The regular site's JC subject filter values match our labels except
+  // "Math", which it calls "Mathematics".
+  trialRedirect: {
+    baseUrl: "https://schedule.zenitheducationstudio.com/",
+    stream: "JC",
+    subjectOverrides: { Math: "Mathematics" },
   },
   calendar: {
     firstDay: 1,

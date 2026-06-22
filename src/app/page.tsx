@@ -6,6 +6,7 @@ import ListView from "../components/ListView";
 import Filters from "../components/Filters";
 import { Session } from "../types";
 import SignupBanner from "../components/SignupBanner";
+import ClosingBanner from "@/components/ClosingBanner";
 import BottomBanner from "@/components/BottomBanner";
 import ViewSelector from "@/components/ViewSelector";
 import { getCrashCourseConfig } from "../../crash-courses";
@@ -89,6 +90,18 @@ export default function Page() {
   });
   const [viewMode, setViewMode] = useState<"calendar" | "list">("calendar");
   const [calendarFilter, setCalendarFilter] = useState<string | null>(null);
+  // `now` drives all date-based slot logic. A `?previewDate=YYYY-MM-DD` query
+  // param overrides it (client-only) so the post-course trial-redirect state
+  // can be previewed before it actually goes live. Resolved once per mount.
+  const now = useMemo<Date>(() => {
+    if (typeof window === "undefined") return new Date();
+    const pd = new URLSearchParams(window.location.search).get("previewDate");
+    if (pd) {
+      const d = new Date(pd);
+      if (!isNaN(d.getTime())) return d;
+    }
+    return new Date();
+  }, []);
 
   const applyFilters = (list: Session[]) =>
     list.filter(
@@ -167,6 +180,7 @@ export default function Page() {
 
   return (
     <div>
+      {config.closingBanner && <ClosingBanner />}
       <SignupBanner />
       <div className="max-w-7xl mx-auto px-2 sm:px-4 py-6 space-y-6 text-sm md:text-base">
         <ViewSelector currentView={viewMode} onViewChange={setViewMode} />
@@ -191,12 +205,13 @@ export default function Page() {
 
         <div className="modern-card p-2 sm:p-6">
           {viewMode === "calendar" ? (
-            <CalendarView events={events} />
+            <CalendarView events={events} now={now} />
           ) : (
             <ListView
               sessions={listFilteredSessions}
               calendarFilter={calendarFilter}
               onCalendarFilterChange={setCalendarFilter}
+              now={now}
             />
           )}
         </div>

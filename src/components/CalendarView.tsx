@@ -17,6 +17,7 @@ import {
   getSessionAvailability,
   getAvailabilityLabel,
   isRegisterable,
+  getTrialRedirect,
 } from "@/utils/sessionAvailability";
 
 function ExamPill() {
@@ -29,6 +30,7 @@ function ExamPill() {
 
 export default function CalendarView({
   events,
+  now,
 }: {
   events: {
     title: string;
@@ -38,6 +40,7 @@ export default function CalendarView({
     backgroundColor: string;
     textColor: string;
   }[];
+  now: Date;
 }) {
   const config = getCrashCourseConfig();
   const calendarRef = useRef<FullCalendar | null>(null);
@@ -137,8 +140,11 @@ export default function CalendarView({
           const topic = arg.event.extendedProps.topic;
           const centre = arg.event.extendedProps.centre;
           const session = arg.event.extendedProps as Session;
-          const availability = getSessionAvailability(session, config);
+          const availability = getSessionAvailability(session, config, now);
           const registerable = isRegisterable(availability);
+          const trial = registerable
+            ? null
+            : getTrialRedirect(session, config, now);
           const isMock = isMockExam(session, config);
           return (
             <div className="p-1 overflow-hidden h-full text-xs leading-tight">
@@ -161,12 +167,12 @@ export default function CalendarView({
               )}
               <div
                 className={`mt-1 truncate ${
-                  registerable
+                  registerable || trial
                     ? "underline cursor-pointer"
                     : "text-gray-500 cursor-not-allowed"
                 }`}
               >
-                {getAvailabilityLabel(availability)}
+                {trial ? "Sign up for trials →" : getAvailabilityLabel(availability)}
               </div>
             </div>
           );
@@ -225,7 +231,8 @@ export default function CalendarView({
                 if (!selectedEvent) return null;
                 const availability = getSessionAvailability(
                   selectedEvent.extendedProps,
-                  config
+                  config,
+                  now
                 );
                 if (isRegisterable(availability)) {
                   return (
@@ -243,6 +250,24 @@ export default function CalendarView({
                           config,
                           "Register (prefilled)"
                         )}
+                      </button>
+                    </a>
+                  );
+                }
+                const trial = getTrialRedirect(
+                  selectedEvent.extendedProps,
+                  config,
+                  now
+                );
+                if (trial) {
+                  return (
+                    <a
+                      href={trial.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                        {trial.label}
                       </button>
                     </a>
                   );

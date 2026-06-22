@@ -81,3 +81,41 @@ export function getAvailabilityLabel(availability: Availability): string {
 export function isRegisterable(availability: Availability): boolean {
   return availability === "open";
 }
+
+export type TrialRedirect = { label: string; href: string };
+
+const DEFAULT_TRIAL_CTA_LABEL = "Sign up for regular class trials →";
+
+// "YYYY-MM-DD" → local midnight Date, or null if malformed.
+function parseYmdAtMidnight(ymd: string): Date | null {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(ymd.trim());
+  if (!m) return null;
+  return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+}
+
+// Once a course is over — `now` is past dateRange.end, i.e. from the next
+// calendar day — and the slug defines `trialRedirect`, its non-registerable
+// slots stop showing "Class Ended" and instead deep-link students to the
+// regular free-trial schedule for the matching subject + stream. Returns null
+// before the cutoff or when the slug has no trialRedirect config.
+export function getTrialRedirect(
+  session: Pick<Session, "subject">,
+  config: Pick<
+    CrashCourseConfig,
+    "dateRange" | "trialRedirect" | "subjectLabels"
+  >,
+  now: Date = new Date()
+): TrialRedirect | null {
+  const tr = config.trialRedirect;
+  if (!tr) return null;
+  const end = parseYmdAtMidnight(config.dateRange.end);
+  if (!end) return null;
+  if (startOfDay(now).getTime() <= end.getTime()) return null;
+  const subjectLabel =
+    config.subjectLabels?.[session.subject] ?? session.subject;
+  const subjectParam = tr.subjectOverrides?.[subjectLabel] ?? subjectLabel;
+  const url = new URL(tr.baseUrl);
+  url.searchParams.set("subject", subjectParam);
+  url.searchParams.set("stream", tr.stream);
+  return { label: tr.ctaLabel ?? DEFAULT_TRIAL_CTA_LABEL, href: url.toString() };
+}

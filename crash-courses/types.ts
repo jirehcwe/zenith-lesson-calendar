@@ -9,6 +9,21 @@ export type BannerContent = {
   ctaHref: string;
 };
 
+export type TrialRedirectConfig = {
+  // Regular free-trial schedule base URL
+  // (e.g. "https://schedule.zenitheducationstudio.com/").
+  baseUrl: string;
+  // ?stream= value, matched exactly against the regular site's stream options
+  // (e.g. "JC", "Secondary (Express)", "Secondary (IP)", "Primary").
+  stream: string;
+  // Optional CTA label; defaults to "Sign up for regular class trials →".
+  ctaLabel?: string;
+  // Optional map from a subject's display label (a subjectLabels value) to the
+  // ?subject= value the regular site expects, for subjects whose names differ
+  // across the two apps (e.g. JC "Math" → "Mathematics").
+  subjectOverrides?: Record<string, string>;
+};
+
 export type HeroContent = {
   // May contain a literal "\n" to split the visible title across lines
   // (rendered by SignupBanner via a split-and-block pass).
@@ -66,6 +81,15 @@ export type CrashCourseConfig = {
   // Optional. When omitted, the page does not render a bottom CTA banner —
   // useful for slugs where the per-session CTA is the only intended path.
   bottomBanner?: BannerContent;
+  // Optional. When set, a prominent banner renders at the very top of the
+  // page (above the hero) — used to announce that a course has ended and
+  // redirect students elsewhere (e.g. the regular free-trial schedule).
+  // Reuses BannerContent; unlike bottomBanner, its `headline` is shown.
+  closingBanner?: BannerContent;
+  // Optional. When set, after the course ends (the day after dateRange.end)
+  // non-registerable slots stop showing "Class Ended" and instead deep-link to
+  // the regular free-trial schedule for the matching subject + stream.
+  trialRedirect?: TrialRedirectConfig;
   calendar: CalendarUIConfig;
   registrationFormUrl: string;
   campaignField: string;
