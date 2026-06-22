@@ -10,7 +10,7 @@ const { closingBanner } = getCrashCourseConfig();
 export default function ClosingBanner() {
   if (!closingBanner) return null;
   return (
-    <div className="w-full bg-slate-900 text-white">
+    <div className="w-full bg-slate-900 text-white sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-center gap-3 text-center">
         <p className="text-sm sm:text-base">
           {closingBanner.headline && (

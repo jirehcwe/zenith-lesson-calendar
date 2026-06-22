@@ -90,18 +90,8 @@ export default function Page() {
   });
   const [viewMode, setViewMode] = useState<"calendar" | "list">("calendar");
   const [calendarFilter, setCalendarFilter] = useState<string | null>(null);
-  // `now` drives all date-based slot logic. A `?previewDate=YYYY-MM-DD` query
-  // param overrides it (client-only) so the post-course trial-redirect state
-  // can be previewed before it actually goes live. Resolved once per mount.
-  const now = useMemo<Date>(() => {
-    if (typeof window === "undefined") return new Date();
-    const pd = new URLSearchParams(window.location.search).get("previewDate");
-    if (pd) {
-      const d = new Date(pd);
-      if (!isNaN(d.getTime())) return d;
-    }
-    return new Date();
-  }, []);
+  // `now` drives all date-based slot logic, resolved once per mount.
+  const now = useMemo<Date>(() => new Date(), []);
 
   const applyFilters = (list: Session[]) =>
     list.filter(
