@@ -16,12 +16,9 @@ export type TrialRedirectConfig = {
   // ?stream= value, matched exactly against the regular site's stream options
   // (e.g. "JC", "Secondary (Express)", "Secondary (IP)", "Primary").
   stream: string;
-  // Optional CTA label; defaults to "Sign up for regular class trials →".
-  ctaLabel?: string;
-  // Optional map from a subject's display label (a subjectLabels value) to the
-  // ?subject= value the regular site expects, for subjects whose names differ
-  // across the two apps (e.g. JC "Math" → "Mathematics").
-  subjectOverrides?: Record<string, string>;
+  // Optional ?campaign= value appended to the course-ended overlay click-out
+  // for attribution (e.g. "POSTJUNCC"). Overlay only; the list panel omits it.
+  campaign?: string;
 };
 
 export type HeroContent = {
@@ -86,9 +83,10 @@ export type CrashCourseConfig = {
   // redirect students elsewhere (e.g. the regular free-trial schedule).
   // Reuses BannerContent; unlike bottomBanner, its `headline` is shown.
   closingBanner?: BannerContent;
-  // Optional. When set, after the course ends (the day after dateRange.end)
-  // non-registerable slots stop showing "Class Ended" and instead deep-link to
-  // the regular free-trial schedule for the matching subject + stream.
+  // Optional. Base URL + stream (+ campaign) for the regular free-trial
+  // schedule. With `closingBanner` set, once the course ends (past
+  // dateRange.end) the calendar shows a course-ended overlay and the list a
+  // matching panel, both linking students there.
   trialRedirect?: TrialRedirectConfig;
   calendar: CalendarUIConfig;
   registrationFormUrl: string;

@@ -82,10 +82,6 @@ export function isRegisterable(availability: Availability): boolean {
   return availability === "open";
 }
 
-export type TrialRedirect = { label: string; href: string };
-
-const DEFAULT_TRIAL_CTA_LABEL = "Sign up for regular class trials →";
-
 // "YYYY-MM-DD" → local midnight Date, or null if malformed.
 function parseYmdAtMidnight(ymd: string): Date | null {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(ymd.trim());
@@ -93,29 +89,50 @@ function parseYmdAtMidnight(ymd: string): Date | null {
   return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
 }
 
-// Once a course is over — `now` is past dateRange.end, i.e. from the next
-// calendar day — and the slug defines `trialRedirect`, its non-registerable
-// slots stop showing "Class Ended" and instead deep-link students to the
-// regular free-trial schedule for the matching subject + stream. Returns null
-// before the cutoff or when the slug has no trialRedirect config.
-export function getTrialRedirect(
-  session: Pick<Session, "subject">,
+// True once `now` is past dateRange.end (i.e. from the next calendar day) —
+// the crash course is fully over.
+export function isCourseOver(
+  config: Pick<CrashCourseConfig, "dateRange">,
+  now: Date = new Date()
+): boolean {
+  const end = parseYmdAtMidnight(config.dateRange.end);
+  if (!end) return false;
+  return startOfDay(now).getTime() > end.getTime();
+}
+
+export type CourseEndedCta = {
+  headline: string;
+  body: string;
+  ctaLabel: string;
+  ctaHref: string;
+};
+
+// Content for the "course ended" calendar overlay + list panel, or null while
+// the course is still running or the slug lacks closingBanner/trialRedirect.
+// Text is reused from `closingBanner` so the overlay/panel echo the banner.
+// `withCampaign` appends `trialRedirect.campaign` to the click-out — the
+// calendar overlay passes it; the list panel does not.
+export function getCourseEndedCta(
   config: Pick<
     CrashCourseConfig,
-    "dateRange" | "trialRedirect" | "subjectLabels"
+    "dateRange" | "closingBanner" | "trialRedirect"
   >,
-  now: Date = new Date()
-): TrialRedirect | null {
+  now: Date = new Date(),
+  opts: { withCampaign?: boolean } = {}
+): CourseEndedCta | null {
+  if (!isCourseOver(config, now)) return null;
+  const cb = config.closingBanner;
   const tr = config.trialRedirect;
-  if (!tr) return null;
-  const end = parseYmdAtMidnight(config.dateRange.end);
-  if (!end) return null;
-  if (startOfDay(now).getTime() <= end.getTime()) return null;
-  const subjectLabel =
-    config.subjectLabels?.[session.subject] ?? session.subject;
-  const subjectParam = tr.subjectOverrides?.[subjectLabel] ?? subjectLabel;
+  if (!cb || !tr) return null;
   const url = new URL(tr.baseUrl);
-  url.searchParams.set("subject", subjectParam);
   url.searchParams.set("stream", tr.stream);
-  return { label: tr.ctaLabel ?? DEFAULT_TRIAL_CTA_LABEL, href: url.toString() };
+  if (opts.withCampaign && tr.campaign) {
+    url.searchParams.set("campaign", tr.campaign);
+  }
+  return {
+    headline: cb.headline ?? "",
+    body: cb.body,
+    ctaLabel: cb.ctaLabel,
+    ctaHref: url.toString(),
+  };
 }

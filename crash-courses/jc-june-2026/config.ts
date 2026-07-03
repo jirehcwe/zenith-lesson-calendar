@@ -52,14 +52,14 @@ const config: CrashCourseConfig = {
     ctaLabel: "Try a free trial lesson →",
     ctaHref: "https://schedule.zenitheducationstudio.com/?stream=JC",
   },
-  // After the course ends (from 1 Jul, the day after dateRange.end), each
-  // ended slot links to the regular free-trial schedule for its subject.
-  // The regular site's JC subject filter values match our labels except
-  // "Math", which it calls "Mathematics".
+  // After the course ends (from 1 Jul, the day after dateRange.end), the
+  // calendar shows a course-ended overlay and the list a matching panel,
+  // linking to the regular free-trial JC schedule. `campaign` tags the
+  // overlay click-out for attribution.
   trialRedirect: {
     baseUrl: "https://schedule.zenitheducationstudio.com/",
     stream: "JC",
-    subjectOverrides: { Math: "Mathematics" },
+    campaign: "POSTJUNCC",
   },
   calendar: {
     firstDay: 1,

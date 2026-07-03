@@ -17,8 +17,9 @@ import {
   getSessionAvailability,
   getAvailabilityLabel,
   isRegisterable,
-  getTrialRedirect,
+  getCourseEndedCta,
 } from "@/utils/sessionAvailability";
+import CourseEndedPanel from "@/components/CourseEndedPanel";
 
 function ExamPill() {
   return (
@@ -81,9 +82,13 @@ export default function CalendarView({
     setIsDialogOpen(true);
   };
 
+  // Once the course is over, a translucent overlay covers the calendar with a
+  // single "course ended → regular trials" click-out (tagged with the campaign).
+  const courseEnded = getCourseEndedCta(config, now, { withCampaign: true });
+
   return (
     <>
-      {config.calendar.tip && (
+      {config.calendar.tip && !courseEnded && (
         <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
           <div className="flex items-center">
             <svg
@@ -104,6 +109,7 @@ export default function CalendarView({
           </div>
         </div>
       )}
+      <div className="relative">
       <FullCalendar
         ref={calendarRef}
         plugins={[timeGridPlugin, dayGridPlugin, scrollGridPlugin]}
@@ -142,9 +148,6 @@ export default function CalendarView({
           const session = arg.event.extendedProps as Session;
           const availability = getSessionAvailability(session, config, now);
           const registerable = isRegisterable(availability);
-          const trial = registerable
-            ? null
-            : getTrialRedirect(session, config, now);
           const isMock = isMockExam(session, config);
           return (
             <div className="p-1 overflow-hidden h-full text-xs leading-tight">
@@ -167,18 +170,24 @@ export default function CalendarView({
               )}
               <div
                 className={`mt-1 truncate ${
-                  registerable || trial
+                  registerable
                     ? "underline cursor-pointer"
                     : "text-gray-500 cursor-not-allowed"
                 }`}
               >
-                {trial ? "Sign up for trials →" : getAvailabilityLabel(availability)}
+                {getAvailabilityLabel(availability)}
               </div>
             </div>
           );
         }}
         eventClick={handleEventClick}
       />
+      {courseEnded && (
+        <div className="absolute inset-0 z-20 flex items-start justify-center rounded-lg bg-white/70 px-4 pt-10 backdrop-blur-[2px] sm:pt-16">
+          <CourseEndedPanel cta={courseEnded} />
+        </div>
+      )}
+      </div>
       <Dialog
         open={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
@@ -250,24 +259,6 @@ export default function CalendarView({
                           config,
                           "Register (prefilled)"
                         )}
-                      </button>
-                    </a>
-                  );
-                }
-                const trial = getTrialRedirect(
-                  selectedEvent.extendedProps,
-                  config,
-                  now
-                );
-                if (trial) {
-                  return (
-                    <a
-                      href={trial.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        {trial.label}
                       </button>
                     </a>
                   );

@@ -12,8 +12,9 @@ import {
   getSessionAvailability,
   getAvailabilityLabel,
   isRegisterable,
-  getTrialRedirect,
+  getCourseEndedCta,
 } from "@/utils/sessionAvailability";
+import CourseEndedPanel from "@/components/CourseEndedPanel";
 
 const config = getCrashCourseConfig();
 const labelFor = (code: string): string =>
@@ -30,6 +31,17 @@ export default function ListView({
   onCalendarFilterChange: (date: string | null) => void;
   now: Date;
 }) {
+  // Course over → replace the whole list with a single "ended → trials" panel
+  // (no campaign tag on this click-out, per config).
+  const courseEnded = getCourseEndedCta(config, now);
+  if (courseEnded) {
+    return (
+      <div className="py-10 flex justify-center px-4">
+        <CourseEndedPanel cta={courseEnded} />
+      </div>
+    );
+  }
+
   const normalizeDate = (raw: string): string | null => {
     const parsed = Date.parse(`${raw} ${config.year}`);
     if (isNaN(parsed)) return null;
@@ -73,12 +85,11 @@ export default function ListView({
         {filtered.map((s) => {
           const availability = getSessionAvailability(s, config, now);
           const registerable = isRegisterable(availability);
-          const trial = registerable ? null : getTrialRedirect(s, config, now);
           return (
             <div
               key={`${s.date}-${s.startTime}-${s.tutor}`}
               className={`p-4 border rounded shadow flex flex-col ${
-                registerable || trial ? "" : "opacity-60"
+                registerable ? "" : "opacity-60"
               }`}
             >
               <div className="font-semibold flex items-center gap-2">
@@ -106,12 +117,6 @@ export default function ListView({
                   >
                     <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
                       {getCtaLabel(s, config, "Register (prefilled)")}
-                    </button>
-                  </a>
-                ) : trial ? (
-                  <a href={trial.href} target="_blank" rel="noopener noreferrer">
-                    <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
-                      {trial.label}
                     </button>
                   </a>
                 ) : (
