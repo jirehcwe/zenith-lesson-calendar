@@ -13,7 +13,10 @@ describe("BottomBanner", () => {
     // @ts-expect-error BottomBanner is assigned inside isolateModules above
     render(<BottomBanner />);
     const link = screen.getByRole("link");
-    expect(link).toHaveAttribute("href", expect.stringContaining("docs.google.com/forms"));
-    expect(link.textContent).toMatch(/sign up/i);
+    expect(link).toHaveAttribute(
+      "href",
+      expect.stringContaining("schedule.zenitheducationstudio.com")
+    );
+    expect(link.textContent).toMatch(/trial/i);
   });
 });

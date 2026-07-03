@@ -13,7 +13,7 @@ const config: CrashCourseConfig = {
   slug: "pri-june-2026",
   metadata: {
     title: "Zenith June Primary Crash Course Scheduler",
-    description: "Sign up for Zenith Primary Crash Course now!",
+    description: "Browse the June 2026 Zenith Primary Crash Course schedule.",
   },
   dateRange: { start: "2026-06-01", end: "2026-06-30" },
   year: 2026,
@@ -37,13 +37,25 @@ const config: CrashCourseConfig = {
   },
   hero: {
     title: "Zenith Primary\n2026 June Holiday Programmes",
-    tagline:
-      "Flexible scheduling • Expert tutors • Proven results • Book your slots early",
+    tagline: "Expert tutors • Proven results • Trusted since 2019",
     blurbBody:
-      "Make this June holiday a fruitful one with Zenith’s two-part programme for P5–P6 students. Start with our FREE Crash Course to strengthen core concepts, then move into our Exam Simulation to apply what they’ve learned under real exam conditions.",
+      "Zenith’s June holiday programme for P5–P6 students has concluded. Browse the schedule below to review the sessions that ran — and explore our regular Primary classes with a free trial lesson.",
     stats: "Trusted by over 20,000 students since 2019",
     heroImageSrc: "/zenith_banner_alt.webp",
     heroImageAlt: "Zenith Education",
+  },
+  // Course has ended: sticky banner + course-ended overlay/panel link to the
+  // regular free-trial Primary schedule (overlay tagged POSTJUNPRI).
+  closingBanner: {
+    headline: "The June 2026 Primary Holiday Programme has ended.",
+    body: "Thank you for joining us! Continue your child’s learning with a free trial lesson in our regular Primary programme.",
+    ctaLabel: "Browse free Primary trial classes →",
+    ctaHref: "https://schedule.zenitheducationstudio.com/?stream=Primary",
+  },
+  trialRedirect: {
+    baseUrl: "https://schedule.zenitheducationstudio.com/",
+    stream: "Primary",
+    campaign: "POSTJUNPRI",
   },
   calendar: {
     firstDay: 1,

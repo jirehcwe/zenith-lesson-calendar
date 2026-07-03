@@ -21,7 +21,7 @@ const config: CrashCourseConfig = {
   slug: "ss-june-2026",
   metadata: {
     title: "Zenith June SS Crash Course Scheduler",
-    description: "Sign up for Zenith Secondary Crash Course now!",
+    description: "Browse the June 2026 Zenith Secondary Crash Course schedule.",
   },
   dateRange: { start: "2026-05-30", end: "2026-06-30" },
   year: 2026,
@@ -106,20 +106,35 @@ const config: CrashCourseConfig = {
   },
   hero: {
     title: "June 2026 SS Crash Course",
-    tagline:
-      "Flexible scheduling • Expert tutors • Proven results • Book your slots early",
-    blurbHeadline: "Plan Your Crash Course Schedule",
+    tagline: "Expert tutors • Proven results • Trusted since 2019",
+    blurbHeadline: "Crash Course Schedule",
     blurbBody:
-      "Register for the Secondary crash course slots you want to attend. Browse the calendar, filter by subject or centre, and sign up for your preferred sessions before they fill up.",
+      "The June 2026 Secondary crash course has concluded. Browse the schedule below to review the sessions that ran — and explore our regular Secondary classes with a free trial lesson.",
     stats: "Trusted by over 20,000 students since 2019",
     heroImageSrc: "/zenith-banner.webp",
     heroImageAlt: "Zenith Education",
   },
-  bottomBanner: {
-    body: "Ready to lock in for your exams?",
-    ctaLabel: "Click here to sign up!",
+  // Course has ended: sticky banner announces it and links to the regular
+  // free-trial Secondary schedule. The course-ended overlay/panel deep-link
+  // there too — tagged POSTJUNSS on the overlay for attribution. The SS cohort
+  // mixes Express + IP; the click-out defaults to Express (the majority).
+  closingBanner: {
+    headline: "The June 2026 Secondary Crash Course has ended.",
+    body: "Thank you for joining us! Continue your prep with a free trial lesson in our regular Secondary programme.",
+    ctaLabel: "Browse free Secondary trial classes →",
     ctaHref:
-      "https://docs.google.com/forms/d/e/1FAIpQLSd67XsTW9RiNHFBoP4R0-j0y3yPIBO2syghkbPmt6bzyUViPw/viewform?usp=dialog&entry.1157532004=SCHEDULE",
+      "https://schedule.zenitheducationstudio.com/?stream=Secondary+(Express)",
+  },
+  bottomBanner: {
+    body: "Looking for regular Secondary classes?",
+    ctaLabel: "Try a free trial lesson →",
+    ctaHref:
+      "https://schedule.zenitheducationstudio.com/?stream=Secondary+(Express)",
+  },
+  trialRedirect: {
+    baseUrl: "https://schedule.zenitheducationstudio.com/",
+    stream: "Secondary (Express)",
+    campaign: "POSTJUNSS",
   },
   calendar: {
     firstDay: 1,

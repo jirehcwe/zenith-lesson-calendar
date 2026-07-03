@@ -29,9 +29,20 @@ describe("ClosingBanner", () => {
     expect(link.textContent).toMatch(/trial/i);
   });
 
-  it("renders nothing for a slug without a closingBanner (ss-june-2026)", () => {
-    const ClosingBanner = loadForSlug("ss-june-2026");
+  it("renders nothing when the resolved config has no closingBanner", () => {
+    // All real slugs now define closingBanner, so mock a config without one.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let ClosingBanner: React.ComponentType<any>;
+    jest.isolateModules(() => {
+      jest.doMock("../../../crash-courses", () => ({
+        getCrashCourseConfig: () => ({}),
+      }));
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      ClosingBanner = require("../ClosingBanner").default;
+    });
+    // @ts-expect-error ClosingBanner is assigned inside isolateModules above
     const { container } = render(<ClosingBanner />);
     expect(container).toBeEmptyDOMElement();
+    jest.dontMock("../../../crash-courses");
   });
 });
