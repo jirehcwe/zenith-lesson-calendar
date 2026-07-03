@@ -45,7 +45,8 @@ const config: CrashCourseConfig = {
     heroImageAlt: "Zenith Education",
   },
   // Course has ended: sticky banner + course-ended overlay/panel link to the
-  // regular free-trial Primary schedule (overlay tagged POSTJUNPRI).
+  // regular free-trial Primary schedule (overlay tagged POSTJUNCC — a shared
+  // "post June crash course" code across all levels).
   closingBanner: {
     headline: "The June 2026 Primary Holiday Programme has ended.",
     body: "Thank you for joining us! Continue your child’s learning with a free trial lesson in our regular Primary programme.",
@@ -55,7 +56,7 @@ const config: CrashCourseConfig = {
   trialRedirect: {
     baseUrl: "https://schedule.zenitheducationstudio.com/",
     stream: "Primary",
-    campaign: "POSTJUNPRI",
+    campaign: "POSTJUNCC",
   },
   calendar: {
     firstDay: 1,

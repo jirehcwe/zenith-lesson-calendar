@@ -116,8 +116,9 @@ const config: CrashCourseConfig = {
   },
   // Course has ended: sticky banner announces it and links to the regular
   // free-trial Secondary schedule. The course-ended overlay/panel deep-link
-  // there too — tagged POSTJUNSS on the overlay for attribution. The SS cohort
-  // mixes Express + IP; the click-out defaults to Express (the majority).
+  // there too — tagged POSTJUNCC on the overlay (a shared "post June crash
+  // course" code across all levels). The SS cohort mixes Express + IP; the
+  // click-out defaults to Express (the majority).
   closingBanner: {
     headline: "The June 2026 Secondary Crash Course has ended.",
     body: "Thank you for joining us! Continue your prep with a free trial lesson in our regular Secondary programme.",
@@ -134,7 +135,7 @@ const config: CrashCourseConfig = {
   trialRedirect: {
     baseUrl: "https://schedule.zenitheducationstudio.com/",
     stream: "Secondary (Express)",
-    campaign: "POSTJUNSS",
+    campaign: "POSTJUNCC",
   },
   calendar: {
     firstDay: 1,
