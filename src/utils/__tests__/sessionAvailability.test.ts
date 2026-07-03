@@ -2,7 +2,8 @@ import {
   getSessionAvailability,
   getAvailabilityLabel,
   isRegisterable,
-  getTrialRedirect,
+  isCourseOver,
+  getCourseEndedCta,
 } from "../sessionAvailability";
 import type { Session } from "@/types";
 
@@ -169,51 +170,58 @@ describe("isRegisterable", () => {
   });
 });
 
-describe("getTrialRedirect", () => {
-  const trialConfig = {
+describe("isCourseOver", () => {
+  const config = { dateRange: { start: "2026-06-01", end: "2026-06-30" } };
+
+  it("is false on dateRange.end (cutoff is the next day)", () => {
+    expect(isCourseOver(config, new Date(2026, 5, 30))).toBe(false);
+  });
+
+  it("is true the day after dateRange.end", () => {
+    expect(isCourseOver(config, new Date(2026, 6, 1))).toBe(true);
+  });
+});
+
+describe("getCourseEndedCta", () => {
+  const endedConfig = {
     dateRange: { start: "2026-06-01", end: "2026-06-30" },
-    subjectLabels: { CHEM: "Chemistry", MATH: "Math" },
+    closingBanner: {
+      headline: "The June 2026 JC Crash Course has ended.",
+      body: "Continue your prep with a free trial.",
+      ctaLabel: "Browse free JC trial classes →",
+      ctaHref: "https://schedule.zenitheducationstudio.com/?stream=JC",
+    },
     trialRedirect: {
       baseUrl: "https://schedule.zenitheducationstudio.com/",
       stream: "JC",
-      subjectOverrides: { Math: "Mathematics" },
+      campaign: "POSTJUNCC",
     },
   };
 
-  it("returns null on dateRange.end (cutoff is the day after)", () => {
-    expect(
-      getTrialRedirect({ subject: "CHEM" }, trialConfig, new Date(2026, 5, 30))
-    ).toBeNull();
+  it("returns null while the course is still running", () => {
+    expect(getCourseEndedCta(endedConfig, new Date(2026, 5, 30))).toBeNull();
   });
 
-  it("returns a subject+stream deep link the day after dateRange.end", () => {
-    const r = getTrialRedirect(
-      { subject: "CHEM" },
-      trialConfig,
-      new Date(2026, 6, 1)
-    );
-    expect(r?.href).toBe(
-      "https://schedule.zenitheducationstudio.com/?subject=Chemistry&stream=JC"
+  it("reuses the closingBanner text + links to the trial schedule after it ends", () => {
+    const cta = getCourseEndedCta(endedConfig, new Date(2026, 6, 1));
+    expect(cta?.headline).toMatch(/has ended/i);
+    expect(cta?.ctaLabel).toBe("Browse free JC trial classes →");
+    expect(cta?.ctaHref).toBe(
+      "https://schedule.zenitheducationstudio.com/?stream=JC"
     );
   });
 
-  it("applies subjectOverrides (Math → Mathematics)", () => {
-    const r = getTrialRedirect(
-      { subject: "MATH" },
-      trialConfig,
-      new Date(2026, 6, 1)
+  it("appends the campaign only when withCampaign is set", () => {
+    const cta = getCourseEndedCta(endedConfig, new Date(2026, 6, 1), {
+      withCampaign: true,
+    });
+    expect(cta?.ctaHref).toBe(
+      "https://schedule.zenitheducationstudio.com/?stream=JC&campaign=POSTJUNCC"
     );
-    expect(r?.href).toContain("subject=Mathematics");
-    expect(r?.href).toContain("stream=JC");
   });
 
-  it("returns null when the slug has no trialRedirect", () => {
-    const noTrial = {
-      dateRange: trialConfig.dateRange,
-      subjectLabels: trialConfig.subjectLabels,
-    };
-    expect(
-      getTrialRedirect({ subject: "CHEM" }, noTrial, new Date(2026, 6, 1))
-    ).toBeNull();
+  it("returns null when the slug has no closingBanner/trialRedirect", () => {
+    const bare = { dateRange: endedConfig.dateRange };
+    expect(getCourseEndedCta(bare, new Date(2026, 6, 1))).toBeNull();
   });
 });
