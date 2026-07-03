@@ -58,7 +58,7 @@ describe("SignupBanner", () => {
 
   it("starts expanded (no compact bar) with no manual collapse button", () => {
     render(<SignupBanner />);
-    expect(screen.getAllByText(/Now booking/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Registrations Open/i).length).toBeGreaterThan(0);
     expect(screen.queryByLabelText("Expand banner")).not.toBeInTheDocument();
     // The manual hide/collapse button has been removed entirely.
     expect(screen.queryByLabelText("Collapse banner")).not.toBeInTheDocument();
@@ -78,11 +78,11 @@ describe("SignupBanner", () => {
     scrollPastBanner();
     await user.click(screen.getByLabelText("Expand banner"));
     expect(screen.queryByLabelText("Expand banner")).not.toBeInTheDocument();
-    expect(screen.getAllByText(/Now booking/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Registrations Open/i).length).toBeGreaterThan(0);
   });
 
   it("renders the eyebrow pill in the desktop layout", () => {
     render(<SignupBanner />);
-    expect(screen.getAllByText(/Now booking/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Registrations Open/i).length).toBeGreaterThan(0);
   });
 });

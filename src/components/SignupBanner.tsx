@@ -29,7 +29,7 @@ export default function SignupBanner() {
     <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-3 py-1">
       <span className="w-1.5 h-1.5 rounded-full bg-green-400 motion-safe:animate-pulse block flex-shrink-0" />
       <span className="text-xs font-semibold uppercase tracking-widest text-white/85">
-        Now booking · 2026 academic year
+        Registrations Open · 2026 academic year
       </span>
     </div>
   );
