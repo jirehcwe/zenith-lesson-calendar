@@ -21,27 +21,11 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-  async headers() {
-    return [
-      {
-        source: "/:path*", // Apply to all paths
-        headers: [
-          {
-            key: "Access-Control-Allow-Origin",
-            value: "https://www.zenitheducationstudio.com",
-          },
-          {
-            key: "Access-Control-Allow-Methods",
-            value: "GET,POST,PUT,DELETE,OPTIONS",
-          },
-          {
-            key: "Access-Control-Allow-Headers",
-            value: "X-Requested-With, Content-Type, Accept",
-          },
-        ],
-      },
-    ];
-  },
+  // Note: with `output: "export"` Next.js does not apply `headers()` — a static
+  // export emits no server. Real HTTP headers for this site come from Cloudflare
+  // Pages (`_headers` file / dashboard), so any config here would be a silent
+  // no-op. (A prior `async headers()` CORS block was removed for this reason —
+  // an ACAO header on our own static pages did nothing anyway. CAL-03.)
 };
 
 export default nextConfig;
