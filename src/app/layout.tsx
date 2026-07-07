@@ -37,6 +37,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${manrope.variable} antialiased`}
       >
+        {/* Pre-paint: flag embedded loads (`?embed=true`) before the hero renders so
+            CSS shows the static compact bar on first paint (no flash / layout shift).
+            Must run synchronously ahead of the body content below it. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              'try{if(new URLSearchParams(window.location.search).get("embed")==="true"){document.documentElement.setAttribute("data-embed","true")}}catch(e){}',
+          }}
+        />
         {children}
       </body>
     </html>

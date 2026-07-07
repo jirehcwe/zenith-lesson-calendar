@@ -34,9 +34,34 @@ export default function SignupBanner() {
     </div>
   );
 
+  const logoTile = (
+    <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center flex-shrink-0">
+      <Image
+        src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65ed367b65acaa4acb2bbf72_Zenith-logo.webp"
+        alt="Zenith"
+        width={22}
+        height={22}
+      />
+    </div>
+  );
+
   return (
     <div ref={bannerRef} className="w-full hero-gradient">
-      <div className={`max-w-7xl mx-auto px-4 ${isCollapsed ? 'py-1' : 'py-4 sm:py-10 lg:py-10'}`}>
+      {/* Embed mode (`?embed=true`): a static compact bar with no expand/collapse
+          control. Visibility is toggled purely by the `data-embed` attribute (set
+          pre-paint in layout.tsx) via CSS — never by React state — so a static
+          export shows the correct bar on first paint with no hydration mismatch. */}
+      <div className="signup-embed-bar max-w-7xl mx-auto px-4 py-1">
+        <div className="w-full flex items-center gap-3 py-2 px-2">
+          <h1 className="text-base font-semibold text-white flex-1 tracking-wide">
+            Zenith 2026 Schedule
+          </h1>
+          {logoTile}
+        </div>
+      </div>
+
+      {/* Standalone hero (hidden under `[data-embed]`): expandable, auto-collapses. */}
+      <div className={`signup-standalone max-w-7xl mx-auto px-4 ${isCollapsed ? 'py-1' : 'py-4 sm:py-10 lg:py-10'}`}>
         {isCollapsed ? (
           /* Collapsed compact bar — same sizing at ALL viewport widths. Click to expand. */
           <button
@@ -55,14 +80,7 @@ export default function SignupBanner() {
             <h1 className="text-base font-semibold text-white flex-1 tracking-wide">
               Zenith 2026 Schedule
             </h1>
-            <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center flex-shrink-0">
-              <Image
-                src="https://cdn.prod.website-files.com/65e18b0d9682c5d7b41c0f12/65ed367b65acaa4acb2bbf72_Zenith-logo.webp"
-                alt="Zenith"
-                width={22}
-                height={22}
-              />
-            </div>
+            {logoTile}
           </button>
         ) : (
           <>

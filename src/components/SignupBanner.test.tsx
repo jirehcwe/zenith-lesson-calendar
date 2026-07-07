@@ -85,4 +85,24 @@ describe("SignupBanner", () => {
     render(<SignupBanner />);
     expect(screen.getAllByText(/Registrations Open/i).length).toBeGreaterThan(0);
   });
+
+  // The embed vs standalone visibility is driven by CSS on the `[data-embed]`
+  // attribute (set pre-paint in layout.tsx), so it is exercised in the browser,
+  // not here. These cases lock the embed bar's structural contract: it is always
+  // in the DOM and, unlike the standalone collapsed bar, offers no expand control.
+  describe("static embed bar", () => {
+    it("renders the schedule title with no expand/collapse control", () => {
+      render(<SignupBanner />);
+      const embedBar = document.querySelector(".signup-embed-bar");
+      expect(embedBar).toBeInTheDocument();
+      expect(embedBar).toHaveTextContent("Zenith 2026 Schedule");
+      expect(embedBar?.querySelector("button")).toBeNull();
+      expect(embedBar?.querySelector("svg")).toBeNull();
+    });
+
+    it("is separate from the interactive standalone hero", () => {
+      render(<SignupBanner />);
+      expect(document.querySelector(".signup-standalone")).toBeInTheDocument();
+    });
+  });
 });
