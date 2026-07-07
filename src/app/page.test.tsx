@@ -96,7 +96,11 @@ describe("pinned mode (?classes=)", () => {
   it("shows exactly the pinned classes, hiding the rest (AC 1)", async () => {
     setUrl("/?classes=2026-Class0001,2026-Class0002&view=list");
     const { container } = render(<Page />);
-    await screen.findByText("Physics");
+    // The calendar legend also renders a "Physics" swatch, so scope the wait to
+    // the visible list region rather than an ambiguous unscoped findByText.
+    await waitFor(() =>
+      expect(listRegion(container).getByText("Physics")).toBeInTheDocument(),
+    );
     const list = listRegion(container);
     expect(list.getByText("Physics")).toBeInTheDocument();
     expect(list.getByText("Economics")).toBeInTheDocument();
@@ -120,8 +124,9 @@ describe("pinned mode (?classes=)", () => {
   it("matches classSlotId case-insensitively (AC 8)", async () => {
     setUrl("/?classes=2026-class0001&view=list");
     const { container } = render(<Page />);
-    await screen.findByText("Physics");
-    expect(listRegion(container).getByText("Physics")).toBeInTheDocument();
+    await waitFor(() =>
+      expect(listRegion(container).getByText("Physics")).toBeInTheDocument(),
+    );
   });
 
   it("shows the exit banner with the displayed count (AC 9)", async () => {
@@ -134,7 +139,9 @@ describe("pinned mode (?classes=)", () => {
   it("preserves campaign & promocode params in the rendered links (AC 4, 5)", async () => {
     setUrl("/?classes=2026-Class0001&campaign=PROMO1&promocode=XYZ&view=list");
     const { container } = render(<Page />);
-    await screen.findByText("Physics");
+    await waitFor(() =>
+      expect(listRegion(container).getByText("Physics")).toBeInTheDocument(),
+    );
     // campaign SCHEDULE -> PROMO1, promocode placeholder -> XYZ
     expect(container.querySelector('a[href*="campaign=PROMO1"]')).not.toBeNull();
     expect(container.querySelector('a[href*="promocode=XYZ"]')).not.toBeNull();
