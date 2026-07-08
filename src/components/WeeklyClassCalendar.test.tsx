@@ -1,4 +1,10 @@
-import { isSlotFull, getSubjectColor, getLegendItemsForStream, WeeklyClassSlot } from "./WeeklyClassCalendar";
+import {
+  isSlotFull,
+  getSubjectColor,
+  getLegendItemsForStream,
+  computeLegendItems,
+  WeeklyClassSlot,
+} from "./WeeklyClassCalendar";
 
 jest.mock("@fullcalendar/react", () => ({ __esModule: true, default: () => null }));
 jest.mock("@fullcalendar/timegrid", () => ({}));
@@ -127,5 +133,52 @@ describe("getLegendItemsForStream", () => {
     expect(labels).toContain("Econ");
     expect(labels).toContain("History");
     expect(items.length).toBeGreaterThan(10);
+  });
+});
+
+describe("computeLegendItems", () => {
+  const jcSlots: WeeklyClassSlot[] = [
+    { subject: "Mathematics", label: "J1 Math" },
+    { subject: "Physics", label: "J1 Physics" },
+    { subject: "Chemistry", label: "J1 Chemistry" },
+    { subject: "Biology", label: "J1 Biology" },
+    { subject: "General Paper", label: "J1 GP" },
+    { subject: "Economics", label: "J1 Econ" },
+  ].map(({ subject, label }) =>
+    makeSlot({ level: "J1", stream: "JC", subjects: [subject], title: label })
+  );
+
+  it("shows every JC subject when a JC level is filtered but no stream is selected", () => {
+    // Reproduces the reported bug: level=J1, stream=null. The blocks are JC
+    // colors, so the legend must resolve JC labels — not collapse to the two
+    // subjects (GP, Econ) that happen to share a hex with the combined palette.
+    const labels = computeLegendItems(jcSlots, null).map((i) => i.label);
+    expect(labels).toEqual(
+      expect.arrayContaining(["Math", "Physics", "Chemistry", "Biology", "GP", "Econ"])
+    );
+  });
+
+  it("resolves the same JC legend whether or not the JC stream is selected", () => {
+    const withStream = computeLegendItems(jcSlots, "JC")
+      .map((i) => i.label)
+      .sort();
+    const withoutStream = computeLegendItems(jcSlots, null)
+      .map((i) => i.label)
+      .sort();
+    expect(withoutStream).toEqual(withStream);
+  });
+
+  it("appends a single Full swatch last when any slot is full", () => {
+    const slots = [
+      ...jcSlots,
+      makeSlot({ level: "J1", stream: "JC", subjects: ["Mathematics"], title: "[FULL] J1 Math" }),
+    ];
+    const labels = computeLegendItems(slots, null).map((i) => i.label);
+    expect(labels[labels.length - 1]).toBe("Full");
+    expect(labels.filter((l) => l === "Full")).toHaveLength(1);
+  });
+
+  it("shows the selected stream's full palette when there are no slots", () => {
+    expect(computeLegendItems([], "Primary")).toEqual(getLegendItemsForStream("Primary"));
   });
 });

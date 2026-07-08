@@ -45,6 +45,18 @@ body {
   background: #23477d;
 }
 
+/* Hero embed mode: `?embed=true` (attribute set pre-paint in layout.tsx) locks the
+   hero to the static compact bar and hides the interactive standalone hero. */
+.signup-embed-bar {
+  display: none;
+}
+html[data-embed="true"] .signup-embed-bar {
+  display: block;
+}
+html[data-embed="true"] .signup-standalone {
+  display: none;
+}
+
 /* Modern card styling */
 .modern-card {
   @apply bg-white rounded-xl shadow-lg border border-gray-100 transition-all duration-200 hover:shadow-xl;
