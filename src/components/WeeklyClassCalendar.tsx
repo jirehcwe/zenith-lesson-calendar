@@ -7,73 +7,21 @@ import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { replaceCampaignInUrl, replacePromocodeInUrl } from "@/utils/campaign";
 import { getFallbackRegistrationLinkByLevel } from "@/utils/prefillRegistration";
 import { to12hr } from "@/utils/time";
+import {
+  subjectToColor,
+  getSubjectColor,
+  getLegendItemsForStream,
+  legendItemsForLevel,
+  LEGEND_ORDER,
+  FULL_SWATCH,
+} from "@/utils/subjectColors";
+
+// Re-exported so existing consumers (ListView, tests) import from here unchanged.
+export { getSubjectColor, getLegendItemsForStream };
 
 // Check if a slot is full based on [FULL] prefix in the title
 export function isSlotFull(slot: WeeklyClassSlot): boolean {
   return slot.title.startsWith("[FULL]");
-}
-
-const FULL_SLOT_COLOR = { color: "#64748B", tint: "#E5E7EB" };
-
-// Combined "all streams" legend (shown when no stream is selected). Ops uses
-// different colors per stream for shared subjects (e.g. Math is cyan in JC,
-// blue in Secondary), so this is a best-effort single swatch per subject:
-// Secondary colors for shared science subjects, JC colors for GP/Econ.
-const LEGEND_ITEMS = [
-  { label: "Math",         color: "#1F4F7A", tint: "#CFE2F3" },
-  { label: "A Math",       color: "#1F4F7A", tint: "#CFE2F3" },
-  { label: "Physics",      color: "#44132D", tint: "#C27BA0" },
-  { label: "Chemistry",    color: "#7E1B1B", tint: "#F4CCCC" },
-  { label: "Biology",      color: "#346F20", tint: "#D9EAD3" },
-  { label: "English",      color: "#4F1C12", tint: "#DD7E6B" },
-  { label: "GP",           color: "#654B01", tint: "#FBBC04" },
-  { label: "Econ",         color: "#007209", tint: "#7BFF85" },
-  { label: "History",      color: "#6C5900", tint: "#FFD504" },
-  { label: "Literature",   color: "#567300", tint: "#DCFF74" },
-  { label: "Geography",    color: "#64748B", tint: "#FFFFFF" },
-  { label: "Soc. Studies", color: "#7E0099", tint: "#F0ABFF" },
-  { label: "Full",         color: "#64748B", tint: "#E5E7EB" },
-] as const;
-
-const JC_LEGEND_ITEMS = [
-  { label: "Math",      color: "#00757B", tint: "#8AE8EF" },
-  { label: "Physics",   color: "#650000", tint: "#FF6969" },
-  { label: "Chemistry", color: "#717100", tint: "#FFF176" },
-  { label: "Biology",   color: "#133586", tint: "#95B0F0" },
-  { label: "GP",        color: "#654B01", tint: "#FBBC04" },
-  { label: "Econ",      color: "#007209", tint: "#7BFF85" },
-  { label: "Full",      color: "#64748B", tint: "#E5E7EB" },
-] as const;
-
-const SEC_LEGEND_ITEMS = [
-  { label: "Math",         color: "#1F4F7A", tint: "#CFE2F3" },
-  { label: "A Math",       color: "#1F4F7A", tint: "#CFE2F3" },
-  { label: "Physics",      color: "#44132D", tint: "#C27BA0" },
-  { label: "Chemistry",    color: "#7E1B1B", tint: "#F4CCCC" },
-  { label: "Biology",      color: "#346F20", tint: "#D9EAD3" },
-  { label: "Science",      color: "#990000", tint: "#FFC2C2" },
-  { label: "English",      color: "#4F1C12", tint: "#DD7E6B" },
-  { label: "History",      color: "#6C5900", tint: "#FFD504" },
-  { label: "Literature",   color: "#567300", tint: "#DCFF74" },
-  { label: "Geography",    color: "#64748B", tint: "#FFFFFF" },
-  { label: "Soc. Studies", color: "#7E0099", tint: "#F0ABFF" },
-  { label: "Full",         color: "#64748B", tint: "#E5E7EB" },
-] as const;
-
-const PRIMARY_LEGEND_ITEMS = [
-  { label: "English", color: "#1E4E7B", tint: "#9FC5E8" },
-  { label: "Math",    color: "#713D07", tint: "#F6B26B" },
-  { label: "Science", color: "#2F5E1B", tint: "#B6D7A8" },
-  { label: "Full",    color: "#64748B", tint: "#E5E7EB" },
-] as const;
-
-export function getLegendItemsForStream(
-  stream: string | null
-): { label: string; color: string; tint: string }[] {
-  if (stream === "JC") return [...JC_LEGEND_ITEMS];
-  if (stream?.startsWith("Secondary")) return [...SEC_LEGEND_ITEMS];
-  if (stream === "Primary") return [...PRIMARY_LEGEND_ITEMS];
-  return [...LEGEND_ITEMS];
 }
 
 // Define a new type for weekly class slots (no topic, no date)
@@ -92,73 +40,40 @@ export type WeeklyClassSlot = {
   prefillRegistrationLink?: string;
 };
 
-// Colors synced to the ops scheduling sheet ("2026 Schedule"). `tint` is the
-// exact ops cell fill; `color` is a darkened shade of the same hue, used for
-// the block text / left-border accent so it stays legible on the pale fill.
-// Exception: JC Chemistry (#FFF176) and Mathematics (#8AE8EF) tints are
-// intentionally softened/deepened from the ops cell fills (#FFFF00 / #BFFCFF)
-// for legibility on screen — keep these and do not re-sync to the sheet.
-const jcSubjectToColorMap: Record<string, { color: string; tint: string }> = {
-  "General Paper": { color: "#654B01", tint: "#FBBC04" },
-  Biology:         { color: "#133586", tint: "#95B0F0" },
-  Physics:         { color: "#650000", tint: "#FF6969" },
-  Chemistry:       { color: "#717100", tint: "#FFF176" },
-  Mathematics:     { color: "#00757B", tint: "#8AE8EF" },
-  Economics:       { color: "#007209", tint: "#7BFF85" },
-};
-
-const secSubjectToColorMap: Record<string, { color: string; tint: string }> = {
-  Mathematics:          { color: "#1F4F7A", tint: "#CFE2F3" },
-  "A Math":             { color: "#1F4F7A", tint: "#CFE2F3" },
-  "E Math":             { color: "#1F4F7A", tint: "#CFE2F3" },
-  "Pure Physics":       { color: "#44132D", tint: "#C27BA0" },
-  "Combined Physics":   { color: "#44132D", tint: "#C27BA0" },
-  Chemistry:            { color: "#7E1B1B", tint: "#F4CCCC" },
-  Physics:              { color: "#44132D", tint: "#C27BA0" },
-  Science:              { color: "#990000", tint: "#FFC2C2" },
-  "Pure Chemistry":     { color: "#7E1B1B", tint: "#F4CCCC" },
-  "Combined Chemistry": { color: "#7E1B1B", tint: "#F4CCCC" },
-  "Pure Biology":       { color: "#346F20", tint: "#D9EAD3" },
-  "Combined Biology":   { color: "#346F20", tint: "#D9EAD3" },
-  English:              { color: "#4F1C12", tint: "#DD7E6B" },
-  "Pure History":       { color: "#6C5900", tint: "#FFD504" },
-  "Combined History":   { color: "#6C5900", tint: "#FFD504" },
-  "Pure Literature":    { color: "#567300", tint: "#DCFF74" },
-  "Combined Literature":{ color: "#567300", tint: "#DCFF74" },
-  // Geography is not offered in 2026; kept white until ops assigns a color.
-  "Pure Geography":     { color: "#64748B", tint: "#FFFFFF" },
-  "Combined Geography": { color: "#64748B", tint: "#FFFFFF" },
-  "Social Studies":     { color: "#7E0099", tint: "#F0ABFF" },
-};
-
-const primarySubjectToColorMap: Record<string, { color: string; tint: string }> = {
-  English:     { color: "#1E4E7B", tint: "#9FC5E8" },
-  Mathematics: { color: "#713D07", tint: "#F6B26B" },
-  Science:     { color: "#2F5E1B", tint: "#B6D7A8" },
-};
-
-export function getSubjectColor(subject: string, level: string): string {
-  return subjectToColor(level, subject).color;
-}
-
-function subjectToColor(
-  level: string,
-  subject: string
-): { color: string; tint: string } {
-  const normalisedSubject = subject.startsWith("IP ")
-    ? subject.slice(3)
-    : subject;
-
-  if (level.includes("J")) {
-    return jcSubjectToColorMap[normalisedSubject] || FULL_SLOT_COLOR;
+// Build the color legend from the currently visible slots. Each swatch is
+// resolved against the palette for that slot's own level, so the legend always
+// matches the colors actually rendered on the calendar — the block color comes
+// from subjectToColor(slot.level, ...), so the label must too. Deriving the
+// palette from a single `selectedStream` breaks when the stream filter is unset
+// but a level filter is active (e.g. level=J1, stream=null): the blocks are JC
+// colors while the palette would be the combined one, dropping most subjects.
+export function computeLegendItems(
+  slots: WeeklyClassSlot[],
+  selectedStream: string | null
+): { label: string; color: string; tint: string }[] {
+  if (slots.length === 0) return getLegendItemsForStream(selectedStream);
+  const seen = new Set<string>();
+  const result: { label: string; color: string; tint: string }[] = [];
+  for (const slot of slots) {
+    if (isSlotFull(slot)) continue;
+    const { color } = subjectToColor(slot.level, slot.subjects[0] ?? "");
+    if (seen.has(color)) continue;
+    seen.add(color);
+    const match = legendItemsForLevel(slot.level).find(
+      (item) => item.color === color
+    );
+    if (match) result.push(match);
   }
-  if (level.includes("S")) {
-    return secSubjectToColorMap[normalisedSubject] || FULL_SLOT_COLOR;
+  result.sort(
+    (a, b) => LEGEND_ORDER.indexOf(a.color) - LEGEND_ORDER.indexOf(b.color)
+  );
+  if (slots.some(isSlotFull)) {
+    const fullItem = getLegendItemsForStream(selectedStream).find(
+      (item) => item.label === "Full"
+    );
+    if (fullItem) result.push(fullItem);
   }
-  if (level.includes("P")) {
-    return primarySubjectToColorMap[normalisedSubject] || FULL_SLOT_COLOR;
-  }
-  return FULL_SLOT_COLOR;
+  return result;
 }
 
 // Helper to get a fixed date for a weekday (using a reference week)
@@ -252,7 +167,7 @@ export default function WeeklyClassCalendar({
       end.setHours(endHour, endMinute, 0, 0);
       const full = isSlotFull(slot);
       const colors = full
-        ? FULL_SLOT_COLOR
+        ? FULL_SWATCH
         : subjectToColor(slot.level, slot.subjects[0] ?? "");
       return {
         title: `${slot.level} ${slot.subjects.join(" + ")} ${
@@ -267,27 +182,10 @@ export default function WeeklyClassCalendar({
     });
   }, [slots]);
 
-  const legendItems = useMemo(() => {
-    if (slots.length === 0) return getLegendItemsForStream(selectedStream);
-    const allItems = getLegendItemsForStream(selectedStream);
-    const seen = new Set<string>();
-    const result: { label: string; color: string; tint: string }[] = [];
-    for (const slot of slots) {
-      if (isSlotFull(slot)) continue;
-      const { color } = subjectToColor(slot.level, slot.subjects[0] ?? "");
-      if (!seen.has(color)) {
-        seen.add(color);
-        const match = allItems.find((item) => item.color === color);
-        if (match) result.push(match);
-      }
-    }
-    if (slots.some(isSlotFull)) {
-      const fullItem = allItems.find((item) => item.label === "Full");
-      if (fullItem) result.push(fullItem);
-    }
-    const order = allItems.map((item) => item.color);
-    return result.sort((a, b) => order.indexOf(a.color) - order.indexOf(b.color));
-  }, [slots, selectedStream]);
+  const legendItems = useMemo(
+    () => computeLegendItems(slots, selectedStream),
+    [slots, selectedStream]
+  );
 
   const emptyDayStyles = useMemo(() => {
     if (slots.length === 0) return '';
@@ -431,7 +329,7 @@ export default function WeeklyClassCalendar({
             const slotData = arg.event.extendedProps as WeeklyClassSlot;
             const full = isSlotFull(slotData);
             const colors = full
-              ? FULL_SLOT_COLOR
+              ? FULL_SWATCH
               : subjectToColor(slotData.level, slotData.subjects[0] ?? "");
             return (
               <div
