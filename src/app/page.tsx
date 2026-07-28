@@ -123,7 +123,6 @@ export default function Page() {
   const [filters, setFilters] = useState({
     subject: [] as string[],
     centre: [] as string[],
-    tutor: [] as string[],
     level: [] as string[],
     stream: null as string | null,
   });
@@ -147,7 +146,6 @@ export default function Page() {
     const initialFilters = {
       subject: params.get("subject")?.split(",").filter(Boolean) || [],
       centre: params.get("centre")?.split(",").filter(Boolean) || [],
-      tutor: params.get("tutor")?.split(",").filter(Boolean) || [],
       level: params.get("level")?.split(",").filter(Boolean) || [],
       stream: params.get("stream") || null,
     };
@@ -209,7 +207,6 @@ export default function Page() {
     // Clear existing filter params only
     params.delete("subject");
     params.delete("centre");
-    params.delete("tutor");
     params.delete("level");
     params.delete("stream");
 
@@ -219,9 +216,6 @@ export default function Page() {
     }
     if (filters.centre.length > 0) {
       params.set("centre", filters.centre.join(","));
-    }
-    if (filters.tutor.length > 0) {
-      params.set("tutor", filters.tutor.join(","));
     }
     if (filters.level.length > 0) {
       params.set("level", filters.level.join(","));
@@ -268,7 +262,6 @@ export default function Page() {
       ...new Set(streamFilteredData.flatMap((s) => s.subjects)),
     ];
     const allCentres = [...new Set(streamFilteredData.map((s) => s.centre))];
-    const allTutors = [...new Set(streamFilteredData.map((s) => s.tutor))];
 
     // Function to count results for each option
     const getResultCount = (field: string, value: string) => {
@@ -279,8 +272,6 @@ export default function Page() {
         testFilters.subject = [value];
       } else if (field === "centre") {
         testFilters.centre = [value];
-      } else if (field === "tutor") {
-        testFilters.tutor = [value];
       }
 
       const result = streamFilteredData.filter((s) => {
@@ -334,25 +325,10 @@ export default function Page() {
         return a.value.localeCompare(b.value);
       });
 
-    const tutorsWithCounts = allTutors
-      .map((tutor) => ({
-        value: tutor,
-        count: getResultCount("tutor", tutor),
-        selected: filters.tutor.includes(tutor),
-      }))
-      .sort((a, b) => {
-        // Only push zero-count options to the bottom, preserve original order otherwise
-        if (a.count === 0 && b.count > 0) return 1;
-        if (a.count > 0 && b.count === 0) return -1;
-
-        return a.value.localeCompare(b.value);
-      });
-
     return {
       levels: levelsWithCounts,
       subjects: subjectsWithCounts,
       centres: centresWithCounts,
-      tutors: tutorsWithCounts,
     };
   }, [weeklyClassData, filters]);
 
@@ -409,7 +385,6 @@ export default function Page() {
         level: [],
         subject: [],
         centre: [],
-        tutor: [],
       });
       return;
     }
@@ -428,7 +403,7 @@ export default function Page() {
       qs ? `${window.location.pathname}?${qs}` : window.location.pathname,
     );
     setPinRequest({ kind: "none" });
-    setFilters({ subject: [], centre: [], tutor: [], level: [], stream: null });
+    setFilters({ subject: [], centre: [], level: [], stream: null });
   };
 
   const hasActiveFilters =
@@ -490,7 +465,6 @@ export default function Page() {
                     levels={filteredOptions.levels}
                     subjects={filteredOptions.subjects}
                     centres={filteredOptions.centres}
-                    tutors={filteredOptions.tutors}
                     filters={filters}
                     onFilterChange={handleFilterChange}
                     currentView={currentView}
@@ -660,7 +634,6 @@ export default function Page() {
                 levels={filteredOptions.levels}
                 subjects={filteredOptions.subjects}
                 centres={filteredOptions.centres}
-                tutors={filteredOptions.tutors}
                 filters={filters}
                 onFilterChange={handleFilterChange}
                 currentView={currentView}
