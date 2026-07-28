@@ -5,8 +5,20 @@ import { replaceCampaignInUrl, replacePromocodeInUrl } from "@/utils/campaign";
 import { getFallbackRegistrationLinkByLevel } from "@/utils/prefillRegistration";
 import { to12hr } from "@/utils/time";
 
-export default function ListView({ sessions, onEmptyStateClick }: { sessions: WeeklyClassSlot[]; onEmptyStateClick?: () => void }) {
+export default function ListView({
+  sessions,
+  onEmptyStateClick,
+  suppressEmptyState = false,
+}: {
+  sessions: WeeklyClassSlot[];
+  onEmptyStateClick?: () => void;
+  suppressEmptyState?: boolean;
+}) {
   if (sessions.length === 0) {
+    // In pinned mode the filter bar and the mobile Filter tab are hidden, so
+    // "Select a stream" / "Open filters" would point at controls that are not
+    // on screen. The pinned banner carries the explanation instead.
+    if (suppressEmptyState) return null;
     return (
       <div className="text-center py-12">
         <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-blue-50 flex items-center justify-center">

@@ -13,7 +13,12 @@ import TestimonialCarousel from "@/components/TestimonialCarousel";
 import TestimonialGrid from "@/components/TestimonialGrid";
 import PinnedBanner from "@/components/PinnedBanner";
 import ViewToggle from "@/components/ViewToggle";
-import { parseClassesParam, matchPinnedSlots } from "@/utils/pinnedClasses";
+import {
+  parsePinRequest,
+  matchPinnedSlots,
+  describePin,
+  type PinRequest,
+} from "@/utils/pinnedSlots";
 import { getCampaignParam } from "@/utils/campaign";
 
 const CACHE_KEY = "weeklyClassData";
@@ -122,7 +127,11 @@ export default function Page() {
     level: [] as string[],
     stream: null as string | null,
   });
-  const [pinnedClassIds, setPinnedClassIds] = useState<string[]>([]);
+  const [pinRequest, setPinRequest] = useState<PinRequest>({ kind: "none" });
+  // Distinguishes "the schedule never arrived" from "your link matched nothing".
+  // Without it, a network/CORS failure on a perfectly valid link tells the user
+  // their link is broken — see the banner message in (f).
+  const [loadFailed, setLoadFailed] = useState(false);
 
   useEffect(() => {
     const check = () =>
@@ -143,7 +152,7 @@ export default function Page() {
       stream: params.get("stream") || null,
     };
     setFilters(initialFilters);
-    setPinnedClassIds(parseClassesParam(window.location.search));
+    setPinRequest(parsePinRequest(window.location.search));
 
     // Read view from URL
     const viewParam = params.get("view") as ViewType;
@@ -181,6 +190,7 @@ export default function Page() {
       })
       .catch((error) => {
         console.error("Error fetching schedule data:", error);
+        setLoadFailed(true);
         setIsLoading(false);
       });
   }, []);
@@ -350,10 +360,12 @@ export default function Page() {
   [weeklyClassData, filters.stream]);
 
   const pinnedSlots = useMemo(
-    () => matchPinnedSlots(weeklyClassData, pinnedClassIds),
-    [weeklyClassData, pinnedClassIds],
+    () => matchPinnedSlots(weeklyClassData, pinRequest),
+    [weeklyClassData, pinRequest],
   );
-  const isPinned = pinnedSlots.length > 0;
+  // Derived from the URL, not the match count, so a link that matches nothing
+  // still enters pinned mode and can report itself as broken.
+  const isPinned = pinRequest.kind !== "none";
 
   const events = useMemo(() => {
     if (isPinned) {
@@ -401,13 +413,14 @@ export default function Page() {
   const handleExitPinned = () => {
     const params = new URLSearchParams(window.location.search);
     params.delete("classes");
+    params.delete("tutor");
     const qs = params.toString();
     window.history.replaceState(
       {},
       "",
       qs ? `${window.location.pathname}?${qs}` : window.location.pathname,
     );
-    setPinnedClassIds([]);
+    setPinRequest({ kind: "none" });
     setFilters({ subject: [], centre: [], tutor: [], level: [], stream: null });
   };
 
@@ -422,7 +435,14 @@ export default function Page() {
       <SignupBanner />
       {!isLoading && isPinned && (
         <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200">
-          <PinnedBanner count={events.length} onShowAll={handleExitPinned} />
+          <PinnedBanner
+            message={
+              loadFailed
+                ? "We couldn't load the schedule. Please try again."
+                : describePin(pinRequest, pinnedSlots)
+            }
+            onShowAll={handleExitPinned}
+          />
           {!isMobilePhone && (
             <div className="max-w-7xl mx-auto px-4 py-2 md:px-8 md:py-3 flex justify-end">
               <ViewToggle currentView={currentView} onViewChange={setCurrentView} />
@@ -530,7 +550,7 @@ export default function Page() {
                 <WeeklyClassCalendar
                   slots={events}
                   isVisible={currentView === "calendar"}
-                  hasActiveFilters={hasActiveFilters}
+                  hasActiveFilters={hasActiveFilters || isPinned}
                   selectedStream={filters.stream}
                   onEmptyStateClick={
                     isMobilePhone
@@ -545,6 +565,7 @@ export default function Page() {
               <div className={currentView !== "list" ? "hidden" : "modern-card p-3 sm:p-6"}>
                 <ListView
                   sessions={events}
+                  suppressEmptyState={isPinned}
                   onEmptyStateClick={
                     isMobilePhone
                       ? () => setFilterSheetOpen(true)

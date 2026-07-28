@@ -1,10 +1,10 @@
 "use client";
 
 export default function PinnedBanner({
-  count,
+  message,
   onShowAll,
 }: {
-  count: number;
+  message: string;
   onShowAll: () => void;
 }) {
   return (
@@ -16,7 +16,7 @@ export default function PinnedBanner({
         >
           i
         </span>
-        You&apos;re viewing {count} selected {count === 1 ? "class" : "classes"}
+        {message}
       </span>
       <button
         onClick={onShowAll}
