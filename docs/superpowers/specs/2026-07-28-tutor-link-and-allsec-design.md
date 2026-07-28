@@ -1,7 +1,7 @@
 # Design: `?tutor=` deep-link and the `AllSec` stream
 
 **Date:** 2026-07-28
-**Branch:** `jireh/feat/tutor-link-allsec` (based on `regular-lessons`)
+**Branch:** `jireh/feat/tutor-link-allsec` → `regular-lessons-staging` → `regular-lessons`
 **Status:** Approved — ready for implementation plan
 
 ## Problem
@@ -90,8 +90,8 @@ dead state must be removed so the param has exactly one owner.
   function needs an explicit `AllSec` case.
 - `Filters.tsx` already routes chip text through a `streamLabel()` helper, so a
   chip's stored value and its displayed label can differ without new machinery.
-  That helper shortens the existing labels to `"Sec Express"` and `"Sec IP"`,
-  which constrains the new chip's copy (see Feature 2).
+  That helper shortens the existing labels to `"Sec Express"` and `"Sec IP"`;
+  the new chip deliberately does not follow that abbreviation (see Feature 2).
 
 ## Feature 1 — `?tutor=` pinned tutor view
 
@@ -274,16 +274,17 @@ visitors see the usual four chips.
 
 `AllSec` is kept as the literal internal state value so it round-trips through
 the URL untouched, with no bidirectional mapping to keep in sync. The
-user-facing label is **"Sec All"**, supplied by the existing `streamLabel()`
-helper.
+user-facing label is **"Secondary (All)"**, supplied by the existing
+`streamLabel()` helper.
 
-> **Copy deviation, flagged.** The approved mockup read "Secondary (All)". The
-> existing chips render through `streamLabel()` as `JC`, `Sec Express`,
-> `Sec IP`, `Primary` — so the long form would be visually out of step with its
-> two direct siblings. `Sec All` preserves the `Sec <track>` pattern, giving
-> `JC · Sec Express · Sec IP · Sec All · Primary`. Revert to "Secondary (All)"
-> if the longer, more legible form is preferred for link recipients who have
-> never seen the filter bar before.
+> **Copy decision (2026-07-28).** The long form is deliberate, and deliberately
+> unlike its siblings: `streamLabel()` shortens the other two to `Sec Express`
+> and `Sec IP`, giving `JC · Sec Express · Sec IP · Secondary (All) · Primary`.
+> The abbreviated `Sec All` was considered and rejected. This chip is reached by
+> link, so its typical viewer has never seen the filter bar and has no `Sec →
+> Secondary` mapping in their head; legibility beats visual symmetry here, and
+> the extra width also helps the chip read as the distinct, wider-scoped option
+> that it is.
 
 Matching is `level.startsWith("S")` rather than an explicit
 `EXP || IP` test. Today those are equivalent (verified above: 325 + 38 = 363,
@@ -297,15 +298,16 @@ is the deliberate choice.
 1. **Union.** `?stream=AllSec` shows every Secondary class, both Express and IP.
 2. **Exclusion.** No JC or Primary classes appear under `AllSec`.
 3. **Chip shown when active.** Arriving via `?stream=AllSec` renders a fifth
-   chip labelled "Sec All", displayed as selected, with the correct count.
+   chip labelled "Secondary (All)", displayed as selected, with the correct
+   count.
 4. **Chip hidden otherwise.** A visitor who has not used the link never sees the
    chip; the filter bar shows the usual four.
 5. **Level dropdown.** With `AllSec` active, the Level dropdown offers the
    S1–S4 union.
 6. **Case-insensitive.** `?stream=allsec` and `?stream=ALLSEC` are accepted and
    normalise to the canonical `AllSec` in state and in the URL.
-7. **Deselect.** Clicking the active "Sec All" chip clears the stream, as with
-   any other chip; the chip then disappears.
+7. **Deselect.** Clicking the active "Secondary (All)" chip clears the stream,
+   as with any other chip; the chip then disappears.
 8. **Colours.** Class blocks render in the Secondary palette (this follows from
    level-based colouring and needs no new code — assert it so a future
    refactor to stream-based colouring cannot regress it silently).
@@ -319,7 +321,7 @@ is the deliberate choice.
 | `src/app/page.tsx` | `levelToFilterMapper`: add `case "AllSec": return level.startsWith("S")` |
 | `src/app/page.tsx` | `streamOptions`: append the `AllSec` option only when `filters.stream === "AllSec"` |
 | `src/app/page.tsx` | mount effect: case-fold an incoming `stream` param to canonical `AllSec` |
-| `src/components/Filters.tsx` | `streamLabel()`: map `AllSec` → `"Sec All"` |
+| `src/components/Filters.tsx` | `streamLabel()`: map `AllSec` → `"Secondary (All)"` |
 | `src/utils/subjectColors.ts` | `getLegendItemsForStream`: treat `AllSec` as Secondary |
 
 No change to block colouring, the legend derived from visible slots, the level
@@ -370,6 +372,48 @@ Secondary palette asserted for both blocks and the empty-calendar legend.
 Per standing preference, **new/edited tests stay uncommitted until the user
 reviews them**.
 
+## Rollout — staging first
+
+This follows the path the `?classes=` feature took (PR #23):
+
+```
+jireh/feat/tutor-link-allsec
+        └─► PR into regular-lessons-staging
+                └─► validate on the Cloudflare Pages preview build
+                        └─► separate PR: regular-lessons-staging ─► regular-lessons
+```
+
+Nothing merges to `regular-lessons` until the preview build has been checked by
+hand. Both features are URL-param-driven and invisible to anyone who does not
+use the link, so the promotion risk is low — but the `?classes=` behaviour
+change is **not** invisible, and that is the one to watch on staging.
+
+**Confirm which API the preview build hits before trusting a staging check.**
+Non-production branches build as Preview in Cloudflare Pages, and the Preview
+environment has its own `NEXT_PUBLIC_SCHEDULE_API_BASE_URL`. The repo documents
+only the production host (`.env.example`), so the preview value must be read
+from Cloudflare Pages → Settings → Variables and Secrets. If the preview
+schedule API is not backed by the same tutor records as production, the tutor
+codes below will differ and the manual checks must be repeated after promotion.
+
+Manual checks on the preview URL, beyond the automated suite:
+
+| Link | Expected |
+| --- | --- |
+| `?tutor=Alicia` | Pinned view; banner names the tutor |
+| `?tutor=Alicia,DJ` | Union of both; multi-tutor banner copy |
+| `?tutor=Dr.%20Han%20Wei` | Encoded multi-word code resolves |
+| `?tutor=Phebee` | "Couldn't find any classes" banner — **not** the homepage |
+| `?classes=NOPE` | Same as above (the reversal of June AC 6, in a real browser) |
+| `?tutor=Alicia&stream=JC` | Stale filter param ignored; still Alicia's classes |
+| `?tutor=Alicia&campaign=X` | Registration link still carries the campaign |
+| `?stream=AllSec` | Fifth chip reads "Secondary (All)"; Express **and** IP present; Secondary palette |
+| `?stream=allsec` | Normalises to the canonical `AllSec` |
+| no params | Unchanged homepage — four chips, empty-state gate |
+
+The last row is the regression check that matters most: the whole change should
+be inert for an ordinary visitor.
+
 ## Out of scope
 
 - Building a real tutor filter control in the filter bar. The dead `filters.tutor`
@@ -379,6 +423,6 @@ reviews them**.
 - Exposing `Tutor.scheduleCode` or a tutor display name through the schedule API.
 - Filtering *within* a pinned subset (the locked-view trade-off, unchanged from
   the June design).
-- Making "Sec All" a permanent public filter chip.
+- Making "Secondary (All)" a permanent public filter chip.
 - Any change to `db-schedule-updater`, the API response shape, or `CACHE_VERSION`.
 - Porting either feature to the crash-course branches.
