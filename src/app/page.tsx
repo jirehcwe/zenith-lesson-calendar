@@ -185,7 +185,14 @@ export default function Page() {
       .then((res: { data: WeeklyClassSlot[] }) => {
         const normalised = res.data.map(normaliseSlot);
         setWeeklyClassData(normalised);
-        setCachedData(normalised);
+        // Never cache an empty schedule. A cache hit short-circuits this effect
+        // before it fetches, so persisting an empty payload locks every visitor
+        // out of a retry for CACHE_DURATION. That is reachable, not theoretical:
+        // the request pins year=<current>, so from 1 January until the new
+        // year's schedule is published the endpoint legitimately returns none.
+        if (normalised.length > 0) {
+          setCachedData(normalised);
+        }
         setIsLoading(false);
       })
       .catch((error) => {
@@ -437,7 +444,11 @@ export default function Page() {
         <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200">
           <PinnedBanner
             message={
-              loadFailed
+              // Only blame the link once we have a schedule to have missed it
+              // in. An exception-shaped failure (loadFailed) and a successful
+              // but empty response are indistinguishable to the recipient of a
+              // valid link, and describePin would call both a dead link.
+              loadFailed || weeklyClassData.length === 0
                 ? "We couldn't load the schedule. Please try again."
                 : describePin(pinRequest, pinnedSlots)
             }
