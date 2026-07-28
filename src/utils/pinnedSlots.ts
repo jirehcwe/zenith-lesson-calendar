@@ -72,12 +72,22 @@ function joinNames(names: string[]): string {
  * the link happened to spell them, and unmatched codes are never named.
  */
 export function describePin(req: PinRequest, matched: Pinnable[]): string {
+  // "No request at all" and "a request that matched nothing" are different
+  // states, and only the second one is a broken link. This check has to come
+  // BEFORE the empty-match guard or the two collapse together: an unpinned
+  // homepage would accuse itself of being a dead link.
+  if (req.kind === "none") return "";
+
   if (matched.length === 0) return "We couldn't find any classes for this link.";
 
   if (req.kind === "tutor") {
     const names = [...new Set(matched.map((s) => s.tutor).filter((t): t is string => t != null))];
     if (names.length === 1) return `You're viewing ${names[0]}'s classes`;
-    return `You're viewing classes taught by ${joinNames(names)}`;
+    // Only promise "taught by X" when there is an X to name. Slots carrying no
+    // tutor at all fall through to the count below rather than rendering
+    // "taught by " with a dangling preposition. `matched` is caller-supplied
+    // and nothing enforces that it came from matchPinnedSlots.
+    if (names.length > 1) return `You're viewing classes taught by ${joinNames(names)}`;
   }
 
   return `You're viewing ${matched.length} selected ${matched.length === 1 ? "class" : "classes"}`;
