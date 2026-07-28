@@ -118,9 +118,16 @@ Parsing rules are unchanged from `parseClassesParam`: split on `,`, trim, drop
 empties. Matching is case-insensitive for both kinds.
 
 **Tutor codes match `slot.tutor` exactly** (after case-folding) — never by
-prefix or substring. The live data contains `Phoebe` **and** `Phebe`, and
-`Joshua` **and** `Joshua Teo`; prefix matching would silently show the wrong
-person's schedule.
+prefix, substring, or fuzzy comparison. The live data contains two distinct
+near-miss pairs, and they guard **different** failure modes:
+
+- `Joshua` and `Joshua Teo` — the prefix hazard. One code is a strict prefix of
+  the other, so prefix matching returns the wrong person.
+- `Phoebe` and `Phebe` — *not* a prefix pair (they diverge at the third
+  character). This one guards against fuzzy, normalised, or edit-distance
+  matching — the kind of "be helpful about typos" change someone adds later.
+
+Both belong in the test fixture; neither on its own covers both hazards.
 
 **Precedence:** if a link carries both `classes` and `tutor`, `classes` wins.
 This is arbitrary but must be decided rather than left emergent.
@@ -366,10 +373,13 @@ dropdown, or `STREAM_VALUES` itself.
 
 Jest 30 + React Testing Library, matching the existing suites.
 
-**`src/utils/pinnedClasses.test.ts`** — both pin kinds parse; precedence when
-both params present; case-insensitive matching; **exact-match-not-prefix**
-(`Phoebe`/`Phebe` and `Joshua`/`Joshua Teo` specifically); unknown code yields
-an empty match list while the request itself remains non-`none`.
+**`src/utils/pinnedSlots.test.ts`** — both pin kinds parse; precedence when
+both params present (including the `?classes=&tutor=X` case, where an empty
+`classes` must count as absent); case-insensitive matching; **exact match**
+against both near-miss pairs (`Joshua`/`Joshua Teo` for prefix,
+`Phoebe`/`Phebe` for fuzzy); unknown code yields an empty match list while the
+request itself remains non-`none`; and `describePin` returns an empty string for
+`kind: "none"`, so the two states never render the same copy.
 
 **`src/components/PinnedBanner.test.tsx`** — all four copy states, including the
 multi-tutor join and the zero-match message.
