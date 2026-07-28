@@ -25,8 +25,7 @@
     "react": "^19.0.0",
     "react-datepicker": "^8.3.0",
     "react-dom": "^19.0.0",
-    "swiper": "^11.2.10",
-    "xlsx": "^0.18.5"
+    "swiper": "^11.2.10"
   },
   "devDependencies": {
     "@cloudflare/next-on-pages": "^1.13.12",
