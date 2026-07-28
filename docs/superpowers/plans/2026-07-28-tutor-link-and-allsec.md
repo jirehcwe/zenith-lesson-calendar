@@ -825,30 +825,38 @@ describe("AllSec stream (?stream=AllSec)", () => {
     ) as unknown as typeof fetch;
   });
 
+  // Mirrors the helper the ?classes= describe block already uses: it returns a
+  // `within(...)` queries object, so call it as `listRegion(container).getByText`
+  // — do NOT wrap it in `within(...)` again.
   const listRegion = (container: HTMLElement) => {
     const card = Array.from(
       container.querySelectorAll<HTMLElement>("div.modern-card"),
     ).find((el) => !el.className.includes("hidden"));
-    return card ?? container;
+    if (!card) throw new Error("visible list region not found");
+    return within(card);
   };
 
+  // NOTE: every test that scopes to `listRegion` must request `&view=list`. In
+  // the default calendar view the list wrapper's className is the bare string
+  // "hidden" with no `modern-card` class, so the helper finds nothing.
+
   it("shows Express and IP together (AC 1)", async () => {
-    setUrl("/?stream=AllSec");
+    setUrl("/?stream=AllSec&view=list");
     const { container } = render(<Page />);
     await waitFor(() =>
-      expect(within(listRegion(container)).getByText("Mathematics")).toBeInTheDocument(),
+      expect(listRegion(container).getByText("Mathematics")).toBeInTheDocument(),
     );
-    expect(within(listRegion(container)).getByText("Chemistry")).toBeInTheDocument();
+    expect(listRegion(container).getByText("Chemistry")).toBeInTheDocument();
   });
 
   it("excludes JC and Primary (AC 2)", async () => {
-    setUrl("/?stream=AllSec");
+    setUrl("/?stream=AllSec&view=list");
     const { container } = render(<Page />);
     await waitFor(() =>
-      expect(within(listRegion(container)).getByText("Mathematics")).toBeInTheDocument(),
+      expect(listRegion(container).getByText("Mathematics")).toBeInTheDocument(),
     );
-    expect(within(listRegion(container)).queryByText("Physics")).not.toBeInTheDocument();
-    expect(within(listRegion(container)).queryByText("Science")).not.toBeInTheDocument();
+    expect(listRegion(container).queryByText("Physics")).not.toBeInTheDocument();
+    expect(listRegion(container).queryByText("Science")).not.toBeInTheDocument();
   });
 
   it("shows the Secondary (All) chip while selected (AC 3)", async () => {
@@ -867,10 +875,10 @@ describe("AllSec stream (?stream=AllSec)", () => {
   });
 
   it("accepts a lowercase param (AC 6)", async () => {
-    setUrl("/?stream=allsec");
+    setUrl("/?stream=allsec&view=list");
     const { container } = render(<Page />);
     await waitFor(() =>
-      expect(within(listRegion(container)).getByText("Mathematics")).toBeInTheDocument(),
+      expect(listRegion(container).getByText("Mathematics")).toBeInTheDocument(),
     );
     expect(screen.getAllByText("Secondary (All)").length).toBeGreaterThan(0);
   });
@@ -879,17 +887,17 @@ describe("AllSec stream (?stream=AllSec)", () => {
     // Levels are normalised to short codes ("Secondary 1" -> "S1") before they
     // reach the filter, so narrowing AllSec to S1 proves S1 is addressable
     // under it — i.e. the level options are the S1-S4 union, not EXP-only.
-    setUrl("/?stream=AllSec&level=S1");
+    setUrl("/?stream=AllSec&level=S1&view=list");
     const { container } = render(<Page />);
     await waitFor(() =>
-      expect(within(listRegion(container)).getByText("English")).toBeInTheDocument(),
+      expect(listRegion(container).getByText("English")).toBeInTheDocument(),
     );
-    expect(within(listRegion(container)).queryByText("Mathematics")).not.toBeInTheDocument();
-    expect(within(listRegion(container)).queryByText("Chemistry")).not.toBeInTheDocument();
+    expect(listRegion(container).queryByText("Mathematics")).not.toBeInTheDocument();
+    expect(listRegion(container).queryByText("Chemistry")).not.toBeInTheDocument();
   });
 
   it("clears the stream and hides the chip when deselected (AC 7)", async () => {
-    setUrl("/?stream=AllSec");
+    setUrl("/?stream=AllSec&view=list");
     const { container } = render(<Page />);
     await waitFor(() =>
       expect(screen.getAllByText("Secondary (All)").length).toBeGreaterThan(0),
@@ -898,7 +906,7 @@ describe("AllSec stream (?stream=AllSec)", () => {
     await waitFor(() =>
       expect(screen.queryByText("Secondary (All)")).not.toBeInTheDocument(),
     );
-    expect(within(listRegion(container)).queryByText("Mathematics")).not.toBeInTheDocument();
+    expect(listRegion(container).queryByText("Mathematics")).not.toBeInTheDocument();
   });
 });
 ```
