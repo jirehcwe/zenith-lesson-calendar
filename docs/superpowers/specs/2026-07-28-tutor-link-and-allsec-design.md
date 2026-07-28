@@ -2,7 +2,7 @@
 
 **Date:** 2026-07-28
 **Branch:** `jireh/feat/tutor-link-allsec` → `regular-lessons-staging` → `regular-lessons`
-**Status:** Approved — ready for implementation plan
+**Status:** Approved 2026-07-28 — implementation in progress
 
 ## Problem
 
@@ -388,13 +388,18 @@ hand. Both features are URL-param-driven and invisible to anyone who does not
 use the link, so the promotion risk is low — but the `?classes=` behaviour
 change is **not** invisible, and that is the one to watch on staging.
 
-**Confirm which API the preview build hits before trusting a staging check.**
-Non-production branches build as Preview in Cloudflare Pages, and the Preview
-environment has its own `NEXT_PUBLIC_SCHEDULE_API_BASE_URL`. The repo documents
-only the production host (`.env.example`), so the preview value must be read
-from Cloudflare Pages → Settings → Variables and Secrets. If the preview
-schedule API is not backed by the same tutor records as production, the tutor
-codes below will differ and the manual checks must be repeated after promotion.
+**Staging validates against the production schedule API** (decided 2026-07-28).
+`GET /schedule` is read-only, so pointing the preview build at production data
+carries no write risk, and it guarantees the tutor codes in the table below
+actually resolve — a staging backend with different tutor records would make
+these checks meaningless and force a repeat after promotion.
+
+Note this diverges from the repo's `CLAUDE.md`, which documents the Preview
+environment as taking the dev/staging host. Confirm the Preview value in
+Cloudflare Pages → Settings → Variables and Secrets matches the production host
+before relying on these checks, and update that `CLAUDE.md` paragraph if the
+production-for-preview setting becomes permanent rather than just for this
+validation.
 
 Manual checks on the preview URL, beyond the automated suite:
 
