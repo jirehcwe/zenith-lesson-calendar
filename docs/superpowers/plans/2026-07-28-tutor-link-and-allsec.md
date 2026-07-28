@@ -323,7 +323,7 @@ export function describePin(req: PinRequest, matched: Pinnable[]): string {
 - [ ] **Step 4: Run the tests to verify they pass**
 
 Run: `yarn test src/utils/pinnedSlots.test.ts`
-Expected: PASS, 30 tests.
+Expected: PASS, 28 tests.
 
 - [ ] **Step 5: Verify nothing else broke**
 
@@ -488,10 +488,24 @@ import {
 } from "@/utils/pinnedSlots";
 ```
 
-**(b)** Replace the pin state declaration (line 125):
+**(b)** Replace the pin state declaration (line 125), and add a load-failure flag beside it:
 
 ```tsx
   const [pinRequest, setPinRequest] = useState<PinRequest>({ kind: "none" });
+  // Distinguishes "the schedule never arrived" from "your link matched nothing".
+  // Without it, a network/CORS failure on a perfectly valid link tells the user
+  // their link is broken — see the banner message in (f).
+  const [loadFailed, setLoadFailed] = useState(false);
+```
+
+In the mount effect's `.catch` (line 182), set the flag alongside the existing log:
+
+```tsx
+      .catch((error) => {
+        console.error("Error fetching schedule data:", error);
+        setLoadFailed(true);
+        setIsLoading(false);
+      });
 ```
 
 **(c)** In the mount effect, replace the `setPinnedClassIds(...)` call (line 146):
@@ -533,8 +547,17 @@ import {
 **(f)** Pass the message to the banner, and suppress the misleading empty states. In the pinned header block, replace the `<PinnedBanner .../>` line:
 
 ```tsx
-          <PinnedBanner message={describePin(pinRequest, pinnedSlots)} onShowAll={handleExitPinned} />
+          <PinnedBanner
+            message={
+              loadFailed
+                ? "We couldn't load the schedule. Please try again."
+                : describePin(pinRequest, pinnedSlots)
+            }
+            onShowAll={handleExitPinned}
+          />
 ```
+
+Pinned mode is now derived from the URL, so it stays active even when the fetch fails — and `describePin` sees zero matched slots and blames the link. A valid `?tutor=Alicia` link would read "We couldn't find any classes for this link." after a network or CORS failure, which is a false statement the old match-count-derived behaviour never produced. `loadFailed` is what keeps the dead-link copy honest.
 
 On `<WeeklyClassCalendar>`, change the `hasActiveFilters` prop:
 
@@ -623,6 +646,16 @@ Rewrite the AC 6 test (currently `falls back to the normal empty-state when no c
       expect(within(listRegion(container)).getByText("Economics")).toBeInTheDocument(),
     );
     expect(within(listRegion(container)).queryByText("Physics")).not.toBeInTheDocument();
+  });
+
+  it("does not blame the link when the schedule fails to load", async () => {
+    global.fetch = jest.fn(() => Promise.reject(new Error("network"))) as unknown as typeof fetch;
+    setUrl("/?tutor=T1");
+    render(<Page />);
+    await waitFor(() =>
+      expect(screen.getByText(/couldn't load the schedule/i)).toBeInTheDocument(),
+    );
+    expect(screen.queryByText(/couldn't find any classes for this link/i)).not.toBeInTheDocument();
   });
 
   it("strips both pin params on exit (AC 12)", async () => {

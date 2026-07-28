@@ -240,9 +240,17 @@ already declared on `WeeklyClassSlot`.
 - Compute the banner message from `pinRequest` and the matched count.
 
 **`src/components/PinnedBanner.tsx`** — accept a `message: string` prop instead
-of `count: number`. The message is composed in `page.tsx`, which is the only
-place that holds both the `pinRequest` and the matched count; the banner stays
-purely presentational. Presentation otherwise unchanged.
+of `count: number`. `page.tsx` owns the call, since it is the only place holding
+both the `pinRequest` and the matched slots; the banner stays purely
+presentational. Presentation otherwise unchanged.
+
+> **Amendment (2026-07-28, during implementation).** The message *string* is
+> produced by a fourth export from the pin module, `describePin(req, matched)`,
+> rather than composed inline in `page.tsx` as this section originally said.
+> It takes the matched slots rather than the requested codes, so tutor names
+> render in the data's canonical casing (`?tutor=alicia` → "Alicia") and codes
+> that matched nothing are never named. Keeping it pure makes the copy table
+> above unit-testable instead of only reachable through a full page render.
 
 **`src/components/Filters.tsx`** — drop the `tutors` prop and the `tutor` field
 from its filter type and reset handlers.
@@ -333,6 +341,13 @@ dropdown, or `STREAM_VALUES` itself.
   banner renders before data arrives. The banner must show the zero-match copy
   only *after* loading completes — gate it on `!isLoading`, as the current
   pinned header already is.
+- **Schedule failed to load** (added 2026-07-28 during implementation review).
+  Because pinned mode is now URL-derived, it stays active when the fetch
+  rejects — and with zero matched slots the banner would blame the *link*. A
+  valid `?tutor=Alicia` would read "We couldn't find any classes for this link."
+  after a network or CORS failure, a false statement the old match-count-derived
+  behaviour never produced. `page.tsx` tracks a `loadFailed` flag in its
+  `.catch` and shows "We couldn't load the schedule. Please try again." instead.
 - **Both pin params present.** `classes` wins (AC 8); `tutor` is ignored, not
   errored on.
 - **Duplicate codes.** Harmless — matching is set membership.
