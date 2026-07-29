@@ -439,7 +439,27 @@ Manual checks on the preview URL, beyond the automated suite:
 | `?tutor=Alicia&campaign=X` | Registration link still carries the campaign |
 | `?stream=AllSec` | Fifth chip reads "Secondary (All)"; Express **and** IP present; Secondary palette |
 | `?stream=allsec` | Normalises to the canonical `AllSec` |
+| `?stream=AllSecc` | Typo'd value lands on the ordinary homepage, **not** a wrong-platform calendar |
+| `?stream=AllSec` on a phone | Filtering is correct, but the chip itself sits behind the bottom-nav filter sheet |
+| `?stream=AllSec` → tap `Sec IP` | One-way door: the chip disappears and cannot be re-selected without reopening the link |
 | no params | Unchanged homepage — four chips, empty-state gate |
+
+Three of those rows are judgement calls rather than pass/fail checks, and the
+preview build is the last chance to change them:
+
+- **Phone visibility.** The chip renders only in the sticky desktop filter bar;
+  on a phone it lives behind the bottom-nav filter sheet. This is pre-existing
+  and applies equally to all five chips — but it bites hardest here, because
+  this chip's whole premise is a viewer who arrived by link and has never seen
+  the filter bar.
+- **Chip order.** `AllSec` is appended, so it renders *after* `Primary` rather
+  than beside its two Secondary siblings. Splicing it in at index 3 is a
+  one-line change if that reads better.
+- **One-way door.** Once the visitor selects any other stream, `AllSec` leaves
+  the options list and only the link brings it back. That is exactly what
+  "appears only while it is the selected stream" means, so it is correct by
+  design — but the natural exploratory gesture (tap `Sec IP`, then try to go
+  back) is a dead end worth seeing in a real browser before shipping.
 
 The last row is the regression check that matters most: the whole change should
 be inert for an ordinary visitor.
