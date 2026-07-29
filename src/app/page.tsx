@@ -25,7 +25,6 @@ const CACHE_KEY = "weeklyClassData";
 const CACHE_TIME_KEY = "weeklyClassDataTimestamp";
 const CACHE_VERSION_KEY = "weeklyClassDataVersion";
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in ms
-const FILTERS_COLLAPSED_STORAGE_KEY = "filtersCollapsed";
 // Increment this version when the API changes to force all clients to invalidate cache
 // Bumped to 4 (2026-05-26): db-schedule-updater MR 3.3 flipped its /schedule
 // response shape from `{success, data:{data:[...]}, message}` to the resource
@@ -59,12 +58,20 @@ function normaliseSlot(slot: WeeklyClassSlot): WeeklyClassSlot {
   };
 }
 
-// A cache we cannot READ is just a cache miss. Everything in here can throw in
-// the wild — `localStorage` access itself when site data is blocked, and
-// JSON.parse on a truncated or hand-edited entry — and this runs inside the
-// mount effect, so an escaping throw leaves isLoading stuck true forever. The
-// spinner then hides the pinned banner, which is the only exit from pinned
+// A cache we cannot READ is just a cache miss. Three things in here throw in
+// the wild: the `localStorage` property access itself under "block all cookies
+// and site data" (SecurityError, before any method runs), getItem/removeItem
+// for the same reason, and JSON.parse on a truncated or hand-edited entry —
+// hence the whole body is wrapped, not just the parse. This runs inside the
+// mount effect, so an escaping throw leaves isLoading stuck true forever, and
+// the spinner then hides the pinned banner, which is the only exit from pinned
 // mode: one corrupt entry and the visitor is trapped on a blank page.
+//
+// This covers page.tsx's own storage use only. Keeping the whole page alive
+// under blocked site data also depends on WeeklyClassCalendar's pro-tip
+// preference being guarded — it reads localStorage in its own mount effect, so
+// an unguarded throw there takes the page down just as effectively. Both are
+// pinned by "renders with site data blocked entirely" in page.test.tsx.
 function getCachedData() {
   try {
     const data = localStorage.getItem(CACHE_KEY);
@@ -302,11 +309,6 @@ export default function Page() {
     const newUrl = `${window.location.pathname}?${params.toString()}`;
     window.history.replaceState({}, "", newUrl);
   }, [currentView]);
-
-  useEffect(() => {
-    localStorage.setItem(FILTERS_COLLAPSED_STORAGE_KEY, filtersCollapsed.toString());
-  }, [filtersCollapsed]);
-
 
   // Compute filtered options for progressive disclosure with counts
   const filteredOptions = useMemo(() => {

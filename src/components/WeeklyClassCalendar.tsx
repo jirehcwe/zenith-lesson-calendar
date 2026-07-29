@@ -122,10 +122,19 @@ export default function WeeklyClassCalendar({
     return () => { el.removeEventListener("scroll", update); ro.disconnect(); };
   }, []);
 
+  // Guarded for the same reason as page.tsx's schedule cache: "block all cookies
+  // and site data" throws SecurityError on the `localStorage` property access
+  // itself, and this runs in a mount effect, so an escaping throw takes the
+  // whole public schedule page down rather than losing one dismissable notice.
+  // Unreadable means "not dismissed" — showing the tip is the harmless default.
   useEffect(() => {
-    const stored = localStorage.getItem(PRO_TIP_STORAGE_KEY);
-    if (stored === "true") {
-      setIsProTipDismissed(true);
+    try {
+      const stored = localStorage.getItem(PRO_TIP_STORAGE_KEY);
+      if (stored === "true") {
+        setIsProTipDismissed(true);
+      }
+    } catch (error) {
+      console.warn("Ignoring unreadable pro-tip preference:", error);
     }
   }, []);
 
@@ -147,7 +156,13 @@ export default function WeeklyClassCalendar({
 
   const handleDismissProTip = () => {
     setIsProTipDismissed(true);
-    localStorage.setItem(PRO_TIP_STORAGE_KEY, "true");
+    // Same storage fragility, and the state above has already done the visible
+    // work: failing to persist must not stop the tip dismissing for this visit.
+    try {
+      localStorage.setItem(PRO_TIP_STORAGE_KEY, "true");
+    } catch (error) {
+      console.warn("Unable to persist pro-tip preference:", error);
+    }
   };
 
   // Convert weekly slots to FullCalendar events for the current week
