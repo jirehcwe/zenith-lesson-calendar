@@ -2,19 +2,30 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import PinnedBanner from "./PinnedBanner";
 
 describe("PinnedBanner", () => {
-  it("shows the count with pluralized 'classes'", () => {
-    render(<PinnedBanner count={2} onShowAll={() => {}} />);
-    expect(screen.getByText(/2 selected classes/i)).toBeInTheDocument();
+  it("renders the message it is given", () => {
+    render(<PinnedBanner message="You're viewing Alicia's classes" onShowAll={() => {}} />);
+    expect(screen.getByText("You're viewing Alicia's classes")).toBeInTheDocument();
   });
 
-  it("uses singular 'class' when count is 1", () => {
-    render(<PinnedBanner count={1} onShowAll={() => {}} />);
-    expect(screen.getByText(/1 selected class\b/i)).toBeInTheDocument();
+  it("renders a multi-tutor message", () => {
+    render(
+      <PinnedBanner message="You're viewing classes taught by Alicia and DJ" onShowAll={() => {}} />,
+    );
+    expect(screen.getByText(/taught by Alicia and DJ/)).toBeInTheDocument();
   });
 
-  it("calls onShowAll when the button is clicked", () => {
+  it("renders the dead-link message", () => {
+    render(
+      <PinnedBanner message="We couldn't find any classes for this link." onShowAll={() => {}} />,
+    );
+    expect(screen.getByText(/couldn't find any classes/i)).toBeInTheDocument();
+  });
+
+  it("still offers the escape hatch when the link is dead", () => {
     const onShowAll = jest.fn();
-    render(<PinnedBanner count={3} onShowAll={onShowAll} />);
+    render(
+      <PinnedBanner message="We couldn't find any classes for this link." onShowAll={onShowAll} />,
+    );
     fireEvent.click(screen.getByRole("button", { name: /show all classes/i }));
     expect(onShowAll).toHaveBeenCalledTimes(1);
   });
