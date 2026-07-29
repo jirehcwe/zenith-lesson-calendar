@@ -366,6 +366,38 @@ describe("pinned mode (?classes= and ?tutor=)", () => {
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
   });
 
+  it("treats a cached EMPTY schedule as a miss and refetches", async () => {
+    // The write path refuses to cache an empty payload, but that only helps
+    // clients who have not already cached one. `[]` is truthy, so the read path
+    // handed it back as a hit and the mount effect returned before fetching —
+    // pinning anyone who cached under the old code to an empty schedule for the
+    // rest of CACHE_DURATION, exactly when the backend has just recovered or the
+    // new year's schedule has just been published. CACHE_VERSION must not be
+    // bumped to flush them, so the read side is what has to reject it.
+    const fetchMock = jest.fn(() =>
+      Promise.resolve({ json: () => Promise.resolve({ data: SLOTS }) }),
+    );
+    global.fetch = fetchMock as unknown as typeof fetch;
+    setUrl("/?tutor=T1&view=list");
+
+    // Seed the version and timestamp entries through a real visit so they are
+    // genuinely valid — and so the test does not restate CACHE_VERSION, which
+    // must not be bumped.
+    const first = render(<Page />);
+    await waitFor(() =>
+      expect(screen.getByText("You're viewing T1's classes")).toBeInTheDocument(),
+    );
+    first.unmount();
+    localStorage.setItem("weeklyClassData", "[]");
+
+    const { container } = render(<Page />);
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+    // ...and the refetched schedule actually lands, rather than the page simply
+    // asking twice and still rendering nothing.
+    expect(await screen.findByText("You're viewing T1's classes")).toBeInTheDocument();
+    expect(listRegion(container).getByText("Physics")).toBeInTheDocument();
+  });
+
   it("does cache a non-empty schedule", async () => {
     // Guards the other side of the `normalised.length > 0` condition: the fix
     // must not disable caching outright.
@@ -708,6 +740,62 @@ describe("AllSec stream (?stream=AllSec)", () => {
     expect(listRegion(container).queryByText("Mathematics")).not.toBeInTheDocument();
     expect(listRegion(container).queryByText("Physics")).not.toBeInTheDocument();
     expect(screen.queryByText("AllSecc")).not.toBeInTheDocument();
+  });
+
+  // Nulling the stream alone was not enough. The mount effect kept reading
+  // subject/centre/level off the SAME rejected link, and a null stream matches
+  // every case in levelToFilterMapper while the "pick a stream first" gate in
+  // the events memo only fires when stream, level, subject AND centre are all
+  // empty. So ?stream=AllSecc&subject=... rendered JC, Secondary and Primary
+  // side by side — the exact wrong-platform mix the whitelist was added to
+  // prevent, just reachable through a longer link. Clearing the dependants is
+  // what handleFilterChange already does whenever the stream changes.
+  it.each([
+    // Each value here is chosen to span platforms, so a leak shows up as JC AND
+    // Primary rows on screen rather than as a subtle miscount.
+    { dependent: "subject", query: "subject=Physics,Science" },
+    { dependent: "level", query: "level=J1,P5" },
+    { dependent: "centre", query: "centre=Bishan" },
+  ])(
+    "discards $dependent too when the stream is rejected (AC 10)",
+    async ({ dependent, query }) => {
+      setUrl(`/?stream=AllSecc&${query}&view=list`);
+      const { container } = render(<Page />);
+      await waitFor(() =>
+        expect(
+          listRegion(container).getByText("Select a stream to see classes"),
+        ).toBeInTheDocument(),
+      );
+      const list = listRegion(container);
+      // Named rather than counted: this client sells JC, Secondary and Primary
+      // as separate businesses, so "a JC class and a Primary class rendered
+      // together" IS the defect, not a symptom of it.
+      expect(list.queryByText("Physics")).not.toBeInTheDocument(); // JC
+      expect(list.queryByText("Science")).not.toBeInTheDocument(); // Primary
+      // ...and nothing from Secondary either: the link is dead, not narrowed.
+      expect(list.queryByText("Mathematics")).not.toBeInTheDocument();
+      expect(list.queryByText("Chemistry")).not.toBeInTheDocument();
+      expect(list.queryByText("English")).not.toBeInTheDocument();
+      expect(list.queryByText("Pure Biology")).not.toBeInTheDocument();
+      expect(screen.queryByText("AllSecc")).not.toBeInTheDocument();
+      // The URL is rewritten to the ordinary homepage, so reloading or
+      // re-sharing the link cannot resurrect the leak.
+      expect(window.location.search).not.toContain(`${dependent}=`);
+      expect(window.location.search).not.toContain("stream=");
+    },
+  );
+
+  it("keeps a VALID stream's dependent filters (AC 10 control)", async () => {
+    // Without this, "discard the dependants" could be implemented as "discard
+    // them always" and the suite above would still pass — which would silently
+    // break every legitimate deep link that narrows a stream to one subject.
+    setUrl("/?stream=AllSec&subject=Chemistry&view=list");
+    const { container } = render(<Page />);
+    await waitFor(() =>
+      expect(listRegion(container).getByText("Chemistry")).toBeInTheDocument(),
+    );
+    expect(listRegion(container).queryByText("Mathematics")).not.toBeInTheDocument();
+    expect(window.location.search).toContain("subject=Chemistry");
   });
 
   it("tolerates a trailing space on the param (AC 11)", async () => {

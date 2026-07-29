@@ -72,7 +72,7 @@ function normaliseSlot(slot: WeeklyClassSlot): WeeklyClassSlot {
 // preference being guarded — it reads localStorage in its own mount effect, so
 // an unguarded throw there takes the page down just as effectively. Both are
 // pinned by "renders with site data blocked entirely" in page.test.tsx.
-function getCachedData() {
+function getCachedData(): WeeklyClassSlot[] | null {
   try {
     const data = localStorage.getItem(CACHE_KEY);
     const timestamp = localStorage.getItem(CACHE_TIME_KEY);
@@ -88,7 +88,18 @@ function getCachedData() {
     }
 
     if (data && timestamp && Date.now() - Number(timestamp) < CACHE_DURATION) {
-      return JSON.parse(data);
+      const parsed: unknown = JSON.parse(data);
+      // An empty (or non-array) payload is a MISS, not a hit. `[]` is truthy, so
+      // returning it makes the mount effect short-circuit before fetching, and
+      // the visitor stays on an empty schedule for the rest of CACHE_DURATION
+      // even once the backend has recovered or the new year's schedule has been
+      // published. The write path now refuses to cache empty, but that does
+      // nothing for clients who already cached one under the old code, and
+      // CACHE_VERSION cannot be bumped to flush them — so the read side is
+      // where it has to be caught. Refetching an empty schedule costs one
+      // request; serving a stale empty one costs the visitor the whole page.
+      if (!Array.isArray(parsed) || parsed.length === 0) return null;
+      return parsed as WeeklyClassSlot[];
     }
     return null;
   } catch (error) {
@@ -131,13 +142,31 @@ const STREAM_VALUES = ["JC", "Secondary (Express)", "Secondary (IP)", "Primary"]
 // retypes a shared ?stream=AllSec link as ?stream=AllSecc would otherwise get a
 // wrong-platform calendar with no signal that anything had failed. Trimmed
 // first, because a trailing space survives copy-paste out of a chat app.
-function normaliseStreamParam(raw: string | null): string | null {
-  const trimmed = raw?.trim();
-  if (!trimmed) return null;
+//
+// `rejected` is what separates "this visitor named no stream" from "this
+// visitor named a stream we refused". Both end at stream: null, but only the
+// second must also void the link's subject/centre/level, because a null stream
+// matches EVERY case in levelToFilterMapper while any one non-empty dependent
+// filter keeps the events memo's "pick a stream first" gate from firing — so
+// ?stream=AllSecc&subject=... would otherwise still serve JC, Secondary and
+// Primary on one screen. Collapsing both cases to a bare null is exactly how
+// that survived the whitelist.
+type StreamParam = { stream: string | null; rejected: boolean };
+
+function normaliseStreamParam(raw: string | null): StreamParam {
+  if (raw === null) return { stream: null, rejected: false };
+  const trimmed = raw.trim();
+  // A present-but-blank ?stream= (or one that is all whitespace) names no valid
+  // stream either, so it is rejected rather than waved through: otherwise
+  // ?stream=&subject=... reopens the same cross-platform leak by another route.
+  if (!trimmed) return { stream: null, rejected: true };
   // Only AllSec is matched case-insensitively: it is the one value typed by
   // hand from a shared link rather than clicked.
-  if (trimmed.toLowerCase() === ALL_SEC.toLowerCase()) return ALL_SEC;
-  return STREAM_VALUES.some((v) => v === trimmed) ? trimmed : null;
+  if (trimmed.toLowerCase() === ALL_SEC.toLowerCase()) {
+    return { stream: ALL_SEC, rejected: false };
+  }
+  const match = STREAM_VALUES.find((v) => v === trimmed);
+  return match ? { stream: match, rejected: false } : { stream: null, rejected: true };
 }
 
 function levelToFilterMapper(
@@ -209,12 +238,21 @@ export default function Page() {
   // Effect to read filters and view from URL on component mount
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const initialFilters = {
-      subject: params.get("subject")?.split(",").filter(Boolean) || [],
-      centre: params.get("centre")?.split(",").filter(Boolean) || [],
-      level: params.get("level")?.split(",").filter(Boolean) || [],
-      stream: normaliseStreamParam(params.get("stream")),
-    };
+    const { stream, rejected } = normaliseStreamParam(params.get("stream"));
+    // A rejected stream voids the whole filter set, not just its own param. The
+    // dependent filters were chosen for a stream this link no longer selects, so
+    // keeping them both leaks other platforms (see normaliseStreamParam) and
+    // shows removal pills for a selection the visitor cannot see. This is the
+    // same rule handleFilterChange already applies whenever the stream changes;
+    // the visitor simply lands on the ordinary unfiltered homepage.
+    const initialFilters = rejected
+      ? { subject: [], centre: [], level: [], stream: null as string | null }
+      : {
+          subject: params.get("subject")?.split(",").filter(Boolean) || [],
+          centre: params.get("centre")?.split(",").filter(Boolean) || [],
+          level: params.get("level")?.split(",").filter(Boolean) || [],
+          stream,
+        };
     setFilters(initialFilters);
     setPinRequest(parsePinRequest(window.location.search));
 
