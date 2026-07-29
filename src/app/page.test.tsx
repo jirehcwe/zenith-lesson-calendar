@@ -286,6 +286,13 @@ describe("pinned mode (?classes= and ?tutor=)", () => {
   it("does not blame the link when the schedule fails to load", async () => {
     global.fetch = jest.fn(() => Promise.reject(new Error("network"))) as unknown as typeof fetch;
     setUrl("/?tutor=T1");
+    // The empty cache used to be incidental here and is now load-bearing: a
+    // failed pinned fetch falls back to the cache, so this test only covers the
+    // nothing-to-fall-back-on case if there is genuinely nothing stored. Stated
+    // rather than assumed, because beforeEach's localStorage.clear() is one
+    // edit away from making this test assert the fallback's behaviour by
+    // accident.
+    expect(localStorage.getItem("weeklyClassData")).toBeNull();
     render(<Page />);
     await waitFor(() =>
       expect(
@@ -478,6 +485,85 @@ describe("pinned mode (?classes= and ?tutor=)", () => {
     expect(screen.queryByText(/select a stream/i)).not.toBeInTheDocument();
     // ...and it reached that verdict from a fresh fetch, not from the cache.
     expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("falls back to the cache for a pinned link when the fetch fails", async () => {
+    // THE regression for the cache-bypass fix above. Skipping the cache read is
+    // a rule about SUCCESS — it exists so a dead-link verdict is only ever
+    // reached against fresh data. Applied to the FAILURE path it throws away a
+    // schedule the browser already holds, so one CORS hiccup or 502 makes every
+    // tutor link in circulation render an empty page with an apology on it,
+    // while the classes the link asks for sit unread in localStorage.
+    const okFetch = jest.fn(() =>
+      Promise.resolve({ json: () => Promise.resolve({ data: SLOTS }) }),
+    );
+    global.fetch = okFetch as unknown as typeof fetch;
+    setUrl("/");
+    // Seed via a real unpinned visit so the timestamp and version entries are
+    // genuinely valid, and the test does not restate CACHE_VERSION.
+    const first = render(<Page />);
+    await waitFor(() =>
+      expect(JSON.parse(localStorage.getItem("weeklyClassData") ?? "[]")).toHaveLength(SLOTS.length),
+    );
+    first.unmount();
+
+    // The API goes down. The tutor's link is still perfectly valid and the data
+    // to serve it is still perfectly fresh.
+    const failingFetch = jest.fn(() => Promise.reject(new Error("network")));
+    global.fetch = failingFetch as unknown as typeof fetch;
+    setUrl("/?tutor=T1&view=list");
+    const { container } = render(<Page />);
+
+    await waitFor(() =>
+      expect(screen.getByText("You're viewing T1's classes")).toBeInTheDocument(),
+    );
+    // The class itself, not just a politely worded banner.
+    expect(listRegion(container).getByText("Physics")).toBeInTheDocument();
+    // No apology for a failure the visitor never experienced...
+    expect(screen.queryByText(/couldn't load the schedule/i)).not.toBeInTheDocument();
+    // ...and no accusation against a link that plainly works.
+    expect(screen.queryByText(/couldn't find any classes for this link/i)).not.toBeInTheDocument();
+    // It really did go to the network first — otherwise this is just the old
+    // serve-from-cache behaviour wearing the new test's name.
+    expect(failingFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps the load-failure copy when the failed fetch's fallback matches nothing", async () => {
+    // The dangerous half of the fallback. The cache is valid and non-empty but
+    // predates the pinned class, so nothing matches — and under a FAILED fetch
+    // that is not evidence of anything: "your link is dead" and "our data is
+    // stale" are indistinguishable from here. Falling through to the dead-link
+    // copy would resurrect the exact bug the cache bypass was added to kill,
+    // via the failure path instead of the happy one.
+    const staleFetch = jest.fn(() =>
+      // A real schedule, just not one containing T1.
+      Promise.resolve({ json: () => Promise.resolve({ data: [SLOTS[2]] }) }),
+    );
+    global.fetch = staleFetch as unknown as typeof fetch;
+    setUrl("/");
+    const first = render(<Page />);
+    await waitFor(() =>
+      expect(JSON.parse(localStorage.getItem("weeklyClassData") ?? "[]")).toHaveLength(1),
+    );
+    first.unmount();
+    // States the precondition that separates this test from the no-cache one
+    // below it: there IS a fresh cache here, it simply misses the pin.
+    expect(JSON.parse(localStorage.getItem("weeklyClassData") ?? "[]")).toHaveLength(1);
+
+    const failingFetch = jest.fn(() => Promise.reject(new Error("network")));
+    global.fetch = failingFetch as unknown as typeof fetch;
+    setUrl("/?tutor=T1");
+    render(<Page />);
+
+    await waitFor(() =>
+      expect(
+        screen.getByText("We couldn't load the schedule. Please try again."),
+      ).toBeInTheDocument(),
+    );
+    expect(screen.queryByText(/couldn't find any classes for this link/i)).not.toBeInTheDocument();
+    // The cache was non-empty, so this must not be the not-yet-published copy
+    // either — that one is reserved for a SUCCESSFUL response carrying no rows.
+    expect(screen.queryByText(/isn't published yet/i)).not.toBeInTheDocument();
   });
 
   it("still serves an UNPINNED visit from cache, with no second fetch", async () => {

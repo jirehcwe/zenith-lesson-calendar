@@ -266,15 +266,16 @@ export default function Page() {
     // Set campaign parameter
     setCampaignParam(getCampaignParam());
 
-    // A pinned link never reads the cache — it only writes one. Every other
-    // banner state is derived from data the page HAS, but the dead-link copy is
-    // derived from data it does NOT have, so a merely-stale cache is enough to
-    // manufacture it: a visitor who browsed the schedule minutes ago, then
-    // followed a link for a class ops published (or a tutor code ops corrected)
-    // in the meantime, gets "We couldn't find any classes for this link." about
-    // a link that works. That is the same lie this feature exists to prevent,
-    // pointed the other way, and no amount of correct matching downstream can
-    // see past the wrong input.
+    // A pinned link never reads the cache on the happy path — it only writes
+    // one (and reads one as a last resort if the fetch fails, see the .catch).
+    // Every other banner state is derived from data the page HAS, but the
+    // dead-link copy is derived from data it does NOT have, so a merely-stale
+    // cache is enough to manufacture it: a visitor who browsed the schedule
+    // minutes ago, then followed a link for a class ops published (or a tutor
+    // code ops corrected) in the meantime, gets "We couldn't find any classes
+    // for this link." about a link that works. That is the same lie this
+    // feature exists to prevent, pointed the other way, and no amount of
+    // correct matching downstream can see past the wrong input.
     //
     // Deliberately a full cache BYPASS rather than a revalidate-after-serve:
     // deferring the truth still flashes the dead-link banner first, and pinned
@@ -315,6 +316,33 @@ export default function Page() {
       })
       .catch((error) => {
         console.error("Error fetching schedule data:", error);
+        // Skipping the cache READ above is a rule about SUCCESS: it exists so a
+        // dead-link verdict is only ever reached against fresh data. On failure
+        // there is no fresh data to prefer, and throwing the cache away as well
+        // turns a blip — one CORS hiccup, one 502, one dropped connection —
+        // into every shared tutor link in circulation rendering an empty page,
+        // while a perfectly serviceable schedule sits unread in localStorage.
+        //
+        // getCachedData still rejects an expired, wrong-version, empty or
+        // corrupt entry, so this can only ever restore a payload the page would
+        // have been happy to hand an unpinned visitor a moment earlier.
+        //
+        // Scoped to pinned requests: an unpinned visit already made this exact
+        // read at the top of the effect and got nothing, so repeating it here
+        // would find the same nothing.
+        if (pin.kind !== "none") {
+          const fallback = getCachedData();
+          if (fallback) setWeeklyClassData(fallback);
+        }
+        // Set regardless — the fetch did fail, and that is what this flag
+        // records. Whether it is worth SAYING is the banner's call, and
+        // pinnedBannerMessage only surfaces the failure copy when nothing
+        // matched: if the fallback produced the pinned classes the visitor came
+        // for, they get them with the ordinary banner and no alarm. If it did
+        // not, the failure copy stands rather than degrading to the dead-link
+        // copy — a cache miss under a failed fetch cannot tell "your link is
+        // dead" from "our data is stale", and that guess is the exact lie this
+        // sequence of fixes exists to prevent.
         setLoadFailed(true);
         setIsLoading(false);
       });

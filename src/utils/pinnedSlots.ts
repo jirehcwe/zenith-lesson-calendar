@@ -102,8 +102,13 @@ export function describePin(req: PinRequest, matched: Pinnable[]): string {
  * The whole copy table for the pinned banner, so the page renders one call
  * instead of a ternary. Three states, and they are NOT interchangeable:
  *
- *  - `loadFailed` — the fetch actually threw. The system failed and retrying
- *    can genuinely help, so say so.
+ *  - `loadFailed` — the fetch actually threw AND left nothing to show for this
+ *    pin. The system failed and retrying can genuinely help, so say so. The
+ *    second half is load-bearing: page.tsx falls back to a cached schedule when
+ *    a PINNED fetch fails, so `loadFailed` no longer implies an empty screen.
+ *    When that fallback produced the classes the link asked for, the visitor
+ *    has exactly what they came for, and apologising for a failure they never
+ *    experienced would be noise — the ordinary copy applies instead.
  *  - `scheduleEmpty` — a successful response carrying zero rows. Nothing
  *    failed; telling a parent to "try again" is both a lie and useless advice.
  *    Reachable every year: the request pins year=<current>, so from 1 January
@@ -112,13 +117,21 @@ export function describePin(req: PinRequest, matched: Pinnable[]): string {
  *
  * `loadFailed` is checked first because a failed fetch also leaves the schedule
  * empty, so the states overlap and the more specific cause has to win.
+ *
+ * The one combination deliberately NOT relaxed: failed fetch + nothing matched
+ * keeps the failure copy and must never fall through to "We couldn't find any
+ * classes for this link." A miss under a failed fetch cannot tell a dead link
+ * from a stale cache, and guessing "dead" is exactly the lie this banner exists
+ * to avoid.
  */
 export function pinnedBannerMessage(
   req: PinRequest,
   matched: Pinnable[],
   { loadFailed, scheduleEmpty }: { loadFailed: boolean; scheduleEmpty: boolean },
 ): string {
-  if (loadFailed) return "We couldn't load the schedule. Please try again.";
+  if (loadFailed && matched.length === 0) {
+    return "We couldn't load the schedule. Please try again.";
+  }
   if (scheduleEmpty) return "The schedule isn't published yet. Please check back soon.";
   return describePin(req, matched);
 }

@@ -269,8 +269,36 @@ describe("pinnedBannerMessage", () => {
   it("prefers the failure message over the empty one when both are set", () => {
     // They always overlap — a failed fetch also leaves weeklyClassData empty —
     // so the order of the two guards is load-bearing, not incidental.
-    expect(pinnedBannerMessage(req, matched, { loadFailed: true, scheduleEmpty: true })).toBe(
+    //
+    // The match list here used to be non-empty, which was an IMPOSSIBLE input
+    // (a match cannot come out of an empty schedule) and is now a meaningful
+    // one: it is the cache-fallback state, and it deliberately no longer
+    // returns this message. Passing `[]` states the case this test is actually
+    // about — the ordering of the two failure guards — instead of a
+    // contradiction that happened to reach the first one.
+    expect(pinnedBannerMessage(req, [], { loadFailed: true, scheduleEmpty: true })).toBe(
       "We couldn't load the schedule. Please try again.",
     );
+  });
+
+  it("keeps the ordinary copy when a fallback matched despite the failed fetch", () => {
+    // page.tsx serves a pinned link from cache when the fetch fails, so
+    // loadFailed can now be true with the requested classes on screen. The
+    // visitor got what the link promised; "We couldn't load the schedule" over
+    // a page full of correct classes is just false.
+    expect(
+      pinnedBannerMessage(req, matched, { loadFailed: true, scheduleEmpty: false }),
+    ).toBe("You're viewing Alicia's classes");
+  });
+
+  it("does not downgrade a failed fetch to a dead link when the fallback missed", () => {
+    // The other half of the fallback: the cache had a schedule (so
+    // scheduleEmpty is false) but not this tutor's classes. That is NOT enough
+    // to call the link dead — the cache may simply predate it — so the failure
+    // copy has to survive a populated-but-unmatched schedule, which is the one
+    // shape that otherwise reaches describePin's dead-link case.
+    expect(
+      pinnedBannerMessage(req, [], { loadFailed: true, scheduleEmpty: false }),
+    ).toBe("We couldn't load the schedule. Please try again.");
   });
 });
