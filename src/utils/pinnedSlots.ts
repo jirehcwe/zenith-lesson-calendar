@@ -92,3 +92,28 @@ export function describePin(req: PinRequest, matched: Pinnable[]): string {
 
   return `You're viewing ${matched.length} selected ${matched.length === 1 ? "class" : "classes"}`;
 }
+
+/**
+ * The whole copy table for the pinned banner, so the page renders one call
+ * instead of a ternary. Three states, and they are NOT interchangeable:
+ *
+ *  - `loadFailed` — the fetch actually threw. The system failed and retrying
+ *    can genuinely help, so say so.
+ *  - `scheduleEmpty` — a successful response carrying zero rows. Nothing
+ *    failed; telling a parent to "try again" is both a lie and useless advice.
+ *    Reachable every year: the request pins year=<current>, so from 1 January
+ *    until the new year's schedule is published EVERY pin link lands here.
+ *  - otherwise — describePin's ordinary copy, including its dead-link case.
+ *
+ * `loadFailed` is checked first because a failed fetch also leaves the schedule
+ * empty, so the states overlap and the more specific cause has to win.
+ */
+export function pinnedBannerMessage(
+  req: PinRequest,
+  matched: Pinnable[],
+  { loadFailed, scheduleEmpty }: { loadFailed: boolean; scheduleEmpty: boolean },
+): string {
+  if (loadFailed) return "We couldn't load the schedule. Please try again.";
+  if (scheduleEmpty) return "The schedule isn't published yet. Please check back soon.";
+  return describePin(req, matched);
+}

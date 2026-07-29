@@ -16,7 +16,7 @@ import ViewToggle from "@/components/ViewToggle";
 import {
   parsePinRequest,
   matchPinnedSlots,
-  describePin,
+  pinnedBannerMessage,
   type PinRequest,
 } from "@/utils/pinnedSlots";
 import { getCampaignParam } from "@/utils/campaign";
@@ -59,31 +59,52 @@ function normaliseSlot(slot: WeeklyClassSlot): WeeklyClassSlot {
   };
 }
 
+// A cache we cannot READ is just a cache miss. Everything in here can throw in
+// the wild — `localStorage` access itself when site data is blocked, and
+// JSON.parse on a truncated or hand-edited entry — and this runs inside the
+// mount effect, so an escaping throw leaves isLoading stuck true forever. The
+// spinner then hides the pinned banner, which is the only exit from pinned
+// mode: one corrupt entry and the visitor is trapped on a blank page.
 function getCachedData() {
-  const data = localStorage.getItem(CACHE_KEY);
-  const timestamp = localStorage.getItem(CACHE_TIME_KEY);
-  const cachedVersion = localStorage.getItem(CACHE_VERSION_KEY);
-  
-  // Check if cache version matches current version
-  if (cachedVersion !== CACHE_VERSION.toString()) {
-    // Version mismatch - clear old cache
-    localStorage.removeItem(CACHE_KEY);
-    localStorage.removeItem(CACHE_TIME_KEY);
-    localStorage.removeItem(CACHE_VERSION_KEY);
+  try {
+    const data = localStorage.getItem(CACHE_KEY);
+    const timestamp = localStorage.getItem(CACHE_TIME_KEY);
+    const cachedVersion = localStorage.getItem(CACHE_VERSION_KEY);
+
+    // Check if cache version matches current version
+    if (cachedVersion !== CACHE_VERSION.toString()) {
+      // Version mismatch - clear old cache
+      localStorage.removeItem(CACHE_KEY);
+      localStorage.removeItem(CACHE_TIME_KEY);
+      localStorage.removeItem(CACHE_VERSION_KEY);
+      return null;
+    }
+
+    if (data && timestamp && Date.now() - Number(timestamp) < CACHE_DURATION) {
+      return JSON.parse(data);
+    }
+    return null;
+  } catch (error) {
+    console.warn("Ignoring unreadable schedule cache:", error);
     return null;
   }
-  
-  if (data && timestamp && Date.now() - Number(timestamp) < CACHE_DURATION) {
-    return JSON.parse(data);
-  }
-  return null;
 }
 
+// A cache we cannot WRITE is a non-event: the payload is already in React state
+// and the page renders fine. The throw must be swallowed HERE rather than by the
+// fetch chain's .catch, which would set loadFailed and render "We couldn't load
+// the schedule. Please try again." directly above the correctly rendered
+// classes. Quota-exceeded is the realistic trigger — the schedule blob is the
+// biggest thing this site stores.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function setCachedData(data: any) {
-  localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-  localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
-  localStorage.setItem(CACHE_VERSION_KEY, CACHE_VERSION.toString());
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+    localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
+    localStorage.setItem(CACHE_VERSION_KEY, CACHE_VERSION.toString());
+  } catch (error) {
+    console.warn("Unable to cache schedule data:", error);
+  }
 }
 
 // Link-only stream selecting every Secondary level regardless of track. Kept as
@@ -136,7 +157,13 @@ function levelToFilterMapper(
     case "Primary":
       return level.startsWith("P");
     default:
-      return true;
+      // Unreachable today (normaliseStreamParam is the only source of a
+      // non-null stream), so this is purely a blast-radius choice for the day
+      // someone edits a STREAM_VALUES string and misses a case above. `true`
+      // turns that typo into "a JC chip showing JC + Secondary + Primary
+      // together" — the platforms this client must never mix. `false` degrades
+      // it to an obviously-empty view instead.
+      return false;
   }
 }
 
@@ -452,15 +479,14 @@ export default function Page() {
       {!isLoading && isPinned && (
         <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200">
           <PinnedBanner
-            message={
-              // Only blame the link once we have a schedule to have missed it
-              // in. An exception-shaped failure (loadFailed) and a successful
-              // but empty response are indistinguishable to the recipient of a
-              // valid link, and describePin would call both a dead link.
-              loadFailed || weeklyClassData.length === 0
-                ? "We couldn't load the schedule. Please try again."
-                : describePin(pinRequest, pinnedSlots)
-            }
+            // Only blame the link once we have a schedule to have missed it in:
+            // describePin would call a failed fetch and a not-yet-published
+            // schedule dead links. The three-way choice lives in
+            // pinnedBannerMessage so the copy stays pure and unit-testable.
+            message={pinnedBannerMessage(pinRequest, pinnedSlots, {
+              loadFailed,
+              scheduleEmpty: weeklyClassData.length === 0,
+            })}
             onShowAll={handleExitPinned}
           />
           {!isMobilePhone && (
