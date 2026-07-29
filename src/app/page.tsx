@@ -24,6 +24,24 @@ import { getCampaignParam } from "@/utils/campaign";
 const CACHE_KEY = "weeklyClassData";
 const CACHE_TIME_KEY = "weeklyClassDataTimestamp";
 const CACHE_VERSION_KEY = "weeklyClassDataVersion";
+// The academic year the cached payload was fetched FOR. The request is
+// year-scoped (`?year=<current>`) but the cache never recorded which year it
+// answered, so a payload cached on 31 December satisfied a request made on 1
+// January: the entry is only ~minutes old, so every freshness check passes, and
+// the visitor is served LAST year's schedule. Tutor codes and centres are stable
+// across years, so nothing downstream can spot the substitution — the classes
+// simply look plausible and wrong. Worst on the pinned fallback (a shared
+// ?tutor= link renders a whole retired timetable under a generic "may be out of
+// date" note) but not confined to it: an ordinary visitor on 1 January gets the
+// same payload with no note at all.
+//
+// Stored ALONGSIDE the payload rather than folded into CACHE_KEY. Two reasons:
+// the read path already has a compare-this-sibling-key-or-discard step for
+// CACHE_VERSION, so this is the same shape rather than a second mechanism; and
+// a per-year key would strand last year's blob in localStorage forever, unread
+// and unreachable, which is the wrong thing to do with the largest item this
+// site stores. One slot, one year, cleared on mismatch.
+const CACHE_YEAR_KEY = "weeklyClassDataYear";
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in ms
 // Increment this version when the API changes to force all clients to invalidate cache
 // Bumped to 4 (2026-05-26): db-schedule-updater MR 3.3 flipped its /schedule
@@ -72,18 +90,23 @@ function normaliseSlot(slot: WeeklyClassSlot): WeeklyClassSlot {
 // preference being guarded — it reads localStorage in its own mount effect, so
 // an unguarded throw there takes the page down just as effectively. Both are
 // pinned by "renders with site data blocked entirely" in page.test.tsx.
-function getCachedData(): WeeklyClassSlot[] | null {
+function getCachedData(year: number): WeeklyClassSlot[] | null {
   try {
     const data = localStorage.getItem(CACHE_KEY);
     const timestamp = localStorage.getItem(CACHE_TIME_KEY);
     const cachedVersion = localStorage.getItem(CACHE_VERSION_KEY);
+    const cachedYear = localStorage.getItem(CACHE_YEAR_KEY);
 
-    // Check if cache version matches current version
-    if (cachedVersion !== CACHE_VERSION.toString()) {
-      // Version mismatch - clear old cache
-      localStorage.removeItem(CACHE_KEY);
-      localStorage.removeItem(CACHE_TIME_KEY);
-      localStorage.removeItem(CACHE_VERSION_KEY);
+    // Wrong SHAPE (version) or wrong SUBJECT (year) — either way this entry
+    // cannot answer the question being asked, so it is discarded rather than
+    // served. The year comparison is a string compare against the same value
+    // the request will carry, so "no year recorded at all" (every client
+    // cached under the old code) is a mismatch too and refetches once. That is
+    // deliberately NOT a CACHE_VERSION bump: the version means "the payload
+    // shape changed", it is pinned by other tests, and year-scoping makes a
+    // bump unnecessary — those clients are flushed by the missing year key.
+    if (cachedVersion !== CACHE_VERSION.toString() || cachedYear !== String(year)) {
+      clearCachedData();
       return null;
     }
 
@@ -114,16 +137,53 @@ function getCachedData(): WeeklyClassSlot[] | null {
 // the schedule. Please try again." directly above the correctly rendered
 // classes. Quota-exceeded is the realistic trigger — the schedule blob is the
 // biggest thing this site stores.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function setCachedData(data: any) {
+function setCachedData(data: WeeklyClassSlot[], year: number) {
   try {
     localStorage.setItem(CACHE_KEY, JSON.stringify(data));
     localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
     localStorage.setItem(CACHE_VERSION_KEY, CACHE_VERSION.toString());
+    // Written LAST so a write that dies part-way (quota) leaves an entry with
+    // no year rather than one labelled with a year it does not hold — the read
+    // path treats a missing year as a mismatch, which is the safe direction.
+    localStorage.setItem(CACHE_YEAR_KEY, String(year));
   } catch (error) {
     console.warn("Unable to cache schedule data:", error);
   }
 }
+
+// Drops the whole entry — all four keys — because they are one record: a
+// payload with no year, or a year with no payload, is a half-state the read
+// path would have to reason about. Guarded for the same reason the two helpers
+// above are: under "block all cookies and site data" the `localStorage`
+// property access itself throws, and an escaping throw here would land in the
+// fetch chain's shared .catch and print "We couldn't load the schedule. Please
+// try again." over a page that loaded perfectly well.
+function clearCachedData() {
+  try {
+    localStorage.removeItem(CACHE_KEY);
+    localStorage.removeItem(CACHE_TIME_KEY);
+    localStorage.removeItem(CACHE_VERSION_KEY);
+    localStorage.removeItem(CACHE_YEAR_KEY);
+  } catch (error) {
+    console.warn("Unable to clear schedule cache:", error);
+  }
+}
+
+// How long the page waits for /schedule before it stops waiting. The cache
+// fallback and the failure banner both used to hang off `.catch` alone, so a
+// request that STALLED rather than rejected — a degraded API, a captive
+// portal, a connection that opens and then goes nowhere — left isLoading true
+// with no path out. The spinner replaces the pinned banner, and the pinned
+// banner holds "Show all classes →", the only exit from pinned mode: a visitor
+// on a shared link was stranded on a spinner with no way to reach the ordinary
+// site at all.
+//
+// 10s is chosen against the two failure directions rather than a percentile:
+// long enough that a slow mobile connection finishes normally (a cold Lambda
+// plus a 3G handshake is comfortably inside it), short enough that a visitor
+// who is never getting an answer is handed the cache — or an honest apology —
+// while they are still looking at the page.
+const SCHEDULE_FETCH_TIMEOUT_MS = 10 * 1000;
 
 // Link-only stream selecting every Secondary level regardless of track. Kept as
 // the literal URL value so it round-trips without a bidirectional mapping; the
@@ -289,7 +349,14 @@ export default function Page() {
     // traffic is a small share of visits, so the saving being given up is one
     // request on a fraction of loads. The write below is unconditional, so a
     // pinned visit still warms the cache for the visitor's next unpinned one.
-    const cached = pin.kind === "none" ? getCachedData() : null;
+    // Read ONCE and thread it through the cache read, the request and the cache
+    // write, rather than calling new Date() at each. A page loaded seconds
+    // before midnight on 31 December would otherwise be able to check the cache
+    // against one year and store the response under another, writing exactly
+    // the mislabelled entry this key exists to prevent.
+    const year = new Date().getFullYear();
+
+    const cached = pin.kind === "none" ? getCachedData(year) : null;
     if (cached) {
       setWeeklyClassData(cached);
       setIsLoading(false);
@@ -300,8 +367,22 @@ export default function Page() {
     // API base is env-configured (prod/preview set in Cloudflare); /schedule path
     // + year are added here. `!` is safe: next.config.ts fails the build if unset.
     const scheduleUrl = new URL("/schedule", process.env.NEXT_PUBLIC_SCHEDULE_API_BASE_URL!);
-    scheduleUrl.searchParams.set("year", String(new Date().getFullYear()));
-    fetch(scheduleUrl)
+    scheduleUrl.searchParams.set("year", String(year));
+
+    // `cancelled` exists because this effect's handlers outlive the component:
+    // the abort below settles the fetch, so without the guard a navigation away
+    // mid-request would run setState on an unmounted tree (and log an error the
+    // visitor caused by leaving).
+    let cancelled = false;
+    const controller = new AbortController();
+    // Abort rather than a parallel "timed out" state: the abort rejects the
+    // fetch, which lands in the SAME .catch as a network failure, so the
+    // stalled case inherits the cache fallback and the banner copy already
+    // built for failure instead of adding a fourth thing for them to disagree
+    // with. A stall and a 502 are the same event to the visitor.
+    const timeoutId = setTimeout(() => controller.abort(), SCHEDULE_FETCH_TIMEOUT_MS);
+
+    fetch(scheduleUrl, { signal: controller.signal })
       .then((res) => res.json())
       // db-schedule-updater MR 3.3 (2026-05-26) flipped the response envelope:
       //   was → { success, data: { data: WeeklyClassSlot[], total, ... }, message }
@@ -309,6 +390,7 @@ export default function Page() {
       // Cached payloads from the old shape are invalidated by the
       // CACHE_VERSION bump above.
       .then((res: { data: WeeklyClassSlot[] }) => {
+        if (cancelled) return;
         const normalised = res.data.map(normaliseSlot);
         setWeeklyClassData(normalised);
         // Never cache an empty schedule. A cache hit short-circuits this effect
@@ -317,11 +399,22 @@ export default function Page() {
         // the request pins year=<current>, so from 1 January until the new
         // year's schedule is published the endpoint legitimately returns none.
         if (normalised.length > 0) {
-          setCachedData(normalised);
+          setCachedData(normalised, year);
+        } else {
+          // Not writing an empty payload is only half of it. The page has just
+          // been told, by a SUCCESSFUL response, that the schedule it is asking
+          // about has no classes — which makes whatever is sitting in the cache
+          // wrong, not merely old. Leaving it there means the next ordinary
+          // visit reads it back and renders a schedule the API has already
+          // disowned, and (unpinned) never fetches to find out. Clearing costs
+          // one request on the next visit; keeping it costs the visitor a
+          // confidently wrong timetable.
+          clearCachedData();
         }
         setIsLoading(false);
       })
       .catch((error) => {
+        if (cancelled) return;
         console.error("Error fetching schedule data:", error);
         // Skipping the cache READ above is a rule about SUCCESS: it exists so a
         // dead-link verdict is only ever reached against fresh data. On failure
@@ -345,7 +438,7 @@ export default function Page() {
         // coincidence, and without the flag the banner states the first as if
         // it were the second.
         if (pin.kind !== "none") {
-          const fallback = getCachedData();
+          const fallback = getCachedData(year);
           if (fallback) {
             setWeeklyClassData(fallback);
             setServedFromCacheFallback(true);
@@ -363,7 +456,20 @@ export default function Page() {
         // fixes exists to prevent.
         setLoadFailed(true);
         setIsLoading(false);
-      });
+      })
+      // Both settle paths, so a normal response leaves no armed timer behind to
+      // abort a request that already finished — and nothing pending for a test
+      // runner (or a page still open in a background tab) to trip over.
+      .finally(() => clearTimeout(timeoutId));
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timeoutId);
+      // Abort on unmount too, not just on timeout: an in-flight request for a
+      // page nobody is looking at is worth cancelling, and the `cancelled`
+      // guard above already stops the resulting rejection touching state.
+      controller.abort();
+    };
   }, []);
 
   // Effect to update URL query params when filters change (preserve non-filter params)

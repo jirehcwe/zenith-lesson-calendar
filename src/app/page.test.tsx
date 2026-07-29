@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor, within } from "@testing-library/react";
+import { act, render, screen, fireEvent, waitFor, within } from "@testing-library/react";
 import Page from "./page";
 
 // FullCalendar renders nothing in jsdom; assert via the List view instead.
@@ -91,8 +91,53 @@ beforeEach(() => {
 });
 
 // The storage-failure tests spy on Storage.prototype/console; a leaked spy would
-// silently break every later test in the file.
-afterEach(() => jest.restoreAllMocks());
+// silently break every later test in the file. The timeout tests install fake
+// timers; a leaked fake clock would hang every later `waitFor`.
+//
+// Order matters: spies first, clock second. One test spies on
+// setTimeout/clearTimeout WHILE fake timers are installed, so restoring that spy
+// puts the FAKE functions back on `global` — useRealTimers has to run after it
+// to sweep them away again.
+afterEach(() => {
+  jest.restoreAllMocks();
+  jest.useRealTimers();
+});
+
+// page.tsx reaches for the calendar year in exactly ONE place —
+// `new Date().getFullYear()`, threaded through the cache read, the request and
+// the cache write — and nothing else under src/ calls it, so pinning that call
+// is a precise stand-in for "this browser tab was open when the year rolled
+// over". Deliberately NOT jest.setSystemTime: the bug lives INSIDE the 5-minute
+// freshness window, so the two mounts must stay milliseconds apart on the
+// wall clock while disagreeing about the year. Freezing the whole clock instead
+// would let the cache expire on age and the test would pass for the wrong
+// reason.
+function pinYear(year: number) {
+  return jest.spyOn(Date.prototype, "getFullYear").mockReturnValue(year);
+}
+
+// A request that opens and then goes nowhere: it settles ONLY when the app
+// aborts it. That is what a stalled connection actually does — a rejected
+// promise is the one thing it never produces — and it is the case a cache
+// fallback living in `.catch` alone cannot see.
+// Note the `init?.signal?` chain: a call made without a signal never subscribes
+// to anything and so hangs forever, exactly as it would in a browser. Passing no
+// AbortSignal cannot accidentally pass these tests.
+function stallingFetch() {
+  return jest.fn((input: RequestInfo | URL, init?: RequestInit) =>
+    new Promise((_, reject) => {
+      init?.signal?.addEventListener("abort", () =>
+        reject(new DOMException("The user aborted a request.", "AbortError")),
+      );
+    }),
+  );
+}
+
+// The app-level timeout, restated so the tests below can straddle it. Kept as a
+// literal rather than imported: page.tsx does not export it, and a test that
+// read the value from the module under test could not tell 10 seconds from 10
+// milliseconds.
+const FETCH_TIMEOUT_MS = 10_000;
 
 // "Block all cookies and site data" (Safari's setting, and Chrome inside a
 // storage-partitioned third-party context) does not merely fail writes: it
@@ -635,6 +680,260 @@ describe("pinned mode (?classes= and ?tutor=)", () => {
     // it to qualify, and hedging a dead-link verdict would be the round-A bug
     // with a disclaimer bolted on. The failure copy is the whole message here.
     expect(screen.queryByText(/saved copy/i)).not.toBeInTheDocument();
+  });
+
+  it("refuses LAST year's cache when this year's pinned fetch fails", async () => {
+    // The cache is keyed by nothing but its own age, while the request is
+    // keyed by year. Cross midnight on 31 December and a five-minute-old entry
+    // — fresh by every check the page makes — answers a question about a
+    // different academic year. Tutor codes and centres are stable year to
+    // year, so the substitution is invisible: the parent gets a complete,
+    // plausible, RETIRED timetable, hedged only as "may be out of date".
+    const seen: string[] = [];
+    const yearSpy = pinYear(2026);
+    const lastYearFetch = jest.fn((url: RequestInfo | URL) => {
+      seen.push(String(url));
+      return Promise.resolve({ json: () => Promise.resolve({ data: SLOTS }) });
+    });
+    global.fetch = lastYearFetch as unknown as typeof fetch;
+    setUrl("/");
+    // Seed through a real visit, so the entry is exactly what an ordinary
+    // browse on 31 December leaves behind — and so the test does not restate
+    // CACHE_VERSION, which must not be bumped.
+    const first = render(<Page />);
+    await waitFor(() =>
+      expect(JSON.parse(localStorage.getItem("weeklyClassData") ?? "[]")).toHaveLength(SLOTS.length),
+    );
+    first.unmount();
+
+    // Midnight. The tab is still open, the entry is still minutes old.
+    yearSpy.mockReturnValue(2027);
+    const failingFetch = jest.fn((url: RequestInfo | URL) => {
+      seen.push(String(url));
+      return Promise.reject(new Error("network"));
+    });
+    global.fetch = failingFetch as unknown as typeof fetch;
+    setUrl("/?tutor=T1&view=list");
+    const { container } = render(<Page />);
+
+    await waitFor(() =>
+      expect(
+        screen.getByText("We couldn't load the schedule. Please try again."),
+      ).toBeInTheDocument(),
+    );
+    // The whole point: last year's classes are NOT on screen. A hedge is not a
+    // substitute — "may be out of date" describes a stale copy of the right
+    // year, not a complete copy of the wrong one.
+    expect(listRegion(container).queryByText("Physics")).not.toBeInTheDocument();
+    expect(screen.queryByText(/saved copy/i)).not.toBeInTheDocument();
+    // ...and the link is not blamed for it either.
+    expect(screen.queryByText(/couldn't find any classes for this link/i)).not.toBeInTheDocument();
+    // The two mounts really did ask about different years — otherwise this is
+    // just the same-year fallback test with a spy attached.
+    expect(seen[0]).toContain("year=2026");
+    expect(seen[1]).toContain("year=2027");
+  });
+
+  it("still falls back to a SAME-year cache when the fetch fails", async () => {
+    // Control for the test above, driven through the same lever. Without it,
+    // "reject a mismatched year" could be implemented as "reject everything"
+    // and the suite would still be green — silently deleting the round-5
+    // fallback, whose whole job is to keep a shared tutor link working through
+    // a backend blip.
+    const yearSpy = pinYear(2026);
+    const okFetch = jest.fn(() =>
+      Promise.resolve({ json: () => Promise.resolve({ data: SLOTS }) }),
+    );
+    global.fetch = okFetch as unknown as typeof fetch;
+    setUrl("/");
+    const first = render(<Page />);
+    await waitFor(() =>
+      expect(JSON.parse(localStorage.getItem("weeklyClassData") ?? "[]")).toHaveLength(SLOTS.length),
+    );
+    first.unmount();
+
+    // Same year, same as every visit that is not on 1 January.
+    yearSpy.mockReturnValue(2026);
+    const failingFetch = jest.fn(() => Promise.reject(new Error("network")));
+    global.fetch = failingFetch as unknown as typeof fetch;
+    setUrl("/?tutor=T1&view=list");
+    const { container } = render(<Page />);
+
+    await waitFor(() =>
+      expect(
+        screen.getByText("You're viewing T1's classes — a saved copy, which may be out of date."),
+      ).toBeInTheDocument(),
+    );
+    expect(listRegion(container).getByText("Physics")).toBeInTheDocument();
+  });
+
+  it("clears a stale cache once a successful response says the schedule is empty", async () => {
+    // Refusing to WRITE an empty payload is only half the job. A 200 carrying
+    // no rows is the API stating that the schedule being asked about has no
+    // classes — which makes whatever is already stored wrong, not merely old.
+    // Left in place it is read back by the next ordinary visit, which then
+    // renders a schedule the API has already disowned and (being unpinned)
+    // never fetches to discover that.
+    const okFetch = jest.fn(() =>
+      Promise.resolve({ json: () => Promise.resolve({ data: SLOTS }) }),
+    );
+    global.fetch = okFetch as unknown as typeof fetch;
+    setUrl("/?stream=JC&view=list");
+    const first = render(<Page />);
+    await waitFor(() =>
+      expect(JSON.parse(localStorage.getItem("weeklyClassData") ?? "[]")).toHaveLength(SLOTS.length),
+    );
+    first.unmount();
+
+    // The schedule is withdrawn (or the year turns and the new one is not up
+    // yet). PINNED deliberately: with a valid cache in place that is the only
+    // visit that reaches the network at all, so it is the only one that can
+    // learn the schedule is empty.
+    const emptyFetch = jest.fn(() =>
+      Promise.resolve({ json: () => Promise.resolve({ data: [] }) }),
+    );
+    global.fetch = emptyFetch as unknown as typeof fetch;
+    setUrl("/?tutor=T1");
+    const second = render(<Page />);
+    await waitFor(() =>
+      expect(
+        screen.getByText("The schedule isn't published yet. Please check back soon."),
+      ).toBeInTheDocument(),
+    );
+    expect(localStorage.getItem("weeklyClassData")).toBeNull();
+    second.unmount();
+
+    // ...and the consequence that matters: the next ordinary visit asks again
+    // instead of resurrecting the entry. Without the clear it serves the stale
+    // classes from localStorage and never calls fetch at all.
+    const okAgain = jest.fn(() =>
+      Promise.resolve({ json: () => Promise.resolve({ data: SLOTS }) }),
+    );
+    global.fetch = okAgain as unknown as typeof fetch;
+    setUrl("/?stream=JC&view=list");
+    const { container } = render(<Page />);
+    await waitFor(() =>
+      expect(listRegion(container).getByText("Physics")).toBeInTheDocument(),
+    );
+    expect(okAgain).toHaveBeenCalledTimes(1);
+  });
+
+  it("escapes the spinner when a pinned fetch STALLS, serving the cache", async () => {
+    // The failure machinery all hangs off `.catch`, and a stalled request never
+    // rejects. isLoading stays true, the spinner replaces the pinned banner,
+    // and the banner holds "Show all classes →" — the only exit from pinned
+    // mode. A degraded API therefore stranded a visitor on a shared link with
+    // no route to the ordinary site at all.
+    jest.useFakeTimers();
+    const okFetch = jest.fn(() =>
+      Promise.resolve({ json: () => Promise.resolve({ data: SLOTS }) }),
+    );
+    global.fetch = okFetch as unknown as typeof fetch;
+    setUrl("/");
+    const first = render(<Page />);
+    await waitFor(() =>
+      expect(JSON.parse(localStorage.getItem("weeklyClassData") ?? "[]")).toHaveLength(SLOTS.length),
+    );
+    first.unmount();
+
+    global.fetch = stallingFetch() as unknown as typeof fetch;
+    setUrl("/?tutor=T1&view=list");
+    const { container } = render(<Page />);
+    expect(screen.getByText(/loading courses/i)).toBeInTheDocument();
+
+    // A second short of the deadline it is still waiting — the page does not
+    // give up on a merely slow mobile connection.
+    await act(async () => {
+      jest.advanceTimersByTime(FETCH_TIMEOUT_MS - 1000);
+    });
+    expect(screen.getByText(/loading courses/i)).toBeInTheDocument();
+
+    await act(async () => {
+      jest.advanceTimersByTime(1000);
+    });
+    // Out of the spinner, into the EXISTING failure path: cache served, and
+    // labelled as a snapshot rather than presented as the schedule.
+    expect(screen.queryByText(/loading courses/i)).not.toBeInTheDocument();
+    expect(
+      screen.getByText("You're viewing T1's classes — a saved copy, which may be out of date."),
+    ).toBeInTheDocument();
+    expect(listRegion(container).getByText("Physics")).toBeInTheDocument();
+    // And the way out of pinned mode is reachable again, which is the point.
+    expect(screen.getByRole("button", { name: /show all classes/i })).toBeInTheDocument();
+  });
+
+  it("escapes the spinner when a pinned fetch STALLS with no cache to serve", async () => {
+    // Same stall, nothing stored. There is no honest content to show, so the
+    // visitor gets the ordinary failure copy — not a new fourth banner state,
+    // and not an accusation that their link is dead.
+    jest.useFakeTimers();
+    global.fetch = stallingFetch() as unknown as typeof fetch;
+    expect(localStorage.getItem("weeklyClassData")).toBeNull();
+    setUrl("/?tutor=T1&view=list");
+    render(<Page />);
+    expect(screen.getByText(/loading courses/i)).toBeInTheDocument();
+
+    await act(async () => {
+      jest.advanceTimersByTime(FETCH_TIMEOUT_MS);
+    });
+    expect(screen.queryByText(/loading courses/i)).not.toBeInTheDocument();
+    expect(
+      screen.getByText("We couldn't load the schedule. Please try again."),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/couldn't find any classes for this link/i)).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /show all classes/i })).toBeInTheDocument();
+  });
+
+  it("clears the timeout once the fetch settles normally", async () => {
+    // The timeout must not outlive the request it guards: an abort fired at a
+    // page that already loaded is harmless today only by accident, and a timer
+    // left armed on every successful load is the shape of a leak.
+    jest.useFakeTimers();
+    // Spies go in AFTER useFakeTimers, so they wrap the fake clock's functions
+    // rather than the real ones jest has just swapped out. (afterEach restores
+    // the spies BEFORE dropping the fake clock, so the fake never leaks back
+    // into a later test.)
+    const scheduled = jest.spyOn(global, "setTimeout");
+    const cleared = jest.spyOn(global, "clearTimeout");
+    setUrl("/?tutor=T1&view=list");
+    render(<Page />);
+    await waitFor(() =>
+      expect(screen.getByText("You're viewing T1's classes")).toBeInTheDocument(),
+    );
+
+    // Deliberately NOT jest.getTimerCount(): fake timers count
+    // requestAnimationFrame too, and WeeklyClassCalendar schedules one on
+    // mount, so the total here is never zero for reasons that have nothing to
+    // do with the fetch. Name the fetch's own timer instead.
+    const armed = scheduled.mock.calls.findIndex(([, ms]) => ms === FETCH_TIMEOUT_MS);
+    // It was armed at all — otherwise "it was cleared" is vacuously satisfiable
+    // by deleting the timeout entirely, which is the bug this pair guards.
+    expect(armed).toBeGreaterThanOrEqual(0);
+    expect(cleared).toHaveBeenCalledWith(scheduled.mock.results[armed].value);
+  });
+
+  it("cancels an in-flight fetch on unmount without a late state update", async () => {
+    // Unmount mid-request — the visitor navigates away while the API is slow.
+    // The effect's cleanup must take the timer AND the request with it;
+    // otherwise the abort lands ten seconds later on a tree that is gone,
+    // logging a failure nobody experienced and setting state on nothing.
+    const error = jest.spyOn(console, "error").mockImplementation(() => {});
+    jest.useFakeTimers();
+    global.fetch = stallingFetch() as unknown as typeof fetch;
+    setUrl("/?tutor=T1&view=list");
+    const { unmount } = render(<Page />);
+    // A raw count IS meaningful here, unlike after a successful load: the fetch
+    // has not settled, so the page is still on the spinner and
+    // WeeklyClassCalendar (with its mount-time requestAnimationFrame) has not
+    // rendered. The one pending timer is the fetch timeout.
+    expect(jest.getTimerCount()).toBe(1);
+
+    unmount();
+    expect(jest.getTimerCount()).toBe(0);
+    await act(async () => {
+      jest.advanceTimersByTime(FETCH_TIMEOUT_MS * 6);
+    });
+    expect(error).not.toHaveBeenCalled();
   });
 
   it("still serves an UNPINNED visit from cache, with no second fetch", async () => {
