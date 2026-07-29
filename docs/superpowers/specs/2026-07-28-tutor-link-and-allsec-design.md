@@ -500,6 +500,7 @@ Manual checks on the preview URL, beyond the automated suite:
 | `?stream=AllSecc` | Typo'd value lands on the ordinary homepage, **not** a wrong-platform calendar |
 | `?stream=AllSec` on a phone | Filtering is correct, but the chip itself sits behind the bottom-nav filter sheet |
 | `?stream=AllSec` → tap `Sec IP` | One-way door: the chip disappears and cannot be re-selected without reopening the link |
+| `?tutor=Alicia` with the API blocked, on a **phone** | Saved-copy banner renders and wraps without eating the viewport — it is ~40 characters longer than the ordinary copy, on a sticky single-row banner |
 | no params | Unchanged homepage — four chips, empty-state gate |
 
 Three of those rows are judgement calls rather than pass/fail checks, and the
