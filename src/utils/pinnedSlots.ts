@@ -4,11 +4,16 @@
  * slots — so a link whose codes match nothing announces itself as broken
  * instead of silently rendering the ordinary homepage. This deliberately
  * reverses AC 6 of the 2026-06-16 `?classes=` design.
+ *
+ * The `ids`/`codes` lists are `readonly` because nothing here mutates them —
+ * they are only read and iterated. That makes the type strictly more permissive
+ * for callers (a mutable `string[]` is assignable to `readonly string[]`, but
+ * not the reverse), so `as const` fixtures and frozen literals are accepted too.
  */
 export type PinRequest =
   | { kind: "none" }
-  | { kind: "classes"; ids: string[] }
-  | { kind: "tutor"; codes: string[] };
+  | { kind: "classes"; ids: readonly string[] }
+  | { kind: "tutor"; codes: readonly string[] };
 
 /** Slots carry `tutor` always and `classSlotId` optionally. */
 type Pinnable = { classSlotId?: string; tutor?: string };
