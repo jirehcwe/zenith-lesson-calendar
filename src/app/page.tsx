@@ -253,8 +253,9 @@ export default function Page() {
           level: params.get("level")?.split(",").filter(Boolean) || [],
           stream,
         };
+    const pin = parsePinRequest(window.location.search);
     setFilters(initialFilters);
-    setPinRequest(parsePinRequest(window.location.search));
+    setPinRequest(pin);
 
     // Read view from URL
     const viewParam = params.get("view") as ViewType;
@@ -265,7 +266,22 @@ export default function Page() {
     // Set campaign parameter
     setCampaignParam(getCampaignParam());
 
-    const cached = getCachedData();
+    // A pinned link never reads the cache — it only writes one. Every other
+    // banner state is derived from data the page HAS, but the dead-link copy is
+    // derived from data it does NOT have, so a merely-stale cache is enough to
+    // manufacture it: a visitor who browsed the schedule minutes ago, then
+    // followed a link for a class ops published (or a tutor code ops corrected)
+    // in the meantime, gets "We couldn't find any classes for this link." about
+    // a link that works. That is the same lie this feature exists to prevent,
+    // pointed the other way, and no amount of correct matching downstream can
+    // see past the wrong input.
+    //
+    // Deliberately a full cache BYPASS rather than a revalidate-after-serve:
+    // deferring the truth still flashes the dead-link banner first, and pinned
+    // traffic is a small share of visits, so the saving being given up is one
+    // request on a fraction of loads. The write below is unconditional, so a
+    // pinned visit still warms the cache for the visitor's next unpinned one.
+    const cached = pin.kind === "none" ? getCachedData() : null;
     if (cached) {
       setWeeklyClassData(cached);
       setIsLoading(false);

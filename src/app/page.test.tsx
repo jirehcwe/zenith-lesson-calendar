@@ -360,8 +360,11 @@ describe("pinned mode (?classes= and ?tutor=)", () => {
     expect(localStorage.getItem("weeklyClassData")).toBeNull();
 
     // A cache hit returns before fetching, so the real harm of caching empty is
-    // that the retry never leaves the browser. Prove the second mount refetches.
+    // that the retry never leaves the browser. Prove the second mount refetches
+    // — and do it UNPINNED, because a pinned visit now skips the cache read
+    // outright and so would refetch here no matter what was stored.
     first.unmount();
+    setUrl("/");
     render(<Page />);
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
   });
@@ -374,28 +377,156 @@ describe("pinned mode (?classes= and ?tutor=)", () => {
     // rest of CACHE_DURATION, exactly when the backend has just recovered or the
     // new year's schedule has just been published. CACHE_VERSION must not be
     // bumped to flush them, so the read side is what has to reject it.
+    //
+    // Deliberately UNPINNED on both mounts. This used to drive the whole thing
+    // through ?tutor=T1, which no longer exercises anything: a pinned visit
+    // skips the cache read entirely, so it refetches whatever is stored and the
+    // `parsed.length === 0` guard could be deleted with this test still green.
+    // The read path is the unpinned path now, so that is where it is probed.
     const fetchMock = jest.fn(() =>
       Promise.resolve({ json: () => Promise.resolve({ data: SLOTS }) }),
     );
     global.fetch = fetchMock as unknown as typeof fetch;
-    setUrl("/?tutor=T1&view=list");
+    setUrl("/?stream=JC&view=list");
 
     // Seed the version and timestamp entries through a real visit so they are
     // genuinely valid — and so the test does not restate CACHE_VERSION, which
     // must not be bumped.
     const first = render(<Page />);
     await waitFor(() =>
-      expect(screen.getByText("You're viewing T1's classes")).toBeInTheDocument(),
+      expect(listRegion(first.container).getByText("Physics")).toBeInTheDocument(),
     );
     first.unmount();
     localStorage.setItem("weeklyClassData", "[]");
 
+    setUrl("/?stream=JC&view=list");
     const { container } = render(<Page />);
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
-    // ...and the refetched schedule actually lands, rather than the page simply
-    // asking twice and still rendering nothing.
-    expect(await screen.findByText("You're viewing T1's classes")).toBeInTheDocument();
+    // Wait on the CONTENT, not the call count: fetch fires synchronously inside
+    // the mount effect, so a count assertion resolves while the spinner is
+    // still up and listRegion has nothing to find.
+    await waitFor(() =>
+      expect(listRegion(container).getByText("Physics")).toBeInTheDocument(),
+    );
+    // ...and it asked again rather than serving the empty entry.
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(screen.queryByText(/loading courses/i)).not.toBeInTheDocument();
+  });
+
+  it("refetches for a pinned link rather than calling it dead from a stale cache", async () => {
+    // THE regression. A cache does not have to be EXPIRED to be wrong, only
+    // OLDER than the schedule: five minutes is plenty of room for ops to
+    // publish a class or correct a tutor code. The mount effect used to return
+    // on any cache hit before fetching, so the pin was matched against the
+    // pre-change payload and missed — and "matched nothing" is rendered as
+    // "We couldn't find any classes for this link.", i.e. the page telling a
+    // parent that a working link is broken. Realistic path, and it is the exact
+    // inverse of the silent-failure this whole feature exists to stop.
+    const staleFetch = jest.fn(() =>
+      // The schedule as it was BEFORE the change: no T1 anywhere in it.
+      Promise.resolve({ json: () => Promise.resolve({ data: [SLOTS[2]] }) }),
+    );
+    global.fetch = staleFetch as unknown as typeof fetch;
+    setUrl("/");
+    const first = render(<Page />);
+    // Seed via a real unpinned visit so the timestamp is genuinely fresh and the
+    // test does not restate CACHE_VERSION, which must not be bumped.
+    await waitFor(() =>
+      expect(JSON.parse(localStorage.getItem("weeklyClassData") ?? "[]")).toHaveLength(1),
+    );
+    first.unmount();
+
+    // Ops publishes the class; the tutor shares the link; the parent taps it
+    // well inside CACHE_DURATION, so that stale entry still reads as fresh.
+    const freshFetch = jest.fn(() =>
+      Promise.resolve({ json: () => Promise.resolve({ data: SLOTS }) }),
+    );
+    global.fetch = freshFetch as unknown as typeof fetch;
+    setUrl("/?tutor=T1&view=list");
+    const { container } = render(<Page />);
+
+    await waitFor(() =>
+      expect(screen.getByText("You're viewing T1's classes")).toBeInTheDocument(),
+    );
+    // Not merely "the banner is right": the class the link points at is on
+    // screen, so the visit is actually useful and not just politely worded.
     expect(listRegion(container).getByText("Physics")).toBeInTheDocument();
+    expect(screen.queryByText(/couldn't find any classes for this link/i)).not.toBeInTheDocument();
+    expect(freshFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("still reports a genuinely dead pin even with a valid cache present", async () => {
+    // The other edge of the same change. Bypassing the cache must make the
+    // dead-link report MORE accurate, not unreachable: a code that matches
+    // nothing in the freshly fetched schedule is still a broken link, and the
+    // page must still say so rather than fall silent on the homepage.
+    const fetchMock = jest.fn(() =>
+      Promise.resolve({ json: () => Promise.resolve({ data: SLOTS }) }),
+    );
+    global.fetch = fetchMock as unknown as typeof fetch;
+    setUrl("/");
+    const first = render(<Page />);
+    await waitFor(() =>
+      expect(JSON.parse(localStorage.getItem("weeklyClassData") ?? "[]")).toHaveLength(SLOTS.length),
+    );
+    first.unmount();
+
+    setUrl("/?tutor=NoSuchTutor");
+    render(<Page />);
+    await waitFor(() =>
+      expect(screen.getByText(/couldn't find any classes for this link/i)).toBeInTheDocument(),
+    );
+    expect(screen.queryByText(/select a stream/i)).not.toBeInTheDocument();
+    // ...and it reached that verdict from a fresh fetch, not from the cache.
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("still serves an UNPINNED visit from cache, with no second fetch", async () => {
+    // The cost control on the fix above: bypassing the cache is scoped to
+    // pinned links, which are a small share of traffic. An implementation that
+    // simply stopped reading the cache would satisfy every pinned assertion in
+    // this file and quietly double the request count for everyone else.
+    const fetchMock = jest.fn(() =>
+      Promise.resolve({ json: () => Promise.resolve({ data: SLOTS }) }),
+    );
+    global.fetch = fetchMock as unknown as typeof fetch;
+    setUrl("/?stream=JC&view=list");
+    const first = render(<Page />);
+    await waitFor(() =>
+      expect(listRegion(first.container).getByText("Physics")).toBeInTheDocument(),
+    );
+    first.unmount();
+
+    setUrl("/?stream=JC&view=list");
+    const { container } = render(<Page />);
+    await waitFor(() =>
+      expect(listRegion(container).getByText("Physics")).toBeInTheDocument(),
+    );
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("still WRITES the cache on a pinned visit, for the next unpinned one", async () => {
+    // Bypass the READ only. The pinned visitor has just paid for a fresh
+    // payload; throwing it away would make their own next visit — and any
+    // ordinary browse from the same browser — pay again for nothing.
+    const fetchMock = jest.fn(() =>
+      Promise.resolve({ json: () => Promise.resolve({ data: SLOTS }) }),
+    );
+    global.fetch = fetchMock as unknown as typeof fetch;
+    setUrl("/?tutor=T1&view=list");
+    const first = render(<Page />);
+    await waitFor(() =>
+      expect(screen.getByText("You're viewing T1's classes")).toBeInTheDocument(),
+    );
+    expect(JSON.parse(localStorage.getItem("weeklyClassData") ?? "[]")).toHaveLength(SLOTS.length);
+    first.unmount();
+
+    // The write is only worth anything if a later unpinned visit can read it.
+    setUrl("/?stream=JC&view=list");
+    const { container } = render(<Page />);
+    await waitFor(() =>
+      expect(listRegion(container).getByText("Physics")).toBeInTheDocument(),
+    );
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it("does cache a non-empty schedule", async () => {
@@ -436,28 +567,42 @@ describe("pinned mode (?classes= and ?tutor=)", () => {
 
   it("treats a corrupt cache entry as a miss instead of hanging on the spinner", async () => {
     // getCachedData runs inside the mount effect, so an unguarded JSON.parse
-    // throw escapes the effect: isLoading never clears, and the spinner replaces
-    // the pinned banner — which is the only exit from pinned mode.
+    // throw escapes the effect and isLoading never clears: a permanent spinner
+    // over a page that has no other way to paint.
+    //
+    // UNPINNED, and it has to be. The original framing here was the pinned one
+    // ("the spinner replaces the pinned banner, the only exit from pinned
+    // mode"), but pinned visits no longer read the cache at all, so a corrupt
+    // entry is unreachable from a pin link and this became a test that could
+    // not fail. The hazard is undiminished on the unpinned path — the parse
+    // still runs there, and a stuck spinner is worse for an ordinary browse
+    // because every visitor hits it.
     const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
     const fetchMock = jest.fn(() =>
       Promise.resolve({ json: () => Promise.resolve({ data: SLOTS }) }),
     );
     global.fetch = fetchMock as unknown as typeof fetch;
-    setUrl("/?tutor=T1");
+    setUrl("/?stream=JC&view=list");
 
     // Seed the cache through a real visit so the version and timestamp entries
     // are genuinely valid and only the payload is corrupt — and so the test does
     // not restate CACHE_VERSION, which must not be bumped.
     const first = render(<Page />);
     await waitFor(() =>
-      expect(screen.getByText("You're viewing T1's classes")).toBeInTheDocument(),
+      expect(listRegion(first.container).getByText("Physics")).toBeInTheDocument(),
     );
     first.unmount();
     localStorage.setItem("weeklyClassData", '[{"classSlotId":"2026-Class0001",');
 
-    render(<Page />);
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
-    expect(await screen.findByText("You're viewing T1's classes")).toBeInTheDocument();
+    setUrl("/?stream=JC&view=list");
+    const { container } = render(<Page />);
+    // Wait on the CONTENT, not the call count: fetch fires synchronously inside
+    // the mount effect, so a count assertion resolves while the spinner is
+    // still up and listRegion has nothing to find.
+    await waitFor(() =>
+      expect(listRegion(container).getByText("Physics")).toBeInTheDocument(),
+    );
+    expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(screen.queryByText(/loading courses/i)).not.toBeInTheDocument();
     expect(warn).toHaveBeenCalled();
   });
