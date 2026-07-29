@@ -237,20 +237,32 @@ describe("describePin", () => {
 describe("pinnedBannerMessage", () => {
   const req = { kind: "tutor", codes: ["Alicia"] } as const;
   const matched = [{ tutor: "Alicia" }];
-  const ok = { loadFailed: false, scheduleEmpty: false };
+  const ok = { loadFailed: false, scheduleEmpty: false, servedFromCacheFallback: false };
+  // The failed-fetch-served-from-cache state, named once. Every field matters:
+  // the fetch threw, the cache answered, and the rows it produced are why
+  // scheduleEmpty is false.
+  const fromCache = { loadFailed: true, scheduleEmpty: false, servedFromCacheFallback: true };
 
   it("blames the system only when the fetch actually failed", () => {
-    expect(pinnedBannerMessage(req, [], { loadFailed: true, scheduleEmpty: true })).toBe(
-      "We couldn't load the schedule. Please try again.",
-    );
+    expect(
+      pinnedBannerMessage(req, [], {
+        loadFailed: true,
+        scheduleEmpty: true,
+        servedFromCacheFallback: false,
+      }),
+    ).toBe("We couldn't load the schedule. Please try again.");
   });
 
   it("says the schedule isn't out yet when it loaded but is empty", () => {
     // A 200 carrying zero rows is not a failure, so "try again" would be both
     // untrue and useless: retrying cannot publish next year's schedule.
-    expect(pinnedBannerMessage(req, [], { loadFailed: false, scheduleEmpty: true })).toBe(
-      "The schedule isn't published yet. Please check back soon.",
-    );
+    expect(
+      pinnedBannerMessage(req, [], {
+        loadFailed: false,
+        scheduleEmpty: true,
+        servedFromCacheFallback: false,
+      }),
+    ).toBe("The schedule isn't published yet. Please check back soon.");
   });
 
   it("falls through to describePin once a schedule is present", () => {
@@ -276,19 +288,71 @@ describe("pinnedBannerMessage", () => {
     // returns this message. Passing `[]` states the case this test is actually
     // about — the ordering of the two failure guards — instead of a
     // contradiction that happened to reach the first one.
-    expect(pinnedBannerMessage(req, [], { loadFailed: true, scheduleEmpty: true })).toBe(
-      "We couldn't load the schedule. Please try again.",
+    expect(
+      pinnedBannerMessage(req, [], {
+        loadFailed: true,
+        scheduleEmpty: true,
+        servedFromCacheFallback: false,
+      }),
+    ).toBe("We couldn't load the schedule. Please try again.");
+  });
+
+  it("marks a fallback-served tutor pin as a saved copy", () => {
+    // Supersedes an earlier assertion that this exact state got the ORDINARY
+    // copy. It reads as a live claim about a tutor's timetable while silently
+    // omitting anything published since the cache was written, so the visitor
+    // is told these are Alicia's classes when they are only the ones Alicia had
+    // when the browser last saw a working API.
+    expect(pinnedBannerMessage(req, matched, fromCache)).toBe(
+      "You're viewing Alicia's classes — a saved copy, which may be out of date.",
     );
   });
 
-  it("keeps the ordinary copy when a fallback matched despite the failed fetch", () => {
-    // page.tsx serves a pinned link from cache when the fetch fails, so
-    // loadFailed can now be true with the requested classes on screen. The
-    // visitor got what the link promised; "We couldn't load the schedule" over
-    // a page full of correct classes is just false.
+  it("marks a fallback-served multi-tutor pin as a saved copy", () => {
     expect(
-      pinnedBannerMessage(req, matched, { loadFailed: true, scheduleEmpty: false }),
-    ).toBe("You're viewing Alicia's classes");
+      pinnedBannerMessage(
+        { kind: "tutor", codes: ["Alicia", "DJ"] },
+        [{ tutor: "Alicia" }, { tutor: "DJ" }],
+        fromCache,
+      ),
+    ).toBe("You're viewing classes taught by Alicia and DJ — a saved copy, which may be out of date.");
+  });
+
+  it("marks a fallback-served classes pin as a saved copy", () => {
+    // Uniform across both pin kinds, and deliberately NOT conditioned on
+    // whether every requested id matched: a class the cache does hold can still
+    // have moved to another time, venue or tutor since, so "all ids present"
+    // proves nothing about the payload being current.
+    expect(
+      pinnedBannerMessage(
+        { kind: "classes", ids: ["a", "b"] },
+        [{ classSlotId: "a" }, { classSlotId: "b" }],
+        fromCache,
+      ),
+    ).toBe("You're viewing 2 selected classes — a saved copy, which may be out of date.");
+  });
+
+  it("hedges a PARTIAL classes fallback rather than counting it as the whole link", () => {
+    // The concrete misinformation: ?classes=a,b against a cache that predates b.
+    // Unqualified, "1 selected class" is a true statement about the cache and a
+    // false one about the link — the visitor is told their two-class link holds
+    // one class, with nothing on screen to suggest otherwise.
+    const result = pinnedBannerMessage(
+      { kind: "classes", ids: ["a", "b"] },
+      [{ classSlotId: "a" }],
+      fromCache,
+    );
+    expect(result).toBe("You're viewing 1 selected class — a saved copy, which may be out of date.");
+    expect(result).not.toBe("You're viewing 1 selected class");
+  });
+
+  it("leaves a successful fetch unhedged", () => {
+    // The saved-copy wording has to stay off the healthy path, or it becomes
+    // background noise on every pinned visit and stops meaning anything on the
+    // one visit where it is true.
+    const result = pinnedBannerMessage(req, matched, ok);
+    expect(result).toBe("You're viewing Alicia's classes");
+    expect(result).not.toMatch(/saved copy/);
   });
 
   it("does not downgrade a failed fetch to a dead link when the fallback missed", () => {
@@ -297,8 +361,14 @@ describe("pinnedBannerMessage", () => {
     // to call the link dead — the cache may simply predate it — so the failure
     // copy has to survive a populated-but-unmatched schedule, which is the one
     // shape that otherwise reaches describePin's dead-link case.
-    expect(
-      pinnedBannerMessage(req, [], { loadFailed: true, scheduleEmpty: false }),
-    ).toBe("We couldn't load the schedule. Please try again.");
+    //
+    // Note the fallback DID serve here (it returned a schedule, just not a
+    // matching one), so this also pins the saved-copy suffix away from the
+    // dead-link verdict: a stale cache never gets to call a link broken, hedged
+    // or otherwise.
+    const result = pinnedBannerMessage(req, [], fromCache);
+    expect(result).toBe("We couldn't load the schedule. Please try again.");
+    expect(result).not.toMatch(/saved copy/);
+    expect(result).not.toMatch(/couldn't find any classes for this link/);
   });
 });

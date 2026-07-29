@@ -458,7 +458,27 @@ describe("pinned mode (?classes= and ?tutor=)", () => {
     // screen, so the visit is actually useful and not just politely worded.
     expect(listRegion(container).getByText("Physics")).toBeInTheDocument();
     expect(screen.queryByText(/couldn't find any classes for this link/i)).not.toBeInTheDocument();
+    // And it is stated plainly, not hedged: this data came off the wire on this
+    // page load. The saved-copy wording belongs to the failed-fetch path only,
+    // and leaking it here would hedge every pinned visit into meaninglessness.
+    expect(screen.queryByText(/saved copy/i)).not.toBeInTheDocument();
     expect(freshFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("states a successful pinned fetch plainly, with no saved-copy hedge", async () => {
+    // The containment test for the fallback flag. It has to be reachable ONLY
+    // from the .catch: a visitor on a healthy load is looking at live data, and
+    // a warning that their view "may be out of date" is both false and, once it
+    // appears on every visit, unreadable on the visit where it is true.
+    // beforeEach supplies a successful fetch and an empty cache.
+    setUrl("/?tutor=T1&view=list");
+    const { container } = render(<Page />);
+    await waitFor(() =>
+      expect(screen.getByText("You're viewing T1's classes")).toBeInTheDocument(),
+    );
+    expect(listRegion(container).getByText("Physics")).toBeInTheDocument();
+    expect(screen.queryByText(/saved copy/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/may be out of date/i)).not.toBeInTheDocument();
   });
 
   it("still reports a genuinely dead pin even with a valid cache present", async () => {
@@ -514,10 +534,21 @@ describe("pinned mode (?classes= and ?tutor=)", () => {
     setUrl("/?tutor=T1&view=list");
     const { container } = render(<Page />);
 
+    // The banner names the tutor — and says where the answer came from. The
+    // assertion used to be the bare "You're viewing T1's classes", which was
+    // this page presenting a snapshot as the schedule: any class added since
+    // the cache was written is missing from a view that claims to be T1's
+    // classes, and nothing on screen said so.
     await waitFor(() =>
-      expect(screen.getByText("You're viewing T1's classes")).toBeInTheDocument(),
+      expect(
+        screen.getByText("You're viewing T1's classes — a saved copy, which may be out of date."),
+      ).toBeInTheDocument(),
     );
-    // The class itself, not just a politely worded banner.
+    // The unqualified claim must be GONE, not merely accompanied.
+    expect(screen.queryByText("You're viewing T1's classes")).not.toBeInTheDocument();
+    // The class itself, not just a politely worded banner. This is the half of
+    // the round-B fix that the warning must not undo: the visitor still gets
+    // the classes, they are just told what they are looking at.
     expect(listRegion(container).getByText("Physics")).toBeInTheDocument();
     // No apology for a failure the visitor never experienced...
     expect(screen.queryByText(/couldn't load the schedule/i)).not.toBeInTheDocument();
@@ -526,6 +557,42 @@ describe("pinned mode (?classes= and ?tutor=)", () => {
     // It really did go to the network first — otherwise this is just the old
     // serve-from-cache behaviour wearing the new test's name.
     expect(failingFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("hedges a PARTIAL cached match instead of counting it as the whole link", async () => {
+    // The misinformation round C names. ?classes=A,B against a cache written
+    // before B existed renders A alone and, unqualified, calls it "1 selected
+    // class" — true of the cache, false of the link. The visitor has no way to
+    // tell a two-class link that lost a class from a one-class link, and the
+    // page sounds equally confident either way.
+    const oldFetch = jest.fn(() =>
+      // The schedule as it was before Class0002 was published.
+      Promise.resolve({ json: () => Promise.resolve({ data: [SLOTS[0]] }) }),
+    );
+    global.fetch = oldFetch as unknown as typeof fetch;
+    setUrl("/");
+    const first = render(<Page />);
+    await waitFor(() =>
+      expect(JSON.parse(localStorage.getItem("weeklyClassData") ?? "[]")).toHaveLength(1),
+    );
+    first.unmount();
+
+    const failingFetch = jest.fn(() => Promise.reject(new Error("network")));
+    global.fetch = failingFetch as unknown as typeof fetch;
+    setUrl("/?classes=2026-Class0001,2026-Class0002&view=list");
+    const { container } = render(<Page />);
+
+    await waitFor(() =>
+      expect(
+        screen.getByText("You're viewing 1 selected class — a saved copy, which may be out of date."),
+      ).toBeInTheDocument(),
+    );
+    // It must not read as a plain, complete selection of one class.
+    expect(screen.queryByText("You're viewing 1 selected class")).not.toBeInTheDocument();
+    // What the cache does hold is still served — hedging is not withholding.
+    expect(listRegion(container).getByText("Physics")).toBeInTheDocument();
+    // ...and the class it does not hold is simply absent, not invented.
+    expect(listRegion(container).queryByText("Economics")).not.toBeInTheDocument();
   });
 
   it("keeps the load-failure copy when the failed fetch's fallback matches nothing", async () => {
@@ -564,6 +631,10 @@ describe("pinned mode (?classes= and ?tutor=)", () => {
     // The cache was non-empty, so this must not be the not-yet-published copy
     // either — that one is reserved for a SUCCESSFUL response carrying no rows.
     expect(screen.queryByText(/isn't published yet/i)).not.toBeInTheDocument();
+    // And the saved-copy wording stays away too: there is nothing on screen for
+    // it to qualify, and hedging a dead-link verdict would be the round-A bug
+    // with a disclaimer bolted on. The failure copy is the whole message here.
+    expect(screen.queryByText(/saved copy/i)).not.toBeInTheDocument();
   });
 
   it("still serves an UNPINNED visit from cache, with no second fetch", async () => {

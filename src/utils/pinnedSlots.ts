@@ -100,15 +100,30 @@ export function describePin(req: PinRequest, matched: Pinnable[]): string {
 
 /**
  * The whole copy table for the pinned banner, so the page renders one call
- * instead of a ternary. Three states, and they are NOT interchangeable:
+ * instead of a ternary. Four states, and they are NOT interchangeable:
  *
  *  - `loadFailed` — the fetch actually threw AND left nothing to show for this
  *    pin. The system failed and retrying can genuinely help, so say so. The
  *    second half is load-bearing: page.tsx falls back to a cached schedule when
  *    a PINNED fetch fails, so `loadFailed` no longer implies an empty screen.
  *    When that fallback produced the classes the link asked for, the visitor
- *    has exactly what they came for, and apologising for a failure they never
- *    experienced would be noise — the ordinary copy applies instead.
+ *    has something to look at, and a bare "we couldn't load the schedule" over
+ *    a page full of classes is simply false — see the next state for what they
+ *    get instead.
+ *  - `servedFromCacheFallback` — those rows came out of localStorage after the
+ *    failed fetch, so they are a SNAPSHOT, not the schedule. The ordinary copy
+ *    asserts completeness the page cannot back up: `?classes=A,B` renders only
+ *    the cached A as "1 selected class", and a tutor pin omits classes added
+ *    since while still claiming to be that tutor's classes. So the ordinary
+ *    description is kept — it is the most accurate summary of what is on
+ *    screen — and marked as a saved copy.
+ *
+ *    Applied uniformly to both pin kinds, deliberately. The tempting
+ *    refinement — "every requested id matched, so this must be complete" — is
+ *    wrong: a class present in the cache can still have had its time, venue or
+ *    tutor changed since it was cached. Staleness is a property of the payload,
+ *    not of the match count, so there is no fallback render this warning is
+ *    untrue of.
  *  - `scheduleEmpty` — a successful response carrying zero rows. Nothing
  *    failed; telling a parent to "try again" is both a lie and useless advice.
  *    Reachable every year: the request pins year=<current>, so from 1 January
@@ -127,11 +142,26 @@ export function describePin(req: PinRequest, matched: Pinnable[]): string {
 export function pinnedBannerMessage(
   req: PinRequest,
   matched: Pinnable[],
-  { loadFailed, scheduleEmpty }: { loadFailed: boolean; scheduleEmpty: boolean },
+  {
+    loadFailed,
+    scheduleEmpty,
+    servedFromCacheFallback,
+  }: { loadFailed: boolean; scheduleEmpty: boolean; servedFromCacheFallback: boolean },
 ): string {
   if (loadFailed && matched.length === 0) {
     return "We couldn't load the schedule. Please try again.";
   }
   if (scheduleEmpty) return "The schedule isn't published yet. Please check back soon.";
-  return describePin(req, matched);
+
+  const description = describePin(req, matched);
+  // The `matched.length` guard keeps the suffix off describePin's dead-link
+  // verdict. In page.tsx that pairing is already unreachable (a fallback render
+  // with no matches is caught by the failure guard above), but the decoration
+  // must never be able to lend a stale cache the authority to call a link dead:
+  // "We couldn't find any classes for this link — a saved copy" would be the
+  // round-A bug wearing the round-C warning as cover.
+  if (servedFromCacheFallback && matched.length > 0) {
+    return `${description} — a saved copy, which may be out of date.`;
+  }
+  return description;
 }

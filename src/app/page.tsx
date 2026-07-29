@@ -226,6 +226,13 @@ export default function Page() {
   // Without it, a network/CORS failure on a perfectly valid link tells the user
   // their link is broken — see the banner message in (f).
   const [loadFailed, setLoadFailed] = useState(false);
+  // Distinguishes "the fetch failed AND the cache supplied what is on screen"
+  // from "the fetch merely failed". `loadFailed` cannot express that: it is set
+  // on both, and the rows it leaves behind are indistinguishable from fetched
+  // ones once they are in weeklyClassData. Only this flag knows the banner is
+  // describing a snapshot rather than the schedule, which is what stops the
+  // pinned copy asserting a completeness the cache cannot back up.
+  const [servedFromCacheFallback, setServedFromCacheFallback] = useState(false);
 
   useEffect(() => {
     const check = () =>
@@ -330,19 +337,30 @@ export default function Page() {
         // Scoped to pinned requests: an unpinned visit already made this exact
         // read at the top of the effect and got nothing, so repeating it here
         // would find the same nothing.
+        //
+        // What the fallback CANNOT do is make itself current, so the render it
+        // produces is flagged as such. Everything downstream of here — the
+        // matching, the count in the banner, the classes on screen — describes
+        // the cached payload accurately and the live schedule only by
+        // coincidence, and without the flag the banner states the first as if
+        // it were the second.
         if (pin.kind !== "none") {
           const fallback = getCachedData();
-          if (fallback) setWeeklyClassData(fallback);
+          if (fallback) {
+            setWeeklyClassData(fallback);
+            setServedFromCacheFallback(true);
+          }
         }
         // Set regardless — the fetch did fail, and that is what this flag
         // records. Whether it is worth SAYING is the banner's call, and
         // pinnedBannerMessage only surfaces the failure copy when nothing
         // matched: if the fallback produced the pinned classes the visitor came
-        // for, they get them with the ordinary banner and no alarm. If it did
-        // not, the failure copy stands rather than degrading to the dead-link
-        // copy — a cache miss under a failed fetch cannot tell "your link is
-        // dead" from "our data is stale", and that guess is the exact lie this
-        // sequence of fixes exists to prevent.
+        // for, they get them, under the saved-copy wording rather than an alarm
+        // about a failure they never experienced. If it did not, the failure
+        // copy stands rather than degrading to the dead-link copy — a cache
+        // miss under a failed fetch cannot tell "your link is dead" from "our
+        // data is stale", and that guess is the exact lie this sequence of
+        // fixes exists to prevent.
         setLoadFailed(true);
         setIsLoading(false);
       });
@@ -570,6 +588,7 @@ export default function Page() {
             message={pinnedBannerMessage(pinRequest, pinnedSlots, {
               loadFailed,
               scheduleEmpty: weeklyClassData.length === 0,
+              servedFromCacheFallback,
             })}
             onShowAll={handleExitPinned}
           />
