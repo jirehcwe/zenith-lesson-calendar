@@ -2,7 +2,7 @@
 
 **Date:** 2026-07-28
 **Branch:** `jireh/feat/tutor-link-allsec` → `regular-lessons-staging` → `regular-lessons`
-**Status:** Approved 2026-07-28 — implementation in progress
+**Status:** Implemented 2026-07-28 — awaiting human test review, then staging validation
 
 ## Problem
 
@@ -521,6 +521,32 @@ preview build is the last chance to change them:
 
 The last row is the regression check that matters most: the whole change should
 be inert for an ordinary visitor.
+
+## Known follow-ups (surfaced during implementation, deliberately not fixed)
+
+None of these block the branch; all were triaged by the whole-branch review.
+
+- **No structural guard against unguarded `localStorage`.** Two separate crash
+  paths were found and fixed here (the schedule cache, and the calendar's
+  pro-tip preference), but nothing stops a new component reintroducing a bare
+  `localStorage` call and reopening the "block all cookies" failure. A
+  `safeStorage` helper or an eslint `no-restricted-globals` rule would make it
+  structural rather than a matter of remembering.
+- **`"AllSec"` is a bare string in three files** — `page.tsx`, `Filters.tsx`,
+  `subjectColors.ts` — with nothing in the type system tying them together. The
+  module-local constraint on `ALL_SEC` is correct for an App Router page file;
+  the fix is a shared `src/utils/streams.ts`, which would also decouple
+  `STREAM_VALUES`' three current jobs.
+- **Stream chips expose no `aria-pressed`.** Selection is conveyed by Tailwind
+  classes alone, so a screen-reader user on a public site cannot tell which
+  stream is active. It would also give the tests a stabler hook than
+  `toHaveClass("bg-gray-900")`.
+- **`getCachedData` treats a corrupt entry as a miss but never clears it**,
+  unlike the version-mismatch path, so every visit re-parses and re-warns until
+  a non-empty fetch overwrites it.
+- **`CLAUDE.md` documents the Preview environment as taking the dev/staging
+  schedule host**, which contradicts this spec's rollout decision. Reconcile it
+  once the Cloudflare Pages value is confirmed.
 
 ## Out of scope
 
