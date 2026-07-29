@@ -86,6 +86,17 @@ function setCachedData(data: any) {
   localStorage.setItem(CACHE_VERSION_KEY, CACHE_VERSION.toString());
 }
 
+// Link-only stream selecting every Secondary level regardless of track. Kept as
+// the literal URL value so it round-trips without a bidirectional mapping; the
+// display label lives in Filters' streamLabel().
+const ALL_SEC = "AllSec";
+
+// The AllSec deep-link is case-insensitive; every other stream passes through.
+function normaliseStreamParam(raw: string | null): string | null {
+  if (!raw) return null;
+  return raw.toLowerCase() === ALL_SEC.toLowerCase() ? ALL_SEC : raw;
+}
+
 function levelToFilterMapper(
   filter: string | null,
   level: string,
@@ -101,6 +112,12 @@ function levelToFilterMapper(
       return level.startsWith("S") && stream.includes("EXP");
     case "Secondary (IP)":
       return level.startsWith("S") && stream.includes("IP");
+    case ALL_SEC:
+      // Deliberately level-based rather than EXP||IP: a Secondary slot with a
+      // blank stream should surface here rather than vanish from every
+      // Secondary view. No such rows exist today (325 EXP + 38 IP = 363 = the
+      // exact Secondary row count).
+      return level.startsWith("S");
     case "Primary":
       return level.startsWith("P");
     default:
@@ -147,7 +164,7 @@ export default function Page() {
       subject: params.get("subject")?.split(",").filter(Boolean) || [],
       centre: params.get("centre")?.split(",").filter(Boolean) || [],
       level: params.get("level")?.split(",").filter(Boolean) || [],
-      stream: params.get("stream") || null,
+      stream: normaliseStreamParam(params.get("stream")),
     };
     setFilters(initialFilters);
     setPinRequest(parsePinRequest(window.location.search));
@@ -334,13 +351,17 @@ export default function Page() {
 
   const STREAM_VALUES = ["JC", "Secondary (Express)", "Secondary (IP)", "Primary"] as const;
 
-  const streamOptions = useMemo(() =>
-    STREAM_VALUES.map((stream) => ({
+  const streamOptions = useMemo(() => {
+    // AllSec is link-only: its chip exists solely while it is the selected
+    // stream, so ordinary visitors still see the usual four.
+    const values: string[] = [...STREAM_VALUES];
+    if (filters.stream === ALL_SEC) values.push(ALL_SEC);
+    return values.map((stream) => ({
       value: stream,
       count: weeklyClassData.filter((s) => levelToFilterMapper(stream, s.level, s.stream)).length,
       selected: filters.stream === stream,
-    })),
-  [weeklyClassData, filters.stream]);
+    }));
+  }, [weeklyClassData, filters.stream]);
 
   const pinnedSlots = useMemo(
     () => matchPinnedSlots(weeklyClassData, pinRequest),

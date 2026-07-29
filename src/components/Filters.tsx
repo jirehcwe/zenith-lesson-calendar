@@ -38,6 +38,7 @@ function truncateText(text: string, maxLength: number = 25): string {
 function streamLabel(stream: string): string {
   if (stream === "Secondary (Express)") return "Sec Express";
   if (stream === "Secondary (IP)") return "Sec IP";
+  if (stream === "AllSec") return "Secondary (All)";
   return stream;
 }
 
