@@ -91,10 +91,25 @@ function setCachedData(data: any) {
 // display label lives in Filters' streamLabel().
 const ALL_SEC = "AllSec";
 
-// The AllSec deep-link is case-insensitive; every other stream passes through.
+// The four chips every visitor sees. AllSec is deliberately absent: it is
+// link-only, and appended to the options list solely while it is selected.
+const STREAM_VALUES = ["JC", "Secondary (Express)", "Secondary (IP)", "Primary"] as const;
+
+// Stream is a closed set, so an unrecognised value resolves to null rather than
+// reaching levelToFilterMapper's `default: return true`. That default renders
+// the *entire* schedule — JC and Primary included — while a truthy
+// filters.stream keeps hasActiveFilters true, which suppresses the "Select a
+// stream to see classes" prompt and shows a nonsense removal pill. A parent who
+// retypes a shared ?stream=AllSec link as ?stream=AllSecc would otherwise get a
+// wrong-platform calendar with no signal that anything had failed. Trimmed
+// first, because a trailing space survives copy-paste out of a chat app.
 function normaliseStreamParam(raw: string | null): string | null {
-  if (!raw) return null;
-  return raw.toLowerCase() === ALL_SEC.toLowerCase() ? ALL_SEC : raw;
+  const trimmed = raw?.trim();
+  if (!trimmed) return null;
+  // Only AllSec is matched case-insensitively: it is the one value typed by
+  // hand from a shared link rather than clicked.
+  if (trimmed.toLowerCase() === ALL_SEC.toLowerCase()) return ALL_SEC;
+  return STREAM_VALUES.some((v) => v === trimmed) ? trimmed : null;
 }
 
 function levelToFilterMapper(
@@ -348,8 +363,6 @@ export default function Page() {
       centres: centresWithCounts,
     };
   }, [weeklyClassData, filters]);
-
-  const STREAM_VALUES = ["JC", "Secondary (Express)", "Secondary (IP)", "Primary"] as const;
 
   const streamOptions = useMemo(() => {
     // AllSec is link-only: its chip exists solely while it is the selected
