@@ -329,18 +329,52 @@ is the deliberate choice.
 9. **Legend on an empty calendar.** With `AllSec` selected and no slots
    rendered, the legend shows the Secondary palette, not the combined overview.
 
+The next three were added during implementation, after a review found that an
+unrecognised `?stream=` value rendered **every** platform's classes at once
+(see the amendment below):
+
+10. **Unrecognised value rejected.** `?stream=AllSecc` lands on the ordinary
+    "Select a stream to see classes" homepage — not a calendar mixing JC,
+    Secondary and Primary.
+11. **Whitespace tolerated.** A trailing or leading space around an otherwise
+    valid value is trimmed rather than rejected.
+12. **Legitimate values still round-trip.** All four of `JC`,
+    `Secondary (Express)`, `Secondary (IP)` and `Primary` survive URL encoding
+    and decoding intact — they contain spaces and parentheses — and each shows
+    its own platform's classes and no other's.
+
 ### Components & changes
 
 | File | Change |
 | --- | --- |
 | `src/app/page.tsx` | `levelToFilterMapper`: add `case "AllSec": return level.startsWith("S")` |
 | `src/app/page.tsx` | `streamOptions`: append the `AllSec` option only when `filters.stream === "AllSec"` |
-| `src/app/page.tsx` | mount effect: case-fold an incoming `stream` param to canonical `AllSec` |
+| `src/app/page.tsx` | mount effect: `normaliseStreamParam` — trim, case-fold `AllSec`, reject anything outside the known set |
 | `src/components/Filters.tsx` | `streamLabel()`: map `AllSec` → `"Secondary (All)"` |
 | `src/utils/subjectColors.ts` | `getLegendItemsForStream`: treat `AllSec` as Secondary |
 
-No change to block colouring, the legend derived from visible slots, the level
-dropdown, or `STREAM_VALUES` itself.
+No change to block colouring, the legend derived from visible slots, or the
+level dropdown.
+
+> **Amendment (2026-07-28, during implementation review).** This section
+> originally said "no change to `STREAM_VALUES` itself". That is no longer
+> true. A review found that `levelToFilterMapper` fell through to
+> `default: return true` for any unrecognised stream, so a mistyped
+> `?stream=AllSecc` rendered **every** platform at once — JC, Secondary and
+> Primary together — with the empty-state prompt suppressed and a nonsense
+> chip in the summary row. Mixing the three platforms is a real business
+> problem for this client, and `AllSec` is the first stream value expected to
+> travel by hand-shared link, which turned a latent wart into a live hazard.
+>
+> Two changes closed it: `normaliseStreamParam` now validates against
+> `STREAM_VALUES` (which moved to module scope and thereby gained a second job
+> as the URL whitelist), and the switch's `default:` returns `false`, so an
+> unreachable-by-construction value degrades to an empty view rather than a
+> wrong-platform one. Note the coupling this creates: `STREAM_VALUES` is now
+> the chip list, the URL whitelist, **and** an implicit index of the switch's
+> case labels, with nothing in the type system tying the three together. AC 12
+> is the guard — it fails if any entry desyncs from its case label, in either
+> direction.
 
 ## Error handling & edge cases
 
@@ -348,13 +382,37 @@ dropdown, or `STREAM_VALUES` itself.
   banner renders before data arrives. The banner must show the zero-match copy
   only *after* loading completes — gate it on `!isLoading`, as the current
   pinned header already is.
-- **Schedule failed to load** (added 2026-07-28 during implementation review).
-  Because pinned mode is now URL-derived, it stays active when the fetch
-  rejects — and with zero matched slots the banner would blame the *link*. A
-  valid `?tutor=Alicia` would read "We couldn't find any classes for this link."
-  after a network or CORS failure, a false statement the old match-count-derived
-  behaviour never produced. `page.tsx` tracks a `loadFailed` flag in its
-  `.catch` and shows "We couldn't load the schedule. Please try again." instead.
+- **No schedule to show** (added 2026-07-28 during implementation review, then
+  split three ways after the whole-branch review). Because pinned mode is now
+  URL-derived it stays active when the schedule is missing, and with zero
+  matched slots the banner would otherwise blame the *link*. Three distinct
+  causes need three distinct messages, and conflating any two of them makes the
+  page lie:
+
+  | Cause | Message |
+  | --- | --- |
+  | The fetch rejected — network, CORS, malformed response | `We couldn't load the schedule. Please try again.` |
+  | The fetch succeeded but carried zero rows | `The schedule isn't published yet. Please check back soon.` |
+  | The schedule loaded; the link's codes matched nothing | `We couldn't find any classes for this link.` |
+
+  The middle row is not hypothetical: the fetch pins `year=<current year>`, so
+  from 1 January until the new year's schedule is published every pin link in
+  circulation hits it. Telling those visitors the system failed and inviting a
+  retry that cannot succeed is worse than the silent fallback this whole design
+  set out to replace.
+
+  The three states are chosen by a pure `pinnedBannerMessage` helper rather than
+  inline in the JSX, so the table above is unit-testable rather than reachable
+  only through a full page render.
+
+- **`localStorage` is hostile.** Writing the schedule cache and reading it back
+  both sit on the failure path: a throwing `setItem` (quota, Safari Private
+  Browsing) once set the load-failure flag and rendered "We couldn't load the
+  schedule" *above* correctly-rendered classes, and an unguarded `JSON.parse`
+  of a corrupt entry threw out of the mount effect, leaving the spinner up
+  forever — with the pinned banner, now the only exit from pinned mode, never
+  rendering. Both are guarded inside `getCachedData`/`setCachedData` rather than
+  at their call sites, so no future caller can reintroduce the leak.
 - **Both pin params present.** `classes` wins (AC 8); `tutor` is ignored, not
   errored on.
 - **Duplicate codes.** Harmless — matching is set membership.

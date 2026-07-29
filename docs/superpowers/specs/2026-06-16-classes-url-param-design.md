@@ -2,7 +2,22 @@
 
 **Date:** 2026-06-16
 **Branch:** `regular-lessons` (developed on `regular-lessons-staging`)
-**Status:** Approved — ready for implementation plan
+**Status:** Implemented — **AC 6 superseded 2026-07-28**
+
+> **Superseded in part.** AC 6 below ("Empty / null / no match → normal site"),
+> and the matching clauses in items 3 and 5 of *Chosen behavior*, no longer
+> describe shipped behaviour. Pinned mode is now derived from the **URL**
+> rather than the match count, so a `?classes=` link whose codes all match
+> nothing stays pinned and reports itself broken instead of silently falling
+> back to the ordinary homepage — a dead link used to be indistinguishable
+> from a first-time visit.
+>
+> The rest of this document still stands, AC 7 included: mixed known and
+> unknown codes are unchanged, with unknown entries dropped silently.
+>
+> See [`2026-07-28-tutor-link-and-allsec-design.md`](./2026-07-28-tutor-link-and-allsec-design.md)
+> for the replacement contract and its rationale. Note the Testing section
+> below names a test for the old AC 6 that no longer exists.
 
 ## Problem
 
