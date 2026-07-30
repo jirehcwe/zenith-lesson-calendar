@@ -1151,6 +1151,125 @@ describe("pinned mode (?classes= and ?tutor=)", () => {
   });
 });
 
+// Every honest state this branch built rendered inside `!isLoading && isPinned`,
+// so an ordinary visitor — no ?tutor=, no ?classes=, i.e. most traffic — got
+// NOTHING when the fetch failed or came back empty: hero, filter bar, and
+// "Select a stream to see classes" over a calendar that can never fill. The
+// prompt is worse than silence there, because it points at filters that cannot
+// help, and the reasonable conclusion is that the centre runs no classes.
+//
+// The absence assertions here are deliberately UNSCOPED. page.tsx keeps both
+// views mounted at all times (it toggles a `hidden` class, not the hidden
+// attribute), so one unscoped query covers the calendar's copy of the prompt as
+// well as the list's — which is how both suppression paths
+// (WeeklyClassCalendar's `hasActiveFilters`, ListView's `suppressEmptyState`)
+// get covered without forcing a view.
+describe("unpinned schedule notice (no ?tutor= / ?classes=)", () => {
+  it("tells an unpinned visitor when the schedule fails to load", async () => {
+    global.fetch = jest.fn(() => Promise.reject(new Error("network"))) as unknown as typeof fetch;
+    // Stated rather than assumed: with something cached the page would have
+    // returned before fetching and there would be no failure to report.
+    expect(localStorage.getItem("weeklyClassData")).toBeNull();
+    setUrl("/");
+    render(<Page />);
+    await waitFor(() =>
+      expect(
+        screen.getByText("We couldn't load the schedule. Please try again."),
+      ).toBeInTheDocument(),
+    );
+    // The misleading prompt — and its CTA — must be gone from BOTH views, not
+    // merely accompanied by an explanation that contradicts them.
+    expect(screen.queryByText(/select a stream/i)).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /open filters/i })).not.toBeInTheDocument();
+    // Nothing failed to publish; the system failed. The two must not blur.
+    expect(screen.queryByText(/isn't published yet/i)).not.toBeInTheDocument();
+  });
+
+  it("tells an unpinned visitor when the fetch STALLS past the timeout", async () => {
+    // The 10s abort is what makes this reachable in the wild: a connection that
+    // opens and then goes nowhere never rejects, so before the timeout this was
+    // a permanent spinner. Now it is a silently empty site unless the notice
+    // renders — which is the whole point of this test.
+    jest.useFakeTimers();
+    global.fetch = stallingFetch() as unknown as typeof fetch;
+    expect(localStorage.getItem("weeklyClassData")).toBeNull();
+    setUrl("/");
+    render(<Page />);
+    expect(screen.getByText(/loading courses/i)).toBeInTheDocument();
+
+    // A second short of the deadline it is still waiting: a merely slow mobile
+    // connection must not be told the schedule failed.
+    await act(async () => {
+      jest.advanceTimersByTime(FETCH_TIMEOUT_MS - 1000);
+    });
+    expect(screen.getByText(/loading courses/i)).toBeInTheDocument();
+
+    await act(async () => {
+      jest.advanceTimersByTime(1000);
+    });
+    expect(screen.queryByText(/loading courses/i)).not.toBeInTheDocument();
+    expect(
+      screen.getByText("We couldn't load the schedule. Please try again."),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/select a stream/i)).not.toBeInTheDocument();
+  });
+
+  it("tells an unpinned visitor when the schedule loaded but is empty", async () => {
+    // A 200 carrying zero rows. Reachable every year: the request pins
+    // year=<current>, so from 1 January until the new year's schedule is
+    // published every ordinary visit lands here — and "Please try again" would
+    // be both a lie and useless advice.
+    global.fetch = jest.fn(() =>
+      Promise.resolve({ json: () => Promise.resolve({ data: [] }) }),
+    ) as unknown as typeof fetch;
+    setUrl("/");
+    render(<Page />);
+    await waitFor(() =>
+      expect(
+        screen.getByText("The schedule isn't published yet. Please check back soon."),
+      ).toBeInTheDocument(),
+    );
+    expect(screen.queryByText(/select a stream/i)).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /open filters/i })).not.toBeInTheDocument();
+    expect(screen.queryByText(/couldn't load the schedule/i)).not.toBeInTheDocument();
+  });
+
+  it("says nothing at all to an unpinned visitor whose schedule loads", async () => {
+    // THE control. A notice that always rendered would be worse than none, and
+    // suppressing the prompt unconditionally would break the ordinary browse
+    // this site exists for — both bugs pass every positive test above.
+    // beforeEach supplies a successful, non-empty fetch.
+    setUrl("/");
+    render(<Page />);
+    await waitFor(() =>
+      expect(screen.queryByText(/loading courses/i)).not.toBeInTheDocument(),
+    );
+    expect(screen.queryByText(/couldn't load the schedule/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/isn't published yet/i)).not.toBeInTheDocument();
+    // Exactly two: the calendar's overlay and the list's empty state, both
+    // mounted at all times. Counting them is what proves neither suppression
+    // path fired — a bare getByText would be ambiguous, and a single-view
+    // assertion would leave the other free to suppress.
+    expect(screen.getAllByText("Select a stream to see classes")).toHaveLength(2);
+  });
+
+  it("offers an unpinned visitor no escape hatch, having pinned nothing", async () => {
+    // "Show all classes →" is the pin's exit. An unpinned visitor is already
+    // looking at all classes, so on this notice it is a control that changes
+    // nothing — and next to "Please try again" it reads as the retry button
+    // this change deliberately does not implement.
+    global.fetch = jest.fn(() => Promise.reject(new Error("network"))) as unknown as typeof fetch;
+    setUrl("/");
+    render(<Page />);
+    await waitFor(() =>
+      expect(
+        screen.getByText("We couldn't load the schedule. Please try again."),
+      ).toBeInTheDocument(),
+    );
+    expect(screen.queryByRole("button", { name: /show all classes/i })).not.toBeInTheDocument();
+  });
+});
+
 describe("AllSec stream (?stream=AllSec)", () => {
   const SEC_SLOTS = [
     {

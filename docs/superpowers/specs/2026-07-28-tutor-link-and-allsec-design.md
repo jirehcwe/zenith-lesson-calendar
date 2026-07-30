@@ -502,6 +502,8 @@ Manual checks on the preview URL, beyond the automated suite:
 | `?stream=AllSec` → tap `Sec IP` | One-way door: the chip disappears and cannot be re-selected without reopening the link |
 | `?tutor=Alicia` with the API blocked, on a **phone** | Saved-copy banner renders and wraps without eating the viewport — it is ~40 characters longer than the ordinary copy, on a sticky single-row banner |
 | no params | Unchanged homepage — four chips, empty-state gate |
+| no params, API blocked | "We couldn't load the schedule" notice, with **no** "Show all classes" action and **no** "Select a stream" prompt in either view |
+| no params, API returns zero rows | "The schedule isn't published yet" notice, same suppression — check both the calendar and the list |
 
 Three of those rows are judgement calls rather than pass/fail checks, and the
 preview build is the last chance to change them:

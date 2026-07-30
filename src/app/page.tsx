@@ -11,12 +11,13 @@ type ViewType = "calendar" | "list";
 import BottomNav from "@/components/BottomNav";
 import TestimonialCarousel from "@/components/TestimonialCarousel";
 import TestimonialGrid from "@/components/TestimonialGrid";
-import PinnedBanner from "@/components/PinnedBanner";
+import NoticeBanner from "@/components/NoticeBanner";
 import ViewToggle from "@/components/ViewToggle";
 import {
   parsePinRequest,
   matchPinnedSlots,
   pinnedBannerMessage,
+  scheduleNoticeMessage,
   type PinRequest,
 } from "@/utils/pinnedSlots";
 import { getCampaignParam } from "@/utils/campaign";
@@ -681,19 +682,45 @@ export default function Page() {
     filters.subject.length > 0 ||
     filters.centre.length > 0;
 
+  const scheduleEmpty = weeklyClassData.length === 0;
+
+  // The same honest states the pinned banner has always shown, for the visitors
+  // who never followed a link — i.e. most of them. Every message on this page
+  // used to render inside `isPinned`, so an ordinary visitor whose fetch failed
+  // or came back empty got the hero, the filter bar and nothing else, then
+  // "Select a stream to see classes" over a calendar that can never fill. The
+  // 10s abort makes it likelier still: a connection that opens and stalls is
+  // now a silently empty site rather than a spinner.
+  //
+  // `hasContent` is `!scheduleEmpty` and not a separate notion here: the
+  // unpinned path renders the whole schedule, and its cache read already
+  // happened (and missed) before the fetch, so a failure leaves the page with
+  // nothing. Passing it explicitly rather than hard-coding `false` keeps the
+  // helper's contract — never apologise over a populated page — true of this
+  // caller too, should an unpinned fallback ever be added.
+  const unpinnedNotice = isPinned
+    ? null
+    : scheduleNoticeMessage({ loadFailed, scheduleEmpty, hasContent: !scheduleEmpty });
+
+  // Both views' "Select a stream to see classes" prompts point at filters, which
+  // cannot fix a schedule that failed to load or has not been published. Pinned
+  // mode has always suppressed them for the same reason; the notice above now
+  // carries the explanation on the unpinned path too.
+  const suppressEmptyState = isPinned || unpinnedNotice !== null;
+
   return (
     <div className="min-h-screen bg-gray-50">
       <SignupBanner />
       {!isLoading && isPinned && (
         <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200">
-          <PinnedBanner
+          <NoticeBanner
             // Only blame the link once we have a schedule to have missed it in:
             // describePin would call a failed fetch and a not-yet-published
             // schedule dead links. The three-way choice lives in
             // pinnedBannerMessage so the copy stays pure and unit-testable.
             message={pinnedBannerMessage(pinRequest, pinnedSlots, {
               loadFailed,
-              scheduleEmpty: weeklyClassData.length === 0,
+              scheduleEmpty,
               servedFromCacheFallback,
             })}
             onShowAll={handleExitPinned}
@@ -704,6 +731,16 @@ export default function Page() {
             </div>
           )}
         </div>
+      )}
+      {/* Deliberately OUTSIDE the desktop-only filter-bar block below: that block
+          is gated on !isMobilePhone, and phones are the bulk of this site's
+          traffic, so a notice rendered inside it would be invisible to exactly
+          the visitors most likely to be on the failing connection. Not sticky
+          either — it carries no action, so there is nothing to keep in reach,
+          and a second `sticky top-0` element would fight the filter bar for the
+          same strip of screen. */}
+      {!isLoading && !isPinned && unpinnedNotice !== null && (
+        <NoticeBanner message={unpinnedNotice} />
       )}
       {!isLoading && !isMobilePhone && !isPinned && (
         <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200">
@@ -804,7 +841,7 @@ export default function Page() {
                 <WeeklyClassCalendar
                   slots={events}
                   isVisible={currentView === "calendar"}
-                  hasActiveFilters={hasActiveFilters || isPinned}
+                  hasActiveFilters={hasActiveFilters || suppressEmptyState}
                   selectedStream={filters.stream}
                   onEmptyStateClick={
                     isMobilePhone
@@ -819,7 +856,7 @@ export default function Page() {
               <div className={currentView !== "list" ? "hidden" : "modern-card p-3 sm:p-6"}>
                 <ListView
                   sessions={events}
-                  suppressEmptyState={isPinned}
+                  suppressEmptyState={suppressEmptyState}
                   onEmptyStateClick={
                     isMobilePhone
                       ? () => setFilterSheetOpen(true)

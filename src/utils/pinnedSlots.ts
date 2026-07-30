@@ -99,12 +99,59 @@ export function describePin(req: PinRequest, matched: Pinnable[]): string {
 }
 
 /**
+ * The two states that are about the SCHEDULE rather than about a link, so both
+ * callers — pinned and unpinned — read the same strings from one place.
+ *
+ * Factored out of pinnedBannerMessage (2026-07-30) because it was only ever
+ * called from behind `isPinned`, which made both messages unreachable for the
+ * ordinary majority of visitors: a failed or empty fetch gave them the hero,
+ * the filter bar and no message at all, then "Select a stream to see classes"
+ * over a calendar that can never fill. Silence would have been bad enough; the
+ * prompt actively points at filters that cannot help, so the reasonable
+ * conclusion is that the centre runs no classes.
+ *
+ *  - `loadFailed` — the fetch actually threw (a rejection, a CORS failure, or
+ *    the 10s abort, which reaches the same `.catch`). The system failed and
+ *    retrying can genuinely help, so say so.
+ *  - `scheduleEmpty` — a successful response carrying zero rows. Nothing
+ *    failed; telling a parent to "try again" is both a lie and useless advice.
+ *    Reachable every year: the request pins year=<current>, so from 1 January
+ *    until the new year's schedule is published EVERY visitor lands here.
+ *  - `null` — nothing to say. This is the return that keeps the notice off the
+ *    ordinary healthy page, so it must stay the default rather than a case.
+ *
+ * `loadFailed` is checked first because a failed fetch also leaves the schedule
+ * empty, so the states overlap and the more specific cause has to win.
+ *
+ * `hasContent` is what stops the failure copy being printed over a page full of
+ * classes: page.tsx falls back to a cached schedule when a PINNED fetch fails,
+ * so `loadFailed` does not imply an empty screen. When there IS content the
+ * caller owns the wording (see pinnedBannerMessage's saved-copy suffix), and
+ * `null` hands that decision back rather than shouting over it.
+ */
+export function scheduleNoticeMessage({
+  loadFailed,
+  scheduleEmpty,
+  hasContent,
+}: {
+  loadFailed: boolean;
+  scheduleEmpty: boolean;
+  hasContent: boolean;
+}): string | null {
+  if (loadFailed && !hasContent) return "We couldn't load the schedule. Please try again.";
+  if (scheduleEmpty) return "The schedule isn't published yet. Please check back soon.";
+  return null;
+}
+
+/**
  * The whole copy table for the pinned banner, so the page renders one call
  * instead of a ternary. Four states, and they are NOT interchangeable:
  *
  *  - `loadFailed` — the fetch actually threw AND left nothing to show for this
- *    pin. The system failed and retrying can genuinely help, so say so. The
- *    second half is load-bearing: page.tsx falls back to a cached schedule when
+ *    pin. The system failed and retrying can genuinely help, so say so (the
+ *    copy itself now lives in scheduleNoticeMessage, shared with the unpinned
+ *    notice, so the two can never drift apart). The second half is
+ *    load-bearing: page.tsx falls back to a cached schedule when
  *    a PINNED fetch fails, so `loadFailed` no longer implies an empty screen.
  *    When that fallback produced the classes the link asked for, the visitor
  *    has something to look at, and a bare "we couldn't load the schedule" over
@@ -148,10 +195,17 @@ export function pinnedBannerMessage(
     servedFromCacheFallback,
   }: { loadFailed: boolean; scheduleEmpty: boolean; servedFromCacheFallback: boolean },
 ): string {
-  if (loadFailed && matched.length === 0) {
-    return "We couldn't load the schedule. Please try again.";
-  }
-  if (scheduleEmpty) return "The schedule isn't published yet. Please check back soon.";
+  // Both schedule-level states, in their established order, from the one place
+  // that owns those two strings. `hasContent` is the pinned reading of "there is
+  // something on screen": the pinned views render `matched`, not the whole
+  // schedule, so a fallback that produced this link's classes counts as content
+  // even though the fetch failed.
+  const notice = scheduleNoticeMessage({
+    loadFailed,
+    scheduleEmpty,
+    hasContent: matched.length > 0,
+  });
+  if (notice) return notice;
 
   const description = describePin(req, matched);
   // The `matched.length` guard keeps the suffix off describePin's dead-link

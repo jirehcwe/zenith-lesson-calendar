@@ -3,7 +3,49 @@ import {
   matchPinnedSlots,
   describePin,
   pinnedBannerMessage,
+  scheduleNoticeMessage,
 } from "./pinnedSlots";
+
+describe("scheduleNoticeMessage", () => {
+  it("says nothing when the schedule loaded and has classes", () => {
+    // The control that matters most: this is the ordinary majority case, and a
+    // notice that renders here would be worse than the silence it replaces.
+    expect(
+      scheduleNoticeMessage({ loadFailed: false, scheduleEmpty: false, hasContent: true }),
+    ).toBeNull();
+  });
+
+  it("blames the system when the fetch failed with nothing to show", () => {
+    expect(
+      scheduleNoticeMessage({ loadFailed: true, scheduleEmpty: true, hasContent: false }),
+    ).toBe("We couldn't load the schedule. Please try again.");
+  });
+
+  it("says the schedule isn't out yet when it loaded but is empty", () => {
+    // A 200 carrying zero rows is not a failure: "try again" would be untrue,
+    // and retrying cannot publish next year's schedule.
+    expect(
+      scheduleNoticeMessage({ loadFailed: false, scheduleEmpty: true, hasContent: false }),
+    ).toBe("The schedule isn't published yet. Please check back soon.");
+  });
+
+  it("prefers the failure message over the empty one when both are set", () => {
+    // They always overlap — a failed fetch also leaves the schedule empty — so
+    // the order of the two guards is load-bearing, not incidental.
+    expect(
+      scheduleNoticeMessage({ loadFailed: true, scheduleEmpty: true, hasContent: false }),
+    ).toBe("We couldn't load the schedule. Please try again.");
+  });
+
+  it("does not apologise over a page that has content", () => {
+    // The cache-fallback shape: the fetch failed but something is on screen. An
+    // apology above a page full of classes is simply false, so the decision goes
+    // back to the caller (pinnedBannerMessage hedges it as a saved copy).
+    expect(
+      scheduleNoticeMessage({ loadFailed: true, scheduleEmpty: false, hasContent: true }),
+    ).toBeNull();
+  });
+});
 
 describe("parsePinRequest", () => {
   it("returns kind 'none' when neither param is present", () => {
