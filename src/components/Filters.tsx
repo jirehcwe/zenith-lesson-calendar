@@ -15,11 +15,9 @@ type FiltersProps = {
   levels: OptionWithCount[];
   subjects: OptionWithCount[];
   centres: OptionWithCount[];
-  tutors: OptionWithCount[];
   filters: {
     subject: string[];
     centre: string[];
-    tutor: string[];
     level: string[];
     stream: string | null;
   };
@@ -40,6 +38,7 @@ function truncateText(text: string, maxLength: number = 25): string {
 function streamLabel(stream: string): string {
   if (stream === "Secondary (Express)") return "Sec Express";
   if (stream === "Secondary (IP)") return "Sec IP";
+  if (stream === "AllSec") return "Secondary (All)";
   return stream;
 }
 
@@ -210,8 +209,6 @@ export default function Filters({
   levels,
   subjects,
   centres,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  tutors,
   filters,
   onFilterChange,
   currentView,
@@ -347,7 +344,7 @@ export default function Filters({
 
             {/* iPad + desktop: inline immediately after last chip */}
             <button
-              onClick={() => onFilterChange({ subject: [], centre: [], tutor: [], level: [], stream: null })}
+              onClick={() => onFilterChange({ subject: [], centre: [], level: [], stream: null })}
               className="max-sm:hidden text-xs text-gray-400 hover:text-red-500 font-medium ml-1 transition-colors underline"
             >
               Clear all
@@ -357,7 +354,7 @@ export default function Filters({
           {/* Mobile only: own row, pinned right */}
           <div className="hidden max-sm:flex justify-end mt-1.5">
             <button
-              onClick={() => onFilterChange({ subject: [], centre: [], tutor: [], level: [], stream: null })}
+              onClick={() => onFilterChange({ subject: [], centre: [], level: [], stream: null })}
               className="text-sm text-gray-400 hover:text-red-500 font-medium transition-colors underline"
             >
               Clear all

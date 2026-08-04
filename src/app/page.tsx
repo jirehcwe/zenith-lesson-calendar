@@ -11,16 +11,39 @@ type ViewType = "calendar" | "list";
 import BottomNav from "@/components/BottomNav";
 import TestimonialCarousel from "@/components/TestimonialCarousel";
 import TestimonialGrid from "@/components/TestimonialGrid";
-import PinnedBanner from "@/components/PinnedBanner";
+import NoticeBanner from "@/components/NoticeBanner";
 import ViewToggle from "@/components/ViewToggle";
-import { parseClassesParam, matchPinnedSlots } from "@/utils/pinnedClasses";
+import {
+  parsePinRequest,
+  matchPinnedSlots,
+  pinnedBannerMessage,
+  scheduleNoticeMessage,
+  type PinRequest,
+} from "@/utils/pinnedSlots";
 import { getCampaignParam } from "@/utils/campaign";
 
 const CACHE_KEY = "weeklyClassData";
 const CACHE_TIME_KEY = "weeklyClassDataTimestamp";
 const CACHE_VERSION_KEY = "weeklyClassDataVersion";
+// The academic year the cached payload was fetched FOR. The request is
+// year-scoped (`?year=<current>`) but the cache never recorded which year it
+// answered, so a payload cached on 31 December satisfied a request made on 1
+// January: the entry is only ~minutes old, so every freshness check passes, and
+// the visitor is served LAST year's schedule. Tutor codes and centres are stable
+// across years, so nothing downstream can spot the substitution — the classes
+// simply look plausible and wrong. Worst on the pinned fallback (a shared
+// ?tutor= link renders a whole retired timetable under a generic "may be out of
+// date" note) but not confined to it: an ordinary visitor on 1 January gets the
+// same payload with no note at all.
+//
+// Stored ALONGSIDE the payload rather than folded into CACHE_KEY. Two reasons:
+// the read path already has a compare-this-sibling-key-or-discard step for
+// CACHE_VERSION, so this is the same shape rather than a second mechanism; and
+// a per-year key would strand last year's blob in localStorage forever, unread
+// and unreachable, which is the wrong thing to do with the largest item this
+// site stores. One slot, one year, cleared on mismatch.
+const CACHE_YEAR_KEY = "weeklyClassDataYear";
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in ms
-const FILTERS_COLLAPSED_STORAGE_KEY = "filtersCollapsed";
 // Increment this version when the API changes to force all clients to invalidate cache
 // Bumped to 4 (2026-05-26): db-schedule-updater MR 3.3 flipped its /schedule
 // response shape from `{success, data:{data:[...]}, message}` to the resource
@@ -54,31 +77,157 @@ function normaliseSlot(slot: WeeklyClassSlot): WeeklyClassSlot {
   };
 }
 
-function getCachedData() {
-  const data = localStorage.getItem(CACHE_KEY);
-  const timestamp = localStorage.getItem(CACHE_TIME_KEY);
-  const cachedVersion = localStorage.getItem(CACHE_VERSION_KEY);
-  
-  // Check if cache version matches current version
-  if (cachedVersion !== CACHE_VERSION.toString()) {
-    // Version mismatch - clear old cache
+// A cache we cannot READ is just a cache miss. Three things in here throw in
+// the wild: the `localStorage` property access itself under "block all cookies
+// and site data" (SecurityError, before any method runs), getItem/removeItem
+// for the same reason, and JSON.parse on a truncated or hand-edited entry —
+// hence the whole body is wrapped, not just the parse. This runs inside the
+// mount effect, so an escaping throw leaves isLoading stuck true forever, and
+// the spinner then hides the pinned banner, which is the only exit from pinned
+// mode: one corrupt entry and the visitor is trapped on a blank page.
+//
+// This covers page.tsx's own storage use only. Keeping the whole page alive
+// under blocked site data also depends on WeeklyClassCalendar's pro-tip
+// preference being guarded — it reads localStorage in its own mount effect, so
+// an unguarded throw there takes the page down just as effectively. Both are
+// pinned by "renders with site data blocked entirely" in page.test.tsx.
+function getCachedData(year: number): WeeklyClassSlot[] | null {
+  try {
+    const data = localStorage.getItem(CACHE_KEY);
+    const timestamp = localStorage.getItem(CACHE_TIME_KEY);
+    const cachedVersion = localStorage.getItem(CACHE_VERSION_KEY);
+    const cachedYear = localStorage.getItem(CACHE_YEAR_KEY);
+
+    // Wrong SHAPE (version) or wrong SUBJECT (year) — either way this entry
+    // cannot answer the question being asked, so it is discarded rather than
+    // served. The year comparison is a string compare against the same value
+    // the request will carry, so "no year recorded at all" (every client
+    // cached under the old code) is a mismatch too and refetches once. That is
+    // deliberately NOT a CACHE_VERSION bump: the version means "the payload
+    // shape changed", it is pinned by other tests, and year-scoping makes a
+    // bump unnecessary — those clients are flushed by the missing year key.
+    if (cachedVersion !== CACHE_VERSION.toString() || cachedYear !== String(year)) {
+      clearCachedData();
+      return null;
+    }
+
+    if (data && timestamp && Date.now() - Number(timestamp) < CACHE_DURATION) {
+      const parsed: unknown = JSON.parse(data);
+      // An empty (or non-array) payload is a MISS, not a hit. `[]` is truthy, so
+      // returning it makes the mount effect short-circuit before fetching, and
+      // the visitor stays on an empty schedule for the rest of CACHE_DURATION
+      // even once the backend has recovered or the new year's schedule has been
+      // published. The write path now refuses to cache empty, but that does
+      // nothing for clients who already cached one under the old code, and
+      // CACHE_VERSION cannot be bumped to flush them — so the read side is
+      // where it has to be caught. Refetching an empty schedule costs one
+      // request; serving a stale empty one costs the visitor the whole page.
+      if (!Array.isArray(parsed) || parsed.length === 0) return null;
+      return parsed as WeeklyClassSlot[];
+    }
+    return null;
+  } catch (error) {
+    console.warn("Ignoring unreadable schedule cache:", error);
+    return null;
+  }
+}
+
+// A cache we cannot WRITE is a non-event: the payload is already in React state
+// and the page renders fine. The throw must be swallowed HERE rather than by the
+// fetch chain's .catch, which would set loadFailed and render "We couldn't load
+// the schedule. Please try again." directly above the correctly rendered
+// classes. Quota-exceeded is the realistic trigger — the schedule blob is the
+// biggest thing this site stores.
+function setCachedData(data: WeeklyClassSlot[], year: number) {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+    localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
+    localStorage.setItem(CACHE_VERSION_KEY, CACHE_VERSION.toString());
+    // Written LAST so a write that dies part-way (quota) leaves an entry with
+    // no year rather than one labelled with a year it does not hold — the read
+    // path treats a missing year as a mismatch, which is the safe direction.
+    localStorage.setItem(CACHE_YEAR_KEY, String(year));
+  } catch (error) {
+    console.warn("Unable to cache schedule data:", error);
+  }
+}
+
+// Drops the whole entry — all four keys — because they are one record: a
+// payload with no year, or a year with no payload, is a half-state the read
+// path would have to reason about. Guarded for the same reason the two helpers
+// above are: under "block all cookies and site data" the `localStorage`
+// property access itself throws, and an escaping throw here would land in the
+// fetch chain's shared .catch and print "We couldn't load the schedule. Please
+// try again." over a page that loaded perfectly well.
+function clearCachedData() {
+  try {
     localStorage.removeItem(CACHE_KEY);
     localStorage.removeItem(CACHE_TIME_KEY);
     localStorage.removeItem(CACHE_VERSION_KEY);
-    return null;
+    localStorage.removeItem(CACHE_YEAR_KEY);
+  } catch (error) {
+    console.warn("Unable to clear schedule cache:", error);
   }
-  
-  if (data && timestamp && Date.now() - Number(timestamp) < CACHE_DURATION) {
-    return JSON.parse(data);
-  }
-  return null;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function setCachedData(data: any) {
-  localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-  localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
-  localStorage.setItem(CACHE_VERSION_KEY, CACHE_VERSION.toString());
+// How long the page waits for /schedule before it stops waiting. The cache
+// fallback and the failure banner both used to hang off `.catch` alone, so a
+// request that STALLED rather than rejected — a degraded API, a captive
+// portal, a connection that opens and then goes nowhere — left isLoading true
+// with no path out. The spinner replaces the pinned banner, and the pinned
+// banner holds "Show all classes →", the only exit from pinned mode: a visitor
+// on a shared link was stranded on a spinner with no way to reach the ordinary
+// site at all.
+//
+// 10s is chosen against the two failure directions rather than a percentile:
+// long enough that a slow mobile connection finishes normally (a cold Lambda
+// plus a 3G handshake is comfortably inside it), short enough that a visitor
+// who is never getting an answer is handed the cache — or an honest apology —
+// while they are still looking at the page.
+const SCHEDULE_FETCH_TIMEOUT_MS = 10 * 1000;
+
+// Link-only stream selecting every Secondary level regardless of track. Kept as
+// the literal URL value so it round-trips without a bidirectional mapping; the
+// display label lives in Filters' streamLabel().
+const ALL_SEC = "AllSec";
+
+// The four chips every visitor sees. AllSec is deliberately absent: it is
+// link-only, and appended to the options list solely while it is selected.
+const STREAM_VALUES = ["JC", "Secondary (Express)", "Secondary (IP)", "Primary"] as const;
+
+// Stream is a closed set, so an unrecognised value resolves to null rather than
+// reaching levelToFilterMapper's `default: return true`. That default renders
+// the *entire* schedule — JC and Primary included — while a truthy
+// filters.stream keeps hasActiveFilters true, which suppresses the "Select a
+// stream to see classes" prompt and shows a nonsense removal pill. A parent who
+// retypes a shared ?stream=AllSec link as ?stream=AllSecc would otherwise get a
+// wrong-platform calendar with no signal that anything had failed. Trimmed
+// first, because a trailing space survives copy-paste out of a chat app.
+//
+// `rejected` is what separates "this visitor named no stream" from "this
+// visitor named a stream we refused". Both end at stream: null, but only the
+// second must also void the link's subject/centre/level, because a null stream
+// matches EVERY case in levelToFilterMapper while any one non-empty dependent
+// filter keeps the events memo's "pick a stream first" gate from firing — so
+// ?stream=AllSecc&subject=... would otherwise still serve JC, Secondary and
+// Primary on one screen. Collapsing both cases to a bare null is exactly how
+// that survived the whitelist.
+type StreamParam = { stream: string | null; rejected: boolean };
+
+function normaliseStreamParam(raw: string | null): StreamParam {
+  if (raw === null) return { stream: null, rejected: false };
+  const trimmed = raw.trim();
+  // A present-but-blank ?stream= (or one that is all whitespace) names no valid
+  // stream either, so it is rejected rather than waved through: otherwise
+  // ?stream=&subject=... reopens the same cross-platform leak by another route.
+  if (!trimmed) return { stream: null, rejected: true };
+  // Only AllSec is matched case-insensitively: it is the one value typed by
+  // hand from a shared link rather than clicked.
+  if (trimmed.toLowerCase() === ALL_SEC.toLowerCase()) {
+    return { stream: ALL_SEC, rejected: false };
+  }
+  const match = STREAM_VALUES.find((v) => v === trimmed);
+  return match ? { stream: match, rejected: false } : { stream: null, rejected: true };
 }
 
 function levelToFilterMapper(
@@ -96,10 +245,22 @@ function levelToFilterMapper(
       return level.startsWith("S") && stream.includes("EXP");
     case "Secondary (IP)":
       return level.startsWith("S") && stream.includes("IP");
+    case ALL_SEC:
+      // Deliberately level-based rather than EXP||IP: a Secondary slot with a
+      // blank stream should surface here rather than vanish from every
+      // Secondary view. No such rows exist today (325 EXP + 38 IP = 363 = the
+      // exact Secondary row count).
+      return level.startsWith("S");
     case "Primary":
       return level.startsWith("P");
     default:
-      return true;
+      // Unreachable today (normaliseStreamParam is the only source of a
+      // non-null stream), so this is purely a blast-radius choice for the day
+      // someone edits a STREAM_VALUES string and misses a case above. `true`
+      // turns that typo into "a JC chip showing JC + Secondary + Primary
+      // together" — the platforms this client must never mix. `false` degrades
+      // it to an obviously-empty view instead.
+      return false;
   }
 }
 
@@ -118,11 +279,21 @@ export default function Page() {
   const [filters, setFilters] = useState({
     subject: [] as string[],
     centre: [] as string[],
-    tutor: [] as string[],
     level: [] as string[],
     stream: null as string | null,
   });
-  const [pinnedClassIds, setPinnedClassIds] = useState<string[]>([]);
+  const [pinRequest, setPinRequest] = useState<PinRequest>({ kind: "none" });
+  // Distinguishes "the schedule never arrived" from "your link matched nothing".
+  // Without it, a network/CORS failure on a perfectly valid link tells the user
+  // their link is broken — see the banner message in (f).
+  const [loadFailed, setLoadFailed] = useState(false);
+  // Distinguishes "the fetch failed AND the cache supplied what is on screen"
+  // from "the fetch merely failed". `loadFailed` cannot express that: it is set
+  // on both, and the rows it leaves behind are indistinguishable from fetched
+  // ones once they are in weeklyClassData. Only this flag knows the banner is
+  // describing a snapshot rather than the schedule, which is what stops the
+  // pinned copy asserting a completeness the cache cannot back up.
+  const [servedFromCacheFallback, setServedFromCacheFallback] = useState(false);
 
   useEffect(() => {
     const check = () =>
@@ -135,15 +306,24 @@ export default function Page() {
   // Effect to read filters and view from URL on component mount
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const initialFilters = {
-      subject: params.get("subject")?.split(",").filter(Boolean) || [],
-      centre: params.get("centre")?.split(",").filter(Boolean) || [],
-      tutor: params.get("tutor")?.split(",").filter(Boolean) || [],
-      level: params.get("level")?.split(",").filter(Boolean) || [],
-      stream: params.get("stream") || null,
-    };
+    const { stream, rejected } = normaliseStreamParam(params.get("stream"));
+    // A rejected stream voids the whole filter set, not just its own param. The
+    // dependent filters were chosen for a stream this link no longer selects, so
+    // keeping them both leaks other platforms (see normaliseStreamParam) and
+    // shows removal pills for a selection the visitor cannot see. This is the
+    // same rule handleFilterChange already applies whenever the stream changes;
+    // the visitor simply lands on the ordinary unfiltered homepage.
+    const initialFilters = rejected
+      ? { subject: [], centre: [], level: [], stream: null as string | null }
+      : {
+          subject: params.get("subject")?.split(",").filter(Boolean) || [],
+          centre: params.get("centre")?.split(",").filter(Boolean) || [],
+          level: params.get("level")?.split(",").filter(Boolean) || [],
+          stream,
+        };
+    const pin = parsePinRequest(window.location.search);
     setFilters(initialFilters);
-    setPinnedClassIds(parseClassesParam(window.location.search));
+    setPinRequest(pin);
 
     // Read view from URL
     const viewParam = params.get("view") as ViewType;
@@ -154,7 +334,30 @@ export default function Page() {
     // Set campaign parameter
     setCampaignParam(getCampaignParam());
 
-    const cached = getCachedData();
+    // A pinned link never reads the cache on the happy path — it only writes
+    // one (and reads one as a last resort if the fetch fails, see the .catch).
+    // Every other banner state is derived from data the page HAS, but the
+    // dead-link copy is derived from data it does NOT have, so a merely-stale
+    // cache is enough to manufacture it: a visitor who browsed the schedule
+    // minutes ago, then followed a link for a class ops published (or a tutor
+    // code ops corrected) in the meantime, gets "We couldn't find any classes
+    // for this link." about a link that works. That is the same lie this
+    // feature exists to prevent, pointed the other way, and no amount of
+    // correct matching downstream can see past the wrong input.
+    //
+    // Deliberately a full cache BYPASS rather than a revalidate-after-serve:
+    // deferring the truth still flashes the dead-link banner first, and pinned
+    // traffic is a small share of visits, so the saving being given up is one
+    // request on a fraction of loads. The write below is unconditional, so a
+    // pinned visit still warms the cache for the visitor's next unpinned one.
+    // Read ONCE and thread it through the cache read, the request and the cache
+    // write, rather than calling new Date() at each. A page loaded seconds
+    // before midnight on 31 December would otherwise be able to check the cache
+    // against one year and store the response under another, writing exactly
+    // the mislabelled entry this key exists to prevent.
+    const year = new Date().getFullYear();
+
+    const cached = pin.kind === "none" ? getCachedData(year) : null;
     if (cached) {
       setWeeklyClassData(cached);
       setIsLoading(false);
@@ -165,8 +368,22 @@ export default function Page() {
     // API base is env-configured (prod/preview set in Cloudflare); /schedule path
     // + year are added here. `!` is safe: next.config.ts fails the build if unset.
     const scheduleUrl = new URL("/schedule", process.env.NEXT_PUBLIC_SCHEDULE_API_BASE_URL!);
-    scheduleUrl.searchParams.set("year", String(new Date().getFullYear()));
-    fetch(scheduleUrl)
+    scheduleUrl.searchParams.set("year", String(year));
+
+    // `cancelled` exists because this effect's handlers outlive the component:
+    // the abort below settles the fetch, so without the guard a navigation away
+    // mid-request would run setState on an unmounted tree (and log an error the
+    // visitor caused by leaving).
+    let cancelled = false;
+    const controller = new AbortController();
+    // Abort rather than a parallel "timed out" state: the abort rejects the
+    // fetch, which lands in the SAME .catch as a network failure, so the
+    // stalled case inherits the cache fallback and the banner copy already
+    // built for failure instead of adding a fourth thing for them to disagree
+    // with. A stall and a 502 are the same event to the visitor.
+    const timeoutId = setTimeout(() => controller.abort(), SCHEDULE_FETCH_TIMEOUT_MS);
+
+    fetch(scheduleUrl, { signal: controller.signal })
       .then((res) => res.json())
       // db-schedule-updater MR 3.3 (2026-05-26) flipped the response envelope:
       //   was → { success, data: { data: WeeklyClassSlot[], total, ... }, message }
@@ -174,15 +391,86 @@ export default function Page() {
       // Cached payloads from the old shape are invalidated by the
       // CACHE_VERSION bump above.
       .then((res: { data: WeeklyClassSlot[] }) => {
+        if (cancelled) return;
         const normalised = res.data.map(normaliseSlot);
         setWeeklyClassData(normalised);
-        setCachedData(normalised);
+        // Never cache an empty schedule. A cache hit short-circuits this effect
+        // before it fetches, so persisting an empty payload locks every visitor
+        // out of a retry for CACHE_DURATION. That is reachable, not theoretical:
+        // the request pins year=<current>, so from 1 January until the new
+        // year's schedule is published the endpoint legitimately returns none.
+        if (normalised.length > 0) {
+          setCachedData(normalised, year);
+        } else {
+          // Not writing an empty payload is only half of it. The page has just
+          // been told, by a SUCCESSFUL response, that the schedule it is asking
+          // about has no classes — which makes whatever is sitting in the cache
+          // wrong, not merely old. Leaving it there means the next ordinary
+          // visit reads it back and renders a schedule the API has already
+          // disowned, and (unpinned) never fetches to find out. Clearing costs
+          // one request on the next visit; keeping it costs the visitor a
+          // confidently wrong timetable.
+          clearCachedData();
+        }
         setIsLoading(false);
       })
       .catch((error) => {
+        if (cancelled) return;
         console.error("Error fetching schedule data:", error);
+        // Skipping the cache READ above is a rule about SUCCESS: it exists so a
+        // dead-link verdict is only ever reached against fresh data. On failure
+        // there is no fresh data to prefer, and throwing the cache away as well
+        // turns a blip — one CORS hiccup, one 502, one dropped connection —
+        // into every shared tutor link in circulation rendering an empty page,
+        // while a perfectly serviceable schedule sits unread in localStorage.
+        //
+        // getCachedData still rejects an expired, wrong-version, empty or
+        // corrupt entry, so this can only ever restore a payload the page would
+        // have been happy to hand an unpinned visitor a moment earlier.
+        //
+        // Scoped to pinned requests: an unpinned visit already made this exact
+        // read at the top of the effect and got nothing, so repeating it here
+        // would find the same nothing.
+        //
+        // What the fallback CANNOT do is make itself current, so the render it
+        // produces is flagged as such. Everything downstream of here — the
+        // matching, the count in the banner, the classes on screen — describes
+        // the cached payload accurately and the live schedule only by
+        // coincidence, and without the flag the banner states the first as if
+        // it were the second.
+        if (pin.kind !== "none") {
+          const fallback = getCachedData(year);
+          if (fallback) {
+            setWeeklyClassData(fallback);
+            setServedFromCacheFallback(true);
+          }
+        }
+        // Set regardless — the fetch did fail, and that is what this flag
+        // records. Whether it is worth SAYING is the banner's call, and
+        // pinnedBannerMessage only surfaces the failure copy when nothing
+        // matched: if the fallback produced the pinned classes the visitor came
+        // for, they get them, under the saved-copy wording rather than an alarm
+        // about a failure they never experienced. If it did not, the failure
+        // copy stands rather than degrading to the dead-link copy — a cache
+        // miss under a failed fetch cannot tell "your link is dead" from "our
+        // data is stale", and that guess is the exact lie this sequence of
+        // fixes exists to prevent.
+        setLoadFailed(true);
         setIsLoading(false);
-      });
+      })
+      // Both settle paths, so a normal response leaves no armed timer behind to
+      // abort a request that already finished — and nothing pending for a test
+      // runner (or a page still open in a background tab) to trip over.
+      .finally(() => clearTimeout(timeoutId));
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timeoutId);
+      // Abort on unmount too, not just on timeout: an in-flight request for a
+      // page nobody is looking at is worth cancelling, and the `cancelled`
+      // guard above already stops the resulting rejection touching state.
+      controller.abort();
+    };
   }, []);
 
   // Effect to update URL query params when filters change (preserve non-filter params)
@@ -192,7 +480,6 @@ export default function Page() {
     // Clear existing filter params only
     params.delete("subject");
     params.delete("centre");
-    params.delete("tutor");
     params.delete("level");
     params.delete("stream");
 
@@ -202,9 +489,6 @@ export default function Page() {
     }
     if (filters.centre.length > 0) {
       params.set("centre", filters.centre.join(","));
-    }
-    if (filters.tutor.length > 0) {
-      params.set("tutor", filters.tutor.join(","));
     }
     if (filters.level.length > 0) {
       params.set("level", filters.level.join(","));
@@ -233,11 +517,6 @@ export default function Page() {
     window.history.replaceState({}, "", newUrl);
   }, [currentView]);
 
-  useEffect(() => {
-    localStorage.setItem(FILTERS_COLLAPSED_STORAGE_KEY, filtersCollapsed.toString());
-  }, [filtersCollapsed]);
-
-
   // Compute filtered options for progressive disclosure with counts
   const filteredOptions = useMemo(() => {
     // Base data filtered by stream only
@@ -251,7 +530,6 @@ export default function Page() {
       ...new Set(streamFilteredData.flatMap((s) => s.subjects)),
     ];
     const allCentres = [...new Set(streamFilteredData.map((s) => s.centre))];
-    const allTutors = [...new Set(streamFilteredData.map((s) => s.tutor))];
 
     // Function to count results for each option
     const getResultCount = (field: string, value: string) => {
@@ -262,8 +540,6 @@ export default function Page() {
         testFilters.subject = [value];
       } else if (field === "centre") {
         testFilters.centre = [value];
-      } else if (field === "tutor") {
-        testFilters.tutor = [value];
       }
 
       const result = streamFilteredData.filter((s) => {
@@ -317,43 +593,32 @@ export default function Page() {
         return a.value.localeCompare(b.value);
       });
 
-    const tutorsWithCounts = allTutors
-      .map((tutor) => ({
-        value: tutor,
-        count: getResultCount("tutor", tutor),
-        selected: filters.tutor.includes(tutor),
-      }))
-      .sort((a, b) => {
-        // Only push zero-count options to the bottom, preserve original order otherwise
-        if (a.count === 0 && b.count > 0) return 1;
-        if (a.count > 0 && b.count === 0) return -1;
-
-        return a.value.localeCompare(b.value);
-      });
-
     return {
       levels: levelsWithCounts,
       subjects: subjectsWithCounts,
       centres: centresWithCounts,
-      tutors: tutorsWithCounts,
     };
   }, [weeklyClassData, filters]);
 
-  const STREAM_VALUES = ["JC", "Secondary (Express)", "Secondary (IP)", "Primary"] as const;
-
-  const streamOptions = useMemo(() =>
-    STREAM_VALUES.map((stream) => ({
+  const streamOptions = useMemo(() => {
+    // AllSec is link-only: its chip exists solely while it is the selected
+    // stream, so ordinary visitors still see the usual four.
+    const values: string[] = [...STREAM_VALUES];
+    if (filters.stream === ALL_SEC) values.push(ALL_SEC);
+    return values.map((stream) => ({
       value: stream,
       count: weeklyClassData.filter((s) => levelToFilterMapper(stream, s.level, s.stream)).length,
       selected: filters.stream === stream,
-    })),
-  [weeklyClassData, filters.stream]);
+    }));
+  }, [weeklyClassData, filters.stream]);
 
   const pinnedSlots = useMemo(
-    () => matchPinnedSlots(weeklyClassData, pinnedClassIds),
-    [weeklyClassData, pinnedClassIds],
+    () => matchPinnedSlots(weeklyClassData, pinRequest),
+    [weeklyClassData, pinRequest],
   );
-  const isPinned = pinnedSlots.length > 0;
+  // Derived from the URL, not the match count, so a link that matches nothing
+  // still enters pinned mode and can report itself as broken.
+  const isPinned = pinRequest.kind !== "none";
 
   const events = useMemo(() => {
     if (isPinned) {
@@ -390,7 +655,6 @@ export default function Page() {
         level: [],
         subject: [],
         centre: [],
-        tutor: [],
       });
       return;
     }
@@ -401,14 +665,15 @@ export default function Page() {
   const handleExitPinned = () => {
     const params = new URLSearchParams(window.location.search);
     params.delete("classes");
+    params.delete("tutor");
     const qs = params.toString();
     window.history.replaceState(
       {},
       "",
       qs ? `${window.location.pathname}?${qs}` : window.location.pathname,
     );
-    setPinnedClassIds([]);
-    setFilters({ subject: [], centre: [], tutor: [], level: [], stream: null });
+    setPinRequest({ kind: "none" });
+    setFilters({ subject: [], centre: [], level: [], stream: null });
   };
 
   const hasActiveFilters =
@@ -417,18 +682,65 @@ export default function Page() {
     filters.subject.length > 0 ||
     filters.centre.length > 0;
 
+  const scheduleEmpty = weeklyClassData.length === 0;
+
+  // The same honest states the pinned banner has always shown, for the visitors
+  // who never followed a link — i.e. most of them. Every message on this page
+  // used to render inside `isPinned`, so an ordinary visitor whose fetch failed
+  // or came back empty got the hero, the filter bar and nothing else, then
+  // "Select a stream to see classes" over a calendar that can never fill. The
+  // 10s abort makes it likelier still: a connection that opens and stalls is
+  // now a silently empty site rather than a spinner.
+  //
+  // `hasContent` is `!scheduleEmpty` and not a separate notion here: the
+  // unpinned path renders the whole schedule, and its cache read already
+  // happened (and missed) before the fetch, so a failure leaves the page with
+  // nothing. Passing it explicitly rather than hard-coding `false` keeps the
+  // helper's contract — never apologise over a populated page — true of this
+  // caller too, should an unpinned fallback ever be added.
+  const unpinnedNotice = isPinned
+    ? null
+    : scheduleNoticeMessage({ loadFailed, scheduleEmpty, hasContent: !scheduleEmpty });
+
+  // Both views' "Select a stream to see classes" prompts point at filters, which
+  // cannot fix a schedule that failed to load or has not been published. Pinned
+  // mode has always suppressed them for the same reason; the notice above now
+  // carries the explanation on the unpinned path too.
+  const suppressEmptyState = isPinned || unpinnedNotice !== null;
+
   return (
     <div className="min-h-screen bg-gray-50">
       <SignupBanner />
       {!isLoading && isPinned && (
         <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200">
-          <PinnedBanner count={events.length} onShowAll={handleExitPinned} />
+          <NoticeBanner
+            // Only blame the link once we have a schedule to have missed it in:
+            // describePin would call a failed fetch and a not-yet-published
+            // schedule dead links. The three-way choice lives in
+            // pinnedBannerMessage so the copy stays pure and unit-testable.
+            message={pinnedBannerMessage(pinRequest, pinnedSlots, {
+              loadFailed,
+              scheduleEmpty,
+              servedFromCacheFallback,
+            })}
+            onShowAll={handleExitPinned}
+          />
           {!isMobilePhone && (
             <div className="max-w-7xl mx-auto px-4 py-2 md:px-8 md:py-3 flex justify-end">
               <ViewToggle currentView={currentView} onViewChange={setCurrentView} />
             </div>
           )}
         </div>
+      )}
+      {/* Deliberately OUTSIDE the desktop-only filter-bar block below: that block
+          is gated on !isMobilePhone, and phones are the bulk of this site's
+          traffic, so a notice rendered inside it would be invisible to exactly
+          the visitors most likely to be on the failing connection. Not sticky
+          either — it carries no action, so there is nothing to keep in reach,
+          and a second `sticky top-0` element would fight the filter bar for the
+          same strip of screen. */}
+      {!isLoading && !isPinned && unpinnedNotice !== null && (
+        <NoticeBanner message={unpinnedNotice} />
       )}
       {!isLoading && !isMobilePhone && !isPinned && (
         <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200">
@@ -459,7 +771,6 @@ export default function Page() {
                     levels={filteredOptions.levels}
                     subjects={filteredOptions.subjects}
                     centres={filteredOptions.centres}
-                    tutors={filteredOptions.tutors}
                     filters={filters}
                     onFilterChange={handleFilterChange}
                     currentView={currentView}
@@ -530,7 +841,7 @@ export default function Page() {
                 <WeeklyClassCalendar
                   slots={events}
                   isVisible={currentView === "calendar"}
-                  hasActiveFilters={hasActiveFilters}
+                  hasActiveFilters={hasActiveFilters || suppressEmptyState}
                   selectedStream={filters.stream}
                   onEmptyStateClick={
                     isMobilePhone
@@ -545,6 +856,7 @@ export default function Page() {
               <div className={currentView !== "list" ? "hidden" : "modern-card p-3 sm:p-6"}>
                 <ListView
                   sessions={events}
+                  suppressEmptyState={suppressEmptyState}
                   onEmptyStateClick={
                     isMobilePhone
                       ? () => setFilterSheetOpen(true)
@@ -628,7 +940,6 @@ export default function Page() {
                 levels={filteredOptions.levels}
                 subjects={filteredOptions.subjects}
                 centres={filteredOptions.centres}
-                tutors={filteredOptions.tutors}
                 filters={filters}
                 onFilterChange={handleFilterChange}
                 currentView={currentView}

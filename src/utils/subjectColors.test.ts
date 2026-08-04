@@ -70,3 +70,19 @@ describe("getLegendItemsForStream", () => {
     expect(getLegendItemsForStream("Secondary (IP)")).toEqual(getLegendItemsForStream("Secondary (Express)"));
   });
 });
+
+describe("AllSec colours", () => {
+  it("uses the Secondary palette for the empty-calendar legend (AC 9)", () => {
+    const allSec = getLegendItemsForStream("AllSec").map((s) => s.label);
+    const secExpress = getLegendItemsForStream("Secondary (Express)").map((s) => s.label);
+    expect(allSec).toEqual(secExpress);
+  });
+
+  it("colours Secondary blocks from the Secondary palette regardless of track (AC 8)", () => {
+    // Guards the level-based colour axis. AllSec mixes EXP and IP in one view,
+    // so a future refactor keying colour off `stream` would silently split the
+    // palette in two — this fails if that ever happens.
+    expect(getSubjectColor("Mathematics", "S3")).toBe(SEC.math.color);
+    expect(getSubjectColor("Chemistry", "S3")).toBe(SEC.chemistry.color);
+  });
+});
