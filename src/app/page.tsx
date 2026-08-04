@@ -193,7 +193,25 @@ const ALL_SEC = "AllSec";
 
 // The four chips every visitor sees. AllSec is deliberately absent: it is
 // link-only, and appended to the options list solely while it is selected.
-const STREAM_VALUES = ["JC", "Secondary (Express)", "Secondary (IP)", "Primary"] as const;
+//
+// Each string is simultaneously the filter state, the ?stream= token and a
+// levelToFilterMapper case label, so it is chosen to survive URL encoding
+// legibly. URLSearchParams renders a space as "+" and a parenthesis as %28/%29,
+// which is why the former "Secondary (Express)" reached parents as
+// ?stream=Secondary+%28Express%29 — unreadable in a chat message and easy to
+// mangle when retyped. The display labels ("Sec Express" / "Sec IP") are
+// unchanged and live in Filters' streamLabel().
+const STREAM_VALUES = ["JC", "Secondary Exp", "Secondary IP", "Primary"] as const;
+
+// Pre-rename tokens, still live in every link already shared — tutor
+// announcements, marketing posts, parents' chat history, bookmarks. They resolve
+// to the current value on read, and because the filters effect re-serialises
+// filters.stream, the address bar quietly upgrades itself to the new spelling.
+// Entries here are permanent: an old link has no expiry.
+const LEGACY_STREAM_VALUES: Record<string, string> = {
+  "Secondary (Express)": "Secondary Exp",
+  "Secondary (IP)": "Secondary IP",
+};
 
 // Stream is a closed set, so an unrecognised value resolves to null rather than
 // reaching levelToFilterMapper's `default: return true`. That default renders
@@ -226,6 +244,11 @@ function normaliseStreamParam(raw: string | null): StreamParam {
   if (trimmed.toLowerCase() === ALL_SEC.toLowerCase()) {
     return { stream: ALL_SEC, rejected: false };
   }
+  // Checked before the whitelist, not after it, so a legacy token never reaches
+  // the reject path — where it would void the link's subject/centre/level too
+  // and drop the visitor on the bare homepage.
+  const legacy = LEGACY_STREAM_VALUES[trimmed];
+  if (legacy) return { stream: legacy, rejected: false };
   const match = STREAM_VALUES.find((v) => v === trimmed);
   return match ? { stream: match, rejected: false } : { stream: null, rejected: true };
 }
@@ -241,9 +264,9 @@ function levelToFilterMapper(
   switch (filter) {
     case "JC":
       return level.startsWith("J");
-    case "Secondary (Express)":
+    case "Secondary Exp":
       return level.startsWith("S") && stream.includes("EXP");
-    case "Secondary (IP)":
+    case "Secondary IP":
       return level.startsWith("S") && stream.includes("IP");
     case ALL_SEC:
       // Deliberately level-based rather than EXP||IP: a Secondary slot with a

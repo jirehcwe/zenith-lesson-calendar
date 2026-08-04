@@ -20,7 +20,7 @@ const baseProps = {
 
 describe("Filters", () => {
   it("renders stream buttons for each stream", () => {
-    render(<Filters {...baseProps} streams={[opt("JC"), opt("Secondary (Express)")]} />);
+    render(<Filters {...baseProps} streams={[opt("JC"), opt("Secondary Exp")]} />);
     // Pill text is "JC 1" and "Sec Express 1" (label + count); use regex
     expect(screen.getByRole("button", { name: /^JC/ })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Sec Express/ })).toBeInTheDocument();
@@ -36,7 +36,7 @@ describe("Filters", () => {
   it("calls onFilterChange with selected stream when a stream button is clicked", async () => {
     const user = userEvent.setup();
     const onFilterChange = jest.fn();
-    render(<Filters {...baseProps} streams={[opt("JC"), opt("Secondary (Express)")]} onFilterChange={onFilterChange} />);
+    render(<Filters {...baseProps} streams={[opt("JC"), opt("Secondary Exp")]} onFilterChange={onFilterChange} />);
     await user.click(screen.getByRole("button", { name: /^JC/ }));
     expect(onFilterChange).toHaveBeenCalledWith(expect.objectContaining({ stream: "JC" }));
   });

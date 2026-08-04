@@ -67,14 +67,14 @@ describe("fallback", () => {
 describe("getLegendItemsForStream", () => {
   it("appends a single Full swatch and keeps IP === Express", () => {
     expect(getLegendItemsForStream("JC").at(-1)).toEqual(FULL_SWATCH);
-    expect(getLegendItemsForStream("Secondary (IP)")).toEqual(getLegendItemsForStream("Secondary (Express)"));
+    expect(getLegendItemsForStream("Secondary IP")).toEqual(getLegendItemsForStream("Secondary Exp"));
   });
 });
 
 describe("AllSec colours", () => {
   it("uses the Secondary palette for the empty-calendar legend (AC 9)", () => {
     const allSec = getLegendItemsForStream("AllSec").map((s) => s.label);
-    const secExpress = getLegendItemsForStream("Secondary (Express)").map((s) => s.label);
+    const secExpress = getLegendItemsForStream("Secondary Exp").map((s) => s.label);
     expect(allSec).toEqual(secExpress);
   });
 
