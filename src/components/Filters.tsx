@@ -35,9 +35,12 @@ function truncateText(text: string, maxLength: number = 25): string {
   return text.substring(0, maxLength) + "...";
 }
 
+// Keys are the ?stream= tokens from page.tsx's STREAM_VALUES, which are kept
+// short and space-separated so they read cleanly in a shared URL; the on-screen
+// wording is chosen here instead.
 function streamLabel(stream: string): string {
-  if (stream === "Secondary (Express)") return "Sec Express";
-  if (stream === "Secondary (IP)") return "Sec IP";
+  if (stream === "Secondary Exp") return "Sec Express";
+  if (stream === "Secondary IP") return "Sec IP";
   if (stream === "AllSec") return "Secondary (All)";
   return stream;
 }

@@ -1533,40 +1533,48 @@ describe("AllSec stream (?stream=AllSec)", () => {
   // (STREAM_VALUES gates ?stream=) and a levelToFilterMapper case label, with
   // nothing tying the two together, so editing one string breaks the deep link
   // AND drops the chip through to the default case. Covering only "Secondary
-  // (IP)" left the other three free to be renamed with the suite still green —
+  // IP" left the other three free to be renamed with the suite still green —
   // and a mis-mapped chip shows the wrong platform's classes, which for this
   // client (JC / Secondary / Primary are separate businesses) is the worst
-  // failure the page has. They contain spaces and parentheses, so this also
-  // genuinely exercises encode/decode: the whitelist must compare against the
-  // DECODED param.
+  // failure the page has.
+  //
+  // `param` is the second half of the contract: these links are pasted into
+  // Telegram and read by humans, so the value the page PUTS BACK in the address
+  // bar is asserted verbatim. It is what stops a future rename reintroducing
+  // percent-escapes (the old values emitted ?stream=Secondary+%28Express%29)
+  // while every behavioural assertion above still passes.
   it.each([
     {
       stream: "JC",
+      param: "stream=JC",
       chip: /JC/,
       shows: ["Physics"],
       hides: ["Mathematics", "Chemistry", "English", "Pure Biology", "Science"],
     },
     {
-      stream: "Secondary (Express)",
+      stream: "Secondary Exp",
+      param: "stream=Secondary+Exp",
       chip: /Sec Express/,
       shows: ["Mathematics", "English"],
       hides: ["Chemistry", "Physics", "Science", "Pure Biology"],
     },
     {
-      stream: "Secondary (IP)",
+      stream: "Secondary IP",
+      param: "stream=Secondary+IP",
       chip: /Sec IP/,
       shows: ["Chemistry"],
       hides: ["Mathematics", "English", "Physics", "Science", "Pure Biology"],
     },
     {
       stream: "Primary",
+      param: "stream=Primary",
       chip: /Primary/,
       shows: ["Science"],
       hides: ["Mathematics", "Chemistry", "English", "Physics", "Pure Biology"],
     },
   ])(
     "round-trips ?stream=$stream and shows only that platform (AC 12)",
-    async ({ stream, chip, shows, hides }) => {
+    async ({ stream, param, chip, shows, hides }) => {
       setUrl(`/?stream=${encodeURIComponent(stream)}&view=list`);
       const { container } = render(<Page />);
       await waitFor(() =>
@@ -1583,6 +1591,70 @@ describe("AllSec stream (?stream=AllSec)", () => {
       // filter that happens to match. A value that fell through to null would
       // still render an unselected chip of the same name.
       expect(streamChip(chip)).toHaveClass("bg-gray-900");
+      // Shareable as written: no %28/%20 anywhere in the stream token.
+      expect(window.location.search).toContain(param);
+      expect(window.location.search).not.toContain("%");
     },
   );
+
+  // The Secondary tokens were renamed once already — "Secondary (Express)" →
+  // "Secondary Exp" — after the escaped form (?stream=Secondary+%28Express%29)
+  // proved unreadable in the Telegram announcements it ships in. Links carrying
+  // the old spelling are already in tutors' and parents' chat history, and they
+  // have no expiry, so the old token must keep resolving. It must resolve
+  // through the ALIAS path specifically: falling through to the whitelist's
+  // reject branch would not merely ignore the stream, it would void the link's
+  // subject/centre/level too (see AC 10 above) and land the visitor on a bare
+  // homepage — a worse outcome than the escaping this rename set out to fix.
+  it.each([
+    {
+      legacy: "Secondary (Express)",
+      canonical: "stream=Secondary+Exp",
+      chip: /Sec Express/,
+      shows: ["Mathematics", "English"],
+      hides: ["Chemistry", "Physics", "Science"],
+    },
+    {
+      legacy: "Secondary (IP)",
+      canonical: "stream=Secondary+IP",
+      chip: /Sec IP/,
+      shows: ["Chemistry"],
+      hides: ["Mathematics", "English", "Physics", "Science"],
+    },
+  ])(
+    "still honours the pre-rename ?stream=$legacy link",
+    async ({ legacy, canonical, chip, shows, hides }) => {
+      setUrl(`/?stream=${encodeURIComponent(legacy)}&view=list`);
+      const { container } = render(<Page />);
+      await waitFor(() =>
+        expect(listRegion(container).getByText(shows[0])).toBeInTheDocument(),
+      );
+      const list = listRegion(container);
+      for (const subject of shows) {
+        expect(list.getByText(subject)).toBeInTheDocument();
+      }
+      for (const subject of hides) {
+        expect(list.queryByText(subject)).not.toBeInTheDocument();
+      }
+      expect(streamChip(chip)).toHaveClass("bg-gray-900");
+      // ...and the address bar is upgraded in place, so the next copy-paste out
+      // of the browser carries the readable token rather than perpetuating the
+      // escaped one.
+      expect(window.location.search).toContain(canonical);
+      expect(window.location.search).not.toContain("%28");
+    },
+  );
+
+  it("keeps a legacy link's dependent filters (alias is not a rejection)", async () => {
+    // The alias could be implemented in the reject branch — "unrecognised, so
+    // null the stream, but happen to re-derive it" — and every assertion above
+    // would still pass while ?stream=Secondary+%28IP%29&subject=Chemistry
+    // silently dropped the subject. This is the difference on screen.
+    setUrl(`/?stream=${encodeURIComponent("Secondary (IP)")}&subject=Chemistry&view=list`);
+    const { container } = render(<Page />);
+    await waitFor(() =>
+      expect(listRegion(container).getByText("Chemistry")).toBeInTheDocument(),
+    );
+    expect(window.location.search).toContain("subject=Chemistry");
+  });
 });

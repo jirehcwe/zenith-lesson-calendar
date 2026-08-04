@@ -95,8 +95,8 @@ describe("getLegendItemsForStream", () => {
     expect(labels).not.toContain("Science");
   });
 
-  it("returns Secondary subjects for Secondary (Express)", () => {
-    const items = getLegendItemsForStream("Secondary (Express)");
+  it("returns Secondary subjects for Secondary Exp", () => {
+    const items = getLegendItemsForStream("Secondary Exp");
     const labels = items.map((i) => i.label);
     expect(labels).toEqual(
       expect.arrayContaining([
@@ -108,9 +108,9 @@ describe("getLegendItemsForStream", () => {
     expect(labels).not.toContain("Econ");
   });
 
-  it("returns the same Secondary items for Secondary (IP)", () => {
-    const express = getLegendItemsForStream("Secondary (Express)").map((i) => i.label);
-    const ip = getLegendItemsForStream("Secondary (IP)").map((i) => i.label);
+  it("returns the same Secondary items for Secondary IP", () => {
+    const express = getLegendItemsForStream("Secondary Exp").map((i) => i.label);
+    const ip = getLegendItemsForStream("Secondary IP").map((i) => i.label);
     expect(ip).toEqual(express);
   });
 
