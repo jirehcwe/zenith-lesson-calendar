@@ -4,14 +4,13 @@ import Filters from "./Filters";
 
 type OptionWithCount = { value: string; count: number; selected: boolean };
 const opt = (value: string, count = 1): OptionWithCount => ({ value, count, selected: false });
-const defaultFilters = { subject: [], centre: [], tutor: [], level: [], stream: null };
+const defaultFilters = { subject: [], centre: [], level: [], stream: null };
 
 const baseProps = {
   streams: [] as OptionWithCount[],
   levels: [] as OptionWithCount[],
   subjects: [] as OptionWithCount[],
   centres: [] as OptionWithCount[],
-  tutors: [] as OptionWithCount[],
   filters: defaultFilters,
   onFilterChange: jest.fn(),
   currentView: "calendar" as const,
@@ -132,7 +131,7 @@ describe("Filters", () => {
     );
     await user.click(screen.getAllByText("Clear all")[0]);
     expect(onFilterChange).toHaveBeenCalledWith({
-      subject: [], centre: [], tutor: [], level: [], stream: null,
+      subject: [], centre: [], level: [], stream: null,
     });
   });
 

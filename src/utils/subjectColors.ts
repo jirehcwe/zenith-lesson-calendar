@@ -87,7 +87,11 @@ export function getSubjectColor(subject: string, level: string): string {
 
 export function getLegendItemsForStream(stream: string | null): Swatch[] {
   if (stream === "JC") return [...paletteToItems(JC), FULL_SWATCH];
-  if (stream?.startsWith("Secondary")) return [...paletteToItems(SEC), FULL_SWATCH];
+  // Only reached when no slots are rendered — once slots exist the legend is
+  // derived per-slot from `level`.
+  if (stream?.startsWith("Secondary") || stream === "AllSec") {
+    return [...paletteToItems(SEC), FULL_SWATCH];
+  }
   if (stream === "Primary") return [...paletteToItems(PRIMARY), FULL_SWATCH];
   return [...OVERVIEW.map((s) => ({ label: s.label, color: s.color, tint: s.tint })), FULL_SWATCH];
 }

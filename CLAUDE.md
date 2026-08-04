@@ -7,13 +7,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `yarn dev` — Start Next.js dev server (http://localhost:3000)
 - `yarn build` — Static export to `/out` directory
 - `yarn lint` — ESLint with Next.js rules
+- `yarn test` — Jest unit tests (`yarn test:coverage` for coverage)
 - `yarn extract-form` — Extract Google Forms prefill options (requires `.env`)
 
-Package manager is **Yarn 4.9.2** (via Corepack). No test suite is configured.
+Package manager is **Yarn 4.9.2** (via Corepack).
 
 ## Architecture
 
-**Static Next.js 15 app** (App Router, `output: "export"`) with React 19, deployed to Vercel. Fully client-side rendered — all components use `"use client"`.
+**Static Next.js 15 app** (App Router, `output: "export"`) with React 19, deployed to **Cloudflare Pages** (a legacy `.vercel/` directory remains from an earlier Vercel deployment — Cloudflare is current; see the env-var section below). Fully client-side rendered — all components use `"use client"`.
 
 ### Data Flow
 
@@ -53,6 +54,13 @@ type WeeklyClassSlot = {
 ## Styling
 
 Tailwind CSS 4 with custom CSS variables and utility classes defined in `src/app/globals.css` (`.btn-primary`, `.btn-secondary`, `.hero-gradient`, `.modern-card`). Components use inline Tailwind classes.
+
+## Gotchas — Do NOT
+
+- **Do NOT change the API response shape (or how it's cached) without bumping `CACHE_VERSION`** — clients keep serving the stale-shaped localStorage cache for up to 5 minutes otherwise. The bump is what forces a re-fetch.
+- **Do NOT confuse the two schedule APIs.** This app reads telebot's `db-schedule-updater` endpoint (`api.schedule.myzenithstudy.com`), NOT lms-backend's `lms-api.myzenithstudy.com/schedule`.
+- **Do NOT set `NEXT_PUBLIC_SCHEDULE_API_BASE_URL` for only one Cloudflare Pages environment** — Production and Preview each need it or that build fails (build-time guard in `next.config.ts`).
+- **Do NOT treat `campaign` and `referralSource` as interchangeable** — channel tracking vs survey answer (see Prefill docs in telebot's CLAUDE.md).
 
 ## Conventions
 

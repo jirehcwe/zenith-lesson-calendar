@@ -5,8 +5,22 @@ import { replaceCampaignInUrl, replacePromocodeInUrl } from "@/utils/campaign";
 import { getFallbackRegistrationLinkByLevel } from "@/utils/prefillRegistration";
 import { to12hr } from "@/utils/time";
 
-export default function ListView({ sessions, onEmptyStateClick }: { sessions: WeeklyClassSlot[]; onEmptyStateClick?: () => void }) {
+export default function ListView({
+  sessions,
+  onEmptyStateClick,
+  suppressEmptyState = false,
+}: {
+  sessions: WeeklyClassSlot[];
+  onEmptyStateClick?: () => void;
+  suppressEmptyState?: boolean;
+}) {
   if (sessions.length === 0) {
+    // Set when the prompt would mislead. In pinned mode the filter bar and the
+    // mobile Filter tab are hidden, so "Select a stream" / "Open filters" point
+    // at controls that are not on screen; when the schedule failed to load or
+    // has not been published, they point at controls that are on screen and
+    // cannot help. NoticeBanner carries the explanation in both cases.
+    if (suppressEmptyState) return null;
     return (
       <div className="text-center py-12">
         <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-blue-50 flex items-center justify-center">

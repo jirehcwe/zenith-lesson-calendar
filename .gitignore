@@ -47,3 +47,6 @@ next-env.d.ts
 .vscode/settings.json
 scripts/credentials.json
 scripts/form_option_extractor/lambda.zip
+
+# Agent scratch (SDD ledgers, review packages, task reports)
+.superpowers/

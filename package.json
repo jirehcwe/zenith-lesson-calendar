@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "typecheck": "tsc --noEmit",
     "extract-form": "dotenv -e .env -- npx tsx scripts/form_option_extractor/index.ts",
     "test": "jest",
     "test:coverage": "jest --coverage"
