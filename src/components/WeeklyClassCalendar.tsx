@@ -24,6 +24,22 @@ export function isSlotFull(slot: WeeklyClassSlot): boolean {
   return slot.title.startsWith("[FULL]");
 }
 
+// Waitlist is a separate, weaker signal than [FULL] and must not be conflated
+// with it. Ops drives both from the scheduling sheet's FormOptions tab via the
+// "Remarks" dropdown, but they decorate the title differently: "Full" prepends
+// a `[FULL]` tag, while waitlist rides the free-text "Custom (Remarks)" escape
+// hatch and is appended as `*(Waitlist Only)*`. A waitlisted class is still open
+// on the Google Form, so this is display-only — it must NOT gate the trial or
+// registration CTAs the way isSlotFull() does.
+//
+// Matched as a loose case-insensitive substring rather than the exact
+// `*(Waitlist Only)*` string: the marker is hand-typed by ops into a free-text
+// cell, so the wording and the asterisk wrapper can drift. This mirrors how the
+// telebot side already sniffs for `[full]`.
+export function isSlotWaitlist(slot: WeeklyClassSlot): boolean {
+  return slot.title.toLowerCase().includes("waitlist");
+}
+
 // Define a new type for weekly class slots (no topic, no date)
 export type WeeklyClassSlot = {
   classSlotId?: string;
@@ -343,6 +359,7 @@ export default function WeeklyClassCalendar({
           eventContent={(arg) => {
             const slotData = arg.event.extendedProps as WeeklyClassSlot;
             const full = isSlotFull(slotData);
+            const waitlist = isSlotWaitlist(slotData);
             const colors = full
               ? FULL_SWATCH
               : subjectToColor(slotData.level, slotData.subjects[0] ?? "");
@@ -399,6 +416,11 @@ export default function WeeklyClassCalendar({
                 {full && (
                   <div style={{ fontSize: "10px", fontWeight: 600, opacity: 0.7 }}>
                     Class is full
+                  </div>
+                )}
+                {waitlist && (
+                  <div style={{ fontSize: "10px", fontWeight: 600, opacity: 0.7 }}>
+                    Waitlist only
                   </div>
                 )}
               </div>
@@ -476,6 +498,11 @@ export default function WeeklyClassCalendar({
                 <DialogTitle className="text-2xl font-extrabold text-gray-900">
                   {selectedEvent.subjects.join(" + ")}
                 </DialogTitle>
+                {isSlotWaitlist(selectedEvent) && (
+                  <span className="inline-block mt-2 bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-1 rounded-md border border-amber-200">
+                    Waitlist only
+                  </span>
+                )}
               </div>
             )}
 
