@@ -1,6 +1,6 @@
 "use client";
 
-import { WeeklyClassSlot, isSlotFull, getSubjectColor } from "./WeeklyClassCalendar";
+import { WeeklyClassSlot, isSlotFull, isSlotWaitlist, getSubjectColor } from "./WeeklyClassCalendar";
 import { replaceCampaignInUrl, replacePromocodeInUrl } from "@/utils/campaign";
 import { getFallbackRegistrationLinkByLevel } from "@/utils/prefillRegistration";
 import { to12hr } from "@/utils/time";
@@ -68,6 +68,7 @@ export default function ListView({
               .sort((a, b) => a.startTime.localeCompare(b.startTime))
               .map((session, index) => {
                 const full = isSlotFull(session);
+                const waitlist = isSlotWaitlist(session);
                 const accentColor = getSubjectColor(session.subjects[0] ?? "", session.level);
                 return (
                   <div
@@ -84,6 +85,11 @@ export default function ListView({
                       <div className="flex items-start justify-between">
                         <div className="font-bold text-base text-gray-800">
                           {session.subjects.join(" + ")}
+                          {waitlist && (
+                            <span className="align-middle bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded-md border border-amber-200 ml-2">
+                              Waitlist only
+                            </span>
+                          )}
                         </div>
                         <span className="bg-gray-100 text-gray-600 text-xs font-bold px-2 py-0.5 rounded-md border border-gray-200 ml-2 flex-shrink-0">
                           {session.level}

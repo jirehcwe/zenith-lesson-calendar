@@ -4,6 +4,7 @@ import type { WeeklyClassSlot } from "./WeeklyClassCalendar";
 
 jest.mock("./WeeklyClassCalendar", () => ({
   isSlotFull: (slot: { title: string }) => slot.title.startsWith("[FULL]"),
+  isSlotWaitlist: (slot: { title: string }) => slot.title.toLowerCase().includes("waitlist"),
   getSubjectColor: () => "#9ca3af",
 }));
 
@@ -80,6 +81,31 @@ describe("ListView", () => {
     render(<ListView sessions={[makeSlot({ title: "[FULL] Math class" })]} />);
     expect(screen.getByText(/Class Full/i)).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /Sign up for FREE Trial/i })).not.toBeInTheDocument();
+  });
+
+  it("shows a Waitlist only badge for waitlisted slots", () => {
+    render(
+      <ListView
+        sessions={[makeSlot({ title: "Math class *(Waitlist Only)*" })]}
+      />
+    );
+    expect(screen.getByText(/Waitlist only/i)).toBeInTheDocument();
+  });
+
+  // Waitlist is informational only — unlike [FULL] it must not suppress signup.
+  it("keeps trial and register buttons active for waitlisted slots", () => {
+    render(
+      <ListView
+        sessions={[makeSlot({ title: "Math class *(Waitlist Only)*" })]}
+      />
+    );
+    expect(screen.getByRole("link", { name: /Sign up for FREE Trial/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Register now/i })).toBeInTheDocument();
+  });
+
+  it("does not show the waitlist badge on an ordinary slot", () => {
+    render(<ListView sessions={[makeSlot()]} />);
+    expect(screen.queryByText(/Waitlist only/i)).not.toBeInTheDocument();
   });
 
   it("renders centre information on each card", () => {
