@@ -33,17 +33,19 @@ const config: CrashCourseConfig = {
     tagline: "Expert tutors • Proven results • Trusted since 2019",
     blurbHeadline: "Crash Course Schedule",
     blurbBody:
-      "The June 2026 JC crash course has concluded. Browse the schedule below to review the sessions that ran — and explore our regular JC classes with a free trial lesson.",
+      "Our next JC crash course runs from 5 to 13 September 2026. Registration opens soon. The June 2026 schedule below shows the sessions that ran — and you can start now with a free trial lesson in our regular JC classes.",
     stats: "Trusted by over 20,000 students since 2019",
     heroImageSrc: "/zenith-banner.webp",
     heroImageAlt: "Zenith Education",
   },
-  // Course has ended: top banner announces it and redirects to the regular
-  // free-trial schedule (filtered to JC). When SS/Pri end, add the same block
-  // to their configs — no component or page changes needed.
+  // The June course is over, so this block announces the next one. Its copy
+  // also feeds the calendar overlay and the list panel through
+  // getCourseEndedCta — one edit updates all three surfaces. Point ctaHref at
+  // the September registration form once ops publishes it; until then the CTA
+  // sends students to the regular free-trial schedule (filtered to JC).
   closingBanner: {
-    headline: "The June 2026 JC Crash Course has ended.",
-    body: "Thank you for joining us! Continue your prep with a free trial lesson in our regular JC programme.",
+    headline: "Upcoming: JC Crash Course, 5–13 September 2026",
+    body: "Registration opens soon. Until then, try a free trial lesson in our regular JC programme.",
     ctaLabel: "Browse free JC trial classes →",
     ctaHref: "https://schedule.zenitheducationstudio.com/?stream=JC",
   },
@@ -52,9 +54,9 @@ const config: CrashCourseConfig = {
     ctaLabel: "Try a free trial lesson →",
     ctaHref: "https://schedule.zenitheducationstudio.com/?stream=JC",
   },
-  // After the course ends (from 1 Jul, the day after dateRange.end), the
-  // calendar shows a course-ended overlay and the list a matching panel,
-  // linking to the regular free-trial JC schedule. `campaign` tags the
+  // From 1 Jul (the day after dateRange.end), the calendar shows an overlay
+  // and the list a matching panel. Both carry the closingBanner copy above
+  // and link to the regular free-trial JC schedule. `campaign` tags the
   // overlay click-out for attribution.
   trialRedirect: {
     baseUrl: "https://schedule.zenitheducationstudio.com/",
