@@ -109,19 +109,22 @@ const config: CrashCourseConfig = {
     tagline: "Expert tutors • Proven results • Trusted since 2019",
     blurbHeadline: "Crash Course Schedule",
     blurbBody:
-      "The June 2026 Secondary crash course has concluded. Browse the schedule below to review the sessions that ran — and explore our regular Secondary classes with a free trial lesson.",
+      "Our next Secondary crash course runs from 5 to 13 September 2026. Registration opens soon. The June 2026 schedule below shows the sessions that ran — and you can start now with a free trial lesson in our regular Secondary classes.",
     stats: "Trusted by over 20,000 students since 2019",
     heroImageSrc: "/zenith-banner.webp",
     heroImageAlt: "Zenith Education",
   },
-  // Course has ended: sticky banner announces it and links to the regular
-  // free-trial Secondary schedule. The course-ended overlay/panel deep-link
-  // there too — tagged POSTJUNCC on the overlay (a shared "post June crash
-  // course" code across all levels). The SS cohort mixes Express + IP; the
-  // click-out defaults to Express (the majority).
+  // The June course is over, so this block announces the next one. Its copy
+  // also feeds the calendar overlay and the list panel through
+  // getCourseEndedCta — one edit updates all three surfaces. Point ctaHref at
+  // the September registration form once ops publishes it; until then the CTA
+  // sends students to the regular free-trial Secondary schedule, tagged
+  // POSTJUNCC on the overlay (a shared "post June crash course" code across
+  // all levels). The SS cohort mixes Express + IP; the click-out defaults to
+  // Express (the majority).
   closingBanner: {
-    headline: "The June 2026 Secondary Crash Course has ended.",
-    body: "Thank you for joining us! Continue your prep with a free trial lesson in our regular Secondary programme.",
+    headline: "Upcoming: Secondary Crash Course, 5–13 September 2026",
+    body: "Registration opens soon. Until then, try a free trial lesson in our regular Secondary programme.",
     ctaLabel: "Browse free Secondary trial classes →",
     ctaHref:
       "https://schedule.zenitheducationstudio.com/?stream=Secondary+(Express)",

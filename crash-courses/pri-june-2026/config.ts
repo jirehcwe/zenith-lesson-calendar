@@ -39,17 +39,20 @@ const config: CrashCourseConfig = {
     title: "Zenith Primary\n2026 June Holiday Programmes",
     tagline: "Expert tutors • Proven results • Trusted since 2019",
     blurbBody:
-      "Zenith’s June holiday programme for P5–P6 students has concluded. Browse the schedule below to review the sessions that ran — and explore our regular Primary classes with a free trial lesson.",
+      "Our next Primary crash course for P5–P6 students runs from 4 to 14 September 2026. Registration opens soon. The June 2026 schedule below shows the sessions that ran — and your child can start now with a free trial lesson in our regular Primary classes.",
     stats: "Trusted by over 20,000 students since 2019",
     heroImageSrc: "/zenith_banner_alt.webp",
     heroImageAlt: "Zenith Education",
   },
-  // Course has ended: sticky banner + course-ended overlay/panel link to the
-  // regular free-trial Primary schedule (overlay tagged POSTJUNCC — a shared
-  // "post June crash course" code across all levels).
+  // The June programme is over, so this block announces the next one. Its copy
+  // also feeds the calendar overlay and the list panel through
+  // getCourseEndedCta — one edit updates all three surfaces. Point ctaHref at
+  // the September registration form once ops publishes it; until then the CTA
+  // sends parents to the regular free-trial Primary schedule (overlay tagged
+  // POSTJUNCC — a shared "post June crash course" code across all levels).
   closingBanner: {
-    headline: "The June 2026 Primary Holiday Programme has ended.",
-    body: "Thank you for joining us! Continue your child’s learning with a free trial lesson in our regular Primary programme.",
+    headline: "Upcoming: Primary Crash Course, 4–14 September 2026",
+    body: "Registration opens soon. Until then, start your child with a free trial lesson in our regular Primary programme.",
     ctaLabel: "Browse free Primary trial classes →",
     ctaHref: "https://schedule.zenitheducationstudio.com/?stream=Primary",
   },
