@@ -1,5 +1,6 @@
 import {
   isSlotFull,
+  isSlotWaitlist,
   getSubjectColor,
   getLegendItemsForStream,
   computeLegendItems,
@@ -44,6 +45,39 @@ describe("isSlotFull", () => {
 
   it("returns false when [FULL] appears mid-title but not as a prefix", () => {
     expect(isSlotFull(makeSlot({ title: "Sec 3 [FULL] Math" }))).toBe(false);
+  });
+});
+
+describe("isSlotWaitlist", () => {
+  // Verbatim from the live schedule feed (2026-Class0439) — ops appends the
+  // marker via the FormOptions "Custom (Remarks)" free-text field.
+  const LIVE_TITLE =
+    "(EXP) Bishan | Sat 11.15AM - 1.15PM | Katherine (S1 Science 2026) *(Waitlist Only)*";
+
+  it("returns true for the live *(Waitlist Only)* suffix", () => {
+    expect(isSlotWaitlist(makeSlot({ title: LIVE_TITLE }))).toBe(true);
+  });
+
+  it("returns false for an ordinary slot", () => {
+    expect(isSlotWaitlist(makeSlot({ title: "Sec 3 Math" }))).toBe(false);
+  });
+
+  it("matches case-insensitively and without the asterisk wrapper, since ops hand-types the remark", () => {
+    expect(isSlotWaitlist(makeSlot({ title: "Sec 3 Math (WAITLIST ONLY)" }))).toBe(true);
+    expect(isSlotWaitlist(makeSlot({ title: "Sec 3 Math - waitlist" }))).toBe(true);
+  });
+
+  // Waitlist and full are independent signals: the live waitlisted class carries
+  // no [FULL] prefix and is still open on the Google Form. Conflating them would
+  // wrongly disable the trial/registration CTAs.
+  it("does not imply the slot is full", () => {
+    expect(isSlotFull(makeSlot({ title: LIVE_TITLE }))).toBe(false);
+  });
+
+  it("is independent of the [FULL] prefix when both are present", () => {
+    const both = makeSlot({ title: "[FULL] Sec 3 Math *(Waitlist Only)*" });
+    expect(isSlotFull(both)).toBe(true);
+    expect(isSlotWaitlist(both)).toBe(true);
   });
 });
 
