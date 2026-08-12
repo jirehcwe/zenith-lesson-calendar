@@ -36,36 +36,15 @@ Clicking a class links to Google Forms with prefilled fields. Prefill URLs are m
 
 ## Key Types
 
-```typescript
-type WeeklyClassSlot = {
-  day: number; startTime: string; endTime: string;
-  subjects: string[]; tutor: string; centre: string;
-  stream: string; level: string;
-  prefillTrialLink: string; prefillRegistrationLink?: string;
-};
-```
-
-`subjects` is an array to support combined classes (e.g. Combined + Pure Humanities, A Math + E Math taught in one session). Render with `subjects.join(" + ")`; use `subjects[0]` only for icon/color anchoring (see `WeeklyClassCalendar.tsx:319,471`).
-
-## Path Alias
-
-`@/*` maps to `./src/*`
-
-## Styling
-
-Tailwind CSS 4 with custom CSS variables and utility classes defined in `src/app/globals.css` (`.btn-primary`, `.btn-secondary`, `.hero-gradient`, `.modern-card`). Components use inline Tailwind classes.
+`WeeklyClassSlot.subjects` is an array to support combined classes (e.g. Combined + Pure Humanities, A Math + E Math taught in one session). Render with `subjects.join(" + ")`; use `subjects[0]` only for icon/color anchoring (see `WeeklyClassCalendar.tsx:319,471`).
 
 ## Gotchas — Do NOT
 
 - **Do NOT change the API response shape (or how it's cached) without bumping `CACHE_VERSION`** — clients keep serving the stale-shaped localStorage cache for up to 5 minutes otherwise. The bump is what forces a re-fetch.
 - **Do NOT confuse the two schedule APIs.** This app reads telebot's `db-schedule-updater` endpoint (`api.schedule.myzenithstudy.com`), NOT lms-backend's `lms-api.myzenithstudy.com/schedule`.
 - **Do NOT set `NEXT_PUBLIC_SCHEDULE_API_BASE_URL` for only one Cloudflare Pages environment** — Production and Preview each need it or that build fails (build-time guard in `next.config.ts`).
-- **Do NOT treat `campaign` and `referralSource` as interchangeable** — channel tracking vs survey answer (see Prefill docs in telebot's CLAUDE.md).
+- **Do NOT treat `campaign` and `referralSource` as interchangeable** — channel tracking vs survey answer (see telebot's `scripts/lambdas/db-schedule-updater/CLAUDE.md`).
 
 ## Conventions
 
-- Functional components only, PascalCase filenames
-- Constants in ALL_CAPS (e.g., `CACHE_KEY`, `FILTERS_COLLAPSED_STORAGE_KEY`)
-- TypeScript strict mode enabled
 - CORS headers configured for `https://www.zenitheducationstudio.com`
-- ESLint ignores `/scripts/` directory
