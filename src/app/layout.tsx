@@ -1,10 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Manrope } from "next/font/google";
-import Script from "next/script";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 import "./globals.css";
-
-// GA4 measurement ID for the live schedule site (schedule.zenitheducationstudio.com).
-const GA_MEASUREMENT_ID = "G-GX27V89PJK";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,19 +47,9 @@ export default function RootLayout({
               'try{if(new URLSearchParams(window.location.search).get("embed")==="true"){document.documentElement.setAttribute("data-embed","true")}}catch(e){}',
           }}
         />
-        {/* Google tag (gtag.js). Deliberately lives on `regular-lessons` only — the
-            staging branch stays untagged so preview traffic never lands in GA4.
-            `afterInteractive` keeps it off the critical path for first paint. */}
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-          strategy="afterInteractive"
-        />
-        <Script id="gtag-init" strategy="afterInteractive">
-          {`window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', '${GA_MEASUREMENT_ID}');`}
-        </Script>
+        {/* Google tag (gtag.js). Fires only on the live schedule hostnames — see
+            src/utils/analytics.ts for why the branch cannot be trusted to scope it. */}
+        <GoogleAnalytics />
         {children}
       </body>
     </html>
