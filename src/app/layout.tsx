@@ -4,7 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 
 // GA4 measurement ID for the live schedule site (schedule.zenitheducationstudio.com).
-const GA_MEASUREMENT_ID = "G-CFR492YL4N";
+const GA_MEASUREMENT_ID = "G-GX27V89PJK";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
