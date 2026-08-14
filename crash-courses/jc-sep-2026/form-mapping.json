@@ -1,0 +1,14 @@
+{
+  "subjectCodes": {
+    "J1 Biology": "BIO",
+    "J1 Chemistry": "CHEM",
+    "J1 Economics": "ECON",
+    "J1 Physics": "PHYS"
+  },
+  "prefillFields": {
+    "J1 Biology": "737212271",
+    "J1 Chemistry": "600100063",
+    "J1 Economics": "1188715475",
+    "J1 Physics": "2067436543"
+  }
+}
