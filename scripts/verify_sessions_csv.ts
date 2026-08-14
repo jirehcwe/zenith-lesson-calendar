@@ -137,7 +137,11 @@ rows.forEach((row, i) => {
     expect(aCentre, centre, "Centre");
     expect(aClassroom, row["Classroom"] ?? "", "Classroom");
     expect(aCapacity, row["Capacity"] ?? "", "Capacity");
-    expect(aTopic, topic, "Topic");
+    // JC packs the topic into column A; Sec leaves that slot blank by design.
+    // Only cross-check when the sheet actually put a topic there — an empty
+    // slot is not evidence of an empty Topic column. The Form Option
+    // reconstruction below still covers Topic for every slug.
+    if (aTopic.trim()) expect(aTopic, topic, "Topic");
 
     // "7 Sep" in column A vs "07 Sep (Mon)" in Date (text)
     const aDate = parseDateText(aDateShort);
