@@ -95,6 +95,7 @@ if (windowArg) {
 }
 
 const seenKeys = new Map<string, number>();
+const formOptionShapes = new Set<string>();
 
 rows.forEach((row, i) => {
   const line = i + 2; // +1 header, +1 to 1-index
@@ -156,12 +157,21 @@ rows.forEach((row, i) => {
   // -- 3. Form Option to Display reconstructs exactly -----------------------
   // Strongest check: it was transcribed from a separate read, but is a pure
   // function of five other columns.
-  const rebuilt = `[${displaySubject}] ${centre} | ${dateText} | ${timeslot} | ${topic}`;
-  if (formOption.trimEnd() !== rebuilt.trimEnd()) {
+  // Two conventions in the wild: JC appends the topic, Sec stops at the
+  // timeslot. Accept either, but only the shape this slug actually uses —
+  // a row that matches neither is a real mismatch.
+  const withTopic = `[${displaySubject}] ${centre} | ${dateText} | ${timeslot} | ${topic}`;
+  const withoutTopic = `[${displaySubject}] ${centre} | ${dateText} | ${timeslot}`;
+  const got = formOption.trimEnd();
+  if (got !== withTopic.trimEnd() && got !== withoutTopic.trimEnd()) {
     fail(
       line,
-      `Form Option mismatch:\n      csv      "${formOption}"\n      rebuilt  "${rebuilt}"`
+      `Form Option mismatch:\n      csv       "${formOption}"\n      expected  "${withTopic}"\n      or        "${withoutTopic}"`
     );
+  } else if (got === withoutTopic.trimEnd() && topic) {
+    formOptionShapes.add("without-topic");
+  } else {
+    formOptionShapes.add("with-topic");
   }
 
   // -- 4. "Date" (M/D/YYYY) agrees with Date (text) -------------------------
@@ -230,6 +240,7 @@ rows.forEach((row, i) => {
 console.log(`\nverify: crash-courses/${slug}/sessions.csv`);
 console.log(`  rows parsed:      ${rows.length}`);
 console.log(`  timeslot column:  "${timeslotKey}"`);
+console.log(`  form option:      ${[...formOptionShapes].join(" + ") || "n/a"}`);
 const subjects = [...new Set(rows.map((r) => r["Subject(Display)"]))].sort();
 console.log(`  subjects (${subjects.length}):     ${subjects.join(", ")}`);
 const centres = [...new Set(rows.map((r) => r["Centre"]))].sort();
