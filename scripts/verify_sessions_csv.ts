@@ -97,11 +97,35 @@ if (windowArg) {
 const seenKeys = new Map<string, number>();
 const formOptionShapes = new Set<string>();
 
+const skippedRows: string[] = [];
+
 rows.forEach((row, i) => {
   const line = i + 2; // +1 header, +1 to 1-index
 
   const code = (row["Schedule Codes"] ?? row["Scheduling code"] ?? "").trim();
   const displaySubject = (row["Subject(Display)"] ?? "").trim();
+
+  // Mirror csv_to_sessions2json's filter. Rows it drops never reach the site,
+  // so holding them to the cross-checks below would report failures for rows
+  // that ship nothing. Surface them instead — a dropped row is usually a
+  // broken lookup in the sheet, and someone should see it.
+  const controls = (row["Form Controls"] ?? "").trim();
+  const willShip =
+    !!displaySubject &&
+    displaySubject !== "#N/A" &&
+    !!code &&
+    !/^closed\s*-\s*not\s+running\b/i.test(controls);
+  if (!willShip) {
+    const why = !code
+      ? "no Schedule Code"
+      : !displaySubject
+        ? "empty Subject(Display)"
+        : displaySubject === "#N/A"
+          ? "Subject(Display) is #N/A (a failed lookup in the sheet)"
+          : "Form Controls is Closed - Not running";
+    skippedRows.push(`row ${line}: dropped by the converter — ${why}`);
+    return;
+  }
   const centre = (row["Centre"] ?? "").trim();
   const dateText = (row["Date (text)"] ?? "").trim();
   const timeslot = (row[timeslotKey] ?? "").trim();
@@ -239,6 +263,7 @@ rows.forEach((row, i) => {
 
 console.log(`\nverify: crash-courses/${slug}/sessions.csv`);
 console.log(`  rows parsed:      ${rows.length}`);
+console.log(`  rows shipping:    ${rows.length - skippedRows.length}`);
 console.log(`  timeslot column:  "${timeslotKey}"`);
 console.log(`  form option:      ${[...formOptionShapes].join(" + ") || "n/a"}`);
 const subjects = [...new Set(rows.map((r) => r["Subject(Display)"]))].sort();
@@ -249,6 +274,11 @@ const dates = [...new Set(rows.map((r) => r["Date (text)"]))].sort(
   (a, b) => (parseDateText(a)?.day ?? 0) - (parseDateText(b)?.day ?? 0)
 );
 console.log(`  dates (${dates.length}):        ${dates.join(", ")}`);
+
+if (skippedRows.length) {
+  console.log(`\n  ${skippedRows.length} row(s) the converter will drop:`);
+  skippedRows.forEach((r) => console.log(`    - ${r}`));
+}
 
 if (warnings.length) {
   console.log(`\n  ${warnings.length} warning(s):`);
