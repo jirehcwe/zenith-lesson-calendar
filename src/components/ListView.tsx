@@ -7,6 +7,8 @@ import {
   getRegistrationUrl,
   getCtaLabel,
   isMockExam,
+  isMockWalkthrough,
+  getWalkthroughNote,
 } from "@/utils/sessionVariant";
 import {
   getSessionAvailability,
@@ -109,7 +111,11 @@ export default function ListView({
                 Time: {s.startTime} - {s.endTime}
               </div>
               <div className="mt-4 flex justify-end">
-                {registerable ? (
+                {isMockWalkthrough(s, config) ? (
+                  <p className="text-sm text-slate-600 text-right">
+                    {getWalkthroughNote(s, config)}
+                  </p>
+                ) : registerable ? (
                   <a
                     href={getRegistrationUrl(s, config)}
                     target="_blank"
