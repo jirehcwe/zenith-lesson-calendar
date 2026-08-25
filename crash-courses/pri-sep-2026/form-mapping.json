@@ -5,7 +5,13 @@
     "P4 Science": "P4Sci",
     "P5 English": "P5Eng",
     "P5 Math": "P5Math",
-    "P5 Science": "P5Sci"
+    "P5 Science": "P5Sci",
+    "P5 English Mock Exam": "P5EngMock",
+    "P5 Math Mock Exam": "P5MathMock",
+    "P5 Science Mock Exam": "P5SciMock",
+    "P6 English Mock Exam": "P6EngMock",
+    "P6 Math Mock Exam": "P6MathMock",
+    "P6 Science Mock Exam": "P6SciMock"
   },
   "prefillFields": {
     "P4 English": "822255076",
@@ -13,6 +19,12 @@
     "P4 Science": "1745400898",
     "P5 English": "2096830254",
     "P5 Math": "1480143045",
-    "P5 Science": "1945975074"
+    "P5 Science": "1945975074",
+    "P5 English Mock Exam": "414070380",
+    "P5 Math Mock Exam": "1816274349",
+    "P5 Science Mock Exam": "1131156552",
+    "P6 English Mock Exam": "2061292576",
+    "P6 Math Mock Exam": "986293620",
+    "P6 Science Mock Exam": "455819443"
   }
 }

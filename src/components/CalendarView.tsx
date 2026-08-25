@@ -12,6 +12,8 @@ import {
   getRegistrationUrl,
   getCtaLabel,
   isMockExam,
+  isMockWalkthrough,
+  getWalkthroughNote,
 } from "@/utils/sessionVariant";
 import {
   getSessionAvailability,
@@ -208,7 +210,11 @@ export default function CalendarView({
                   <span>
                     {[
                       selectedEvent.extendedProps.subject,
-                      selectedEvent.extendedProps.topic,
+                      // A mock exam's topic carries both session timings, which
+                      // is too long for a title — it gets its own line below.
+                      isMockExam(selectedEvent.extendedProps, config)
+                        ? ""
+                        : selectedEvent.extendedProps.topic,
                       selectedEvent.extendedProps.level,
                     ]
                       .filter((part) => part && part.trim().length > 0)
@@ -232,12 +238,28 @@ export default function CalendarView({
                     {selectedEvent.extendedProps.startTime} -{" "}
                     {selectedEvent.extendedProps.endTime}
                   </div>
+                  {isMockExam(selectedEvent.extendedProps, config) &&
+                    selectedEvent.extendedProps.topic && (
+                      <div className="text-sm">
+                        <span className="font-semibold">Both sessions:</span>{" "}
+                        {selectedEvent.extendedProps.topic}
+                      </div>
+                    )}
                 </div>
               </>
             )}
             <div className="flex justify-end mt-4">
               {(() => {
                 if (!selectedEvent) return null;
+                // A walkthrough is booked through its paired simulation, so it
+                // deliberately offers no button — just the explanation.
+                if (isMockWalkthrough(selectedEvent.extendedProps, config)) {
+                  return (
+                    <p className="text-sm text-slate-600 text-left">
+                      {getWalkthroughNote(selectedEvent.extendedProps, config)}
+                    </p>
+                  );
+                }
                 const availability = getSessionAvailability(
                   selectedEvent.extendedProps,
                   config,

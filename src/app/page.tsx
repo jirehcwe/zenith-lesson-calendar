@@ -10,7 +10,12 @@ import ClosingBanner from "@/components/ClosingBanner";
 import BottomBanner from "@/components/BottomBanner";
 import ViewSelector from "@/components/ViewSelector";
 import { getCrashCourseConfig } from "../../crash-courses";
-import { isMockExam, hasAnyMockExams } from "@/utils/sessionVariant";
+import {
+  hasAnyMockExams,
+  getVariantLabel,
+  getVariantLabels,
+} from "@/utils/sessionVariant";
+
 
 const config = getCrashCourseConfig();
 const labelFor = (code: string): string =>
@@ -69,14 +74,10 @@ export default function Page() {
   const sessions: Session[] = config.sessions;
   const showTypeFilter = hasAnyMockExams(sessions, config);
   const typeOf = (s: Session): string =>
-    isMockExam(s, config) && config.mockExam
-      ? config.mockExam.variantLabel
-      : REGULAR_TYPE_LABEL;
+    getVariantLabel(s, config) ?? REGULAR_TYPE_LABEL;
   const typeOptions = useMemo(
     () =>
-      showTypeFilter && config.mockExam
-        ? [REGULAR_TYPE_LABEL, config.mockExam.variantLabel]
-        : [],
+      showTypeFilter ? [REGULAR_TYPE_LABEL, ...getVariantLabels(config)] : [],
     [showTypeFilter]
   );
 
