@@ -14,6 +14,7 @@ const CHEMISTRY = "#F4CCCC";
 const BIOLOGY = "#D9EAD3";
 const HISTORY = "#B6A48E";
 const SOCIAL_STUDIES = "#C9DAF8";
+const LITERATURE = "#D5A6BD";
 const BLACK = "#000000";
 
 // September runs S1-S3 only — the registration form is titled
@@ -25,13 +26,14 @@ const config: CrashCourseConfig = {
     description:
       "Browse and register for the September 2026 Zenith Secondary Crash Course.",
   },
-  dateRange: { start: "2026-09-05", end: "2026-09-12" },
+  dateRange: { start: "2026-09-05", end: "2026-09-13" },
   year: 2026,
   subjectColors: {
     "S1 English": { backgroundColor: ENGLISH, textColor: BLACK },
     "S2 English": { backgroundColor: ENGLISH, textColor: BLACK },
     "S3 English": { backgroundColor: ENGLISH, textColor: BLACK },
     "S3 IP English": { backgroundColor: ENGLISH, textColor: BLACK },
+    "S2 IP English": { backgroundColor: ENGLISH, textColor: BLACK },
 
     "S1 Math": { backgroundColor: MATH, textColor: BLACK },
     "S2 Math": { backgroundColor: MATH, textColor: BLACK },
@@ -58,6 +60,9 @@ const config: CrashCourseConfig = {
     "S3 Pure History": { backgroundColor: HISTORY, textColor: BLACK },
     "S3 Combined History": { backgroundColor: HISTORY, textColor: BLACK },
 
+    "S3 Pure Literature": { backgroundColor: LITERATURE, textColor: BLACK },
+    "S3 Combined Literature": { backgroundColor: LITERATURE, textColor: BLACK },
+
     "S3 Social Studies": { backgroundColor: SOCIAL_STUDIES, textColor: BLACK },
   },
   subjectLabels: {
@@ -80,6 +85,9 @@ const config: CrashCourseConfig = {
     "SBio(Comb)": "Combined Biology",
     "SHis(Pure)": "Pure History",
     "SHis(Comb)": "Combined History",
+    "SLit(Pure)": "Pure Literature",
+    "SLit(Comb)": "Combined Literature",
+    "LSEng(IP)": "(IP) Lower Sec English",
     SSoc: "Social Studies",
   },
   hero: {
@@ -87,7 +95,7 @@ const config: CrashCourseConfig = {
     tagline: "Expert tutors • Proven results • Trusted since 2019",
     blurbHeadline: "Crash Course Schedule",
     blurbBody:
-      "Registration is open for the September 2026 Secondary crash course, 5 to 12 September, for S1 to S3. Pick a level, subject and centre below, then click any class to register.",
+      "Registration is open for the September 2026 Secondary crash course, 5 to 13 September, for S1 to S3. Pick a level, subject and centre below, then click any class to register.",
     stats: "Trusted by over 20,000 students since 2019",
     heroImageSrc: "/zenith-banner.webp",
     heroImageAlt: "Zenith Education",

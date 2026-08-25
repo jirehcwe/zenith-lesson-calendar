@@ -1,0 +1,18 @@
+{
+  "subjectCodes": {
+    "P4 English": "P4Eng",
+    "P4 Math": "P4Math",
+    "P4 Science": "P4Sci",
+    "P5 English": "P5Eng",
+    "P5 Math": "P5Math",
+    "P5 Science": "P5Sci"
+  },
+  "prefillFields": {
+    "P4 English": "822255076",
+    "P4 Math": "1137033822",
+    "P4 Science": "1745400898",
+    "P5 English": "2096830254",
+    "P5 Math": "1480143045",
+    "P5 Science": "1945975074"
+  }
+}
