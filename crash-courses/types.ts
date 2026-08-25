@@ -59,9 +59,22 @@ export type MockExamConfig = {
   variantLabel: string;
   // Form URL. No SCHEDULE/PROMOCODE placeholders required — this URL is
   // used as-is (e.g. a Jotform that doesn't take prefill query params).
-  registrationFormUrl: string;
+  // OMIT it when the mock exam is booked through the slug's main form: rows
+  // then go through the normal prefill builder, using their own entry id.
+  registrationFormUrl?: string;
   // CTA button label for mock-exam rows (e.g. "Register for Exam Simulation").
-  ctaLabel: string;
+  // Omit to fall back to the regular label.
+  ctaLabel?: string;
+  // Optional second half of a paired mock exam — the walkthrough that follows
+  // the simulation, on another day and sometimes in another room. Rows whose
+  // `purpose` matches appear as their own Type in the filter and deliberately
+  // render NO call to action: a place is booked through the paired simulation
+  // slot, and `note` says so on the card and in the modal.
+  pairedVariant?: {
+    purposeMatch: string;
+    variantLabel: string;
+    note: string;
+  };
 };
 
 export type CrashCourseConfig = {
