@@ -42,7 +42,21 @@ if (!fs.existsSync(csvPath)) {
 
 type Row = Record<string, string>;
 const rows: Row[] = parse(fs.readFileSync(csvPath, "utf8"), {
-  columns: true,
+  // The source sheets repeat header names (Level, Subject, Centre, Tutor) at
+  // the helper columns AF-AM. csv-parse's default for a duplicate name is
+  // last-wins, which would silently read the formula-driven helper column
+  // instead of the one ops fills in — e.g. Subject "LSMath" instead of
+  // "Sec - LS Math". Mirror csv_to_sessions2json and suffix duplicates so the
+  // first appearance keeps the unsuffixed key.
+  columns: (headers: string[]) => {
+    const seen = new Map<string, number>();
+    return headers.map((h) => {
+      const t = (h ?? "").trim();
+      const n = (seen.get(t) ?? 0) + 1;
+      seen.set(t, n);
+      return n === 1 ? t : `${t}__${n}`;
+    });
+  },
   skip_empty_lines: true,
   // Keep the trailing space on an empty-topic "… | " form option intact.
   trim: false,
@@ -187,7 +201,15 @@ rows.forEach((row, i) => {
   const withTopic = `[${displaySubject}] ${centre} | ${dateText} | ${timeslot} | ${topic}`;
   const withoutTopic = `[${displaySubject}] ${centre} | ${dateText} | ${timeslot}`;
   const got = formOption.trimEnd();
-  if (got !== withTopic.trimEnd() && got !== withoutTopic.trimEnd()) {
+  if (!got) {
+    // An empty Form Option is how the sheet marks a class with no prefill.
+    // The converter passes it through and the UI renders "Class Full" with a
+    // disabled Register button — legitimate, but worth surfacing.
+    warn(
+      line,
+      `empty Form Option — ${displaySubject} at ${centre} on ${dateText} will render as Class Full`
+    );
+  } else if (got !== withTopic.trimEnd() && got !== withoutTopic.trimEnd()) {
     fail(
       line,
       `Form Option mismatch:\n      csv       "${formOption}"\n      expected  "${withTopic}"\n      or        "${withoutTopic}"`

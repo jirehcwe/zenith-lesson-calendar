@@ -4,7 +4,6 @@
     "S2 English": "LSEng",
     "S3 English": "SEng",
     "S3 IP English": "SEng(IP)",
-
     "S1 Math": "LSMath",
     "S2 Math": "LSMath",
     "S1 IP Math": "LSMath(IP)",
@@ -12,31 +11,27 @@
     "S3 IP Math": "SMath(IP)",
     "S3 A Math": "SMath(AM)",
     "S3 E Math": "SMath(EM)",
-
     "S1 Science": "LSScience",
-
     "S3 Pure Physics": "SPhy(Pure)",
     "S3 Combined Physics": "SPhy(Comb)",
     "S3 IP Physics": "SPhy(IP)",
-
     "S3 Pure Chemistry": "SChem(Pure)",
     "S3 Combined Chemistry": "SChem(Comb)",
     "S3 IP Chemistry": "SChem(IP)",
-
     "S3 Pure Biology": "SBio(Pure)",
     "S3 Combined Biology": "SBio(Comb)",
-
     "S3 Pure History": "SHis(Pure)",
     "S3 Combined History": "SHis(Comb)",
-
-    "S3 Social Studies": "SSoc"
+    "S3 Social Studies": "SSoc",
+    "S3 Pure Literature": "SLit(Pure)",
+    "S3 Combined Literature": "SLit(Comb)",
+    "S2 IP English": "LSEng(IP)"
   },
   "prefillFields": {
     "S1 English": "1016736042",
     "S2 English": "822255076",
     "S3 English": "136322790",
     "S3 IP English": "1249604192",
-
     "S1 Math": "1165110009",
     "S2 Math": "1137033822",
     "S1 IP Math": "857742220",
@@ -44,23 +39,20 @@
     "S3 IP Math": "1473865721",
     "S3 A Math": "211505445",
     "S3 E Math": "1542437949",
-
     "S1 Science": "862261665",
-
     "S3 Pure Physics": "1411978775",
     "S3 Combined Physics": "1411978775",
     "S3 IP Physics": "1981611879",
-
     "S3 Pure Chemistry": "530119122",
     "S3 Combined Chemistry": "530119122",
     "S3 IP Chemistry": "1815277042",
-
     "S3 Pure Biology": "672830523",
     "S3 Combined Biology": "672830523",
-
     "S3 Pure History": "2134367015",
     "S3 Combined History": "2134367015",
-
-    "S3 Social Studies": "202167365"
+    "S3 Social Studies": "202167365",
+    "S3 Pure Literature": "103510107",
+    "S3 Combined Literature": "103510107",
+    "S2 IP English": "260829673"
   }
 }
