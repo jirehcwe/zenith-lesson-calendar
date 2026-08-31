@@ -20,6 +20,7 @@ import {
   getAvailabilityLabel,
   isRegisterable,
   getCourseEndedCta,
+  getCalendarJumpDate,
 } from "@/utils/sessionAvailability";
 import CourseEndedPanel from "@/components/CourseEndedPanel";
 
@@ -65,17 +66,14 @@ export default function CalendarView({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Jump to the current week on mount when today falls inside the
-  // configured dateRange. Static export means initialDate is baked in at
-  // build time — without this, every visitor lands on the first week of
-  // the run regardless of when they open the page.
+  // Static export bakes initialDate in at build time, so on its own every
+  // visitor lands on whatever week was hardcoded. Jump to the week that
+  // actually matters: the opening week before the run starts, today during it.
   useEffect(() => {
     const api = calendarRef.current?.getApi();
     if (!api) return;
-    const today = new Date();
-    const start = new Date(config.dateRange.start);
-    const end = new Date(config.dateRange.end);
-    if (today >= start && today <= end) api.gotoDate(today);
+    const jumpTo = getCalendarJumpDate(config);
+    if (jumpTo) api.gotoDate(jumpTo);
   }, [config.dateRange.start, config.dateRange.end]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
