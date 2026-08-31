@@ -136,3 +136,23 @@ export function getCourseEndedCta(
     ctaHref: url.toString(),
   };
 }
+
+// Which date the calendar should open on, or null to keep the configured
+// initialDate. A baked-in initialDate is a build-time guess: for a course
+// starting mid-week it can point at a page that hides the opening days, since
+// weeks start on Monday. So:
+//   - before the run starts -> the first day, so the opening week is visible
+//   - during the run        -> today
+//   - after it ends         -> null; the course-ended overlay covers the grid
+export function getCalendarJumpDate(
+  config: Pick<CrashCourseConfig, "dateRange">,
+  now: Date = new Date()
+): Date | null {
+  const start = parseYmdAtMidnight(config.dateRange.start);
+  const end = parseYmdAtMidnight(config.dateRange.end);
+  if (!start || !end) return null;
+  const today = startOfDay(now);
+  if (today < start) return start;
+  if (today <= end) return today;
+  return null;
+}
