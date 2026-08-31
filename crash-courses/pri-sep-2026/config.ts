@@ -26,7 +26,7 @@ const config: CrashCourseConfig = {
     description:
       "Browse and register for the September 2026 Zenith Primary Crash Course.",
   },
-  dateRange: { start: "2026-09-06", end: "2026-09-15" },
+  dateRange: { start: "2026-09-04", end: "2026-09-15" },
   year: 2026,
   subjectColors: {
     "P4 English": { backgroundColor: ENGLISH, textColor: BLACK },
@@ -65,7 +65,7 @@ const config: CrashCourseConfig = {
     title: "Zenith Primary\n2026 September Crash Course",
     tagline: "Expert tutors • Proven results • Trusted since 2019",
     blurbBody:
-      "Registration is open for the September 2026 Primary crash course, 6 to 15 September, for P4 and P5, plus P5 and P6 mock exams. Pick a level, subject and centre below, then click any class to register.",
+      "Registration is open for the September 2026 Primary crash course, 4 to 15 September, for P4 and P5, plus P5 and P6 mock exams. Pick a level, subject and centre below, then click any class to register.",
     stats: "Trusted by over 20,000 students since 2019",
     heroImageSrc: "/zenith_banner_alt.webp",
     heroImageAlt: "Zenith Education",
@@ -80,7 +80,7 @@ const config: CrashCourseConfig = {
     initialDate: "2026-09-07",
     slotMinTime: "08:00:00",
     slotMaxTime: "22:00:00",
-    listViewMinDate: "2026-09-06",
+    listViewMinDate: "2026-09-04",
     tip: {
       label: "Pro Tip",
       body: "Use the filters to narrow down by level, subject or centre. Click any class for the prefilled registration link.",
