@@ -4,6 +4,7 @@ import {
   isRegisterable,
   isCourseOver,
   getCourseEndedCta,
+  getCalendarJumpDate,
 } from "../sessionAvailability";
 import type { Session } from "@/types";
 
@@ -223,5 +224,40 @@ describe("getCourseEndedCta", () => {
   it("returns null when the slug has no closingBanner/trialRedirect", () => {
     const bare = { dateRange: endedConfig.dateRange };
     expect(getCourseEndedCta(bare, new Date(2026, 6, 1))).toBeNull();
+  });
+});
+
+describe("getCalendarJumpDate", () => {
+  const config = { dateRange: { start: "2026-09-04", end: "2026-09-15" } };
+
+  it("opens on the first day when the run has not started", () => {
+    // 31 Aug — the bug: a hardcoded initialDate of 07 Sep put 4-6 Sep on the
+    // previous page, so the opening classes were invisible by default.
+    const d = getCalendarJumpDate(config, new Date(2026, 7, 31));
+    expect(d).toEqual(new Date(2026, 8, 4));
+  });
+
+  it("opens on today while the run is on", () => {
+    const d = getCalendarJumpDate(config, new Date(2026, 8, 9, 14, 0));
+    expect(d).toEqual(new Date(2026, 8, 9));
+  });
+
+  it("still jumps on the first and last day of the run", () => {
+    expect(getCalendarJumpDate(config, new Date(2026, 8, 4, 23, 0))).toEqual(
+      new Date(2026, 8, 4)
+    );
+    expect(getCalendarJumpDate(config, new Date(2026, 8, 15, 23, 0))).toEqual(
+      new Date(2026, 8, 15)
+    );
+  });
+
+  it("leaves the configured initialDate alone once the run is over", () => {
+    expect(getCalendarJumpDate(config, new Date(2026, 8, 16))).toBeNull();
+  });
+
+  it("returns null on a malformed range rather than guessing", () => {
+    expect(
+      getCalendarJumpDate({ dateRange: { start: "nope", end: "2026-09-15" } })
+    ).toBeNull();
   });
 });

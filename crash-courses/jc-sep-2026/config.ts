@@ -48,7 +48,7 @@ const config: CrashCourseConfig = {
   },
   calendar: {
     firstDay: 1,
-    initialDate: "2026-09-07",
+    initialDate: "2026-09-04",
     slotMinTime: "09:00:00",
     slotMaxTime: "20:00:00",
     listViewMinDate: "2026-09-04",
