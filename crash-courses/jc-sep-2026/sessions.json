@@ -75,7 +75,7 @@
     "date": "08 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "[J1 Biology] Tan Kah Kee | 08 Sep (Tue) | 10:00AM - 01:00PM | Control of Eukaryotic Gene Expression",
+    "prefill": "",
     "prefillField": "737212271",
     "displaySubject": "J1 Biology"
   },
@@ -155,7 +155,7 @@
     "date": "10 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
-    "prefill": "[J1 Chemistry] Paya Lebar | 10 Sep (Thu) | 01:30PM - 04:30PM | Organic Chemistry (Isomerism - Alkenes)",
+    "prefill": "",
     "prefillField": "600100063",
     "displaySubject": "J1 Chemistry"
   },
@@ -219,7 +219,7 @@
     "date": "10 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "[J1 Biology] Marymount | 10 Sep (Thu) | 10:00AM - 01:00PM | Control of Eukaryotic Gene Expression",
+    "prefill": "",
     "prefillField": "737212271",
     "displaySubject": "J1 Biology"
   },
@@ -235,7 +235,7 @@
     "date": "07 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "[J1 Chemistry] Tampines | 07 Sep (Mon) | 10:00AM - 01:00PM | Organic Chemistry (Isomerism - Alkenes)",
+    "prefill": "",
     "prefillField": "600100063",
     "displaySubject": "J1 Chemistry"
   },
@@ -251,7 +251,7 @@
     "date": "09 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
-    "prefill": "[J1 Biology] Tampines | 09 Sep (Wed) | 01:30PM - 04:30PM | Control of Eukaryotic Gene Expression",
+    "prefill": "",
     "prefillField": "737212271",
     "displaySubject": "J1 Biology"
   },
@@ -267,7 +267,7 @@
     "date": "10 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
-    "prefill": "[J1 Physics] Tampines | 10 Sep (Thu) | 01:30PM - 04:30PM | Gravitational Field",
+    "prefill": "",
     "prefillField": "2067436543",
     "displaySubject": "J1 Physics"
   },
@@ -299,7 +299,7 @@
     "date": "13 Sep",
     "startTime": "11:00 AM",
     "endTime": "2:00 PM",
-    "prefill": "[J1 Physics] Tampines | 13 Sep (Sun) | 11:00AM - 02:00PM | Superposition",
+    "prefill": "",
     "prefillField": "2067436543",
     "displaySubject": "J1 Physics"
   },
@@ -347,7 +347,7 @@
     "date": "10 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
-    "prefill": "[J1 Physics] Bishan | 10 Sep (Thu) | 01:30PM - 04:30PM | Gravitational Field",
+    "prefill": "",
     "prefillField": "2067436543",
     "displaySubject": "J1 Physics"
   },
@@ -379,7 +379,7 @@
     "date": "07 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "[J1 Biology] Bukit Panjang | 07 Sep (Mon) | 10:00AM - 01:00PM | Control of Eukaryotic Gene Expression",
+    "prefill": "",
     "prefillField": "737212271",
     "displaySubject": "J1 Biology"
   },
@@ -507,7 +507,7 @@
     "date": "07 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
-    "prefill": "",
+    "prefill": "[J1 Chemistry] Kovan | 07 Sep (Mon) | 01:30PM - 04:30PM | Organic Chemistry (Isomerism - Alkenes)",
     "prefillField": "600100063",
     "displaySubject": "J1 Chemistry"
   },
@@ -587,7 +587,7 @@
     "date": "08 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
-    "prefill": "[J1 Chemistry] Serangoon | 08 Sep (Tue) | 01:30PM - 04:30PM | Reaction Kinetics",
+    "prefill": "",
     "prefillField": "600100063",
     "displaySubject": "J1 Chemistry"
   },
@@ -651,7 +651,7 @@
     "date": "10 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "[J1 Chemistry] Jurong Point | 10 Sep (Thu) | 10:00AM - 01:00PM | Organic Chemistry (Isomerism - Alkenes)",
+    "prefill": "",
     "prefillField": "600100063",
     "displaySubject": "J1 Chemistry"
   },
@@ -795,7 +795,7 @@
     "date": "13 Sep",
     "startTime": "4:00 PM",
     "endTime": "7:00 PM",
-    "prefill": "[J1 Economics] Tampines | 13 Sep (Sun) | 04:00PM - 07:00PM | Firms and Decisions (Mainstream)",
+    "prefill": "",
     "prefillField": "1188715475",
     "displaySubject": "J1 Economics"
   },
