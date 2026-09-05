@@ -379,7 +379,7 @@
     "date": "07 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "[J1 Biology] Bukit Panjang | 07 Sep (Mon) | 10:00AM - 01:00PM | Control of Eukaryotic Gene Expression",
+    "prefill": "",
     "prefillField": "737212271",
     "displaySubject": "J1 Biology"
   },
@@ -443,7 +443,7 @@
     "date": "08 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
-    "prefill": "",
+    "prefill": "[J1 Physics] Jurong East | 08 Sep (Tue) | 01:30PM - 04:30PM | Gravitational Field",
     "prefillField": "2067436543",
     "displaySubject": "J1 Physics"
   },
@@ -475,7 +475,7 @@
     "date": "08 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
-    "prefill": "",
+    "prefill": "[J1 Chemistry] Kovan | 08 Sep (Tue) | 01:30PM - 04:30PM | Organic Chemistry (Isomerism - Alkenes)",
     "prefillField": "600100063",
     "displaySubject": "J1 Chemistry"
   },
@@ -539,7 +539,7 @@
     "date": "11 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
-    "prefill": "",
+    "prefill": "[J1 Chemistry] Kovan | 11 Sep (Fri) | 01:30PM - 04:30PM | Reaction Kinetics",
     "prefillField": "600100063",
     "displaySubject": "J1 Chemistry"
   },
@@ -555,7 +555,7 @@
     "date": "08 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
-    "prefill": "[J1 Physics] Serangoon | 08 Sep (Tue) | 01:30PM - 04:30PM | Gravitational Field",
+    "prefill": "",
     "prefillField": "2067436543",
     "displaySubject": "J1 Physics"
   },
@@ -715,7 +715,7 @@
     "date": "09 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
-    "prefill": "",
+    "prefill": "[J1 Chemistry] Jurong East | 09 Sep (Wed) | 01:30PM - 04:30PM | Organic Chemistry (Isomerism - Alkenes)",
     "prefillField": "600100063",
     "displaySubject": "J1 Chemistry"
   },
@@ -811,7 +811,7 @@
     "date": "07 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "",
+    "prefill": "[J1 Chemistry] Kovan | 07 Sep (Mon) | 10:00AM - 01:00PM | Organic Chemistry (Isomerism - Alkenes)",
     "prefillField": "600100063",
     "displaySubject": "J1 Chemistry"
   },
