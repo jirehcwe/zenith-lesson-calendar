@@ -123,7 +123,7 @@
     "date": "08 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "",
+    "prefill": "[S3 Pure Chemistry] Buona Vista | 08 Sep (Tue) | 01:00PM - 03:00PM",
     "prefillField": "530119122",
     "displaySubject": "S3 Pure Chemistry"
   },
@@ -987,7 +987,7 @@
     "date": "10 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S3 IP Chemistry] Bishan | 10 Sep (Thu) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "1815277042",
     "displaySubject": "S3 IP Chemistry"
   },
@@ -1003,7 +1003,7 @@
     "date": "11 Sep",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "",
+    "prefill": "[S3 Pure Chemistry] Bishan | 11 Sep (Fri) | 10:00AM - 12:00PM",
     "prefillField": "530119122",
     "displaySubject": "S3 Pure Chemistry"
   },
@@ -1099,7 +1099,7 @@
     "date": "08 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "",
+    "prefill": "[S3 English] Bishan | 08 Sep (Tue) | 01:00PM - 03:00PM",
     "prefillField": "136322790",
     "displaySubject": "S3 English"
   },
@@ -1147,7 +1147,7 @@
     "date": "08 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S1 Math] Bishan | 08 Sep (Tue) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "1165110009",
     "displaySubject": "S1 Math"
   },
@@ -1211,7 +1211,7 @@
     "date": "09 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "",
+    "prefill": "[S3 Pure Physics] Bishan | 09 Sep (Wed) | 01:00PM - 03:00PM",
     "prefillField": "1411978775",
     "displaySubject": "S3 Pure Physics"
   },
@@ -1243,7 +1243,7 @@
     "date": "06 Sep",
     "startTime": "11:15 AM",
     "endTime": "1:15 PM",
-    "prefill": "[S3 E Math] Bukit Panjang | 06 Sep (Sun) | 11:15AM - 01:15PM",
+    "prefill": "",
     "prefillField": "1542437949",
     "displaySubject": "S3 E Math"
   },
@@ -1547,7 +1547,7 @@
     "date": "06 Sep",
     "startTime": "9:00 AM",
     "endTime": "11:00 AM",
-    "prefill": "[S1 English] Serangoon | 06 Sep (Sun) | 09:00AM - 11:00AM",
+    "prefill": "",
     "prefillField": "1016736042",
     "displaySubject": "S1 English"
   },
@@ -1563,7 +1563,7 @@
     "date": "06 Sep",
     "startTime": "11:15 AM",
     "endTime": "1:15 PM",
-    "prefill": "[S2 English] Serangoon | 06 Sep (Sun) | 11:15AM - 01:15PM",
+    "prefill": "",
     "prefillField": "822255076",
     "displaySubject": "S2 English"
   },
@@ -1579,7 +1579,7 @@
     "date": "06 Sep",
     "startTime": "2:00 PM",
     "endTime": "4:00 PM",
-    "prefill": "[S3 English] Serangoon | 06 Sep (Sun) | 02:00PM - 04:00PM",
+    "prefill": "",
     "prefillField": "136322790",
     "displaySubject": "S3 English"
   },
@@ -2203,7 +2203,7 @@
     "date": "06 Sep",
     "startTime": "11:15 AM",
     "endTime": "1:15 PM",
-    "prefill": "[S3 Combined Physics] Jurong Point | 06 Sep (Sun) | 11:15AM - 01:15PM",
+    "prefill": "",
     "prefillField": "1411978775",
     "displaySubject": "S3 Combined Physics"
   },
@@ -2219,7 +2219,7 @@
     "date": "06 Sep",
     "startTime": "2:00 PM",
     "endTime": "4:00 PM",
-    "prefill": "[S3 Pure Physics] Jurong Point | 06 Sep (Sun) | 02:00PM - 04:00PM",
+    "prefill": "",
     "prefillField": "1411978775",
     "displaySubject": "S3 Pure Physics"
   },
@@ -2571,7 +2571,7 @@
     "date": "06 Sep",
     "startTime": "9:00 AM",
     "endTime": "11:00 AM",
-    "prefill": "[S2 Math] Jurong East | 06 Sep (Sun) | 09:00AM - 11:00AM",
+    "prefill": "",
     "prefillField": "1137033822",
     "displaySubject": "S2 Math"
   },
@@ -2587,7 +2587,7 @@
     "date": "06 Sep",
     "startTime": "11:15 AM",
     "endTime": "1:15 PM",
-    "prefill": "[S1 Math] Jurong East | 06 Sep (Sun) | 11:15AM - 01:15PM",
+    "prefill": "",
     "prefillField": "1165110009",
     "displaySubject": "S1 Math"
   },
@@ -2603,7 +2603,7 @@
     "date": "06 Sep",
     "startTime": "2:00 PM",
     "endTime": "4:00 PM",
-    "prefill": "[S3 A Math] Jurong East | 06 Sep (Sun) | 02:00PM - 04:00PM",
+    "prefill": "",
     "prefillField": "211505445",
     "displaySubject": "S3 A Math"
   },
