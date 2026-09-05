@@ -59,8 +59,17 @@ const sampleSessions: Session[] = [
 ];
 
 describe("ListView", () => {
+  // The fixtures below are dated 06 and 09 Sep 2026. Availability is relative to
+  // "now": a session dated today or earlier reads as "Class Ended", whatever its
+  // prefill. Without a fixed clock these tests pass until 06 Sep 2026 and fail
+  // every day after. Pin the clock so they assert the same thing forever.
   beforeEach(() => {
+    jest.useFakeTimers({ now: new Date("2026-09-01T12:00:00Z") });
     window.history.pushState({}, "", "/");
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   it("renders a card per session passed in", () => {
