@@ -65,7 +65,7 @@ const rows: Row[] = parse(fs.readFileSync(csvPath, "utf8"), {
 
 const failures: string[] = [];
 const warnings: string[] = [];
-const fail = (line: number, msg: string) =>
+const addFailure = (line: number, msg: string) =>
   failures.push(`row ${line}: ${msg}`);
 const warn = (line: number, msg: string) =>
   warnings.push(`row ${line}: ${msg}`);
@@ -149,7 +149,7 @@ rows.forEach((row, i) => {
   // -- 1. No spreadsheet error values leaked into the export ---------------
   for (const [k, v] of Object.entries(row)) {
     if (typeof v === "string" && BAD_VALUES.test(v)) {
-      fail(line, `column "${k}" contains a spreadsheet error value: ${v}`);
+      addFailure(line, `column "${k}" contains a spreadsheet error value: ${v}`);
     }
   }
 
@@ -157,7 +157,7 @@ rows.forEach((row, i) => {
   // Guards against a field being copied correctly in one place and not the other.
   const parts = code.split("<>");
   if (parts.length !== 11) {
-    fail(line, `Schedule Codes has ${parts.length} <>-parts, expected 11`);
+    addFailure(line, `Schedule Codes has ${parts.length} <>-parts, expected 11`);
   } else {
     const [
       aPurpose, aLevel, aSubject, aTutor, aDay,
@@ -165,7 +165,7 @@ rows.forEach((row, i) => {
     ] = parts;
     const expect = (got: string, want: string, label: string) => {
       if (got.trim() !== want.trim()) {
-        fail(line, `${label}: Schedule Codes says "${got}", column says "${want}"`);
+        addFailure(line, `${label}: Schedule Codes says "${got}", column says "${want}"`);
       }
     };
     expect(aPurpose, row["Purpose"] ?? "", "Purpose");
@@ -186,9 +186,9 @@ rows.forEach((row, i) => {
     const aDate = parseDateText(aDateShort);
     const jDate = parseDateText(dateText);
     if (!aDate || !jDate) {
-      fail(line, `unparseable date ("${aDateShort}" / "${dateText}")`);
+      addFailure(line, `unparseable date ("${aDateShort}" / "${dateText}")`);
     } else if (aDate.day !== jDate.day || aDate.month !== jDate.month) {
-      fail(line, `date mismatch: Schedule Codes "${aDateShort}" vs Date (text) "${dateText}"`);
+      addFailure(line, `date mismatch: Schedule Codes "${aDateShort}" vs Date (text) "${dateText}"`);
     }
   }
 
@@ -210,7 +210,7 @@ rows.forEach((row, i) => {
       `empty Form Option — ${displaySubject} at ${centre} on ${dateText} will render as Class Full`
     );
   } else if (got !== withTopic.trimEnd() && got !== withoutTopic.trimEnd()) {
-    fail(
+    addFailure(
       line,
       `Form Option mismatch:\n      csv       "${formOption}"\n      expected  "${withTopic}"\n      or        "${withoutTopic}"`
     );
@@ -225,23 +225,23 @@ rows.forEach((row, i) => {
   const jDate = parseDateText(dateText);
   if (numeric && jDate) {
     if (Number(numeric[1]) !== jDate.month || Number(numeric[2]) !== jDate.day) {
-      fail(line, `Date "${row["Date"]}" disagrees with Date (text) "${dateText}"`);
+      addFailure(line, `Date "${row["Date"]}" disagrees with Date (text) "${dateText}"`);
     }
   } else if (!numeric) {
-    fail(line, `unparseable Date column "${row["Date"]}"`);
+    addFailure(line, `unparseable Date column "${row["Date"]}"`);
   }
 
   // -- 5. Timeslot is well formed and ordered ------------------------------
   const slotParts = timeslot.split(/\s*-\s*/);
   if (slotParts.length !== 2) {
-    fail(line, `unparseable timeslot "${timeslot}"`);
+    addFailure(line, `unparseable timeslot "${timeslot}"`);
   } else {
     const s = toMinutes(slotParts[0]);
     const e = toMinutes(slotParts[1]);
     if (s === null || e === null) {
-      fail(line, `unparseable timeslot "${timeslot}"`);
+      addFailure(line, `unparseable timeslot "${timeslot}"`);
     } else if (e <= s) {
-      fail(line, `timeslot ends before it starts: "${timeslot}"`);
+      addFailure(line, `timeslot ends before it starts: "${timeslot}"`);
     } else {
       // Start Time is allowed to trail Timeslot by up to 30 min (documented
       // historical drift), but must never be later than it.
@@ -265,7 +265,7 @@ rows.forEach((row, i) => {
     const d = new Date(2000 + 26, jDate.month - 1, jDate.day);
     d.setFullYear(windowStart.getFullYear());
     if (d < windowStart || d > windowEnd) {
-      fail(line, `date ${dateText} falls outside the window ${windowArg}`);
+      addFailure(line, `date ${dateText} falls outside the window ${windowArg}`);
     }
   }
 

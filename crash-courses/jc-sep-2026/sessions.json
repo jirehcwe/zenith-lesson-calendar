@@ -59,7 +59,7 @@
     "date": "07 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "[J1 Physics] Tan Kah Kee | 07 Sep (Mon) | 10:00AM - 01:00PM | Superposition",
+    "prefill": "",
     "prefillField": "2067436543",
     "displaySubject": "J1 Physics"
   },
@@ -91,7 +91,7 @@
     "date": "10 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
-    "prefill": "[J1 Chemistry] Tan Kah Kee | 10 Sep (Thu) | 01:30PM - 04:30PM | Reaction Kinetics",
+    "prefill": "",
     "prefillField": "600100063",
     "displaySubject": "J1 Chemistry"
   },
@@ -267,7 +267,7 @@
     "date": "10 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
-    "prefill": "",
+    "prefill": "[J1 Physics] Tampines | 10 Sep (Thu) | 01:30PM - 04:30PM | Gravitational Field",
     "prefillField": "2067436543",
     "displaySubject": "J1 Physics"
   },
@@ -379,7 +379,7 @@
     "date": "07 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "",
+    "prefill": "[J1 Biology] Bukit Panjang | 07 Sep (Mon) | 10:00AM - 01:00PM | Control of Eukaryotic Gene Expression",
     "prefillField": "737212271",
     "displaySubject": "J1 Biology"
   },
@@ -427,7 +427,7 @@
     "date": "08 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "[J1 Physics] Jurong East | 08 Sep (Tue) | 10:00AM - 01:00PM | Superposition",
+    "prefill": "",
     "prefillField": "2067436543",
     "displaySubject": "J1 Physics"
   },
@@ -443,7 +443,7 @@
     "date": "08 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
-    "prefill": "[J1 Physics] Jurong East | 08 Sep (Tue) | 01:30PM - 04:30PM | Gravitational Field",
+    "prefill": "",
     "prefillField": "2067436543",
     "displaySubject": "J1 Physics"
   },
@@ -507,7 +507,7 @@
     "date": "07 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
-    "prefill": "[J1 Chemistry] Kovan | 07 Sep (Mon) | 01:30PM - 04:30PM | Organic Chemistry (Isomerism - Alkenes)",
+    "prefill": "",
     "prefillField": "600100063",
     "displaySubject": "J1 Chemistry"
   },
@@ -539,7 +539,7 @@
     "date": "11 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
-    "prefill": "[J1 Chemistry] Kovan | 11 Sep (Fri) | 01:30PM - 04:30PM | Reaction Kinetics",
+    "prefill": "",
     "prefillField": "600100063",
     "displaySubject": "J1 Chemistry"
   },
@@ -725,13 +725,13 @@
     "level": "J1 2026",
     "topic": "Acid-Base Equilibria (Chemistry of Aqueous Solution 1)",
     "tutor": "Ryan",
-    "centre": "Buona Vista",
-    "classroom": "BV-2 (L3)",
-    "capacity": "18",
+    "centre": "Potong Pasir",
+    "classroom": "PP-3 (L2)",
+    "capacity": "25",
     "date": "08 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "[J1 Chemistry] Buona Vista | 08 Sep (Tue) | 10:00AM - 01:00PM | Acid-Base Equilibria (Chemistry of Aqueous Solution 1)",
+    "prefill": "[J1 Chemistry] Potong Pasir | 08 Sep (Tue) | 10:00AM - 01:00PM | Acid-Base Equilibria (Chemistry of Aqueous Solution 1)",
     "prefillField": "600100063",
     "displaySubject": "J1 Chemistry"
   },
@@ -811,7 +811,7 @@
     "date": "07 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "[J1 Chemistry] Kovan | 07 Sep (Mon) | 10:00AM - 01:00PM | Organic Chemistry (Isomerism - Alkenes)",
+    "prefill": "",
     "prefillField": "600100063",
     "displaySubject": "J1 Chemistry"
   },
@@ -827,7 +827,7 @@
     "date": "04 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "[J1 Economics] Bishan | 04 Sep (Fri) | 10:00AM - 01:00PM | Comparison of Standard of living (HCI, NYJC)",
+    "prefill": "",
     "prefillField": "1188715475",
     "displaySubject": "J1 Economics"
   },
@@ -843,7 +843,7 @@
     "date": "04 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
-    "prefill": "[J1 Economics] Bishan | 04 Sep (Fri) | 01:30PM - 04:30PM | Macroeconomic Policies (NYJC)",
+    "prefill": "",
     "prefillField": "1188715475",
     "displaySubject": "J1 Economics"
   }
