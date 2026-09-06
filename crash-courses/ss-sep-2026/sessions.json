@@ -219,7 +219,7 @@
     "date": "07 Sep",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "[S1 Math] Buona Vista | 07 Sep (Mon) | 10:00AM - 12:00PM",
+    "prefill": "",
     "prefillField": "1165110009",
     "displaySubject": "S1 Math"
   },
@@ -235,7 +235,7 @@
     "date": "07 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S2 Math] Buona Vista | 07 Sep (Mon) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "1137033822",
     "displaySubject": "S2 Math"
   },
@@ -267,7 +267,7 @@
     "date": "07 Sep",
     "startTime": "12:00 PM",
     "endTime": "2:00 PM",
-    "prefill": "[S2 Math] Tan Kah Kee | 07 Sep (Mon) | 12:00PM - 02:00PM",
+    "prefill": "",
     "prefillField": "1137033822",
     "displaySubject": "S2 Math"
   },
@@ -283,7 +283,7 @@
     "date": "07 Sep",
     "startTime": "2:00 PM",
     "endTime": "4:00 PM",
-    "prefill": "[S3 A Math] Tan Kah Kee | 07 Sep (Mon) | 02:00PM - 04:00PM",
+    "prefill": "",
     "prefillField": "211505445",
     "displaySubject": "S3 A Math"
   },
@@ -443,7 +443,7 @@
     "date": "07 Sep",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "[S3 E Math] Potong Pasir | 07 Sep (Mon) | 10:00AM - 12:00PM",
+    "prefill": "",
     "prefillField": "1542437949",
     "displaySubject": "S3 E Math"
   },
@@ -459,7 +459,7 @@
     "date": "07 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S3 A Math] Potong Pasir | 07 Sep (Mon) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "211505445",
     "displaySubject": "S3 A Math"
   },
@@ -556,22 +556,6 @@
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
     "prefill": "[S3 Combined History] Potong Pasir | 08 Sep (Tue) | 01:00PM - 03:00PM",
-    "prefillField": "2134367015",
-    "displaySubject": "S3 Combined History"
-  },
-  {
-    "purpose": "Sec SepCC",
-    "subject": "SHis(Comb)",
-    "level": "S3 2026",
-    "topic": "Outbreak of WW2 SBQ & SEQ",
-    "tutor": "Evan",
-    "centre": "Potong Pasir",
-    "classroom": "PP-7",
-    "capacity": "16",
-    "date": "09 Sep",
-    "startTime": "1:00 PM",
-    "endTime": "3:00 PM",
-    "prefill": "[S3 Combined History] Potong Pasir | 09 Sep (Wed) | 01:00PM - 03:00PM",
     "prefillField": "2134367015",
     "displaySubject": "S3 Combined History"
   },
@@ -763,7 +747,7 @@
     "date": "09 Sep",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "",
+    "prefill": "[S3 Pure Chemistry] Tampines | 09 Sep (Wed) | 10:00AM - 12:00PM",
     "prefillField": "530119122",
     "displaySubject": "S3 Pure Chemistry"
   },
@@ -827,7 +811,7 @@
     "date": "07 Sep",
     "startTime": "11:15 AM",
     "endTime": "1:15 PM",
-    "prefill": "[S3 A Math] Tampines | 07 Sep (Mon) | 11:15AM - 01:15PM",
+    "prefill": "",
     "prefillField": "211505445",
     "displaySubject": "S3 A Math"
   },
@@ -843,7 +827,7 @@
     "date": "07 Sep",
     "startTime": "2:00 PM",
     "endTime": "4:00 PM",
-    "prefill": "[S3 E Math] Tampines | 07 Sep (Mon) | 02:00PM - 04:00PM",
+    "prefill": "",
     "prefillField": "1542437949",
     "displaySubject": "S3 E Math"
   },
@@ -891,7 +875,7 @@
     "date": "07 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S3 Combined History] Bishan | 07 Sep (Mon) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "2134367015",
     "displaySubject": "S3 Combined History"
   },
@@ -939,7 +923,7 @@
     "date": "07 Sep",
     "startTime": "3:00 PM",
     "endTime": "5:00 PM",
-    "prefill": "[S3 A Math] Bishan | 07 Sep (Mon) | 03:00PM - 05:00PM",
+    "prefill": "",
     "prefillField": "211505445",
     "displaySubject": "S3 A Math"
   },
@@ -987,7 +971,7 @@
     "date": "10 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "",
+    "prefill": "[S3 IP Chemistry] Bishan | 10 Sep (Thu) | 01:00PM - 03:00PM",
     "prefillField": "1815277042",
     "displaySubject": "S3 IP Chemistry"
   },
@@ -1099,7 +1083,7 @@
     "date": "08 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S3 English] Bishan | 08 Sep (Tue) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "136322790",
     "displaySubject": "S3 English"
   },
@@ -1211,7 +1195,7 @@
     "date": "09 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S3 Pure Physics] Bishan | 09 Sep (Wed) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "1411978775",
     "displaySubject": "S3 Pure Physics"
   },
@@ -1467,7 +1451,7 @@
     "date": "07 Sep",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "[S2 Math] Serangoon | 07 Sep (Mon) | 10:00AM - 12:00PM",
+    "prefill": "",
     "prefillField": "1137033822",
     "displaySubject": "S2 Math"
   },
@@ -1483,7 +1467,7 @@
     "date": "07 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S3 A Math] Serangoon | 07 Sep (Mon) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "211505445",
     "displaySubject": "S3 A Math"
   },
@@ -1723,7 +1707,7 @@
     "date": "07 Sep",
     "startTime": "12:00 PM",
     "endTime": "2:00 PM",
-    "prefill": "[S1 English] Serangoon | 07 Sep (Mon) | 12:00PM - 02:00PM",
+    "prefill": "",
     "prefillField": "1016736042",
     "displaySubject": "S1 English"
   },
@@ -1739,7 +1723,7 @@
     "date": "07 Sep",
     "startTime": "2:00 PM",
     "endTime": "4:00 PM",
-    "prefill": "[S2 English] Serangoon | 07 Sep (Mon) | 02:00PM - 04:00PM",
+    "prefill": "",
     "prefillField": "822255076",
     "displaySubject": "S2 English"
   },
@@ -1755,7 +1739,7 @@
     "date": "07 Sep",
     "startTime": "4:15 PM",
     "endTime": "6:15 PM",
-    "prefill": "[S3 English] Serangoon | 07 Sep (Mon) | 04:15PM - 06:15PM",
+    "prefill": "",
     "prefillField": "136322790",
     "displaySubject": "S3 English"
   },
@@ -1803,7 +1787,7 @@
     "date": "07 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S3 Combined Physics] Jurong Point | 07 Sep (Mon) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "1411978775",
     "displaySubject": "S3 Combined Physics"
   },
@@ -1931,7 +1915,7 @@
     "date": "07 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S3 Pure Physics] Jurong Point | 07 Sep (Mon) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "1411978775",
     "displaySubject": "S3 Pure Physics"
   },
@@ -1947,7 +1931,7 @@
     "date": "07 Sep",
     "startTime": "5:00 PM",
     "endTime": "7:00 PM",
-    "prefill": "[S3 Combined Physics] Jurong Point | 07 Sep (Mon) | 05:00PM - 07:00PM",
+    "prefill": "",
     "prefillField": "1411978775",
     "displaySubject": "S3 Combined Physics"
   },
@@ -1963,7 +1947,7 @@
     "date": "07 Sep",
     "startTime": "7:15 PM",
     "endTime": "9:15 PM",
-    "prefill": "[S3 Pure Physics] Jurong Point | 07 Sep (Mon) | 07:15PM - 09:15PM",
+    "prefill": "",
     "prefillField": "1411978775",
     "displaySubject": "S3 Pure Physics"
   },
@@ -2091,7 +2075,7 @@
     "date": "07 Sep",
     "startTime": "5:00 PM",
     "endTime": "7:00 PM",
-    "prefill": "[S3 E Math] Jurong Point | 07 Sep (Mon) | 05:00PM - 07:00PM",
+    "prefill": "",
     "prefillField": "1542437949",
     "displaySubject": "S3 E Math"
   },
@@ -2107,7 +2091,7 @@
     "date": "07 Sep",
     "startTime": "7:15 PM",
     "endTime": "9:15 PM",
-    "prefill": "[S3 A Math] Jurong Point | 07 Sep (Mon) | 07:15PM - 09:15PM",
+    "prefill": "",
     "prefillField": "211505445",
     "displaySubject": "S3 A Math"
   },
@@ -2235,7 +2219,7 @@
     "date": "07 Sep",
     "startTime": "5:00 PM",
     "endTime": "7:00 PM",
-    "prefill": "[S1 Math] Jurong Point | 07 Sep (Mon) | 05:00PM - 07:00PM",
+    "prefill": "",
     "prefillField": "1165110009",
     "displaySubject": "S1 Math"
   },
@@ -2379,7 +2363,7 @@
     "date": "07 Sep",
     "startTime": "5:00 PM",
     "endTime": "7:00 PM",
-    "prefill": "[S3 IP Physics] King Albert Park | 07 Sep (Mon) | 05:00PM - 07:00PM",
+    "prefill": "",
     "prefillField": "1981611879",
     "displaySubject": "S3 IP Physics"
   },
@@ -2779,7 +2763,7 @@
     "date": "07 Sep",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "[S1 Math] Woodlands | 07 Sep (Mon) | 10:00AM - 12:00PM",
+    "prefill": "",
     "prefillField": "1165110009",
     "displaySubject": "S1 Math"
   },
@@ -2853,22 +2837,6 @@
     "level": "S3 2026",
     "topic": "Outbreak of WW2 SBQ & SEQ",
     "tutor": "Evan",
-    "centre": "Potong Pasir",
-    "classroom": "PP-7",
-    "capacity": "16",
-    "date": "09 Sep",
-    "startTime": "1:00 PM",
-    "endTime": "3:00 PM",
-    "prefill": "[S3 Pure History] Potong Pasir | 09 Sep (Wed) | 01:00PM - 03:00PM",
-    "prefillField": "2134367015",
-    "displaySubject": "S3 Pure History"
-  },
-  {
-    "purpose": "Sec SepCC",
-    "subject": "SHis(Pure)",
-    "level": "S3 2026",
-    "topic": "Outbreak of WW2 SBQ & SEQ",
-    "tutor": "Evan",
     "centre": "Tampines",
     "classroom": "TP-2 (main)",
     "capacity": "22",
@@ -2891,7 +2859,7 @@
     "date": "07 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S3 Pure History] Bishan | 07 Sep (Mon) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "2134367015",
     "displaySubject": "S3 Pure History"
   },
