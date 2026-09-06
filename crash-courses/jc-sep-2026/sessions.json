@@ -427,7 +427,7 @@
     "date": "08 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "",
+    "prefill": "[J1 Physics] Jurong East | 08 Sep (Tue) | 10:00AM - 01:00PM | Superposition",
     "prefillField": "2067436543",
     "displaySubject": "J1 Physics"
   },
@@ -523,7 +523,7 @@
     "date": "07 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
-    "prefill": "[J1 Physics] Kovan | 07 Sep (Mon) | 01:30PM - 04:30PM | Gravitational Field",
+    "prefill": "",
     "prefillField": "2067436543",
     "displaySubject": "J1 Physics"
   },
@@ -539,7 +539,7 @@
     "date": "11 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
-    "prefill": "[J1 Chemistry] Kovan | 11 Sep (Fri) | 01:30PM - 04:30PM | Reaction Kinetics",
+    "prefill": "",
     "prefillField": "600100063",
     "displaySubject": "J1 Chemistry"
   },
@@ -571,7 +571,7 @@
     "date": "12 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
-    "prefill": "[J1 Physics] Kovan | 12 Sep (Sat) | 01:30PM - 04:30PM | Superposition",
+    "prefill": "",
     "prefillField": "2067436543",
     "displaySubject": "J1 Physics"
   },
@@ -763,7 +763,7 @@
     "date": "09 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "[J1 Chemistry] Tampines | 09 Sep (Wed) | 10:00AM - 01:00PM | Organic Chemistry (Isomerism - Alkenes)",
+    "prefill": "",
     "prefillField": "600100063",
     "displaySubject": "J1 Chemistry"
   },
@@ -811,7 +811,7 @@
     "date": "07 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "[J1 Chemistry] Kovan | 07 Sep (Mon) | 10:00AM - 01:00PM | Organic Chemistry (Isomerism - Alkenes)",
+    "prefill": "",
     "prefillField": "600100063",
     "displaySubject": "J1 Chemistry"
   },
