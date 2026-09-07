@@ -6,12 +6,12 @@
     "topic": "Similarity & Congruency, Volume and SA of Pyramids, Cones and Spheres",
     "tutor": "Vegas",
     "centre": "Buona Vista",
-    "classroom": "BV-1 (L3)",
+    "classroom": "BV-3 (L2)",
     "capacity": "28",
     "date": "08 Sep",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "[S2 Math] Buona Vista | 08 Sep (Tue) | 10:00AM - 12:00PM",
+    "prefill": "",
     "prefillField": "1137033822",
     "displaySubject": "S2 Math"
   },
@@ -123,7 +123,7 @@
     "date": "08 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S3 Pure Chemistry] Buona Vista | 08 Sep (Tue) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "530119122",
     "displaySubject": "S3 Pure Chemistry"
   },
@@ -251,7 +251,7 @@
     "date": "11 Sep",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "[S3 Pure Physics] Buona Vista | 11 Sep (Fri) | 10:00AM - 12:00PM",
+    "prefill": "",
     "prefillField": "1411978775",
     "displaySubject": "S3 Pure Physics"
   },
@@ -299,7 +299,7 @@
     "date": "08 Sep",
     "startTime": "2:00 PM",
     "endTime": "4:00 PM",
-    "prefill": "[S3 E Math] Tan Kah Kee | 08 Sep (Tue) | 02:00PM - 04:00PM",
+    "prefill": "",
     "prefillField": "1542437949",
     "displaySubject": "S3 E Math"
   },
@@ -411,7 +411,7 @@
     "date": "08 Sep",
     "startTime": "4:15 PM",
     "endTime": "6:15 PM",
-    "prefill": "[S3 IP Math] Tan Kah Kee | 08 Sep (Tue) | 04:15PM - 06:15PM",
+    "prefill": "",
     "prefillField": "1473865721",
     "displaySubject": "S3 IP Math"
   },
@@ -555,7 +555,7 @@
     "date": "08 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S3 Combined History] Potong Pasir | 08 Sep (Tue) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "2134367015",
     "displaySubject": "S3 Combined History"
   },
@@ -603,25 +603,9 @@
     "date": "08 Sep",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "[S3 Pure Physics] Paya Lebar | 08 Sep (Tue) | 10:00AM - 12:00PM",
+    "prefill": "",
     "prefillField": "1411978775",
     "displaySubject": "S3 Pure Physics"
-  },
-  {
-    "purpose": "Sec SepCC",
-    "subject": "SMath(AM)",
-    "level": "S3 2026",
-    "topic": "Trigonometry",
-    "tutor": "Keith",
-    "centre": "Paya Lebar",
-    "classroom": "KINEX-2",
-    "capacity": "30",
-    "date": "12 Sep",
-    "startTime": "2:00 PM",
-    "endTime": "4:00 PM",
-    "prefill": "[S3 A Math] Paya Lebar | 12 Sep (Sat) | 02:00PM - 04:00PM",
-    "prefillField": "211505445",
-    "displaySubject": "S3 A Math"
   },
   {
     "purpose": "Sec SepCC",
@@ -635,7 +619,7 @@
     "date": "08 Sep",
     "startTime": "12:00 PM",
     "endTime": "2:00 PM",
-    "prefill": "[S2 English] Paya Lebar | 08 Sep (Tue) | 12:00PM - 02:00PM",
+    "prefill": "",
     "prefillField": "822255076",
     "displaySubject": "S2 English"
   },
@@ -651,7 +635,7 @@
     "date": "08 Sep",
     "startTime": "2:00 PM",
     "endTime": "4:00 PM",
-    "prefill": "[S3 English] Paya Lebar | 08 Sep (Tue) | 02:00PM - 04:00PM",
+    "prefill": "",
     "prefillField": "136322790",
     "displaySubject": "S3 English"
   },
@@ -683,7 +667,7 @@
     "date": "08 Sep",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "[S1 English] Tampines | 08 Sep (Tue) | 10:00AM - 12:00PM",
+    "prefill": "",
     "prefillField": "1016736042",
     "displaySubject": "S1 English"
   },
@@ -731,7 +715,7 @@
     "date": "08 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S1 Science] Tampines | 08 Sep (Tue) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "862261665",
     "displaySubject": "S1 Science"
   },
@@ -891,7 +875,7 @@
     "date": "08 Sep",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "[S3 Pure Chemistry] Bishan | 08 Sep (Tue) | 10:00AM - 12:00PM",
+    "prefill": "",
     "prefillField": "530119122",
     "displaySubject": "S3 Pure Chemistry"
   },
@@ -1003,7 +987,7 @@
     "date": "08 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S3 Pure Physics] Bishan | 08 Sep (Tue) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "1411978775",
     "displaySubject": "S3 Pure Physics"
   },
@@ -1083,7 +1067,7 @@
     "date": "08 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S3 English] Bishan | 08 Sep (Tue) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "136322790",
     "displaySubject": "S3 English"
   },
@@ -1131,7 +1115,7 @@
     "date": "08 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S1 Math] Bishan | 08 Sep (Tue) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "1165110009",
     "displaySubject": "S1 Math"
   },
@@ -1147,7 +1131,7 @@
     "date": "08 Sep",
     "startTime": "3:00 PM",
     "endTime": "5:00 PM",
-    "prefill": "[S2 Math] Bishan | 08 Sep (Tue) | 03:00PM - 05:00PM",
+    "prefill": "",
     "prefillField": "1137033822",
     "displaySubject": "S2 Math"
   },
@@ -1163,7 +1147,7 @@
     "date": "08 Sep",
     "startTime": "5:00 PM",
     "endTime": "7:00 PM",
-    "prefill": "[S3 Pure Chemistry] Bishan | 08 Sep (Tue) | 05:00PM - 07:00PM",
+    "prefill": "",
     "prefillField": "530119122",
     "displaySubject": "S3 Pure Chemistry"
   },
@@ -1243,7 +1227,7 @@
     "date": "08 Sep",
     "startTime": "3:00 PM",
     "endTime": "5:00 PM",
-    "prefill": "[S3 A Math] Bukit Panjang | 08 Sep (Tue) | 03:00PM - 05:00PM",
+    "prefill": "",
     "prefillField": "211505445",
     "displaySubject": "S3 A Math"
   },
@@ -1291,7 +1275,7 @@
     "date": "08 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S2 Math] Bukit Panjang | 08 Sep (Tue) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "1137033822",
     "displaySubject": "S2 Math"
   },
@@ -1307,7 +1291,7 @@
     "date": "08 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S3 Pure Physics] Jurong East | 08 Sep (Tue) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "1411978775",
     "displaySubject": "S3 Pure Physics"
   },
@@ -1371,7 +1355,7 @@
     "date": "08 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S1 English] Kovan | 08 Sep (Tue) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "1016736042",
     "displaySubject": "S1 English"
   },
@@ -1403,7 +1387,7 @@
     "date": "08 Sep",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "[S3 IP Physics] King Albert Park | 08 Sep (Tue) | 10:00AM - 12:00PM",
+    "prefill": "",
     "prefillField": "1981611879",
     "displaySubject": "S3 IP Physics"
   },
@@ -1483,7 +1467,7 @@
     "date": "10 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S3 Pure Chemistry] Serangoon | 10 Sep (Thu) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "530119122",
     "displaySubject": "S3 Pure Chemistry"
   },
@@ -1579,7 +1563,7 @@
     "date": "08 Sep",
     "startTime": "2:00 PM",
     "endTime": "4:00 PM",
-    "prefill": "[S2 Math] Serangoon | 08 Sep (Tue) | 02:00PM - 04:00PM",
+    "prefill": "",
     "prefillField": "1137033822",
     "displaySubject": "S2 Math"
   },
@@ -1782,7 +1766,7 @@
     "topic": "EOY Revision on Dynamics, Light, Thermal Properties of Matter",
     "tutor": "Marcus",
     "centre": "Jurong Point",
-    "classroom": "JP-1",
+    "classroom": "JP-2",
     "capacity": "36",
     "date": "07 Sep",
     "startTime": "1:00 PM",
@@ -1803,7 +1787,7 @@
     "date": "08 Sep",
     "startTime": "5:00 PM",
     "endTime": "7:00 PM",
-    "prefill": "[S3 Combined Physics] Jurong Point | 08 Sep (Tue) | 05:00PM - 07:00PM",
+    "prefill": "",
     "prefillField": "1411978775",
     "displaySubject": "S3 Combined Physics"
   },
@@ -1819,7 +1803,7 @@
     "date": "08 Sep",
     "startTime": "7:15 PM",
     "endTime": "9:15 PM",
-    "prefill": "[S3 Pure Physics] Jurong Point | 08 Sep (Tue) | 07:15PM - 09:15PM",
+    "prefill": "",
     "prefillField": "1411978775",
     "displaySubject": "S3 Pure Physics"
   },
@@ -1910,7 +1894,7 @@
     "topic": "EOY Revision on Dynamics, Light, Thermal Properties of Matter",
     "tutor": "JM",
     "centre": "Jurong Point",
-    "classroom": "JP-2",
+    "classroom": "JP-1",
     "capacity": "36",
     "date": "07 Sep",
     "startTime": "1:00 PM",
@@ -1963,7 +1947,7 @@
     "date": "08 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S3 Pure Physics] Jurong Point | 08 Sep (Tue) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "1411978775",
     "displaySubject": "S3 Pure Physics"
   },
@@ -2635,7 +2619,7 @@
     "date": "08 Sep",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "[S3 A Math] Jurong East | 08 Sep (Tue) | 10:00AM - 12:00PM",
+    "prefill": "",
     "prefillField": "211505445",
     "displaySubject": "S3 A Math"
   },
@@ -2651,7 +2635,7 @@
     "date": "08 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S3 E Math] Jurong East | 08 Sep (Tue) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "1542437949",
     "displaySubject": "S3 E Math"
   },
@@ -2827,7 +2811,7 @@
     "date": "08 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S3 Pure History] Potong Pasir | 08 Sep (Tue) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "2134367015",
     "displaySubject": "S3 Pure History"
   },
@@ -2891,7 +2875,7 @@
     "date": "08 Sep",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "[S3 Combined Biology] Paya Lebar | 08 Sep (Tue) | 10:00AM - 12:00PM",
+    "prefill": "",
     "prefillField": "672830523",
     "displaySubject": "S3 Combined Biology"
   },
