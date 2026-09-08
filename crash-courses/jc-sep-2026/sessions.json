@@ -107,7 +107,7 @@
     "date": "10 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "",
+    "prefill": "[J1 Biology] Potong Pasir | 10 Sep (Thu) | 10:00AM - 01:00PM | Control of Eukaryotic Gene Expression",
     "prefillField": "737212271",
     "displaySubject": "J1 Biology"
   },
@@ -219,7 +219,7 @@
     "date": "10 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "",
+    "prefill": "[J1 Biology] Marymount | 10 Sep (Thu) | 10:00AM - 01:00PM | Control of Eukaryotic Gene Expression",
     "prefillField": "737212271",
     "displaySubject": "J1 Biology"
   },
@@ -363,7 +363,7 @@
     "date": "11 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
-    "prefill": "[J1 Physics] Bukit Panjang | 11 Sep (Fri) | 01:30PM - 04:30PM | Gravitational Field",
+    "prefill": "",
     "prefillField": "2067436543",
     "displaySubject": "J1 Physics"
   },
@@ -459,7 +459,7 @@
     "date": "13 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "[J1 Biology] Jurong East | 13 Sep (Sun) | 10:00AM - 01:00PM | Control of Eukaryotic Gene Expression",
+    "prefill": "",
     "prefillField": "737212271",
     "displaySubject": "J1 Biology"
   },
@@ -699,7 +699,7 @@
     "date": "09 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "[J1 Chemistry] Jurong East | 09 Sep (Wed) | 10:00AM - 01:00PM | Reaction Kinetics",
+    "prefill": "",
     "prefillField": "600100063",
     "displaySubject": "J1 Chemistry"
   },
@@ -747,7 +747,7 @@
     "date": "09 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
-    "prefill": "[J1 Chemistry] Buona Vista | 09 Sep (Wed) | 01:30PM - 04:30PM | Organic Chemistry (Isomerism - Alkenes)",
+    "prefill": "",
     "prefillField": "600100063",
     "displaySubject": "J1 Chemistry"
   },
@@ -758,8 +758,8 @@
     "topic": "Organic Chemistry (Isomerism - Alkenes)",
     "tutor": "Zoey",
     "centre": "Tampines",
-    "classroom": "TP-2 (main)",
-    "capacity": "22",
+    "classroom": "TP-6 (ext)",
+    "capacity": "25",
     "date": "09 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
