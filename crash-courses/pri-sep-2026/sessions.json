@@ -27,7 +27,7 @@
     "date": "09 Sep",
     "startTime": "10:00 AM",
     "endTime": "11:30 AM",
-    "prefill": "[P4 Science] Bishan | 09 Sep (Wed) | 10:00AM - 11:30AM",
+    "prefill": "",
     "prefillField": "1745400898",
     "displaySubject": "P4 Science"
   },
@@ -267,7 +267,7 @@
     "date": "09 Sep",
     "startTime": "12:30 PM",
     "endTime": "2:30 PM",
-    "prefill": "[P5 Science] Jurong Point | 09 Sep (Wed) | 12:30PM - 02:30PM",
+    "prefill": "",
     "prefillField": "1945975074",
     "displaySubject": "P5 Science"
   },
