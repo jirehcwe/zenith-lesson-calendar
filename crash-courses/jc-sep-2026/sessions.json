@@ -107,7 +107,7 @@
     "date": "10 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "[J1 Biology] Potong Pasir | 10 Sep (Thu) | 10:00AM - 01:00PM | Control of Eukaryotic Gene Expression",
+    "prefill": "",
     "prefillField": "737212271",
     "displaySubject": "J1 Biology"
   },
@@ -219,7 +219,7 @@
     "date": "10 Sep",
     "startTime": "10:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "[J1 Biology] Marymount | 10 Sep (Thu) | 10:00AM - 01:00PM | Control of Eukaryotic Gene Expression",
+    "prefill": "",
     "prefillField": "737212271",
     "displaySubject": "J1 Biology"
   },
@@ -667,7 +667,7 @@
     "date": "10 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
-    "prefill": "[J1 Chemistry] Jurong Point | 10 Sep (Thu) | 01:30PM - 04:30PM | Organic Chemistry (Isomerism - Alkenes)",
+    "prefill": "",
     "prefillField": "600100063",
     "displaySubject": "J1 Chemistry"
   },
