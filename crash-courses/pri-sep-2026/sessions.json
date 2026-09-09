@@ -91,7 +91,7 @@
     "date": "10 Sep",
     "startTime": "12:30 PM",
     "endTime": "2:30 PM",
-    "prefill": "[P5 Science] Bishan | 10 Sep (Thu) | 12:30PM - 02:30PM",
+    "prefill": "",
     "prefillField": "1945975074",
     "displaySubject": "P5 Science"
   },
@@ -171,7 +171,7 @@
     "date": "10 Sep",
     "startTime": "5:00 PM",
     "endTime": "6:30 PM",
-    "prefill": "[P4 English] Bishan | 10 Sep (Thu) | 05:00PM - 06:30PM",
+    "prefill": "",
     "prefillField": "822255076",
     "displaySubject": "P4 English"
   },
