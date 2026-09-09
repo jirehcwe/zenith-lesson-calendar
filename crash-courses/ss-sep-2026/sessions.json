@@ -123,7 +123,7 @@
     "date": "10 Sep",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "[S3 E Math] Buona Vista | 10 Sep (Thu) | 10:00AM - 12:00PM",
+    "prefill": "",
     "prefillField": "1542437949",
     "displaySubject": "S3 E Math"
   },
@@ -139,7 +139,7 @@
     "date": "10 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S3 A Math] Buona Vista | 10 Sep (Thu) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "211505445",
     "displaySubject": "S3 A Math"
   },
@@ -491,7 +491,7 @@
     "date": "10 Sep",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "[S2 English] Potong Pasir | 10 Sep (Thu) | 10:00AM - 12:00PM",
+    "prefill": "",
     "prefillField": "822255076",
     "displaySubject": "S2 English"
   },
@@ -539,7 +539,7 @@
     "date": "10 Sep",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "[S3 Pure Chemistry] Paya Lebar | 10 Sep (Thu) | 10:00AM - 12:00PM",
+    "prefill": "",
     "prefillField": "530119122",
     "displaySubject": "S3 Pure Chemistry"
   },
@@ -779,7 +779,7 @@
     "date": "10 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S1 Science] Tampines | 10 Sep (Thu) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "862261665",
     "displaySubject": "S1 Science"
   },
@@ -875,7 +875,7 @@
     "date": "10 Sep",
     "startTime": "3:00 PM",
     "endTime": "5:00 PM",
-    "prefill": "[S3 A Math] Bishan | 10 Sep (Thu) | 03:00PM - 05:00PM",
+    "prefill": "",
     "prefillField": "211505445",
     "displaySubject": "S3 A Math"
   },
@@ -902,8 +902,8 @@
     "topic": "Qualitative Analysis",
     "tutor": "Crystal",
     "centre": "Bishan",
-    "classroom": "BS-3",
-    "capacity": "15",
+    "classroom": "BS-2",
+    "capacity": "29",
     "date": "10 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
@@ -1051,7 +1051,7 @@
     "date": "11 Sep",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "[S2 English] Bishan | 11 Sep (Fri) | 10:00AM - 12:00PM",
+    "prefill": "",
     "prefillField": "822255076",
     "displaySubject": "S2 English"
   },
@@ -1147,7 +1147,7 @@
     "date": "10 Sep",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "[S3 Pure Physics] Bukit Panjang | 10 Sep (Thu) | 10:00AM - 12:00PM",
+    "prefill": "",
     "prefillField": "1411978775",
     "displaySubject": "S3 Pure Physics"
   },
@@ -1195,7 +1195,7 @@
     "date": "10 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S3 Pure Physics] Bukit Panjang | 10 Sep (Thu) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "1411978775",
     "displaySubject": "S3 Pure Physics"
   },
@@ -1211,7 +1211,7 @@
     "date": "10 Sep",
     "startTime": "7:15 PM",
     "endTime": "9:15 PM",
-    "prefill": "[S3 Combined Physics] Bukit Panjang | 10 Sep (Thu) | 07:15PM - 09:15PM",
+    "prefill": "",
     "prefillField": "1411978775",
     "displaySubject": "S3 Combined Physics"
   },
@@ -1323,7 +1323,7 @@
     "date": "10 Sep",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "[S2 English] Kovan | 10 Sep (Thu) | 10:00AM - 12:00PM",
+    "prefill": "",
     "prefillField": "822255076",
     "displaySubject": "S2 English"
   },
@@ -1355,7 +1355,7 @@
     "date": "10 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S3 Combined History] Serangoon | 10 Sep (Thu) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "2134367015",
     "displaySubject": "S3 Combined History"
   },
@@ -1547,7 +1547,7 @@
     "date": "10 Sep",
     "startTime": "11:15 AM",
     "endTime": "1:15 PM",
-    "prefill": "[S3 A Math] Serangoon | 10 Sep (Thu) | 11:15AM - 01:15PM",
+    "prefill": "",
     "prefillField": "211505445",
     "displaySubject": "S3 A Math"
   },
@@ -1563,7 +1563,7 @@
     "date": "10 Sep",
     "startTime": "2:00 PM",
     "endTime": "4:00 PM",
-    "prefill": "[S2 Math] Serangoon | 10 Sep (Thu) | 02:00PM - 04:00PM",
+    "prefill": "",
     "prefillField": "1137033822",
     "displaySubject": "S2 Math"
   },
@@ -2299,7 +2299,7 @@
     "date": "10 Sep",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "[S1 IP Math] Tan Kah Kee | 10 Sep (Thu) | 10:00AM - 12:00PM",
+    "prefill": "",
     "prefillField": "857742220",
     "displaySubject": "S1 IP Math"
   },
@@ -2667,7 +2667,7 @@
     "date": "10 Sep",
     "startTime": "5:00 PM",
     "endTime": "7:00 PM",
-    "prefill": "[S3 IP English] Tan Kah Kee | 10 Sep (Thu) | 05:00PM - 07:00PM",
+    "prefill": "",
     "prefillField": "1249604192",
     "displaySubject": "S3 IP English"
   },
@@ -2779,7 +2779,7 @@
     "date": "10 Sep",
     "startTime": "1:00 PM",
     "endTime": "3:00 PM",
-    "prefill": "[S3 Pure History] Serangoon | 10 Sep (Thu) | 01:00PM - 03:00PM",
+    "prefill": "",
     "prefillField": "2134367015",
     "displaySubject": "S3 Pure History"
   },
