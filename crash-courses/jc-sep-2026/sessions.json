@@ -43,7 +43,7 @@
     "date": "11 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
-    "prefill": "[J1 Biology] Buona Vista | 11 Sep (Fri) | 01:30PM - 04:30PM | Cell Cycle",
+    "prefill": "",
     "prefillField": "737212271",
     "displaySubject": "J1 Biology"
   },
@@ -139,7 +139,7 @@
     "date": "11 Sep",
     "startTime": "1:30 PM",
     "endTime": "4:30 PM",
-    "prefill": "[J1 Chemistry] Potong Pasir | 11 Sep (Fri) | 01:30PM - 04:30PM | Reaction Kinetics",
+    "prefill": "",
     "prefillField": "600100063",
     "displaySubject": "J1 Chemistry"
   },
