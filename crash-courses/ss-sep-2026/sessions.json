@@ -363,7 +363,7 @@
     "date": "12 Sep",
     "startTime": "2:00 PM",
     "endTime": "4:00 PM",
-    "prefill": "[S3 Pure Chemistry] Tan Kah Kee | 12 Sep (Sat) | 02:00PM - 04:00PM",
+    "prefill": "",
     "prefillField": "530119122",
     "displaySubject": "S3 Pure Chemistry"
   },
@@ -411,7 +411,7 @@
     "date": "12 Sep",
     "startTime": "2:00 PM",
     "endTime": "4:00 PM",
-    "prefill": "[S3 E Math] Tan Kah Kee | 12 Sep (Sat) | 02:00PM - 04:00PM",
+    "prefill": "",
     "prefillField": "1542437949",
     "displaySubject": "S3 E Math"
   },
@@ -1579,7 +1579,7 @@
     "date": "12 Sep",
     "startTime": "9:00 AM",
     "endTime": "11:00 AM",
-    "prefill": "[S3 Combined Literature] Serangoon | 12 Sep (Sat) | 09:00AM - 11:00AM",
+    "prefill": "",
     "prefillField": "103510107",
     "displaySubject": "S3 Combined Literature"
   },
@@ -1915,7 +1915,7 @@
     "date": "12 Sep",
     "startTime": "9:00 AM",
     "endTime": "11:00 AM",
-    "prefill": "[S3 Combined Physics] Jurong Point | 12 Sep (Sat) | 09:00AM - 11:00AM",
+    "prefill": "",
     "prefillField": "1411978775",
     "displaySubject": "S3 Combined Physics"
   },
@@ -1931,7 +1931,7 @@
     "date": "12 Sep",
     "startTime": "11:15 AM",
     "endTime": "1:15 PM",
-    "prefill": "[S3 Pure Physics] Jurong Point | 12 Sep (Sat) | 11:15AM - 01:15PM",
+    "prefill": "",
     "prefillField": "1411978775",
     "displaySubject": "S3 Pure Physics"
   },
@@ -1947,7 +1947,7 @@
     "date": "12 Sep",
     "startTime": "2:00 PM",
     "endTime": "4:00 PM",
-    "prefill": "[S3 Pure Physics] Jurong Point | 12 Sep (Sat) | 02:00PM - 04:00PM",
+    "prefill": "",
     "prefillField": "1411978775",
     "displaySubject": "S3 Pure Physics"
   },
@@ -2171,7 +2171,7 @@
     "date": "12 Sep",
     "startTime": "9:00 AM",
     "endTime": "11:00 AM",
-    "prefill": "[S1 English] Jurong Point | 12 Sep (Sat) | 09:00AM - 11:00AM",
+    "prefill": "",
     "prefillField": "1016736042",
     "displaySubject": "S1 English"
   },
@@ -2187,7 +2187,7 @@
     "date": "12 Sep",
     "startTime": "11:15 AM",
     "endTime": "1:15 PM",
-    "prefill": "[S2 English] Jurong Point | 12 Sep (Sat) | 11:15AM - 01:15PM",
+    "prefill": "",
     "prefillField": "822255076",
     "displaySubject": "S2 English"
   },
@@ -2203,7 +2203,7 @@
     "date": "12 Sep",
     "startTime": "2:00 PM",
     "endTime": "4:00 PM",
-    "prefill": "[S3 English] Jurong Point | 12 Sep (Sat) | 02:00PM - 04:00PM",
+    "prefill": "",
     "prefillField": "136322790",
     "displaySubject": "S3 English"
   },
@@ -2331,25 +2331,9 @@
     "date": "12 Sep",
     "startTime": "9:00 AM",
     "endTime": "11:00 AM",
-    "prefill": "[S2 Math] Jurong Point | 12 Sep (Sat) | 09:00AM - 11:00AM",
+    "prefill": "",
     "prefillField": "1137033822",
     "displaySubject": "S2 Math"
-  },
-  {
-    "purpose": "Sec SepCC",
-    "subject": "LSMath",
-    "level": "S1 2026",
-    "topic": "Angles, Triangles & Polygons, Perimeter and Area of Planar Figures",
-    "tutor": "Phebe",
-    "centre": "Jurong Point",
-    "classroom": "JP-3",
-    "capacity": "17",
-    "date": "12 Sep",
-    "startTime": "11:15 AM",
-    "endTime": "1:15 PM",
-    "prefill": "[S1 Math] Jurong Point | 12 Sep (Sat) | 11:15AM - 01:15PM",
-    "prefillField": "1165110009",
-    "displaySubject": "S1 Math"
   },
   {
     "purpose": "Sec SepCC",
@@ -2363,7 +2347,7 @@
     "date": "12 Sep",
     "startTime": "2:00 PM",
     "endTime": "4:00 PM",
-    "prefill": "[S3 E Math] Jurong Point | 12 Sep (Sat) | 02:00PM - 04:00PM",
+    "prefill": "",
     "prefillField": "1542437949",
     "displaySubject": "S3 E Math"
   },
@@ -2414,22 +2398,6 @@
     "prefill": "",
     "prefillField": "211505445",
     "displaySubject": "S3 A Math"
-  },
-  {
-    "purpose": "Sec SepCC",
-    "subject": "LSMath",
-    "level": "S2 2026",
-    "topic": "Similarity & Congruency, Volume and SA of Pyramids, Cones and Spheres",
-    "tutor": "Phebe",
-    "centre": "Jurong East",
-    "classroom": "JE-4",
-    "capacity": "25",
-    "date": "13 Sep",
-    "startTime": "9:00 AM",
-    "endTime": "11:00 AM",
-    "prefill": "[S2 Math] Jurong East | 13 Sep (Sun) | 09:00AM - 11:00AM",
-    "prefillField": "1137033822",
-    "displaySubject": "S2 Math"
   },
   {
     "purpose": "Sec SepCC",
@@ -2603,7 +2571,7 @@
     "date": "12 Sep",
     "startTime": "11:15 AM",
     "endTime": "1:15 PM",
-    "prefill": "[S2 IP English] Bishan | 12 Sep (Sat) | 11:15AM - 01:15PM",
+    "prefill": "",
     "prefillField": "260829673",
     "displaySubject": "S2 IP English"
   },
@@ -2779,7 +2747,7 @@
     "date": "12 Sep",
     "startTime": "9:00 AM",
     "endTime": "11:00 AM",
-    "prefill": "[S3 Pure Literature] Serangoon | 12 Sep (Sat) | 09:00AM - 11:00AM",
+    "prefill": "",
     "prefillField": "103510107",
     "displaySubject": "S3 Pure Literature"
   }
