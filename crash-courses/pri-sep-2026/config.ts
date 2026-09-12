@@ -70,10 +70,27 @@ const config: CrashCourseConfig = {
     heroImageSrc: "/zenith_banner_alt.webp",
     heroImageAlt: "Zenith Education",
   },
+  // Retirement blocks. `closingBanner` supplies the copy and `trialRedirect`
+  // the click-out; both are gated on the course being over, so nothing here
+  // shows while the course still runs. From the day after dateRange.end the
+  // top strip, the calendar overlay and the list panel all appear and send
+  // students to the regular Primary schedule, tagged POSTSEPCC.
+  closingBanner: {
+    headline: "The September Primary Crash Course has ended",
+    body: "Our regular Primary programme runs all year. Start your child with a free trial lesson.",
+    ctaLabel: "Browse free Primary trial classes →",
+    ctaHref:
+      "https://schedule.zenitheducationstudio.com/?stream=Primary&campaign=POSTSEPCC",
+  },
+  trialRedirect: {
+    baseUrl: "https://schedule.zenitheducationstudio.com/",
+    stream: "Primary",
+    campaign: "POSTSEPCC",
+  },
   bottomBanner: {
     body: "Looking for regular Primary classes?",
     ctaLabel: "Try a free trial lesson →",
-    ctaHref: "https://schedule.zenitheducationstudio.com/?stream=Primary",
+    ctaHref: "https://schedule.zenitheducationstudio.com/?stream=Primary&campaign=POSTSEPCC",
   },
   calendar: {
     firstDay: 1,

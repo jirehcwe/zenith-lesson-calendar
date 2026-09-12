@@ -38,13 +38,30 @@ const config: CrashCourseConfig = {
     heroImageSrc: "/zenith-banner.webp",
     heroImageAlt: "Zenith Education",
   },
-  // No closingBanner and no trialRedirect while the course is upcoming — both
-  // blocks are what switch the page into its "course has ended" treatment.
-  // Add them after 13 Sep to retire this slug the way jc-june-2026 was.
+  // Retirement blocks. `closingBanner` supplies the copy and `trialRedirect`
+  // the click-out. Both are gated on the course being over, so nothing here
+  // shows while the course still runs — that is deliberate, so students sign
+  // up for the crash course rather than being sent to regular classes early.
+  // From the day after dateRange.end the top strip, the calendar overlay and
+  // the list panel all appear and point at the regular JC schedule,
+  // tagged POSTSEPCC. The bottomBanner below is the one exception: it links
+  // out throughout, and now carries the same tag.
+  closingBanner: {
+    headline: "The September JC Crash Course has ended",
+    body: "Our regular JC programme runs all year. Try a free trial lesson.",
+    ctaLabel: "Browse free JC trial classes →",
+    ctaHref:
+      "https://schedule.zenitheducationstudio.com/?stream=JC&campaign=POSTSEPCC",
+  },
+  trialRedirect: {
+    baseUrl: "https://schedule.zenitheducationstudio.com/",
+    stream: "JC",
+    campaign: "POSTSEPCC",
+  },
   bottomBanner: {
     body: "Looking for regular JC classes?",
     ctaLabel: "Try a free trial lesson →",
-    ctaHref: "https://schedule.zenitheducationstudio.com/?stream=JC",
+    ctaHref: "https://schedule.zenitheducationstudio.com/?stream=JC&campaign=POSTSEPCC",
   },
   calendar: {
     firstDay: 1,

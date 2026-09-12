@@ -100,13 +100,31 @@ const config: CrashCourseConfig = {
     heroImageSrc: "/zenith-banner.webp",
     heroImageAlt: "Zenith Education",
   },
-  // No closingBanner and no trialRedirect while the course is upcoming —
-  // together they are what switch the page into its "course has ended" state.
+  // Retirement blocks. `closingBanner` supplies the copy and `trialRedirect`
+  // the click-out. Both are gated on the course being over, so nothing here
+  // shows while the course still runs — that is deliberate, so students sign
+  // up for the crash course rather than being sent to regular classes early.
+  // From the day after dateRange.end the top strip, the calendar overlay and
+  // the list panel all appear and point at the regular Secondary schedule,
+  // tagged POSTSEPCC. The bottomBanner below is the one exception: it links
+  // out throughout, and now carries the same tag.
+  closingBanner: {
+    headline: "The September Secondary Crash Course has ended",
+    body: "Our regular Secondary programme runs all year. Try a free trial lesson.",
+    ctaLabel: "Browse free Secondary trial classes →",
+    ctaHref:
+      "https://schedule.zenitheducationstudio.com/?stream=Secondary+(Express)&campaign=POSTSEPCC",
+  },
+  trialRedirect: {
+    baseUrl: "https://schedule.zenitheducationstudio.com/",
+    stream: "Secondary (Express)",
+    campaign: "POSTSEPCC",
+  },
   bottomBanner: {
     body: "Looking for regular Secondary classes?",
     ctaLabel: "Try a free trial lesson →",
     ctaHref:
-      "https://schedule.zenitheducationstudio.com/?stream=Secondary+(Express)",
+      "https://schedule.zenitheducationstudio.com/?stream=Secondary+(Express)&campaign=POSTSEPCC",
   },
   calendar: {
     firstDay: 1,
