@@ -107,7 +107,7 @@
     "date": "13 Sep",
     "startTime": "11:00 AM",
     "endTime": "12:30 PM",
-    "prefill": "[P4 Math] Bishan | 13 Sep (Sun) | 11:00AM - 12:30PM",
+    "prefill": "",
     "prefillField": "1137033822",
     "displaySubject": "P4 Math"
   },
@@ -123,7 +123,7 @@
     "date": "13 Sep",
     "startTime": "2:00 PM",
     "endTime": "4:00 PM",
-    "prefill": "[P5 Math] Bishan | 13 Sep (Sun) | 02:00PM - 04:00PM",
+    "prefill": "",
     "prefillField": "1480143045",
     "displaySubject": "P5 Math"
   },
@@ -235,7 +235,7 @@
     "date": "13 Sep",
     "startTime": "11:00 AM",
     "endTime": "1:00 PM",
-    "prefill": "[P5 Math] King Albert Park | 13 Sep (Sun) | 11:00AM - 01:00PM",
+    "prefill": "",
     "prefillField": "1480143045",
     "displaySubject": "P5 Math"
   },
@@ -251,7 +251,7 @@
     "date": "13 Sep",
     "startTime": "2:00 PM",
     "endTime": "3:30 PM",
-    "prefill": "[P4 Math] King Albert Park | 13 Sep (Sun) | 02:00PM - 03:30PM",
+    "prefill": "",
     "prefillField": "1137033822",
     "displaySubject": "P4 Math"
   },
