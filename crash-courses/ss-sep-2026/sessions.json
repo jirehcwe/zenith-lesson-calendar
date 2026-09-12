@@ -1595,7 +1595,7 @@
     "date": "13 Sep",
     "startTime": "9:00 AM",
     "endTime": "11:00 AM",
-    "prefill": "[S1 English] Serangoon | 13 Sep (Sun) | 09:00AM - 11:00AM",
+    "prefill": "",
     "prefillField": "1016736042",
     "displaySubject": "S1 English"
   },
@@ -1611,7 +1611,7 @@
     "date": "13 Sep",
     "startTime": "11:15 AM",
     "endTime": "1:15 PM",
-    "prefill": "[S2 English] Serangoon | 13 Sep (Sun) | 11:15AM - 01:15PM",
+    "prefill": "",
     "prefillField": "822255076",
     "displaySubject": "S2 English"
   },
@@ -1627,7 +1627,7 @@
     "date": "13 Sep",
     "startTime": "2:00 PM",
     "endTime": "4:00 PM",
-    "prefill": "[S3 English] Serangoon | 13 Sep (Sun) | 02:00PM - 04:00PM",
+    "prefill": "",
     "prefillField": "136322790",
     "displaySubject": "S3 English"
   },
@@ -2411,7 +2411,7 @@
     "date": "13 Sep",
     "startTime": "2:00 PM",
     "endTime": "4:00 PM",
-    "prefill": "[S3 A Math] Jurong East | 13 Sep (Sun) | 02:00PM - 04:00PM",
+    "prefill": "",
     "prefillField": "211505445",
     "displaySubject": "S3 A Math"
   },
