@@ -52,6 +52,62 @@ describe("ClosingBanner", () => {
     }
   );
 
+  // The September slugs carry their retirement copy ahead of time, so the
+  // strip must stay hidden until the course is actually over. If it leaked
+  // early it would push students to regular classes while they could still
+  // register for the crash course — the opposite of what it is for.
+  const SEPT_SLUGS = [
+    { slug: "jc-sep-2026", stream: "JC", name: "JC", end: "2026-09-13" },
+    {
+      slug: "ss-sep-2026",
+      stream: "Secondary+(Express)",
+      name: "Secondary",
+      end: "2026-09-13",
+    },
+    { slug: "pri-sep-2026", stream: "Primary", name: "Primary", end: "2026-09-15" },
+  ] as const;
+
+  it.each(SEPT_SLUGS)(
+    "renders nothing for $slug while the course is still running",
+    ({ slug }) => {
+      const ClosingBanner = loadForSlug(slug);
+      // Mid-course: 10 Sep is inside every September window.
+      const { container } = render(
+        <ClosingBanner now={new Date(2026, 8, 10, 12, 0, 0)} />
+      );
+      expect(container).toBeEmptyDOMElement();
+    }
+  );
+
+  it.each(SEPT_SLUGS)(
+    "renders nothing for $slug on the final day itself",
+    ({ slug, end }) => {
+      const ClosingBanner = loadForSlug(slug);
+      const [y, m, d] = end.split("-").map(Number);
+      const { container } = render(
+        <ClosingBanner now={new Date(y, m - 1, d, 23, 0, 0)} />
+      );
+      expect(container).toBeEmptyDOMElement();
+    }
+  );
+
+  it.each(SEPT_SLUGS)(
+    "renders the retirement strip for $slug the day after it ends, tagged POSTSEPCC",
+    ({ slug, stream, name, end }) => {
+      const ClosingBanner = loadForSlug(slug);
+      const [y, m, d] = end.split("-").map(Number);
+      render(<ClosingBanner now={new Date(y, m - 1, d + 1, 9, 0, 0)} />);
+      expect(
+        screen.getByText(`The September ${name} Crash Course has ended`)
+      ).toBeInTheDocument();
+      const link = screen.getByRole("link");
+      expect(link).toHaveAttribute(
+        "href",
+        `https://schedule.zenitheducationstudio.com/?stream=${stream}&campaign=POSTSEPCC`
+      );
+    }
+  );
+
   it("renders nothing when the resolved config has no closingBanner", () => {
     // All real slugs now define closingBanner, so mock a config without one.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
