@@ -22,12 +22,18 @@ jest.mock("next/image", () => ({
 jest.mock("../../../crash-courses", () => ({
   getCrashCourseConfig: () => ({
     slug: "ss-june-2026",
+    // The course window matters now: SignupBanner swaps the blurb once the
+    // course is over. Tests that care pass an explicit `now`, so they stay
+    // deterministic whatever the real date is.
+    dateRange: { start: "2026-05-30", end: "2026-06-30" },
     hero: {
       title: "May 2026 SS Crash Course",
       tagline: "Flexible scheduling • Expert tutors • Proven results",
       blurbHeadline: "Plan Your Crash Course Schedule",
       blurbBody:
         "Register for the Secondary crash course slots you want to attend.",
+      blurbBodyEnded:
+        "The Secondary crash course has finished. The schedule below is kept for reference.",
       stats: "Trusted by over 20,000 students since 2019",
       heroImageSrc: "/zenith-banner.webp",
       heroImageAlt: "Zenith Education",
@@ -69,14 +75,37 @@ describe("SignupBanner content from config.hero", () => {
     expect(stats.length).toBeGreaterThan(0);
   });
 
-  it("renders the blurb headline and body", () => {
-    render(<SignupBanner />);
+  it("renders the blurb headline and body while the course runs", () => {
+    // Mid-course: 10 Jun sits inside the mocked 30 May–30 Jun window.
+    render(<SignupBanner now={new Date(2026, 5, 10)} />);
     const headlines = screen.getAllByText(/Plan Your Crash Course Schedule/i);
     expect(headlines.length).toBeGreaterThan(0);
     const bodies = screen.getAllByText(
       /Register for the Secondary crash course slots/i
     );
     expect(bodies.length).toBeGreaterThan(0);
+    expect(screen.queryByText(/kept for reference/i)).toBeNull();
+  });
+
+  // A retired slug used to keep announcing "Register for…" directly beneath a
+  // closing banner saying the course had ended. The blurb now swaps instead.
+  it("keeps the running blurb on the final day itself", () => {
+    render(<SignupBanner now={new Date(2026, 5, 30, 23, 0, 0)} />);
+    expect(
+      screen.getAllByText(/Register for the Secondary crash course slots/i)
+        .length
+    ).toBeGreaterThan(0);
+    expect(screen.queryByText(/kept for reference/i)).toBeNull();
+  });
+
+  it("swaps to the ended blurb the day after the course finishes", () => {
+    render(<SignupBanner now={new Date(2026, 6, 1, 9, 0, 0)} />);
+    expect(
+      screen.getAllByText(/The Secondary crash course has finished/i).length
+    ).toBeGreaterThan(0);
+    expect(
+      screen.queryByText(/Register for the Secondary crash course slots/i)
+    ).toBeNull();
   });
 });
 

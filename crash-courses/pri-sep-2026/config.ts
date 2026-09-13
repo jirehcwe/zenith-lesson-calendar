@@ -66,6 +66,8 @@ const config: CrashCourseConfig = {
     tagline: "Expert tutors • Proven results • Trusted since 2019",
     blurbBody:
       "Registration is open for the September 2026 Primary crash course, 4 to 15 September, for P4 and P5, plus P5 and P6 mock exams. Pick a level, subject and centre below, then click any class to register.",
+    blurbBodyEnded:
+      "The September 2026 Primary crash course, 4 to 15 September, has finished. The schedule below is kept for reference.",
     stats: "Trusted by over 20,000 students since 2019",
     heroImageSrc: "/zenith_banner_alt.webp",
     heroImageAlt: "Zenith Education",
