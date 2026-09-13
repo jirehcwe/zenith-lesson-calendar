@@ -30,6 +30,10 @@ export type HeroContent = {
   // is not rendered.
   blurbHeadline?: string;
   blurbBody: string;
+  // Optional replacement for `blurbBody` once the course is over. Without it
+  // a retired slug keeps announcing "Registration is open", directly
+  // contradicting the closing banner above it.
+  blurbBodyEnded?: string;
   stats: string;
   heroImageSrc: string;
   heroImageAlt: string;

@@ -95,7 +95,11 @@ export function isCourseOver(
   config: Pick<CrashCourseConfig, "dateRange">,
   now: Date = new Date()
 ): boolean {
-  const end = parseYmdAtMidnight(config.dateRange.end);
+  // Tolerate a config without a dateRange (test fixtures, partial mocks):
+  // treat it as 'not over', which keeps the pre-course copy and CTAs.
+  const end = config.dateRange
+    ? parseYmdAtMidnight(config.dateRange.end)
+    : null;
   if (!end) return false;
   return startOfDay(now).getTime() > end.getTime();
 }

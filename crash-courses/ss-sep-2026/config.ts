@@ -96,6 +96,8 @@ const config: CrashCourseConfig = {
     blurbHeadline: "Crash Course Schedule",
     blurbBody:
       "Registration is open for the September 2026 Secondary crash course, 5 to 13 September, for S1 to S3. Pick a level, subject and centre below, then click any class to register.",
+    blurbBodyEnded:
+      "The September 2026 Secondary crash course, 5 to 13 September, has finished. The schedule below is kept for reference.",
     stats: "Trusted by over 20,000 students since 2019",
     heroImageSrc: "/zenith-banner.webp",
     heroImageAlt: "Zenith Education",

@@ -34,6 +34,8 @@ const config: CrashCourseConfig = {
     blurbHeadline: "Crash Course Schedule",
     blurbBody:
       "Registration is open for the September 2026 JC crash course, 4 to 13 September. Pick a subject and a centre below, then click any class to register.",
+    blurbBodyEnded:
+      "The September 2026 JC crash course, 4 to 13 September, has finished. The schedule below is kept for reference.",
     stats: "Trusted by over 20,000 students since 2019",
     heroImageSrc: "/zenith-banner.webp",
     heroImageAlt: "Zenith Education",
