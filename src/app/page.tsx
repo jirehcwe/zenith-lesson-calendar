@@ -172,7 +172,7 @@ export default function Page() {
   return (
     <div>
       {config.closingBanner && <ClosingBanner now={now} />}
-      <SignupBanner />
+      <SignupBanner now={now} />
       <div className="max-w-7xl mx-auto px-2 sm:px-4 py-6 space-y-6 text-sm md:text-base">
         <ViewSelector currentView={viewMode} onViewChange={setViewMode} />
 

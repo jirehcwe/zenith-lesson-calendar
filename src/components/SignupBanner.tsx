@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { getCrashCourseConfig } from "../../crash-courses";
+import { isCourseOver } from "@/utils/sessionAvailability";
 
 const STORAGE_KEY = "signupBannerCollapsed";
 
@@ -29,8 +30,15 @@ function renderTitle(title: string) {
   ));
 }
 
-export default function SignupBanner() {
-  const { hero } = getCrashCourseConfig();
+export default function SignupBanner({ now }: { now?: Date }) {
+  const config = getCrashCourseConfig();
+  const { hero } = config;
+  // Swap the blurb once the course is over, so the hero stops inviting
+  // registrations the closing banner has just declared closed.
+  const blurbBody =
+    isCourseOver(config, now ?? new Date()) && hero.blurbBodyEnded
+      ? hero.blurbBodyEnded
+      : hero.blurbBody;
   const [isCollapsed, setIsCollapsed] = useState(true);
   const showBlurbHeadline =
     !!hero.blurbHeadline && hero.blurbHeadline.trim().length > 0;
@@ -163,7 +171,7 @@ export default function SignupBanner() {
                   </h2>
                 )}
                 <p className="text-sm sm:text-base text-blue-100 max-w-2xl mx-auto text-center">
-                  {hero.blurbBody}
+                  {blurbBody}
                 </p>
               </div>
             </div>
@@ -234,7 +242,7 @@ export default function SignupBanner() {
                 </h2>
               )}
               <p className="text-base xl:text-lg text-blue-100 max-w-2xl">
-                {hero.blurbBody}
+                {blurbBody}
               </p>
             </div>
           </div>
