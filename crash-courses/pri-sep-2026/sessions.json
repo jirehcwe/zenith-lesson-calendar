@@ -347,7 +347,7 @@
     "date": "15 Sep",
     "startTime": "10:00 AM",
     "endTime": "12:00 PM",
-    "prefill": "[P5 Math] Bishan | 15 Sep (Tue) | 10:00AM - 12:00PM",
+    "prefill": "",
     "prefillField": "1480143045",
     "displaySubject": "P5 Math"
   },
@@ -379,7 +379,7 @@
     "date": "15 Sep",
     "startTime": "3:30 PM",
     "endTime": "5:00 PM",
-    "prefill": "[P4 English] King Albert Park | 15 Sep (Tue) | 03:30PM - 05:00PM",
+    "prefill": "",
     "prefillField": "822255076",
     "displaySubject": "P4 English"
   },
