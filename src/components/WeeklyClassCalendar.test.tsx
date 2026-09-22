@@ -50,7 +50,7 @@ describe("isSlotFull", () => {
 
 describe("isSlotWaitlist", () => {
   // Verbatim from the live schedule feed (2026-Class0439) — ops appends the
-  // marker via the FormOptions "Custom (Remarks)" free-text field.
+  // marker to the class label by hand.
   const LIVE_TITLE =
     "(EXP) Bishan | Sat 11.15AM - 1.15PM | Katherine (S1 Science 2026) *(Waitlist Only)*";
 

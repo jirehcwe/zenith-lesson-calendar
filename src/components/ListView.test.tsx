@@ -83,6 +83,20 @@ describe("ListView", () => {
     expect(screen.queryByRole("link", { name: /Sign up for FREE Trial/i })).not.toBeInTheDocument();
   });
 
+  it("greys out the trial button for a slot whose trial form is closed", () => {
+    render(<ListView sessions={[makeSlot({ trialOpen: false })]} />);
+    expect(screen.queryByRole("link", { name: /Sign up for FREE Trial/i })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Trial closed/i })).toBeDisabled();
+    expect(screen.getByRole("link", { name: /Register now/i })).toBeInTheDocument();
+  });
+
+  it("greys out the register button for a slot whose registration form is closed", () => {
+    render(<ListView sessions={[makeSlot({ registrationOpen: false })]} />);
+    expect(screen.queryByRole("link", { name: /Register now/i })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Registration closed/i })).toBeDisabled();
+    expect(screen.getByRole("link", { name: /Sign up for FREE Trial/i })).toBeInTheDocument();
+  });
+
   it("shows a Waitlist only badge for waitlisted slots", () => {
     render(
       <ListView

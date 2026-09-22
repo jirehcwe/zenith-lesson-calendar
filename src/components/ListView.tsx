@@ -1,8 +1,7 @@
 "use client";
 
 import { WeeklyClassSlot, isSlotFull, isSlotWaitlist, getSubjectColor } from "./WeeklyClassCalendar";
-import { replaceCampaignInUrl, replacePromocodeInUrl } from "@/utils/campaign";
-import { getFallbackRegistrationLinkByLevel } from "@/utils/prefillRegistration";
+import SignupActions from "./SignupActions";
 import { to12hr } from "@/utils/time";
 
 export default function ListView({
@@ -118,35 +117,7 @@ export default function ListView({
 
                       {/* Action buttons */}
                       <div className="pt-2 border-t border-gray-100">
-                        {full ? (
-                          <button
-                            disabled
-                            className="w-full bg-gray-200 text-gray-500 font-medium py-2.5 px-4 rounded-lg text-sm cursor-not-allowed"
-                          >
-                            Class Full
-                          </button>
-                        ) : (
-                          <div className="flex gap-2">
-                            <a
-                              href={replacePromocodeInUrl(replaceCampaignInUrl(session.prefillTrialLink))}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex-1 block bg-amber-400 hover:bg-amber-500 text-gray-900 font-semibold text-xs py-2 px-3 rounded-lg text-center transition-all duration-200"
-                            >
-                              Sign up for FREE Trial
-                            </a>
-                            <a
-                              href={replacePromocodeInUrl(replaceCampaignInUrl(
-                                session.prefillRegistrationLink ?? getFallbackRegistrationLinkByLevel(session.level)
-                              ))}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex-1 block bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs py-2 px-3 rounded-lg text-center transition-all duration-200"
-                            >
-                              Register now
-                            </a>
-                          </div>
-                        )}
+                        <SignupActions slot={session} variant="card" />
                       </div>
                     </div>
                   </div>
