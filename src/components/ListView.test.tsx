@@ -83,6 +83,41 @@ describe("ListView", () => {
     expect(screen.queryByRole("link", { name: /Sign up for FREE Trial/i })).not.toBeInTheDocument();
   });
 
+  it("greys out the trial button for a slot whose trial form is closed", () => {
+    render(<ListView sessions={[makeSlot({ trialOpen: false })]} />);
+    expect(screen.queryByRole("link", { name: /Sign up for FREE Trial/i })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Trial closed/i })).toBeDisabled();
+    expect(screen.getByRole("link", { name: /Register now/i })).toBeInTheDocument();
+  });
+
+  it("greys out the register button for a slot whose registration form is closed", () => {
+    render(<ListView sessions={[makeSlot({ registrationOpen: false })]} />);
+    expect(screen.queryByRole("link", { name: /Register now/i })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Registration closed/i })).toBeDisabled();
+    expect(screen.getByRole("link", { name: /Sign up for FREE Trial/i })).toBeInTheDocument();
+  });
+
+  it("greys out a card whose trial and registration forms are both closed, like a full card", () => {
+    render(
+      <ListView
+        sessions={[
+          makeSlot({ trialOpen: false, registrationOpen: false }),
+          makeSlot({ title: "[FULL] Math class", subjects: ["English"] }),
+        ]}
+      />
+    );
+    const closedCard = screen.getByRole("button", { name: /Class Closed/i }).closest(".rounded-xl");
+    const fullCard = screen.getByRole("button", { name: /Class Full/i }).closest(".rounded-xl");
+    expect(closedCard).toHaveClass("opacity-60");
+    expect(fullCard).toHaveClass("opacity-60");
+  });
+
+  it("does not grey out a card with only one form closed", () => {
+    render(<ListView sessions={[makeSlot({ trialOpen: false })]} />);
+    const card = screen.getByRole("button", { name: /Trial closed/i }).closest(".rounded-xl");
+    expect(card).not.toHaveClass("opacity-60");
+  });
+
   it("shows a Waitlist only badge for waitlisted slots", () => {
     render(
       <ListView

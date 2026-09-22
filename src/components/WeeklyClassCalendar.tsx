@@ -4,8 +4,8 @@ import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { useEffect, useRef, useState, useMemo } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
-import { replaceCampaignInUrl, replacePromocodeInUrl } from "@/utils/campaign";
-import { getFallbackRegistrationLinkByLevel } from "@/utils/prefillRegistration";
+import { isSlotClosed, isSlotFull, isSlotWaitlist } from "@/utils/slotStatus";
+import SignupActions from "./SignupActions";
 import { to12hr } from "@/utils/time";
 import {
   subjectToColor,
@@ -17,28 +17,7 @@ import {
 } from "@/utils/subjectColors";
 
 // Re-exported so existing consumers (ListView, tests) import from here unchanged.
-export { getSubjectColor, getLegendItemsForStream };
-
-// Check if a slot is full based on [FULL] prefix in the title
-export function isSlotFull(slot: WeeklyClassSlot): boolean {
-  return slot.title.startsWith("[FULL]");
-}
-
-// Waitlist is a separate, weaker signal than [FULL] and must not be conflated
-// with it. Ops drives both from the scheduling sheet's FormOptions tab via the
-// "Remarks" dropdown, but they decorate the title differently: "Full" prepends
-// a `[FULL]` tag, while waitlist rides the free-text "Custom (Remarks)" escape
-// hatch and is appended as `*(Waitlist Only)*`. A waitlisted class is still open
-// on the Google Form, so this is display-only — it must NOT gate the trial or
-// registration CTAs the way isSlotFull() does.
-//
-// Matched as a loose case-insensitive substring rather than the exact
-// `*(Waitlist Only)*` string: the marker is hand-typed by ops into a free-text
-// cell, so the wording and the asterisk wrapper can drift. This mirrors how the
-// telebot side already sniffs for `[full]`.
-export function isSlotWaitlist(slot: WeeklyClassSlot): boolean {
-  return slot.title.toLowerCase().includes("waitlist");
-}
+export { getSubjectColor, getLegendItemsForStream, isSlotFull, isSlotWaitlist };
 
 // Define a new type for weekly class slots (no topic, no date)
 export type WeeklyClassSlot = {
@@ -54,6 +33,10 @@ export type WeeklyClassSlot = {
   level: string;
   prefillTrialLink: string;
   prefillRegistrationLink?: string;
+  // false when ops closed that sign-up form for this class. Missing means
+  // open: feeds and cached payloads from before the flags do not send them.
+  trialOpen?: boolean;
+  registrationOpen?: boolean;
 };
 
 // Build the color legend from the currently visible slots. Each swatch is
@@ -71,7 +54,7 @@ export function computeLegendItems(
   const seen = new Set<string>();
   const result: { label: string; color: string; tint: string }[] = [];
   for (const slot of slots) {
-    if (isSlotFull(slot)) continue;
+    if (isSlotGreyedOut(slot)) continue;
     const { color } = subjectToColor(slot.level, slot.subjects[0] ?? "");
     if (seen.has(color)) continue;
     seen.add(color);
@@ -83,13 +66,20 @@ export function computeLegendItems(
   result.sort(
     (a, b) => LEGEND_ORDER.indexOf(a.color) - LEGEND_ORDER.indexOf(b.color)
   );
-  if (slots.some(isSlotFull)) {
-    const fullItem = getLegendItemsForStream(selectedStream).find(
-      (item) => item.label === "Full"
-    );
-    if (fullItem) result.push(fullItem);
+  // Full and closed classes share one grey swatch, labelled for what is shown.
+  const anyFull = slots.some(isSlotFull);
+  const anyClosed = slots.some(isSlotClosed);
+  if (anyFull || anyClosed) {
+    const label = anyFull && anyClosed ? "Full / Closed" : anyFull ? "Full" : "Closed";
+    result.push({ label, color: FULL_SWATCH.color, tint: FULL_SWATCH.tint });
   }
   return result;
+}
+
+// A full class and a closed class (both sign-up forms closed) are drawn the
+// same grey way; only their label differs.
+function isSlotGreyedOut(slot: WeeklyClassSlot): boolean {
+  return isSlotFull(slot) || isSlotClosed(slot);
 }
 
 // Helper to get a fixed date for a weekday (using a reference week)
@@ -196,8 +186,7 @@ export default function WeeklyClassCalendar({
       start.setHours(startHour, startMinute, 0, 0);
       const end = new Date(baseDate);
       end.setHours(endHour, endMinute, 0, 0);
-      const full = isSlotFull(slot);
-      const colors = full
+      const colors = isSlotGreyedOut(slot)
         ? FULL_SWATCH
         : subjectToColor(slot.level, slot.subjects[0] ?? "");
       return {
@@ -209,6 +198,7 @@ export default function WeeklyClassCalendar({
         extendedProps: slot,
         backgroundColor: colors.tint,
         textColor: colors.color,
+        classNames: isSlotClosed(slot) ? ["zenith-closed-event"] : [],
       };
     });
   }, [slots]);
@@ -247,6 +237,8 @@ export default function WeeklyClassCalendar({
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   const handleEventClick = (arg: any) => {
+    // A closed class takes no sign-ups, so it has no popup to open.
+    if (isSlotClosed(arg.event.extendedProps)) return;
     setSelectedEvent(arg.event.extendedProps);
     setIsDialogOpen(true);
   };
@@ -265,6 +257,14 @@ export default function WeeklyClassCalendar({
           transform: translateY(-1px) scale(1.02) !important;
           filter: brightness(1.04) !important;
           box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12) !important;
+        }
+        :global(.fc-v-event.zenith-closed-event) {
+          cursor: default !important;
+        }
+        :global(.fc-v-event.zenith-closed-event:hover) {
+          transform: none !important;
+          filter: none !important;
+          box-shadow: none !important;
         }
         :global(.fc) {
           --fc-border-color: #CBD5E1;
@@ -359,8 +359,9 @@ export default function WeeklyClassCalendar({
           eventContent={(arg) => {
             const slotData = arg.event.extendedProps as WeeklyClassSlot;
             const full = isSlotFull(slotData);
+            const closed = isSlotClosed(slotData);
             const waitlist = isSlotWaitlist(slotData);
-            const colors = full
+            const colors = full || closed
               ? FULL_SWATCH
               : subjectToColor(slotData.level, slotData.subjects[0] ?? "");
             return (
@@ -416,6 +417,11 @@ export default function WeeklyClassCalendar({
                 {full && (
                   <div style={{ fontSize: "10px", fontWeight: 600, opacity: 0.7 }}>
                     Class is full
+                  </div>
+                )}
+                {closed && (
+                  <div style={{ fontSize: "10px", fontWeight: 600, opacity: 0.7 }}>
+                    Class is closed
                   </div>
                 )}
                 {waitlist && (
@@ -551,38 +557,7 @@ export default function WeeklyClassCalendar({
                   </div>
                 </div>
 
-                {isSlotFull(selectedEvent) ? (
-                  <button
-                    disabled
-                    className="w-full bg-gray-100 text-gray-500 font-medium py-2.5 px-4 rounded-lg text-sm cursor-not-allowed"
-                  >
-                    This class is currently full
-                  </button>
-                ) : (
-                  <div className="flex gap-2.5">
-                    {selectedEvent.prefillTrialLink && (
-                      <a
-                        href={replacePromocodeInUrl(replaceCampaignInUrl(selectedEvent.prefillTrialLink))}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 flex items-center justify-center bg-amber-400 hover:bg-amber-500 text-gray-900 font-semibold text-sm py-2.5 px-4 rounded-lg text-center transition-all duration-200"
-                      >
-                        Sign up for FREE Trial
-                      </a>
-                    )}
-                    <a
-                      href={replacePromocodeInUrl(replaceCampaignInUrl(
-                        selectedEvent.prefillRegistrationLink ??
-                          getFallbackRegistrationLinkByLevel(selectedEvent.level ?? "Unknown")
-                      ))}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm py-2.5 px-4 rounded-lg text-center transition-all duration-200"
-                    >
-                      Register now
-                    </a>
-                  </div>
-                )}
+                <SignupActions slot={selectedEvent} variant="popup" />
               </div>
             )}
           </DialogPanel>
