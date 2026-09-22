@@ -32,3 +32,10 @@ export function canBookTrial(slot: WeeklyClassSlot): boolean {
 export function canRegister(slot: WeeklyClassSlot): boolean {
   return !isSlotFull(slot) && slot.registrationOpen !== false;
 }
+
+// Both sign-up forms closed on a class that is not [FULL]. The calendar treats
+// it like a full class — greyed out, labelled "closed" — and does not open its
+// popup. A [FULL] class keeps its full label, whatever its flags say.
+export function isSlotClosed(slot: WeeklyClassSlot): boolean {
+  return !isSlotFull(slot) && slot.trialOpen === false && slot.registrationOpen === false;
+}
