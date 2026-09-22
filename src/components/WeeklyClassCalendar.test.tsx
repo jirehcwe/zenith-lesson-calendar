@@ -212,6 +212,29 @@ describe("computeLegendItems", () => {
     expect(labels.filter((l) => l === "Full")).toHaveLength(1);
   });
 
+  it("labels the grey swatch Closed when only closed classes are grey", () => {
+    // The only Economics class is closed, so Econ must drop out of the legend.
+    const slots = [
+      ...jcSlots.filter((slot) => !slot.subjects.includes("Economics")),
+      makeSlot({ level: "J1", stream: "JC", subjects: ["Economics"], trialOpen: false, registrationOpen: false }),
+    ];
+    const labels = computeLegendItems(slots, null).map((i) => i.label);
+    expect(labels[labels.length - 1]).toBe("Closed");
+    expect(labels).not.toContain("Econ");
+    expect(labels).toContain("Math");
+  });
+
+  it("labels the grey swatch Full / Closed when both kinds are grey", () => {
+    const slots = [
+      ...jcSlots,
+      makeSlot({ level: "J1", stream: "JC", subjects: ["Mathematics"], title: "[FULL] J1 Math" }),
+      makeSlot({ level: "J1", stream: "JC", subjects: ["Economics"], trialOpen: false, registrationOpen: false }),
+    ];
+    const labels = computeLegendItems(slots, null).map((i) => i.label);
+    expect(labels[labels.length - 1]).toBe("Full / Closed");
+    expect(labels.filter((l) => /Full|Closed/.test(l))).toHaveLength(1);
+  });
+
   it("shows the selected stream's full palette when there are no slots", () => {
     expect(computeLegendItems([], "Primary")).toEqual(getLegendItemsForStream("Primary"));
   });

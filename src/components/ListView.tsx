@@ -1,6 +1,7 @@
 "use client";
 
-import { WeeklyClassSlot, isSlotFull, isSlotWaitlist, getSubjectColor } from "./WeeklyClassCalendar";
+import { WeeklyClassSlot, getSubjectColor } from "./WeeklyClassCalendar";
+import { isSlotClosed, isSlotFull, isSlotWaitlist } from "@/utils/slotStatus";
 import SignupActions from "./SignupActions";
 import { to12hr } from "@/utils/time";
 
@@ -66,14 +67,15 @@ export default function ListView({
             {sessionsByDay[day]
               .sort((a, b) => a.startTime.localeCompare(b.startTime))
               .map((session, index) => {
-                const full = isSlotFull(session);
+                // A closed class (both forms closed) is greyed out like a full one.
+                const greyedOut = isSlotFull(session) || isSlotClosed(session);
                 const waitlist = isSlotWaitlist(session);
                 const accentColor = getSubjectColor(session.subjects[0] ?? "", session.level);
                 return (
                   <div
                     key={`${session.startTime}-${session.tutor}-${session.centre}-${session.day}-${index}`}
                     className={`rounded-xl overflow-hidden shadow-sm border-2 transition-all duration-200 hover:shadow-lg hover:border-blue-200 hover:-translate-y-0.5 ${
-                      full ? "bg-gray-50 border-gray-300 opacity-60" : "bg-white border-gray-200"
+                      greyedOut ? "bg-gray-50 border-gray-300 opacity-60" : "bg-white border-gray-200"
                     }`}
                   >
                     {/* Accent bar */}

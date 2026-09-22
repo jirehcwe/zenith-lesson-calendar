@@ -4,7 +4,7 @@ import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { useEffect, useRef, useState, useMemo } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
-import { isSlotFull, isSlotWaitlist } from "@/utils/slotStatus";
+import { isSlotClosed, isSlotFull, isSlotWaitlist } from "@/utils/slotStatus";
 import SignupActions from "./SignupActions";
 import { to12hr } from "@/utils/time";
 import {
@@ -54,7 +54,7 @@ export function computeLegendItems(
   const seen = new Set<string>();
   const result: { label: string; color: string; tint: string }[] = [];
   for (const slot of slots) {
-    if (isSlotFull(slot)) continue;
+    if (isSlotGreyedOut(slot)) continue;
     const { color } = subjectToColor(slot.level, slot.subjects[0] ?? "");
     if (seen.has(color)) continue;
     seen.add(color);
@@ -66,13 +66,20 @@ export function computeLegendItems(
   result.sort(
     (a, b) => LEGEND_ORDER.indexOf(a.color) - LEGEND_ORDER.indexOf(b.color)
   );
-  if (slots.some(isSlotFull)) {
-    const fullItem = getLegendItemsForStream(selectedStream).find(
-      (item) => item.label === "Full"
-    );
-    if (fullItem) result.push(fullItem);
+  // Full and closed classes share one grey swatch, labelled for what is shown.
+  const anyFull = slots.some(isSlotFull);
+  const anyClosed = slots.some(isSlotClosed);
+  if (anyFull || anyClosed) {
+    const label = anyFull && anyClosed ? "Full / Closed" : anyFull ? "Full" : "Closed";
+    result.push({ label, color: FULL_SWATCH.color, tint: FULL_SWATCH.tint });
   }
   return result;
+}
+
+// A full class and a closed class (both sign-up forms closed) are drawn the
+// same grey way; only their label differs.
+function isSlotGreyedOut(slot: WeeklyClassSlot): boolean {
+  return isSlotFull(slot) || isSlotClosed(slot);
 }
 
 // Helper to get a fixed date for a weekday (using a reference week)
@@ -179,8 +186,7 @@ export default function WeeklyClassCalendar({
       start.setHours(startHour, startMinute, 0, 0);
       const end = new Date(baseDate);
       end.setHours(endHour, endMinute, 0, 0);
-      const full = isSlotFull(slot);
-      const colors = full
+      const colors = isSlotGreyedOut(slot)
         ? FULL_SWATCH
         : subjectToColor(slot.level, slot.subjects[0] ?? "");
       return {
@@ -192,6 +198,7 @@ export default function WeeklyClassCalendar({
         extendedProps: slot,
         backgroundColor: colors.tint,
         textColor: colors.color,
+        classNames: isSlotClosed(slot) ? ["zenith-closed-event"] : [],
       };
     });
   }, [slots]);
@@ -230,6 +237,8 @@ export default function WeeklyClassCalendar({
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   const handleEventClick = (arg: any) => {
+    // A closed class takes no sign-ups, so it has no popup to open.
+    if (isSlotClosed(arg.event.extendedProps)) return;
     setSelectedEvent(arg.event.extendedProps);
     setIsDialogOpen(true);
   };
@@ -248,6 +257,14 @@ export default function WeeklyClassCalendar({
           transform: translateY(-1px) scale(1.02) !important;
           filter: brightness(1.04) !important;
           box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12) !important;
+        }
+        :global(.fc-v-event.zenith-closed-event) {
+          cursor: default !important;
+        }
+        :global(.fc-v-event.zenith-closed-event:hover) {
+          transform: none !important;
+          filter: none !important;
+          box-shadow: none !important;
         }
         :global(.fc) {
           --fc-border-color: #CBD5E1;
@@ -342,8 +359,9 @@ export default function WeeklyClassCalendar({
           eventContent={(arg) => {
             const slotData = arg.event.extendedProps as WeeklyClassSlot;
             const full = isSlotFull(slotData);
+            const closed = isSlotClosed(slotData);
             const waitlist = isSlotWaitlist(slotData);
-            const colors = full
+            const colors = full || closed
               ? FULL_SWATCH
               : subjectToColor(slotData.level, slotData.subjects[0] ?? "");
             return (
@@ -399,6 +417,11 @@ export default function WeeklyClassCalendar({
                 {full && (
                   <div style={{ fontSize: "10px", fontWeight: 600, opacity: 0.7 }}>
                     Class is full
+                  </div>
+                )}
+                {closed && (
+                  <div style={{ fontSize: "10px", fontWeight: 600, opacity: 0.7 }}>
+                    Class is closed
                   </div>
                 )}
                 {waitlist && (

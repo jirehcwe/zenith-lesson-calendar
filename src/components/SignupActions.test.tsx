@@ -50,17 +50,21 @@ describe.each(["popup", "card"] as const)("SignupActions (%s)", (variant) => {
     expect(trialLink()).toBeInTheDocument();
   });
 
-  it("greys out both buttons when both forms are closed", () => {
+  it("shows one closed message instead of the buttons when both forms are closed", () => {
     render(
       <SignupActions
         slot={makeSlot({ trialOpen: false, registrationOpen: false })}
         variant={variant}
       />
     );
+    expect(screen.getByRole("button", { name: /closed/i })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /closed/i })).toHaveTextContent(
+      variant === "popup" ? "This class is currently closed" : "Class Closed"
+    );
     expect(trialLink()).not.toBeInTheDocument();
     expect(registerLink()).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Trial closed/i })).toBeDisabled();
-    expect(screen.getByRole("button", { name: /Registration closed/i })).toBeDisabled();
+    expect(screen.queryByRole("button", { name: /Trial closed/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Registration closed/i })).not.toBeInTheDocument();
   });
 
   it("shows only the full message for a [FULL] class, whatever the flags say", () => {

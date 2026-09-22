@@ -1,4 +1,4 @@
-import { canBookTrial, canRegister } from "./slotStatus";
+import { canBookTrial, canRegister, isSlotClosed } from "./slotStatus";
 import type { WeeklyClassSlot } from "@/components/WeeklyClassCalendar";
 
 const makeSlot = (overrides: Partial<WeeklyClassSlot> = {}): WeeklyClassSlot => ({
@@ -41,5 +41,26 @@ describe("canBookTrial / canRegister", () => {
     });
     expect(canBookTrial(full)).toBe(false);
     expect(canRegister(full)).toBe(false);
+  });
+});
+
+describe("isSlotClosed", () => {
+  it("is true only when both forms are closed", () => {
+    expect(isSlotClosed(makeSlot({ trialOpen: false, registrationOpen: false }))).toBe(true);
+    expect(isSlotClosed(makeSlot({ trialOpen: false, registrationOpen: true }))).toBe(false);
+    expect(isSlotClosed(makeSlot({ trialOpen: true, registrationOpen: false }))).toBe(false);
+  });
+
+  it("is false when the flags are missing, so older feeds show classes as open", () => {
+    expect(isSlotClosed(makeSlot())).toBe(false);
+  });
+
+  it("leaves a [FULL] class full, even when both forms are closed", () => {
+    const full = makeSlot({
+      title: "[FULL] (EXP) Bishan | Mon 5PM - 7PM | Jael (S4 Pure Physics 2026)",
+      trialOpen: false,
+      registrationOpen: false,
+    });
+    expect(isSlotClosed(full)).toBe(false);
   });
 });

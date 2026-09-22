@@ -38,7 +38,7 @@ Clicking a class links to Google Forms with prefilled fields. Prefill URLs are m
 
 `WeeklyClassSlot.subjects` is an array to support combined classes (e.g. Combined + Pure Humanities, A Math + E Math taught in one session). Render with `subjects.join(" + ")`; use `subjects[0]` only for icon/color anchoring (see `WeeklyClassCalendar.tsx:319,471`).
 
-`SignupActions` renders the trial and register buttons for both the calendar popup and the list card. The gate rule lives in `src/utils/slotStatus.ts`: a `[FULL]` class shows one full message, and otherwise each button is greyed out when its flag is `false`. `signupButtons.guard.test.ts` fails if any other source file reads the prefill links or renders the button labels, so a new view cannot skip the rule.
+`SignupActions` renders the trial and register buttons for both the calendar popup and the list card. The gate rule lives in `src/utils/slotStatus.ts`: a `[FULL]` class shows one full message, and otherwise each button is greyed out when its flag is `false`. A class with both flags `false` (`isSlotClosed`) is drawn like a full class — grey block and grey list card, labelled "Class is closed" — and its calendar block opens no popup. Full and closed share one grey legend swatch (`Full`, `Closed`, or `Full / Closed`). `signupButtons.guard.test.ts` fails if any other source file reads the prefill links or renders the button labels, so a new view cannot skip the rule.
 
 ## Gotchas — Do NOT
 

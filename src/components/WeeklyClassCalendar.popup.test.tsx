@@ -1,32 +1,44 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import WeeklyClassCalendar, { type WeeklyClassSlot } from "./WeeklyClassCalendar";
+import { FULL_SWATCH } from "@/utils/subjectColors";
 
-// Stand-in for FullCalendar: one button per event that calls eventClick the
-// way FullCalendar does, so the test reaches the real class popup.
+// Stand-in for FullCalendar: one block per event, drawn with the component's
+// own eventContent and colour, that calls eventClick the way FullCalendar
+// does. The test reaches the real grid label and the real class popup.
 jest.mock("@fullcalendar/react", () => {
   const React = jest.requireActual("react");
+  type MockEvent = {
+    title: string;
+    extendedProps: unknown;
+    backgroundColor?: string;
+    classNames?: string[];
+  };
   return {
     __esModule: true,
     default: ({
       events,
       eventClick,
+      eventContent,
     }: {
-      events: { title: string; extendedProps: unknown }[];
+      events: MockEvent[];
       eventClick: (arg: { event: { extendedProps: unknown } }) => void;
+      eventContent: (arg: { event: { title: string; extendedProps: unknown } }) => unknown;
     }) =>
       React.createElement(
         "div",
         null,
         events.map((event, i) =>
           React.createElement(
-            "button",
+            "div",
             {
               key: i,
               "data-testid": "calendar-event",
+              "data-background": event.backgroundColor,
+              className: (event.classNames ?? []).join(" "),
               onClick: () => eventClick({ event: { extendedProps: event.extendedProps } }),
             },
-            event.title
+            eventContent({ event: { title: event.title, extendedProps: event.extendedProps } })
           )
         )
       ),
@@ -95,5 +107,43 @@ describe("WeeklyClassCalendar class popup", () => {
     expect(popup.getByRole("button", { name: /currently full/i })).toBeDisabled();
     expect(popup.queryByRole("link", { name: /Sign up for FREE Trial/i })).not.toBeInTheDocument();
     expect(popup.queryByRole("link", { name: /Register now/i })).not.toBeInTheDocument();
+  });
+});
+
+describe("WeeklyClassCalendar grid block", () => {
+  const block = () => screen.getByTestId("calendar-event");
+
+  it("greys out a class whose trial and registration forms are both closed", () => {
+    render(<WeeklyClassCalendar slots={[makeSlot({ trialOpen: false, registrationOpen: false })]} />);
+    expect(block()).toHaveAttribute("data-background", FULL_SWATCH.tint);
+    expect(block()).toHaveTextContent("Class is closed");
+    expect(block()).not.toHaveTextContent("Class is full");
+  });
+
+  it("opens no popup for a closed class", async () => {
+    render(<WeeklyClassCalendar slots={[makeSlot({ trialOpen: false, registrationOpen: false })]} />);
+    await userEvent.click(block());
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("keeps a class with only one form closed in its subject colour, and clickable", async () => {
+    render(<WeeklyClassCalendar slots={[makeSlot({ trialOpen: false })]} />);
+    expect(block()).not.toHaveAttribute("data-background", FULL_SWATCH.tint);
+    expect(block()).not.toHaveTextContent("Class is closed");
+    await userEvent.click(block());
+    expect(await screen.findByRole("dialog")).toBeInTheDocument();
+  });
+
+  it("still labels a [FULL] class full, and it still opens its popup", async () => {
+    render(
+      <WeeklyClassCalendar
+        slots={[makeSlot({ title: "[FULL] Pure Physics", trialOpen: false, registrationOpen: false })]}
+      />
+    );
+    expect(block()).toHaveAttribute("data-background", FULL_SWATCH.tint);
+    expect(block()).toHaveTextContent("Class is full");
+    expect(block()).not.toHaveTextContent("Class is closed");
+    await userEvent.click(block());
+    expect(await screen.findByRole("dialog")).toBeInTheDocument();
   });
 });
