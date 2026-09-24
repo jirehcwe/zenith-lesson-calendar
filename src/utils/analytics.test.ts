@@ -1,4 +1,4 @@
-import { GA_MEASUREMENT_ID, shouldLoadAnalytics } from "./analytics";
+import { GTM_CONTAINER_ID, shouldLoadAnalytics } from "./analytics";
 
 describe("shouldLoadAnalytics", () => {
   it("loads on both production aliases of the schedule site", () => {
@@ -40,8 +40,9 @@ describe("shouldLoadAnalytics", () => {
     expect(shouldLoadAnalytics("  schedule.zenitheducationstudio.com  ")).toBe(true);
   });
 
-  it("exports the GA4 property the schedule site reports to", () => {
-    // Guards the G-CFR492YL4N -> G-GX27V89PJK correction from silently regressing.
-    expect(GA_MEASUREMENT_ID).toBe("G-GX27V89PJK");
+  it("exports the GTM container the schedule site loads", () => {
+    // What this container fires is configured in the GTM interface, not in this repo,
+    // so the ID is the only part a test here can meaningfully hold still.
+    expect(GTM_CONTAINER_ID).toBe("GTM-NTBDX6K2");
   });
 });

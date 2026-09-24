@@ -1,5 +1,11 @@
-/** GA4 measurement ID for the public schedule site. */
-export const GA_MEASUREMENT_ID = "G-GX27V89PJK";
+/**
+ * Google Tag Manager container for the public schedule site.
+ *
+ * The site used to load gtag.js directly against a GA4 property. Tag ownership moved
+ * into GTM so the marketing agency can manage tags without a code deploy — what this
+ * container actually fires is configured in the GTM interface, not here.
+ */
+export const GTM_CONTAINER_ID = "GTM-NTBDX6K2";
 
 /**
  * The hostnames that serve the real, public schedule site. Both are Cloudflare Pages
@@ -11,13 +17,13 @@ const ANALYTICS_HOSTNAMES: ReadonlySet<string> = new Set([
 ]);
 
 /**
- * Decides whether to load the Google tag for a given hostname.
+ * Decides whether to load the container for a given hostname.
  *
- * Branch topology cannot carry this decision. The tag first shipped only on
+ * Branch topology cannot carry this decision. The original tag shipped only on
  * `regular-lessons` so the staging tree would stay untagged, and within four days a
  * prod-to-staging sync had copied it across anyway. The hostname is the stable signal,
  * so preview deploys (`*.pages.dev`), the staging branch, and local dev all stay out
- * of GA4 no matter which branch they were built from.
+ * of analytics no matter which branch they were built from.
  *
  * Matching is exact — a suffix check would accept lookalikes such as
  * `schedule.zenitheducationstudio.com.example.com`.
