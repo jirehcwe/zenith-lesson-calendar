@@ -10,8 +10,8 @@
  * What each container fires is set in the GTM interface by the marketing
  * agency (Mustard), not in this repo.
  *
- * A platform with no entry loads nothing. Secondary and JC get entries when
- * their containers exist.
+ * Every platform must have an entry: the map is a full Record, so adding a
+ * platform without a container fails the type check.
  */
 export type CrashCoursePlatform = "jc" | "ss" | "pri";
 
@@ -21,7 +21,21 @@ type GtmSite = {
   hostnames: readonly string[];
 };
 
-export const GTM_SITES: Readonly<Partial<Record<CrashCoursePlatform, GtmSite>>> = {
+export const GTM_SITES: Readonly<Record<CrashCoursePlatform, GtmSite>> = {
+  jc: {
+    containerId: "GTM-T69DCPPH",
+    hostnames: [
+      "crashcourse.jc.zenitheducationstudio.com",
+      "www.crashcourse.jc.zenitheducationstudio.com",
+    ],
+  },
+  ss: {
+    containerId: "GTM-WSFQX29S",
+    hostnames: [
+      "crashcourse.ss.zenitheducationstudio.com",
+      "www.crashcourse.ss.zenitheducationstudio.com",
+    ],
+  },
   pri: {
     containerId: "GTM-W9TJKN3L",
     hostnames: [
@@ -48,7 +62,7 @@ export function platformFromSlug(slug: string | undefined): CrashCoursePlatform 
  */
 export function gtmContainerForSlug(slug: string | undefined): string | null {
   const platform = platformFromSlug(slug);
-  return platform ? GTM_SITES[platform]?.containerId ?? null : null;
+  return platform ? GTM_SITES[platform].containerId : null;
 }
 
 /**
@@ -67,8 +81,8 @@ export function gtmContainerFor(
   hostname: string
 ): string | null {
   const platform = platformFromSlug(slug);
-  const site = platform ? GTM_SITES[platform] : undefined;
-  if (!site) return null;
+  if (!platform) return null;
+  const site = GTM_SITES[platform];
   const host = hostname.trim().toLowerCase();
   return site.hostnames.includes(host) ? site.containerId : null;
 }
