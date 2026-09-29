@@ -6,6 +6,8 @@ import {
 } from "../analytics";
 
 const PRI = "crashcourse.pri.zenitheducationstudio.com";
+const SS = "crashcourse.ss.zenitheducationstudio.com";
+const JC = "crashcourse.jc.zenitheducationstudio.com";
 
 describe("platformFromSlug", () => {
   it("reads the platform from the slug prefix", () => {
@@ -62,26 +64,49 @@ describe("gtmContainerFor", () => {
     );
   });
 
-  it("loads nothing for platforms that have no container yet", () => {
-    expect(
-      gtmContainerFor("jc-sep-2026", "www.crashcourse.jc.zenitheducationstudio.com")
-    ).toBeNull();
-    expect(
-      gtmContainerFor("ss-sep-2026", "www.crashcourse.ss.zenitheducationstudio.com")
-    ).toBeNull();
+  it("loads the Secondary and JC containers on their own hostnames", () => {
+    expect(gtmContainerFor("ss-sep-2026", SS)).toBe("GTM-WSFQX29S");
+    expect(gtmContainerFor("ss-sep-2026", `www.${SS}`)).toBe("GTM-WSFQX29S");
+    expect(gtmContainerFor("jc-sep-2026", JC)).toBe("GTM-T69DCPPH");
+    expect(gtmContainerFor("jc-june-2026", `www.${JC}`)).toBe("GTM-T69DCPPH");
+  });
+
+  it("keeps each site's container on its own site", () => {
+    // Every pairing of a build with another site's hostname loads nothing.
+    const hosts = { pri: PRI, ss: SS, jc: JC };
+    for (const platform of Object.keys(hosts)) {
+      for (const [other, otherHost] of Object.entries(hosts)) {
+        if (other === platform) continue;
+        expect(gtmContainerFor(`${platform}-sep-2026`, otherHost)).toBeNull();
+        expect(gtmContainerFor(`${platform}-sep-2026`, `www.${otherHost}`)).toBeNull();
+      }
+    }
+  });
+
+  it("loads nothing on the Secondary and JC preview deploys", () => {
+    expect(gtmContainerFor("ss-sep-2026", "zenith-crash-course-ss.pages.dev")).toBeNull();
+    expect(gtmContainerFor("jc-sep-2026", "zenith-crash-course-jc.pages.dev")).toBeNull();
+  });
+
+  it("loads nothing for an unknown platform, even on a real hostname", () => {
+    expect(gtmContainerFor("sec-sep-2026", SS)).toBeNull();
+    expect(gtmContainerFor(undefined, PRI)).toBeNull();
   });
 });
 
 describe("gtmContainerForSlug", () => {
   it("returns the build's container without looking at the hostname", () => {
     expect(gtmContainerForSlug("pri-sep-2026")).toBe("GTM-W9TJKN3L");
-    expect(gtmContainerForSlug("jc-sep-2026")).toBeNull();
+    expect(gtmContainerForSlug("ss-sep-2026")).toBe("GTM-WSFQX29S");
+    expect(gtmContainerForSlug("jc-sep-2026")).toBe("GTM-T69DCPPH");
     expect(gtmContainerForSlug(undefined)).toBeNull();
   });
 });
 
 describe("GTM_SITES", () => {
-  it("pins the Primary container ID", () => {
-    expect(GTM_SITES.pri?.containerId).toBe("GTM-W9TJKN3L");
+  it("pins each site's container ID", () => {
+    expect(GTM_SITES.pri.containerId).toBe("GTM-W9TJKN3L");
+    expect(GTM_SITES.ss.containerId).toBe("GTM-WSFQX29S");
+    expect(GTM_SITES.jc.containerId).toBe("GTM-T69DCPPH");
   });
 });
