@@ -74,6 +74,8 @@ describe("matchesSyllabus", () => {
     expect(matchesSyllabus("RVHS Aligned", ["RI"])).toBe(false);
     expect(matchesSyllabus("RI Aligned", ["R"])).toBe(false);
     expect(matchesSyllabus("RGS Aligned", ["RGS Aligned"])).toBe(false);
+    expect(matchesSyllabus("Cat High Aligned", ["Cat"])).toBe(false);
+    expect(matchesSyllabus("Cat Aligned", ["Cat High"])).toBe(false);
   });
 
   it("ignores case, and matches any one of several picks", () => {

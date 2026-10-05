@@ -617,9 +617,19 @@ export default function Page() {
   // Drop it, or the list would be filtered by a school nobody can see.
   useEffect(() => {
     if (weeklyClassData.length === 0 || filters.syllabus.length === 0) return;
-    const known = new Set(filteredOptions.syllabuses.map((o) => o.value.toLowerCase()));
-    const kept = filters.syllabus.filter((pick) => known.has(pick.toLowerCase()));
-    if (kept.length !== filters.syllabus.length) {
+    // Use each option's own text, so the chip and the dropdown agree.
+    const byFolded = new Map(
+      filteredOptions.syllabuses.map((o) => [o.value.trim().toLowerCase(), o.value]),
+    );
+    const kept: string[] = [];
+    for (const pick of filters.syllabus) {
+      const option = byFolded.get(pick.trim().toLowerCase());
+      if (option !== undefined && !kept.includes(option)) kept.push(option);
+    }
+    const same =
+      kept.length === filters.syllabus.length &&
+      kept.every((pick, i) => pick === filters.syllabus[i]);
+    if (!same) {
       setFilters((current) => ({ ...current, syllabus: kept }));
     }
   }, [weeklyClassData, filteredOptions.syllabuses, filters.syllabus]);
@@ -791,7 +801,7 @@ export default function Page() {
                   Filters
                   {hasActiveFilters && (
                     <span className="bg-blue-600 text-white text-[10px] font-bold px-1.5 py-px rounded-full tabular-nums">
-                      {[filters.stream, ...filters.level, ...filters.subject, ...filters.centre].filter(Boolean).length}
+                      {[filters.stream, ...filters.level, ...filters.subject, ...filters.centre, ...filters.syllabus].filter(Boolean).length}
                     </span>
                   )}
                 </button>

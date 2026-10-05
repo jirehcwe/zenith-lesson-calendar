@@ -688,14 +688,11 @@ describe("pinned mode (?classes= and ?tutor=)", () => {
     render(<Page />);
 
     await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(1));
+    expect(localStorage.getItem("weeklyClassDataYear")).toBeNull();
   });
 
   it("still falls back to the cache when a pinned fetch fails", async () => {
-    // Control for the test above, driven through the same lever. Without it,
-    // "reject a mismatched year" could be implemented as "reject everything"
-    // and the suite would still be green — silently deleting the round-5
-    // fallback, whose whole job is to keep a shared tutor link working through
-    // a backend blip.
+    // A failed pinned fetch must still serve the cached schedule.
     const okFetch = jest.fn(() =>
       Promise.resolve({ json: () => Promise.resolve({ data: SLOTS }) }),
     );
@@ -1672,6 +1669,57 @@ describe("Syllabus filter", () => {
     expect(shown("RgsOnly")).not.toBeInTheDocument();
   });
 
+  describe("when one school name contains another", () => {
+    beforeEach(() => {
+      global.fetch = jest.fn(() =>
+        Promise.resolve({
+          json: () =>
+            Promise.resolve({
+              data: [...SYLLABUS_SLOTS, ip(9, "CatOnly", "Cat Aligned")],
+            }),
+        }),
+      ) as unknown as typeof fetch;
+    });
+
+    it("Cat does not match Cat High", async () => {
+      setUrl("/?stream=Secondary IP&syllabus=Cat&view=list");
+      render(<Page />);
+      expect(await screen.findByText("CatOnly")).toBeInTheDocument();
+      expect(shown("RgsGroup")).not.toBeInTheDocument();
+    });
+
+    it("Cat High does not match Cat", async () => {
+      setUrl("/?stream=Secondary IP&syllabus=Cat High&view=list");
+      render(<Page />);
+      expect(await screen.findByText("RgsGroup")).toBeInTheDocument();
+      expect(shown("CatOnly")).not.toBeInTheDocument();
+    });
+  });
+
+  it("counts a syllabus pick in the collapsed filters badge", async () => {
+    setUrl("/?stream=Secondary IP&syllabus=RGS&view=list");
+    render(<Page />);
+    await screen.findByText("RgsOnly");
+    fireEvent.click(screen.getByRole("button", { name: "Hide filters" }));
+    const badge = within(screen.getByRole("button", { name: "Show filters" }));
+    expect(badge.getByText("2")).toBeInTheDocument();
+  });
+
+  it("shows a lower-case URL pick as the option's own text", async () => {
+    setUrl("/?stream=Secondary IP&syllabus=rgs&view=list");
+    render(<Page />);
+    expect(await screen.findByText("RgsOnly")).toBeInTheDocument();
+    expect(shown("HciOnly")).not.toBeInTheDocument();
+    await waitFor(() => expect(window.location.search).toContain("syllabus=RGS"));
+  });
+
+  it("keeps both picks of a URL list with a stray space", async () => {
+    setUrl("/?stream=Secondary IP&syllabus=RGS,%20RI&view=list");
+    render(<Page />);
+    await screen.findByText("RgsOnly");
+    await waitFor(() => expect(window.location.search).toContain("syllabus=RGS%2CRI"));
+  });
+
   it("shows every class of the stream when no school is picked", async () => {
     setUrl("/?stream=Secondary IP&view=list");
     render(<Page />);
@@ -1778,8 +1826,7 @@ describe("JC next-year note", () => {
     feed([jc(2026)]);
     setUrl("/?stream=JC&view=list");
     render(<Page />);
-    const notes = await screen.findAllByText(NOTE);
-    expect(notes.length).toBeGreaterThanOrEqual(1);
+    expect(await screen.findByText(NOTE)).toBeInTheDocument();
   });
 
   it("hides once JC shows 2027 slots", async () => {
