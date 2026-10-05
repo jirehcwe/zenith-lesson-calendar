@@ -103,19 +103,6 @@ afterEach(() => {
   jest.useRealTimers();
 });
 
-// page.tsx reaches for the calendar year in exactly ONE place —
-// `new Date().getFullYear()`, threaded through the cache read, the request and
-// the cache write — and nothing else under src/ calls it, so pinning that call
-// is a precise stand-in for "this browser tab was open when the year rolled
-// over". Deliberately NOT jest.setSystemTime: the bug lives INSIDE the 5-minute
-// freshness window, so the two mounts must stay milliseconds apart on the
-// wall clock while disagreeing about the year. Freezing the whole clock instead
-// would let the cache expire on age and the test would pass for the wrong
-// reason.
-function pinYear(year: number) {
-  return jest.spyOn(Date.prototype, "getFullYear").mockReturnValue(year);
-}
-
 // A request that opens and then goes nowhere: it settles ONLY when the app
 // aborts it. That is what a stalled connection actually does — a rejected
 // promise is the one thing it never produces — and it is the case a cache
@@ -382,8 +369,7 @@ describe("pinned mode (?classes= and ?tutor=)", () => {
 
   it("does not blame the link — or the system — when the schedule loads but is empty", async () => {
     // A 200 carrying no classes is not a broken link AND not a failure. Real
-    // trigger: the request pins year=<current>, so every link in circulation
-    // hits this from 1 January until the new year's schedule is published.
+    // trigger: the feed returns none while a year's schedule is not published.
     // "Please try again" would be a lie there, and retrying cannot help.
     global.fetch = jest.fn(() =>
       Promise.resolve({ json: () => Promise.resolve({ data: [] }) }),
@@ -682,65 +668,33 @@ describe("pinned mode (?classes= and ?tutor=)", () => {
     expect(screen.queryByText(/saved copy/i)).not.toBeInTheDocument();
   });
 
-  it("refuses LAST year's cache when this year's pinned fetch fails", async () => {
-    // The cache is keyed by nothing but its own age, while the request is
-    // keyed by year. Cross midnight on 31 December and a five-minute-old entry
-    // — fresh by every check the page makes — answers a question about a
-    // different academic year. Tutor codes and centres are stable year to
-    // year, so the substitution is invisible: the parent gets a complete,
-    // plausible, RETIRED timetable, hedged only as "may be out of date".
-    const seen: string[] = [];
-    const yearSpy = pinYear(2026);
-    const lastYearFetch = jest.fn((url: RequestInfo | URL) => {
-      seen.push(String(url));
-      return Promise.resolve({ json: () => Promise.resolve({ data: SLOTS }) });
-    });
-    global.fetch = lastYearFetch as unknown as typeof fetch;
-    setUrl("/");
-    // Seed through a real visit, so the entry is exactly what an ordinary
-    // browse on 31 December leaves behind — and so the test does not restate
-    // CACHE_VERSION, which must not be bumped.
-    const first = render(<Page />);
-    await waitFor(() =>
-      expect(JSON.parse(localStorage.getItem("weeklyClassData") ?? "[]")).toHaveLength(SLOTS.length),
-    );
-    first.unmount();
+  it("asks the feed for the calendar view and sends no year", async () => {
+    render(<Page />);
+    await waitFor(() => expect(global.fetch).toHaveBeenCalled());
 
-    // Midnight. The tab is still open, the entry is still minutes old.
-    yearSpy.mockReturnValue(2027);
-    const failingFetch = jest.fn((url: RequestInfo | URL) => {
-      seen.push(String(url));
-      return Promise.reject(new Error("network"));
-    });
-    global.fetch = failingFetch as unknown as typeof fetch;
-    setUrl("/?tutor=T1&view=list");
-    const { container } = render(<Page />);
-
-    await waitFor(() =>
-      expect(
-        screen.getByText("We couldn't load the schedule. Please try again."),
-      ).toBeInTheDocument(),
-    );
-    // The whole point: last year's classes are NOT on screen. A hedge is not a
-    // substitute — "may be out of date" describes a stale copy of the right
-    // year, not a complete copy of the wrong one.
-    expect(listRegion(container).queryByText("Physics")).not.toBeInTheDocument();
-    expect(screen.queryByText(/saved copy/i)).not.toBeInTheDocument();
-    // ...and the link is not blamed for it either.
-    expect(screen.queryByText(/couldn't find any classes for this link/i)).not.toBeInTheDocument();
-    // The two mounts really did ask about different years — otherwise this is
-    // just the same-year fallback test with a spy attached.
-    expect(seen[0]).toContain("year=2026");
-    expect(seen[1]).toContain("year=2027");
+    const url = String((global.fetch as jest.Mock).mock.calls[0][0]);
+    expect(url).toContain("/schedule?");
+    expect(url).toContain("view=calendar");
+    expect(url).not.toContain("year=");
   });
 
-  it("still falls back to a SAME-year cache when the fetch fails", async () => {
+  it("refuses a cache written by the year-keyed version of the page", async () => {
+    localStorage.setItem("weeklyClassData", JSON.stringify(SLOTS));
+    localStorage.setItem("weeklyClassDataTimestamp", Date.now().toString());
+    localStorage.setItem("weeklyClassDataVersion", "4");
+    localStorage.setItem("weeklyClassDataYear", "2026");
+
+    render(<Page />);
+
+    await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(1));
+  });
+
+  it("still falls back to the cache when a pinned fetch fails", async () => {
     // Control for the test above, driven through the same lever. Without it,
     // "reject a mismatched year" could be implemented as "reject everything"
     // and the suite would still be green — silently deleting the round-5
     // fallback, whose whole job is to keep a shared tutor link working through
     // a backend blip.
-    const yearSpy = pinYear(2026);
     const okFetch = jest.fn(() =>
       Promise.resolve({ json: () => Promise.resolve({ data: SLOTS }) }),
     );
@@ -752,8 +706,6 @@ describe("pinned mode (?classes= and ?tutor=)", () => {
     );
     first.unmount();
 
-    // Same year, same as every visit that is not on 1 January.
-    yearSpy.mockReturnValue(2026);
     const failingFetch = jest.fn(() => Promise.reject(new Error("network")));
     global.fetch = failingFetch as unknown as typeof fetch;
     setUrl("/?tutor=T1&view=list");
@@ -1215,9 +1167,8 @@ describe("unpinned schedule notice (no ?tutor= / ?classes=)", () => {
   });
 
   it("tells an unpinned visitor when the schedule loaded but is empty", async () => {
-    // A 200 carrying zero rows. Reachable every year: the request pins
-    // year=<current>, so from 1 January until the new year's schedule is
-    // published every ordinary visit lands here — and "Please try again" would
+    // A 200 carrying zero rows. Reachable when the feed has none
+    // published: every ordinary visit lands here — and "Please try again" would
     // be both a lie and useless advice.
     global.fetch = jest.fn(() =>
       Promise.resolve({ json: () => Promise.resolve({ data: [] }) }),

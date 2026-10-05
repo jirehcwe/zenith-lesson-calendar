@@ -37,6 +37,8 @@ export type WeeklyClassSlot = {
   // open: feeds and cached payloads from before the flags do not send them.
   trialOpen?: boolean;
   registrationOpen?: boolean;
+  // School track from the master sheet. Missing on old rows; null for none.
+  track?: string | null;
 };
 
 // Build the color legend from the currently visible slots. Each swatch is

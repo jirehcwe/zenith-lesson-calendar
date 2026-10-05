@@ -21,7 +21,7 @@ export function isSlotWaitlist(slot: WeeklyClassSlot): boolean {
 }
 
 // Ops can close the trial form or the registration form for one class (Master
-// Sheet (2026) columns BU and BY), and the feed sends that as trialOpen /
+// Sheet (2026) BU/BY, Master Sheet (2027) CG/CH), and the feed sends that as trialOpen /
 // registrationOpen. A missing flag means open, so feeds and cached payloads
 // from before the flags keep their buttons. A [FULL] class takes no sign-ups,
 // whatever its flags say.
