@@ -1,4 +1,5 @@
 import { act, render, screen, fireEvent, waitFor, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import Page from "./page";
 
 // FullCalendar renders nothing in jsdom; assert via the List view instead.
@@ -1607,5 +1608,141 @@ describe("AllSec stream (?stream=AllSec)", () => {
       expect(listRegion(container).getByText("Chemistry")).toBeInTheDocument(),
     );
     expect(window.location.search).toContain("subject=Chemistry");
+  });
+});
+
+describe("Syllabus filter", () => {
+  const ip = (n: number, subject: string, track?: string | null) => ({
+    classSlotId: `2027-Class10${n}`,
+    title: `Bishan | Sat 9AM - 11AM | T${n} (S3 ${subject} 2027)`,
+    day: 6, startTime: "09:00", endTime: "11:00",
+    subjects: [subject], tutor: `T${n}`, centre: "Bishan",
+    stream: "IP", level: "Secondary 3",
+    prefillTrialLink: "https://example.com/t", prefillRegistrationLink: "https://example.com/r",
+    trialOpen: true, registrationOpen: true,
+    ...(track === undefined ? {} : { track }),
+  });
+  const SYLLABUS_SLOTS = [
+    ip(1, "RgsOnly", "RGS Aligned"),
+    ip(2, "RgsGroup", "RGS + RI + CHIJ St Nicholas + Cat High Aligned"),
+    ip(3, "AnySchool", "All Schools"),
+    ip(4, "HciOnly", "HCI Aligned"),
+    ip(5, "RjcOnly", "RJC Aligned"),
+    ip(6, "NoTrackNA", "NA"),
+    ip(7, "NoTrackField"),
+    { ...ip(8, "ExpressClass", null), stream: "EXP" },
+  ];
+  const IP_SUBJECTS = [
+    "RgsOnly", "RgsGroup", "AnySchool", "HciOnly", "RjcOnly", "NoTrackNA", "NoTrackField",
+  ];
+
+  // Desktop, so the sticky filter bar and its stream chips mount.
+  beforeEach(() => {
+    setScreen(...DESKTOP);
+    global.fetch = jest.fn(() =>
+      Promise.resolve({ json: () => Promise.resolve({ data: SYLLABUS_SLOTS }) }),
+    ) as unknown as typeof fetch;
+  });
+
+  const shown = (subject: string) => screen.queryByText(subject);
+
+  it("shows the classes that name the school, alone or in a group, and All Schools", async () => {
+    setUrl("/?stream=Secondary IP&syllabus=RGS&view=list");
+    render(<Page />);
+    expect(await screen.findByText("RgsOnly")).toBeInTheDocument();
+    expect(shown("RgsGroup")).toBeInTheDocument();
+    expect(shown("AnySchool")).toBeInTheDocument();
+  });
+
+  it("hides another school's class and a class with no syllabus", async () => {
+    setUrl("/?stream=Secondary IP&syllabus=RGS&view=list");
+    render(<Page />);
+    await screen.findByText("RgsOnly");
+    for (const subject of ["HciOnly", "RjcOnly", "NoTrackNA", "NoTrackField"]) {
+      expect(shown(subject)).not.toBeInTheDocument();
+    }
+  });
+
+  it("matches whole names only", async () => {
+    setUrl("/?stream=Secondary IP&syllabus=RI&view=list");
+    render(<Page />);
+    expect(await screen.findByText("RgsGroup")).toBeInTheDocument();
+    expect(shown("AnySchool")).toBeInTheDocument();
+    expect(shown("RjcOnly")).not.toBeInTheDocument();
+    expect(shown("RgsOnly")).not.toBeInTheDocument();
+  });
+
+  it("shows every class of the stream when no school is picked", async () => {
+    setUrl("/?stream=Secondary IP&view=list");
+    render(<Page />);
+    await screen.findByText("RgsOnly");
+    for (const subject of IP_SUBJECTS) {
+      expect(shown(subject)).toBeInTheDocument();
+    }
+    expect(shown("ExpressClass")).not.toBeInTheDocument();
+  });
+
+  it("offers single schools and never NA or All Schools", async () => {
+    setUrl("/?stream=Secondary IP&view=list");
+    render(<Page />);
+    await screen.findByText("RgsOnly");
+    await userEvent.setup().click(screen.getByRole("button", { name: /Syllabus/ }));
+    const options = within(screen.getByRole("listbox"));
+    for (const school of ["Cat High", "CHIJ St Nicholas", "HCI", "RGS", "RI", "RJC"]) {
+      expect(options.getByText(school)).toBeInTheDocument();
+    }
+    for (const bad of ["NA", "All Schools", "RGS Aligned"]) {
+      expect(options.queryByText(bad)).not.toBeInTheDocument();
+    }
+  });
+
+  it("hides the Syllabus filter for a stream with no syllabus values", async () => {
+    setUrl("/?stream=Secondary Exp&view=list");
+    render(<Page />);
+    await screen.findByText("ExpressClass");
+    expect(screen.queryByRole("button", { name: /Syllabus/ })).not.toBeInTheDocument();
+  });
+
+  it("ignores an unknown school in the URL", async () => {
+    setUrl("/?stream=Secondary IP&syllabus=Hogwarts&view=list");
+    render(<Page />);
+    await screen.findByText("RgsOnly");
+    for (const subject of IP_SUBJECTS) {
+      expect(shown(subject)).toBeInTheDocument();
+    }
+    await waitFor(() => expect(window.location.search).not.toContain("syllabus="));
+  });
+
+  it("ignores a syllabus pick on a stream that has no such school", async () => {
+    setUrl("/?stream=Secondary Exp&syllabus=RGS&view=list");
+    render(<Page />);
+    expect(await screen.findByText("ExpressClass")).toBeInTheDocument();
+    await waitFor(() => expect(window.location.search).not.toContain("syllabus="));
+  });
+
+  it("clears the pick when the stream changes", async () => {
+    setUrl("/?stream=Secondary IP&syllabus=RGS&view=list");
+    render(<Page />);
+    await screen.findByText("RgsOnly");
+    expect(window.location.search).toContain("syllabus=RGS");
+    const streamRow = screen.getByText("Stream").parentElement!;
+    fireEvent.click(within(streamRow).getByRole("button", { name: /^Primary/ }));
+    await waitFor(() => expect(window.location.search).toContain("stream=Primary"));
+    expect(window.location.search).not.toContain("syllabus=");
+  });
+
+  it("keeps the pick in the URL", async () => {
+    setUrl("/?stream=Secondary IP&view=list");
+    render(<Page />);
+    await screen.findByText("RgsOnly");
+    const user = userEvent.setup();
+    await user.click(screen.getByRole("button", { name: /Syllabus/ }));
+    await user.click(within(screen.getByRole("listbox")).getByText("HCI"));
+    await waitFor(() => expect(window.location.search).toContain("syllabus=HCI"));
+    expect(shown("HciOnly")).toBeInTheDocument();
+    expect(shown("AnySchool")).toBeInTheDocument();
+    for (const subject of ["RgsOnly", "RgsGroup", "RjcOnly", "NoTrackNA", "NoTrackField"]) {
+      expect(shown(subject)).not.toBeInTheDocument();
+    }
   });
 });

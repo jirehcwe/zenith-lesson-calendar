@@ -21,6 +21,7 @@ import {
   type PinRequest,
 } from "@/utils/pinnedSlots";
 import { getCampaignParam } from "@/utils/campaign";
+import { matchesSyllabus, syllabusOptions } from "@/utils/syllabus";
 
 const CACHE_KEY = "weeklyClassData";
 const CACHE_TIME_KEY = "weeklyClassDataTimestamp";
@@ -275,6 +276,7 @@ export default function Page() {
     subject: [] as string[],
     centre: [] as string[],
     level: [] as string[],
+    syllabus: [] as string[],
     stream: null as string | null,
   });
   const [pinRequest, setPinRequest] = useState<PinRequest>({ kind: "none" });
@@ -309,11 +311,12 @@ export default function Page() {
     // same rule handleFilterChange already applies whenever the stream changes;
     // the visitor simply lands on the ordinary unfiltered homepage.
     const initialFilters = rejected
-      ? { subject: [], centre: [], level: [], stream: null as string | null }
+      ? { subject: [], centre: [], level: [], syllabus: [], stream: null as string | null }
       : {
           subject: params.get("subject")?.split(",").filter(Boolean) || [],
           centre: params.get("centre")?.split(",").filter(Boolean) || [],
           level: params.get("level")?.split(",").filter(Boolean) || [],
+          syllabus: params.get("syllabus")?.split(",").filter(Boolean) || [],
           stream,
         };
     const pin = parsePinRequest(window.location.search);
@@ -469,6 +472,7 @@ export default function Page() {
     params.delete("subject");
     params.delete("centre");
     params.delete("level");
+    params.delete("syllabus");
     params.delete("stream");
 
     // Add current filter params
@@ -480,6 +484,9 @@ export default function Page() {
     }
     if (filters.level.length > 0) {
       params.set("level", filters.level.join(","));
+    }
+    if (filters.syllabus.length > 0) {
+      params.set("syllabus", filters.syllabus.join(","));
     }
     if (filters.stream) {
       params.set("stream", filters.stream);
@@ -518,6 +525,7 @@ export default function Page() {
       ...new Set(streamFilteredData.flatMap((s) => s.subjects)),
     ];
     const allCentres = [...new Set(streamFilteredData.map((s) => s.centre))];
+    const allSyllabuses = syllabusOptions(streamFilteredData.map((s) => s.track));
 
     // Function to count results for each option
     const getResultCount = (field: string, value: string) => {
@@ -528,6 +536,8 @@ export default function Page() {
         testFilters.subject = [value];
       } else if (field === "centre") {
         testFilters.centre = [value];
+      } else if (field === "syllabus") {
+        testFilters.syllabus = [value];
       }
 
       const result = streamFilteredData.filter((s) => {
@@ -537,7 +547,8 @@ export default function Page() {
           (testFilters.subject.length === 0 ||
             s.subjects.some((subj) => testFilters.subject.includes(subj))) &&
           (testFilters.centre.length === 0 ||
-            testFilters.centre.includes(s.centre))
+            testFilters.centre.includes(s.centre)) &&
+          matchesSyllabus(s.track, testFilters.syllabus)
         );
       });
 
@@ -581,12 +592,36 @@ export default function Page() {
         return a.value.localeCompare(b.value);
       });
 
+    const syllabusesWithCounts = allSyllabuses
+      .map((school) => ({
+        value: school,
+        count: getResultCount("syllabus", school),
+        selected: filters.syllabus.some((p) => p.toLowerCase() === school.toLowerCase()),
+      }))
+      .sort((a, b) => {
+        if (a.count === 0 && b.count > 0) return 1;
+        if (a.count > 0 && b.count === 0) return -1;
+        return a.value.localeCompare(b.value, "en", { sensitivity: "base" });
+      });
+
     return {
       levels: levelsWithCounts,
       subjects: subjectsWithCounts,
       centres: centresWithCounts,
+      syllabuses: syllabusesWithCounts,
     };
   }, [weeklyClassData, filters]);
+
+  // A pick that no class in this stream names came from a stale link.
+  // Drop it, or the list would be filtered by a school nobody can see.
+  useEffect(() => {
+    if (weeklyClassData.length === 0 || filters.syllabus.length === 0) return;
+    const known = new Set(filteredOptions.syllabuses.map((o) => o.value.toLowerCase()));
+    const kept = filters.syllabus.filter((pick) => known.has(pick.toLowerCase()));
+    if (kept.length !== filters.syllabus.length) {
+      setFilters((current) => ({ ...current, syllabus: kept }));
+    }
+  }, [weeklyClassData, filteredOptions.syllabuses, filters.syllabus]);
 
   const streamOptions = useMemo(() => {
     // AllSec is link-only: its chip exists solely while it is the selected
@@ -616,7 +651,8 @@ export default function Page() {
       filters.stream === null &&
       filters.level.length === 0 &&
       filters.subject.length === 0 &&
-      filters.centre.length === 0
+      filters.centre.length === 0 &&
+      filters.syllabus.length === 0
     ) {
       return [];
     }
@@ -626,7 +662,8 @@ export default function Page() {
         (filters.level.length === 0 || filters.level.includes(s.level)) &&
         (filters.subject.length === 0 ||
           s.subjects.some((subj) => filters.subject.includes(subj))) &&
-        (filters.centre.length === 0 || filters.centre.includes(s.centre))
+        (filters.centre.length === 0 || filters.centre.includes(s.centre)) &&
+        matchesSyllabus(s.track, filters.syllabus)
       );
     });
     return filtered.map((s) => ({ ...s }));
@@ -643,6 +680,7 @@ export default function Page() {
         level: [],
         subject: [],
         centre: [],
+        syllabus: [],
       });
       return;
     }
@@ -661,14 +699,15 @@ export default function Page() {
       qs ? `${window.location.pathname}?${qs}` : window.location.pathname,
     );
     setPinRequest({ kind: "none" });
-    setFilters({ subject: [], centre: [], level: [], stream: null });
+    setFilters({ subject: [], centre: [], level: [], syllabus: [], stream: null });
   };
 
   const hasActiveFilters =
     filters.stream !== null ||
     filters.level.length > 0 ||
     filters.subject.length > 0 ||
-    filters.centre.length > 0;
+    filters.centre.length > 0 ||
+    filters.syllabus.length > 0;
 
   const scheduleEmpty = weeklyClassData.length === 0;
 
@@ -759,6 +798,7 @@ export default function Page() {
                     levels={filteredOptions.levels}
                     subjects={filteredOptions.subjects}
                     centres={filteredOptions.centres}
+                    syllabuses={filteredOptions.syllabuses}
                     filters={filters}
                     onFilterChange={handleFilterChange}
                     currentView={currentView}
@@ -928,6 +968,7 @@ export default function Page() {
                 levels={filteredOptions.levels}
                 subjects={filteredOptions.subjects}
                 centres={filteredOptions.centres}
+                syllabuses={filteredOptions.syllabuses}
                 filters={filters}
                 onFilterChange={handleFilterChange}
                 currentView={currentView}
