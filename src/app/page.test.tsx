@@ -1721,13 +1721,23 @@ describe("Syllabus filter", () => {
   });
 
   it("clears the pick when the stream changes", async () => {
+    // The JC slot names RGS too, so the prune effect would keep the pick.
+    // Only the stream-change reset can clear it.
+    const jcSlot = {
+      ...ip(9, "JcRgsClass", "RGS Aligned"),
+      stream: "H2", level: "J2",
+    };
+    global.fetch = jest.fn(() =>
+      Promise.resolve({ json: () => Promise.resolve({ data: [...SYLLABUS_SLOTS, jcSlot] }) }),
+    ) as unknown as typeof fetch;
     setUrl("/?stream=Secondary IP&syllabus=RGS&view=list");
     render(<Page />);
     await screen.findByText("RgsOnly");
     expect(window.location.search).toContain("syllabus=RGS");
     const streamRow = screen.getByText("Stream").parentElement!;
-    fireEvent.click(within(streamRow).getByRole("button", { name: /^Primary/ }));
-    await waitFor(() => expect(window.location.search).toContain("stream=Primary"));
+    fireEvent.click(within(streamRow).getByRole("button", { name: /^JC/ }));
+    expect(await screen.findByText("JcRgsClass")).toBeInTheDocument();
+    await waitFor(() => expect(window.location.search).toContain("stream=JC"));
     expect(window.location.search).not.toContain("syllabus=");
   });
 
