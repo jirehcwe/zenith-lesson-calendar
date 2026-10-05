@@ -1611,27 +1611,27 @@ describe("AllSec stream (?stream=AllSec)", () => {
   });
 });
 
+const ip = (n: number, subject: string, track?: string | null) => ({
+  classSlotId: `2027-Class10${n}`,
+  title: `Bishan | Sat 9AM - 11AM | T${n} (S3 ${subject} 2027)`,
+  day: 6, startTime: "09:00", endTime: "11:00",
+  subjects: [subject], tutor: `T${n}`, centre: "Bishan",
+  stream: "IP", level: "Secondary 3",
+  prefillTrialLink: "https://example.com/t", prefillRegistrationLink: "https://example.com/r",
+  trialOpen: true, registrationOpen: true,
+  ...(track === undefined ? {} : { track }),
+});
+const SYLLABUS_SLOTS = [
+  ip(1, "RgsOnly", "RGS Aligned"),
+  ip(2, "RgsGroup", "RGS + RI + CHIJ St Nicholas + Cat High Aligned"),
+  ip(3, "AnySchool", "All Schools"),
+  ip(4, "HciOnly", "HCI Aligned"),
+  ip(5, "RjcOnly", "RJC Aligned"),
+  ip(6, "NoTrackNA", "NA"),
+  ip(7, "NoTrackField"),
+  { ...ip(8, "ExpressClass", null), stream: "EXP" },
+];
 describe("Syllabus filter", () => {
-  const ip = (n: number, subject: string, track?: string | null) => ({
-    classSlotId: `2027-Class10${n}`,
-    title: `Bishan | Sat 9AM - 11AM | T${n} (S3 ${subject} 2027)`,
-    day: 6, startTime: "09:00", endTime: "11:00",
-    subjects: [subject], tutor: `T${n}`, centre: "Bishan",
-    stream: "IP", level: "Secondary 3",
-    prefillTrialLink: "https://example.com/t", prefillRegistrationLink: "https://example.com/r",
-    trialOpen: true, registrationOpen: true,
-    ...(track === undefined ? {} : { track }),
-  });
-  const SYLLABUS_SLOTS = [
-    ip(1, "RgsOnly", "RGS Aligned"),
-    ip(2, "RgsGroup", "RGS + RI + CHIJ St Nicholas + Cat High Aligned"),
-    ip(3, "AnySchool", "All Schools"),
-    ip(4, "HciOnly", "HCI Aligned"),
-    ip(5, "RjcOnly", "RJC Aligned"),
-    ip(6, "NoTrackNA", "NA"),
-    ip(7, "NoTrackField"),
-    { ...ip(8, "ExpressClass", null), stream: "EXP" },
-  ];
   const IP_SUBJECTS = [
     "RgsOnly", "RgsGroup", "AnySchool", "HciOnly", "RjcOnly", "NoTrackNA", "NoTrackField",
   ];
@@ -1754,5 +1754,55 @@ describe("Syllabus filter", () => {
     for (const subject of ["RgsOnly", "RgsGroup", "RjcOnly", "NoTrackNA", "NoTrackField"]) {
       expect(shown(subject)).not.toBeInTheDocument();
     }
+  });
+});
+
+describe("JC next-year note", () => {
+  const NOTE = "JC 2027 classes open on 1 Jan 2027";
+  const jc = (year: number) => ({
+    classSlotId: `${year}-Class0001`,
+    title: `Bishan | Sat 9AM - 11AM | T (J2 Economics ${year})`,
+    day: 6, startTime: "09:00", endTime: "11:00",
+    subjects: ["Economics"], tutor: "T", centre: "Bishan",
+    stream: "H2", level: "J2",
+    prefillTrialLink: "https://example.com/t", prefillRegistrationLink: "https://example.com/r",
+    trialOpen: true, registrationOpen: true,
+  });
+  const feed = (slots: unknown[]) => {
+    global.fetch = jest.fn(() =>
+      Promise.resolve({ json: () => Promise.resolve({ data: slots }) }),
+    ) as unknown as typeof fetch;
+  };
+
+  it("shows when JC is picked and JC still shows 2026 slots", async () => {
+    feed([jc(2026)]);
+    setUrl("/?stream=JC&view=list");
+    render(<Page />);
+    const notes = await screen.findAllByText(NOTE);
+    expect(notes.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("hides once JC shows 2027 slots", async () => {
+    feed([jc(2027)]);
+    setUrl("/?stream=JC&view=list");
+    render(<Page />);
+    await screen.findByText("Economics");
+    expect(screen.queryByText(NOTE)).toBeNull();
+  });
+
+  it("hides for another stream", async () => {
+    feed([jc(2026), ...SYLLABUS_SLOTS]);
+    setUrl("/?stream=Secondary IP&view=list");
+    render(<Page />);
+    await screen.findByText("RgsOnly");
+    expect(screen.queryByText(NOTE)).toBeNull();
+  });
+
+  it("hides in a pinned view", async () => {
+    feed([jc(2026)]);
+    setUrl("/?tutor=T&stream=JC&view=list");
+    render(<Page />);
+    await screen.findByText("Economics");
+    expect(screen.queryByText(NOTE)).toBeNull();
   });
 });

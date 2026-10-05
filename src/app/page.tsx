@@ -22,6 +22,7 @@ import {
 } from "@/utils/pinnedSlots";
 import { getCampaignParam } from "@/utils/campaign";
 import { matchesSyllabus, syllabusOptions } from "@/utils/syllabus";
+import { showJcNextYearNote } from "@/utils/scheduleYear";
 
 const CACHE_KEY = "weeklyClassData";
 const CACHE_TIME_KEY = "weeklyClassDataTimestamp";
@@ -643,6 +644,11 @@ export default function Page() {
   // still enters pinned mode and can report itself as broken.
   const isPinned = pinRequest.kind !== "none";
 
+  const jcNote = useMemo(
+    () => showJcNextYearNote(filters.stream, weeklyClassData),
+    [filters.stream, weeklyClassData]
+  );
+
   const events = useMemo(() => {
     if (isPinned) {
       return pinnedSlots.map((s) => ({ ...s }));
@@ -851,6 +857,16 @@ export default function Page() {
       )}
       <div className="max-w-7xl mx-auto px-4 md:px-8 pt-2 md:pt-4 pb-safe">
         <div className="flex flex-col gap-2">
+          {/* One note for both layouts. It sits under the desktop filter bar
+              and above the list on a phone. */}
+          {!isLoading && jcNote && !isPinned && (
+            <p
+              role="note"
+              className="text-sm font-semibold text-indigo-700 bg-indigo-50 border border-indigo-100 rounded-md px-3 py-2"
+            >
+              JC 2027 classes open on 1 Jan 2027
+            </p>
+          )}
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-12 sm:py-24 gap-4">
               <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600"></div>
