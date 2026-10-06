@@ -4,13 +4,14 @@ import Filters from "./Filters";
 
 type OptionWithCount = { value: string; count: number; selected: boolean };
 const opt = (value: string, count = 1): OptionWithCount => ({ value, count, selected: false });
-const defaultFilters = { subject: [], centre: [], level: [], stream: null };
+const defaultFilters = { subject: [], centre: [], level: [], syllabus: [] as string[], stream: null };
 
 const baseProps = {
   streams: [] as OptionWithCount[],
   levels: [] as OptionWithCount[],
   subjects: [] as OptionWithCount[],
   centres: [] as OptionWithCount[],
+  syllabuses: [] as OptionWithCount[],
   filters: defaultFilters,
   onFilterChange: jest.fn(),
   currentView: "calendar" as const,
@@ -131,7 +132,7 @@ describe("Filters", () => {
     );
     await user.click(screen.getAllByText("Clear all")[0]);
     expect(onFilterChange).toHaveBeenCalledWith({
-      subject: [], centre: [], level: [], stream: null,
+      subject: [], centre: [], level: [], syllabus: [], stream: null,
     });
   });
 
@@ -229,5 +230,66 @@ describe("Filters — mobile layout (openUpward=true)", () => {
     expect(screen.getByText("8")).toBeInTheDocument();
     expect(screen.getByText(/classes/i)).toBeInTheDocument();
     expect(screen.getAllByText("Clear all").length).toBeGreaterThan(0);
+  });
+});
+
+describe("Filters — Syllabus", () => {
+  it("renders a Syllabus control when there are options", () => {
+    render(<Filters {...baseProps} syllabuses={[opt("RGS", 2)]} />);
+    expect(screen.getByRole("button", { name: /Syllabus/ })).toBeInTheDocument();
+  });
+
+  it("renders no Syllabus control when there are no options", () => {
+    render(<Filters {...baseProps} syllabuses={[]} />);
+    expect(screen.queryByText("Syllabus")).not.toBeInTheDocument();
+  });
+
+  it("renders the Syllabus control in the mobile layout too", () => {
+    render(<Filters {...baseProps} syllabuses={[opt("RGS", 2)]} openUpward />);
+    expect(screen.getByText("Syllabus", { selector: "label" })).toBeInTheDocument();
+  });
+
+  it("calls onFilterChange with the picked school", async () => {
+    const user = userEvent.setup();
+    const onFilterChange = jest.fn();
+    render(<Filters {...baseProps} syllabuses={[opt("RGS", 2)]} onFilterChange={onFilterChange} />);
+    await user.click(screen.getByRole("button", { name: /Syllabus/ }));
+    await user.click(screen.getByText("RGS"));
+    expect(onFilterChange).toHaveBeenCalledWith(expect.objectContaining({ syllabus: ["RGS"] }));
+  });
+
+  it("shows a removal chip for a selected school and removes only it", async () => {
+    const user = userEvent.setup();
+    const onFilterChange = jest.fn();
+    render(
+      <Filters
+        {...baseProps}
+        syllabuses={[opt("RGS", 2), opt("RI", 1)]}
+        filters={{ ...defaultFilters, syllabus: ["RGS", "RI"] }}
+        onFilterChange={onFilterChange}
+        totalCount={3}
+      />
+    );
+    // The summary row only shows when a filter is active, so syllabus alone must count.
+    await user.click(screen.getByRole("button", { name: "RGS ×" }));
+    expect(onFilterChange).toHaveBeenCalledWith(expect.objectContaining({ syllabus: ["RI"] }));
+  });
+
+  it("Clear all empties the syllabus pick", async () => {
+    const user = userEvent.setup();
+    const onFilterChange = jest.fn();
+    render(
+      <Filters
+        {...baseProps}
+        syllabuses={[opt("RGS", 2)]}
+        filters={{ ...defaultFilters, syllabus: ["RGS"] }}
+        onFilterChange={onFilterChange}
+        totalCount={2}
+      />
+    );
+    await user.click(screen.getAllByText("Clear all")[0]);
+    expect(onFilterChange).toHaveBeenCalledWith({
+      subject: [], centre: [], level: [], syllabus: [], stream: null,
+    });
   });
 });

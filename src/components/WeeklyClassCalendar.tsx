@@ -4,6 +4,7 @@ import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { useEffect, useRef, useState, useMemo } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
+import { syllabusLabel } from "@/utils/syllabus";
 import { isSlotClosed, isSlotFull, isSlotWaitlist } from "@/utils/slotStatus";
 import SignupActions from "./SignupActions";
 import { to12hr } from "@/utils/time";
@@ -37,6 +38,8 @@ export type WeeklyClassSlot = {
   // open: feeds and cached payloads from before the flags do not send them.
   trialOpen?: boolean;
   registrationOpen?: boolean;
+  // School track from the master sheet. Missing on old rows; null for none.
+  track?: string | null;
 };
 
 // Build the color legend from the currently visible slots. Each swatch is
@@ -361,6 +364,7 @@ export default function WeeklyClassCalendar({
             const full = isSlotFull(slotData);
             const closed = isSlotClosed(slotData);
             const waitlist = isSlotWaitlist(slotData);
+            const syllabus = syllabusLabel(slotData.track);
             const colors = full || closed
               ? FULL_SWATCH
               : subjectToColor(slotData.level, slotData.subjects[0] ?? "");
@@ -427,6 +431,22 @@ export default function WeeklyClassCalendar({
                 {waitlist && (
                   <div style={{ fontSize: "10px", fontWeight: 600, opacity: 0.7 }}>
                     Waitlist only
+                  </div>
+                )}
+                {syllabus && (
+                  <div
+                    data-testid="syllabus-label"
+                    title={syllabus}
+                    style={{
+                      fontSize: "10px",
+                      fontWeight: 600,
+                      opacity: 0.7,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {syllabus}
                   </div>
                 )}
               </div>
@@ -505,8 +525,16 @@ export default function WeeklyClassCalendar({
                   {selectedEvent.subjects.join(" + ")}
                 </DialogTitle>
                 {isSlotWaitlist(selectedEvent) && (
-                  <span className="inline-block mt-2 bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-1 rounded-md border border-amber-200">
+                  <span className="inline-block mt-2 mr-2 bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-1 rounded-md border border-amber-200">
                     Waitlist only
+                  </span>
+                )}
+                {syllabusLabel(selectedEvent.track) && (
+                  <span
+                    data-testid="syllabus-label"
+                    className="inline-block mt-2 bg-indigo-50 text-indigo-700 text-xs font-bold px-2.5 py-1 rounded-md border border-indigo-100"
+                  >
+                    {syllabusLabel(selectedEvent.track)}
                   </span>
                 )}
               </div>

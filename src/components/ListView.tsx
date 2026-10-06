@@ -4,6 +4,7 @@ import { WeeklyClassSlot, getSubjectColor } from "./WeeklyClassCalendar";
 import { isSlotClosed, isSlotFull, isSlotWaitlist } from "@/utils/slotStatus";
 import SignupActions from "./SignupActions";
 import { to12hr } from "@/utils/time";
+import { syllabusLabel } from "@/utils/syllabus";
 
 export default function ListView({
   sessions,
@@ -70,6 +71,7 @@ export default function ListView({
                 // A closed class (both forms closed) is greyed out like a full one.
                 const greyedOut = isSlotFull(session) || isSlotClosed(session);
                 const waitlist = isSlotWaitlist(session);
+                const syllabus = syllabusLabel(session.track);
                 const accentColor = getSubjectColor(session.subjects[0] ?? "", session.level);
                 return (
                   <div
@@ -96,6 +98,15 @@ export default function ListView({
                           {session.level}
                         </span>
                       </div>
+
+                      {syllabus && (
+                        <span
+                          data-testid="syllabus-label"
+                          className="self-start bg-indigo-50 text-indigo-700 text-xs font-bold px-2 py-0.5 rounded-md border border-indigo-100"
+                        >
+                          {syllabus}
+                        </span>
+                      )}
 
                       {/* Info rows */}
                       <div className="flex flex-col gap-2 text-sm">

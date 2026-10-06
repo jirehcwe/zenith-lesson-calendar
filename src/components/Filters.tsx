@@ -15,10 +15,12 @@ type FiltersProps = {
   levels: OptionWithCount[];
   subjects: OptionWithCount[];
   centres: OptionWithCount[];
+  syllabuses: OptionWithCount[];
   filters: {
     subject: string[];
     centre: string[];
     level: string[];
+    syllabus: string[];
     stream: string | null;
   };
   onFilterChange: (filters: FiltersProps["filters"]) => void;
@@ -212,6 +214,7 @@ export default function Filters({
   levels,
   subjects,
   centres,
+  syllabuses,
   filters,
   onFilterChange,
   currentView,
@@ -229,7 +232,8 @@ export default function Filters({
     filters.stream !== null ||
     filters.level.length > 0 ||
     filters.subject.length > 0 ||
-    filters.centre.length > 0;
+    filters.centre.length > 0 ||
+    filters.syllabus.length > 0;
 
   return (
     <div className={`flex flex-col ${openUpward ? "gap-5" : "gap-4"}`}>
@@ -273,6 +277,7 @@ export default function Filters({
           <MultiSelect label="Level" selected={filters.level} options={levels} onChange={(val) => setFilter("level", val)} openUpward={openUpward} />
           <MultiSelect label="Subject" selected={filters.subject} options={subjects} onChange={(val) => setFilter("subject", val)} openUpward={openUpward} />
           <MultiSelect label="Centre" selected={filters.centre} options={centres} onChange={(val) => setFilter("centre", val)} openUpward={openUpward} />
+          {syllabuses.length > 0 && <MultiSelect label="Syllabus" selected={filters.syllabus} options={syllabuses} onChange={(val) => setFilter("syllabus", val)} openUpward={openUpward} />}
         </div>
       ) : (
         // Desktop: compact pills in one row + optional view toggle
@@ -280,6 +285,7 @@ export default function Filters({
           <MultiSelect compact label="Level" selected={filters.level} options={levels} onChange={(val) => setFilter("level", val)} openUpward={openUpward} triggerOpen={triggerLevelOpen} />
           <MultiSelect compact label="Subject" selected={filters.subject} options={subjects} onChange={(val) => setFilter("subject", val)} openUpward={openUpward} />
           <MultiSelect compact label="Centre" selected={filters.centre} options={centres} onChange={(val) => setFilter("centre", val)} openUpward={openUpward} />
+          {syllabuses.length > 0 && <MultiSelect compact label="Syllabus" selected={filters.syllabus} options={syllabuses} onChange={(val) => setFilter("syllabus", val)} openUpward={openUpward} />}
 
           {showViewToggle && (
             <div className="ml-auto flex bg-white border border-gray-200 rounded-xl p-0.5 gap-0.5 flex-shrink-0">
@@ -344,10 +350,16 @@ export default function Filters({
                 {c} <span className="text-gray-400 ml-0.5">×</span>
               </button>
             ))}
+            {filters.syllabus.map((s) => (
+              <button key={s} onClick={() => setFilter("syllabus", filters.syllabus.filter((x) => x !== s))}
+                className="bg-white border border-gray-200 rounded-full px-3 py-1 sm:px-2.5 sm:py-0.5 text-sm sm:text-xs font-medium flex items-center gap-1 hover:border-red-300 transition-colors">
+                {s} <span className="text-gray-400 ml-0.5">×</span>
+              </button>
+            ))}
 
             {/* iPad + desktop: inline immediately after last chip */}
             <button
-              onClick={() => onFilterChange({ subject: [], centre: [], level: [], stream: null })}
+              onClick={() => onFilterChange({ subject: [], centre: [], level: [], syllabus: [], stream: null })}
               className="max-sm:hidden text-xs text-gray-400 hover:text-red-500 font-medium ml-1 transition-colors underline"
             >
               Clear all
@@ -357,7 +369,7 @@ export default function Filters({
           {/* Mobile only: own row, pinned right */}
           <div className="hidden max-sm:flex justify-end mt-1.5">
             <button
-              onClick={() => onFilterChange({ subject: [], centre: [], level: [], stream: null })}
+              onClick={() => onFilterChange({ subject: [], centre: [], level: [], syllabus: [], stream: null })}
               className="text-sm text-gray-400 hover:text-red-500 font-medium transition-colors underline"
             >
               Clear all
