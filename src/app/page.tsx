@@ -21,27 +21,13 @@ import {
   type PinRequest,
 } from "@/utils/pinnedSlots";
 import { getCampaignParam } from "@/utils/campaign";
+import { matchesSyllabus, syllabusOptions } from "@/utils/syllabus";
+import { showJcNextYearNote } from "@/utils/scheduleYear";
 
 const CACHE_KEY = "weeklyClassData";
 const CACHE_TIME_KEY = "weeklyClassDataTimestamp";
 const CACHE_VERSION_KEY = "weeklyClassDataVersion";
-// The academic year the cached payload was fetched FOR. The request is
-// year-scoped (`?year=<current>`) but the cache never recorded which year it
-// answered, so a payload cached on 31 December satisfied a request made on 1
-// January: the entry is only ~minutes old, so every freshness check passes, and
-// the visitor is served LAST year's schedule. Tutor codes and centres are stable
-// across years, so nothing downstream can spot the substitution — the classes
-// simply look plausible and wrong. Worst on the pinned fallback (a shared
-// ?tutor= link renders a whole retired timetable under a generic "may be out of
-// date" note) but not confined to it: an ordinary visitor on 1 January gets the
-// same payload with no note at all.
-//
-// Stored ALONGSIDE the payload rather than folded into CACHE_KEY. Two reasons:
-// the read path already has a compare-this-sibling-key-or-discard step for
-// CACHE_VERSION, so this is the same shape rather than a second mechanism; and
-// a per-year key would strand last year's blob in localStorage forever, unread
-// and unreachable, which is the wrong thing to do with the largest item this
-// site stores. One slot, one year, cleared on mismatch.
+// Old versions stored the fetched year here. Kept only so clearCachedData removes it.
 const CACHE_YEAR_KEY = "weeklyClassDataYear";
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in ms
 // Increment this version when the API changes to force all clients to invalidate cache
@@ -50,7 +36,8 @@ const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in ms
 // directly `{data:[...], total, pageSize, currentPage}`. Cached payloads from
 // the old shape would still parse but downstream code now reads `res.data`
 // (not `res.data.data`), so we invalidate to force a fresh fetch.
-const CACHE_VERSION = 4;
+// 5: the feed's calendar view replaced the year-keyed request.
+const CACHE_VERSION = 5;
 
 // Collapse db-schedule-updater's venue granularity back into the flat labels
 // the calendar has always used: "Zoom" → "Online", and strip any parenthetical
@@ -91,22 +78,15 @@ function normaliseSlot(slot: WeeklyClassSlot): WeeklyClassSlot {
 // preference being guarded — it reads localStorage in its own mount effect, so
 // an unguarded throw there takes the page down just as effectively. Both are
 // pinned by "renders with site data blocked entirely" in page.test.tsx.
-function getCachedData(year: number): WeeklyClassSlot[] | null {
+function getCachedData(): WeeklyClassSlot[] | null {
   try {
     const data = localStorage.getItem(CACHE_KEY);
     const timestamp = localStorage.getItem(CACHE_TIME_KEY);
     const cachedVersion = localStorage.getItem(CACHE_VERSION_KEY);
-    const cachedYear = localStorage.getItem(CACHE_YEAR_KEY);
 
-    // Wrong SHAPE (version) or wrong SUBJECT (year) — either way this entry
-    // cannot answer the question being asked, so it is discarded rather than
-    // served. The year comparison is a string compare against the same value
-    // the request will carry, so "no year recorded at all" (every client
-    // cached under the old code) is a mismatch too and refetches once. That is
-    // deliberately NOT a CACHE_VERSION bump: the version means "the payload
-    // shape changed", it is pinned by other tests, and year-scoping makes a
-    // bump unnecessary — those clients are flushed by the missing year key.
-    if (cachedVersion !== CACHE_VERSION.toString() || cachedYear !== String(year)) {
+    // A wrong version means the payload has another shape or came from a
+    // year-keyed request. Discard it.
+    if (cachedVersion !== CACHE_VERSION.toString()) {
       clearCachedData();
       return null;
     }
@@ -138,23 +118,17 @@ function getCachedData(year: number): WeeklyClassSlot[] | null {
 // the schedule. Please try again." directly above the correctly rendered
 // classes. Quota-exceeded is the realistic trigger — the schedule blob is the
 // biggest thing this site stores.
-function setCachedData(data: WeeklyClassSlot[], year: number) {
+function setCachedData(data: WeeklyClassSlot[]) {
   try {
     localStorage.setItem(CACHE_KEY, JSON.stringify(data));
     localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
     localStorage.setItem(CACHE_VERSION_KEY, CACHE_VERSION.toString());
-    // Written LAST so a write that dies part-way (quota) leaves an entry with
-    // no year rather than one labelled with a year it does not hold — the read
-    // path treats a missing year as a mismatch, which is the safe direction.
-    localStorage.setItem(CACHE_YEAR_KEY, String(year));
   } catch (error) {
     console.warn("Unable to cache schedule data:", error);
   }
 }
 
-// Drops the whole entry — all four keys — because they are one record: a
-// payload with no year, or a year with no payload, is a half-state the read
-// path would have to reason about. Guarded for the same reason the two helpers
+// Drops the whole entry — all four keys — because they are one record. Guarded for the same reason the two helpers
 // above are: under "block all cookies and site data" the `localStorage`
 // property access itself throws, and an escaping throw here would land in the
 // fetch chain's shared .catch and print "We couldn't load the schedule. Please
@@ -303,6 +277,7 @@ export default function Page() {
     subject: [] as string[],
     centre: [] as string[],
     level: [] as string[],
+    syllabus: [] as string[],
     stream: null as string | null,
   });
   const [pinRequest, setPinRequest] = useState<PinRequest>({ kind: "none" });
@@ -337,11 +312,12 @@ export default function Page() {
     // same rule handleFilterChange already applies whenever the stream changes;
     // the visitor simply lands on the ordinary unfiltered homepage.
     const initialFilters = rejected
-      ? { subject: [], centre: [], level: [], stream: null as string | null }
+      ? { subject: [], centre: [], level: [], syllabus: [], stream: null as string | null }
       : {
           subject: params.get("subject")?.split(",").filter(Boolean) || [],
           centre: params.get("centre")?.split(",").filter(Boolean) || [],
           level: params.get("level")?.split(",").filter(Boolean) || [],
+          syllabus: params.get("syllabus")?.split(",").filter(Boolean) || [],
           stream,
         };
     const pin = parsePinRequest(window.location.search);
@@ -373,14 +349,7 @@ export default function Page() {
     // traffic is a small share of visits, so the saving being given up is one
     // request on a fraction of loads. The write below is unconditional, so a
     // pinned visit still warms the cache for the visitor's next unpinned one.
-    // Read ONCE and thread it through the cache read, the request and the cache
-    // write, rather than calling new Date() at each. A page loaded seconds
-    // before midnight on 31 December would otherwise be able to check the cache
-    // against one year and store the response under another, writing exactly
-    // the mislabelled entry this key exists to prevent.
-    const year = new Date().getFullYear();
-
-    const cached = pin.kind === "none" ? getCachedData(year) : null;
+    const cached = pin.kind === "none" ? getCachedData() : null;
     if (cached) {
       setWeeklyClassData(cached);
       setIsLoading(false);
@@ -388,10 +357,11 @@ export default function Page() {
     }
 
     setIsLoading(true);
-    // API base is env-configured (prod/preview set in Cloudflare); /schedule path
-    // + year are added here. `!` is safe: next.config.ts fails the build if unset.
+    // API base is env-configured (prod/preview set in Cloudflare). `!` is safe:
+    // next.config.ts fails the build if unset.
+    // The feed picks the year for each platform; see telebot salesYear.ts.
     const scheduleUrl = new URL("/schedule", process.env.NEXT_PUBLIC_SCHEDULE_API_BASE_URL!);
-    scheduleUrl.searchParams.set("year", String(year));
+    scheduleUrl.searchParams.set("view", "calendar");
 
     // `cancelled` exists because this effect's handlers outlive the component:
     // the abort below settles the fetch, so without the guard a navigation away
@@ -419,11 +389,10 @@ export default function Page() {
         setWeeklyClassData(normalised);
         // Never cache an empty schedule. A cache hit short-circuits this effect
         // before it fetches, so persisting an empty payload locks every visitor
-        // out of a retry for CACHE_DURATION. That is reachable, not theoretical:
-        // the request pins year=<current>, so from 1 January until the new
-        // year's schedule is published the endpoint legitimately returns none.
+        // out of a retry for CACHE_DURATION. The feed can
+        // return none while a year's schedule is not published.
         if (normalised.length > 0) {
-          setCachedData(normalised, year);
+          setCachedData(normalised);
         } else {
           // Not writing an empty payload is only half of it. The page has just
           // been told, by a SUCCESSFUL response, that the schedule it is asking
@@ -462,7 +431,7 @@ export default function Page() {
         // coincidence, and without the flag the banner states the first as if
         // it were the second.
         if (pin.kind !== "none") {
-          const fallback = getCachedData(year);
+          const fallback = getCachedData();
           if (fallback) {
             setWeeklyClassData(fallback);
             setServedFromCacheFallback(true);
@@ -504,6 +473,7 @@ export default function Page() {
     params.delete("subject");
     params.delete("centre");
     params.delete("level");
+    params.delete("syllabus");
     params.delete("stream");
 
     // Add current filter params
@@ -515,6 +485,9 @@ export default function Page() {
     }
     if (filters.level.length > 0) {
       params.set("level", filters.level.join(","));
+    }
+    if (filters.syllabus.length > 0) {
+      params.set("syllabus", filters.syllabus.join(","));
     }
     if (filters.stream) {
       params.set("stream", filters.stream);
@@ -553,6 +526,7 @@ export default function Page() {
       ...new Set(streamFilteredData.flatMap((s) => s.subjects)),
     ];
     const allCentres = [...new Set(streamFilteredData.map((s) => s.centre))];
+    const allSyllabuses = syllabusOptions(streamFilteredData.map((s) => s.track));
 
     // Function to count results for each option
     const getResultCount = (field: string, value: string) => {
@@ -563,6 +537,8 @@ export default function Page() {
         testFilters.subject = [value];
       } else if (field === "centre") {
         testFilters.centre = [value];
+      } else if (field === "syllabus") {
+        testFilters.syllabus = [value];
       }
 
       const result = streamFilteredData.filter((s) => {
@@ -572,7 +548,8 @@ export default function Page() {
           (testFilters.subject.length === 0 ||
             s.subjects.some((subj) => testFilters.subject.includes(subj))) &&
           (testFilters.centre.length === 0 ||
-            testFilters.centre.includes(s.centre))
+            testFilters.centre.includes(s.centre)) &&
+          matchesSyllabus(s.track, testFilters.syllabus)
         );
       });
 
@@ -616,12 +593,46 @@ export default function Page() {
         return a.value.localeCompare(b.value);
       });
 
+    const syllabusesWithCounts = allSyllabuses
+      .map((school) => ({
+        value: school,
+        count: getResultCount("syllabus", school),
+        selected: filters.syllabus.some((p) => p.toLowerCase() === school.toLowerCase()),
+      }))
+      .sort((a, b) => {
+        if (a.count === 0 && b.count > 0) return 1;
+        if (a.count > 0 && b.count === 0) return -1;
+        return a.value.localeCompare(b.value, "en", { sensitivity: "base" });
+      });
+
     return {
       levels: levelsWithCounts,
       subjects: subjectsWithCounts,
       centres: centresWithCounts,
+      syllabuses: syllabusesWithCounts,
     };
   }, [weeklyClassData, filters]);
+
+  // A pick that no class in this stream names came from a stale link.
+  // Drop it, or the list would be filtered by a school nobody can see.
+  useEffect(() => {
+    if (weeklyClassData.length === 0 || filters.syllabus.length === 0) return;
+    // Use each option's own text, so the chip and the dropdown agree.
+    const byFolded = new Map(
+      filteredOptions.syllabuses.map((o) => [o.value.trim().toLowerCase(), o.value]),
+    );
+    const kept: string[] = [];
+    for (const pick of filters.syllabus) {
+      const option = byFolded.get(pick.trim().toLowerCase());
+      if (option !== undefined && !kept.includes(option)) kept.push(option);
+    }
+    const same =
+      kept.length === filters.syllabus.length &&
+      kept.every((pick, i) => pick === filters.syllabus[i]);
+    if (!same) {
+      setFilters((current) => ({ ...current, syllabus: kept }));
+    }
+  }, [weeklyClassData, filteredOptions.syllabuses, filters.syllabus]);
 
   const streamOptions = useMemo(() => {
     // AllSec is link-only: its chip exists solely while it is the selected
@@ -643,6 +654,11 @@ export default function Page() {
   // still enters pinned mode and can report itself as broken.
   const isPinned = pinRequest.kind !== "none";
 
+  const jcNote = useMemo(
+    () => showJcNextYearNote(filters.stream, weeklyClassData),
+    [filters.stream, weeklyClassData]
+  );
+
   const events = useMemo(() => {
     if (isPinned) {
       return pinnedSlots.map((s) => ({ ...s }));
@@ -651,7 +667,8 @@ export default function Page() {
       filters.stream === null &&
       filters.level.length === 0 &&
       filters.subject.length === 0 &&
-      filters.centre.length === 0
+      filters.centre.length === 0 &&
+      filters.syllabus.length === 0
     ) {
       return [];
     }
@@ -661,7 +678,8 @@ export default function Page() {
         (filters.level.length === 0 || filters.level.includes(s.level)) &&
         (filters.subject.length === 0 ||
           s.subjects.some((subj) => filters.subject.includes(subj))) &&
-        (filters.centre.length === 0 || filters.centre.includes(s.centre))
+        (filters.centre.length === 0 || filters.centre.includes(s.centre)) &&
+        matchesSyllabus(s.track, filters.syllabus)
       );
     });
     return filtered.map((s) => ({ ...s }));
@@ -678,6 +696,7 @@ export default function Page() {
         level: [],
         subject: [],
         centre: [],
+        syllabus: [],
       });
       return;
     }
@@ -696,14 +715,15 @@ export default function Page() {
       qs ? `${window.location.pathname}?${qs}` : window.location.pathname,
     );
     setPinRequest({ kind: "none" });
-    setFilters({ subject: [], centre: [], level: [], stream: null });
+    setFilters({ subject: [], centre: [], level: [], syllabus: [], stream: null });
   };
 
   const hasActiveFilters =
     filters.stream !== null ||
     filters.level.length > 0 ||
     filters.subject.length > 0 ||
-    filters.centre.length > 0;
+    filters.centre.length > 0 ||
+    filters.syllabus.length > 0;
 
   const scheduleEmpty = weeklyClassData.length === 0;
 
@@ -781,7 +801,7 @@ export default function Page() {
                   Filters
                   {hasActiveFilters && (
                     <span className="bg-blue-600 text-white text-[10px] font-bold px-1.5 py-px rounded-full tabular-nums">
-                      {[filters.stream, ...filters.level, ...filters.subject, ...filters.centre].filter(Boolean).length}
+                      {[filters.stream, ...filters.level, ...filters.subject, ...filters.centre, ...filters.syllabus].filter(Boolean).length}
                     </span>
                   )}
                 </button>
@@ -794,6 +814,7 @@ export default function Page() {
                     levels={filteredOptions.levels}
                     subjects={filteredOptions.subjects}
                     centres={filteredOptions.centres}
+                    syllabuses={filteredOptions.syllabuses}
                     filters={filters}
                     onFilterChange={handleFilterChange}
                     currentView={currentView}
@@ -846,6 +867,16 @@ export default function Page() {
       )}
       <div className="max-w-7xl mx-auto px-4 md:px-8 pt-2 md:pt-4 pb-safe">
         <div className="flex flex-col gap-2">
+          {/* One note for both layouts. It sits under the desktop filter bar
+              and above the list on a phone. */}
+          {!isLoading && jcNote && !isPinned && (
+            <p
+              role="note"
+              className="text-sm font-semibold text-indigo-700 bg-indigo-50 border border-indigo-100 rounded-md px-3 py-2"
+            >
+              JC 2027 classes open on 1 Jan 2027
+            </p>
+          )}
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-12 sm:py-24 gap-4">
               <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600"></div>
@@ -963,6 +994,7 @@ export default function Page() {
                 levels={filteredOptions.levels}
                 subjects={filteredOptions.subjects}
                 centres={filteredOptions.centres}
+                syllabuses={filteredOptions.syllabuses}
                 filters={filters}
                 onFilterChange={handleFilterChange}
                 currentView={currentView}

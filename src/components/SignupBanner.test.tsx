@@ -95,9 +95,15 @@ describe("SignupBanner", () => {
       render(<SignupBanner />);
       const embedBar = document.querySelector(".signup-embed-bar");
       expect(embedBar).toBeInTheDocument();
-      expect(embedBar).toHaveTextContent("Zenith 2026 Schedule");
+      expect(embedBar).toHaveTextContent("Zenith 2027 Schedule");
       expect(embedBar?.querySelector("button")).toBeNull();
       expect(embedBar?.querySelector("svg")).toBeNull();
+    });
+
+    it("names the 2027 academic year in the pill", () => {
+      render(<SignupBanner />);
+      expect(screen.getAllByText(/2027 academic year/i).length).toBeGreaterThan(0);
+      expect(screen.queryByText(/2026/)).toBeNull();
     });
 
     it("is separate from the interactive standalone hero", () => {

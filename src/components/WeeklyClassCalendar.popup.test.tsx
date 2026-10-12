@@ -110,6 +110,32 @@ describe("WeeklyClassCalendar class popup", () => {
   });
 });
 
+describe("WeeklyClassCalendar syllabus", () => {
+  it("shows the syllabus on the block", () => {
+    render(<WeeklyClassCalendar slots={[makeSlot({ track: "All Schools" })]} />);
+    expect(within(screen.getByTestId("calendar-event")).getByTestId("syllabus-label")).toHaveTextContent(
+      "All Schools"
+    );
+  });
+
+  it("shows no syllabus line on the block for track NA", () => {
+    render(<WeeklyClassCalendar slots={[makeSlot({ track: "NA" })]} />);
+    expect(screen.queryByTestId("syllabus-label")).toBeNull();
+  });
+
+  it("shows the syllabus in the popup", async () => {
+    const popup = await openPopup(makeSlot({ track: "TJC + Dunman High + Cedar Girls Aligned" }));
+    expect(popup.getByTestId("syllabus-label")).toHaveTextContent(
+      "TJC + Dunman High + Cedar Girls Aligned"
+    );
+  });
+
+  it("shows no syllabus line in the popup for a slot with no track", async () => {
+    const popup = await openPopup(makeSlot());
+    expect(popup.queryByTestId("syllabus-label")).toBeNull();
+  });
+});
+
 describe("WeeklyClassCalendar grid block", () => {
   const block = () => screen.getByTestId("calendar-event");
 

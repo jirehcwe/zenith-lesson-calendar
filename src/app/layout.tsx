@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Manrope } from "next/font/google";
 import GoogleTagManager from "@/components/GoogleTagManager";
 import { GTM_CONTAINER_ID } from "@/utils/analytics";
+import { SCHEDULE_YEAR } from "@/utils/scheduleYear";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -25,8 +26,8 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Zenith 2026 Schedule",
-  description: "View the Zenith 2026 Schedule and sign up for trial classes!",
+  title: `Zenith ${SCHEDULE_YEAR} Schedule`,
+  description: `View the Zenith ${SCHEDULE_YEAR} Schedule and sign up for trial classes!`,
 };
 
 export default function RootLayout({

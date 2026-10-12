@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
+import { SCHEDULE_YEAR } from "@/utils/scheduleYear";
 
 export default function SignupBanner() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -29,7 +30,7 @@ export default function SignupBanner() {
     <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-3 py-1">
       <span className="w-1.5 h-1.5 rounded-full bg-green-400 motion-safe:animate-pulse block flex-shrink-0" />
       <span className="text-xs font-semibold uppercase tracking-widest text-white/85">
-        Registrations Open · 2026 academic year
+        Registrations Open · {SCHEDULE_YEAR} academic year
       </span>
     </div>
   );
@@ -54,7 +55,7 @@ export default function SignupBanner() {
       <div className="signup-embed-bar max-w-7xl mx-auto px-4 py-1">
         <div className="w-full flex items-center gap-3 py-2 px-2">
           <h1 className="text-base font-semibold text-white flex-1 tracking-wide">
-            Zenith 2026 Schedule
+            Zenith {SCHEDULE_YEAR} Schedule
           </h1>
           {logoTile}
         </div>
@@ -78,7 +79,7 @@ export default function SignupBanner() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
             <h1 className="text-base font-semibold text-white flex-1 tracking-wide">
-              Zenith 2026 Schedule
+              Zenith {SCHEDULE_YEAR} Schedule
             </h1>
             {logoTile}
           </button>

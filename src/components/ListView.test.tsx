@@ -170,4 +170,15 @@ describe("ListView", () => {
     render(<ListView sessions={[makeSlot({ startTime: "14:00", endTime: "16:00" })]} />);
     expect(screen.getByText("2:00 PM – 4:00 PM")).toBeInTheDocument();
   });
+
+  it("shows the syllabus on a card that has one", () => {
+    render(<ListView sessions={[makeSlot({ track: "RGS Aligned" })]} />);
+    expect(screen.getByTestId("syllabus-label")).toHaveTextContent("RGS Aligned");
+  });
+
+  it.each([undefined, null, "", "NA"])("shows no syllabus for track %p", (track) => {
+    render(<ListView sessions={[makeSlot({ track })]} />);
+    expect(screen.queryByTestId("syllabus-label")).toBeNull();
+    expect(screen.queryByText("NA")).toBeNull();
+  });
 });

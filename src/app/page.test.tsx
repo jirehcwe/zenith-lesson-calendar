@@ -1,4 +1,5 @@
 import { act, render, screen, fireEvent, waitFor, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import Page from "./page";
 
 // FullCalendar renders nothing in jsdom; assert via the List view instead.
@@ -102,19 +103,6 @@ afterEach(() => {
   jest.restoreAllMocks();
   jest.useRealTimers();
 });
-
-// page.tsx reaches for the calendar year in exactly ONE place —
-// `new Date().getFullYear()`, threaded through the cache read, the request and
-// the cache write — and nothing else under src/ calls it, so pinning that call
-// is a precise stand-in for "this browser tab was open when the year rolled
-// over". Deliberately NOT jest.setSystemTime: the bug lives INSIDE the 5-minute
-// freshness window, so the two mounts must stay milliseconds apart on the
-// wall clock while disagreeing about the year. Freezing the whole clock instead
-// would let the cache expire on age and the test would pass for the wrong
-// reason.
-function pinYear(year: number) {
-  return jest.spyOn(Date.prototype, "getFullYear").mockReturnValue(year);
-}
 
 // A request that opens and then goes nowhere: it settles ONLY when the app
 // aborts it. That is what a stalled connection actually does — a rejected
@@ -382,8 +370,7 @@ describe("pinned mode (?classes= and ?tutor=)", () => {
 
   it("does not blame the link — or the system — when the schedule loads but is empty", async () => {
     // A 200 carrying no classes is not a broken link AND not a failure. Real
-    // trigger: the request pins year=<current>, so every link in circulation
-    // hits this from 1 January until the new year's schedule is published.
+    // trigger: the feed returns none while a year's schedule is not published.
     // "Please try again" would be a lie there, and retrying cannot help.
     global.fetch = jest.fn(() =>
       Promise.resolve({ json: () => Promise.resolve({ data: [] }) }),
@@ -682,65 +669,30 @@ describe("pinned mode (?classes= and ?tutor=)", () => {
     expect(screen.queryByText(/saved copy/i)).not.toBeInTheDocument();
   });
 
-  it("refuses LAST year's cache when this year's pinned fetch fails", async () => {
-    // The cache is keyed by nothing but its own age, while the request is
-    // keyed by year. Cross midnight on 31 December and a five-minute-old entry
-    // — fresh by every check the page makes — answers a question about a
-    // different academic year. Tutor codes and centres are stable year to
-    // year, so the substitution is invisible: the parent gets a complete,
-    // plausible, RETIRED timetable, hedged only as "may be out of date".
-    const seen: string[] = [];
-    const yearSpy = pinYear(2026);
-    const lastYearFetch = jest.fn((url: RequestInfo | URL) => {
-      seen.push(String(url));
-      return Promise.resolve({ json: () => Promise.resolve({ data: SLOTS }) });
-    });
-    global.fetch = lastYearFetch as unknown as typeof fetch;
-    setUrl("/");
-    // Seed through a real visit, so the entry is exactly what an ordinary
-    // browse on 31 December leaves behind — and so the test does not restate
-    // CACHE_VERSION, which must not be bumped.
-    const first = render(<Page />);
-    await waitFor(() =>
-      expect(JSON.parse(localStorage.getItem("weeklyClassData") ?? "[]")).toHaveLength(SLOTS.length),
-    );
-    first.unmount();
+  it("asks the feed for the calendar view and sends no year", async () => {
+    render(<Page />);
+    await waitFor(() => expect(global.fetch).toHaveBeenCalled());
 
-    // Midnight. The tab is still open, the entry is still minutes old.
-    yearSpy.mockReturnValue(2027);
-    const failingFetch = jest.fn((url: RequestInfo | URL) => {
-      seen.push(String(url));
-      return Promise.reject(new Error("network"));
-    });
-    global.fetch = failingFetch as unknown as typeof fetch;
-    setUrl("/?tutor=T1&view=list");
-    const { container } = render(<Page />);
-
-    await waitFor(() =>
-      expect(
-        screen.getByText("We couldn't load the schedule. Please try again."),
-      ).toBeInTheDocument(),
-    );
-    // The whole point: last year's classes are NOT on screen. A hedge is not a
-    // substitute — "may be out of date" describes a stale copy of the right
-    // year, not a complete copy of the wrong one.
-    expect(listRegion(container).queryByText("Physics")).not.toBeInTheDocument();
-    expect(screen.queryByText(/saved copy/i)).not.toBeInTheDocument();
-    // ...and the link is not blamed for it either.
-    expect(screen.queryByText(/couldn't find any classes for this link/i)).not.toBeInTheDocument();
-    // The two mounts really did ask about different years — otherwise this is
-    // just the same-year fallback test with a spy attached.
-    expect(seen[0]).toContain("year=2026");
-    expect(seen[1]).toContain("year=2027");
+    const url = String((global.fetch as jest.Mock).mock.calls[0][0]);
+    expect(url).toContain("/schedule?");
+    expect(url).toContain("view=calendar");
+    expect(url).not.toContain("year=");
   });
 
-  it("still falls back to a SAME-year cache when the fetch fails", async () => {
-    // Control for the test above, driven through the same lever. Without it,
-    // "reject a mismatched year" could be implemented as "reject everything"
-    // and the suite would still be green — silently deleting the round-5
-    // fallback, whose whole job is to keep a shared tutor link working through
-    // a backend blip.
-    const yearSpy = pinYear(2026);
+  it("refuses a cache written by the year-keyed version of the page", async () => {
+    localStorage.setItem("weeklyClassData", JSON.stringify(SLOTS));
+    localStorage.setItem("weeklyClassDataTimestamp", Date.now().toString());
+    localStorage.setItem("weeklyClassDataVersion", "4");
+    localStorage.setItem("weeklyClassDataYear", "2026");
+
+    render(<Page />);
+
+    await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(1));
+    expect(localStorage.getItem("weeklyClassDataYear")).toBeNull();
+  });
+
+  it("still falls back to the cache when a pinned fetch fails", async () => {
+    // A failed pinned fetch must still serve the cached schedule.
     const okFetch = jest.fn(() =>
       Promise.resolve({ json: () => Promise.resolve({ data: SLOTS }) }),
     );
@@ -752,8 +704,6 @@ describe("pinned mode (?classes= and ?tutor=)", () => {
     );
     first.unmount();
 
-    // Same year, same as every visit that is not on 1 January.
-    yearSpy.mockReturnValue(2026);
     const failingFetch = jest.fn(() => Promise.reject(new Error("network")));
     global.fetch = failingFetch as unknown as typeof fetch;
     setUrl("/?tutor=T1&view=list");
@@ -1215,9 +1165,8 @@ describe("unpinned schedule notice (no ?tutor= / ?classes=)", () => {
   });
 
   it("tells an unpinned visitor when the schedule loaded but is empty", async () => {
-    // A 200 carrying zero rows. Reachable every year: the request pins
-    // year=<current>, so from 1 January until the new year's schedule is
-    // published every ordinary visit lands here — and "Please try again" would
+    // A 200 carrying zero rows. Reachable when the feed has none
+    // published: every ordinary visit lands here — and "Please try again" would
     // be both a lie and useless advice.
     global.fetch = jest.fn(() =>
       Promise.resolve({ json: () => Promise.resolve({ data: [] }) }),
@@ -1656,5 +1605,251 @@ describe("AllSec stream (?stream=AllSec)", () => {
       expect(listRegion(container).getByText("Chemistry")).toBeInTheDocument(),
     );
     expect(window.location.search).toContain("subject=Chemistry");
+  });
+});
+
+const ip = (n: number, subject: string, track?: string | null) => ({
+  classSlotId: `2027-Class10${n}`,
+  title: `Bishan | Sat 9AM - 11AM | T${n} (S3 ${subject} 2027)`,
+  day: 6, startTime: "09:00", endTime: "11:00",
+  subjects: [subject], tutor: `T${n}`, centre: "Bishan",
+  stream: "IP", level: "Secondary 3",
+  prefillTrialLink: "https://example.com/t", prefillRegistrationLink: "https://example.com/r",
+  trialOpen: true, registrationOpen: true,
+  ...(track === undefined ? {} : { track }),
+});
+const SYLLABUS_SLOTS = [
+  ip(1, "RgsOnly", "RGS Aligned"),
+  ip(2, "RgsGroup", "RGS + RI + CHIJ St Nicholas + Cat High Aligned"),
+  ip(3, "AnySchool", "All Schools"),
+  ip(4, "HciOnly", "HCI Aligned"),
+  ip(5, "RjcOnly", "RJC Aligned"),
+  ip(6, "NoTrackNA", "NA"),
+  ip(7, "NoTrackField"),
+  { ...ip(8, "ExpressClass", null), stream: "EXP" },
+];
+describe("Syllabus filter", () => {
+  const IP_SUBJECTS = [
+    "RgsOnly", "RgsGroup", "AnySchool", "HciOnly", "RjcOnly", "NoTrackNA", "NoTrackField",
+  ];
+
+  // Desktop, so the sticky filter bar and its stream chips mount.
+  beforeEach(() => {
+    setScreen(...DESKTOP);
+    global.fetch = jest.fn(() =>
+      Promise.resolve({ json: () => Promise.resolve({ data: SYLLABUS_SLOTS }) }),
+    ) as unknown as typeof fetch;
+  });
+
+  const shown = (subject: string) => screen.queryByText(subject);
+
+  it("shows the classes that name the school, alone or in a group, and All Schools", async () => {
+    setUrl("/?stream=Secondary IP&syllabus=RGS&view=list");
+    render(<Page />);
+    expect(await screen.findByText("RgsOnly")).toBeInTheDocument();
+    expect(shown("RgsGroup")).toBeInTheDocument();
+    expect(shown("AnySchool")).toBeInTheDocument();
+  });
+
+  it("hides another school's class and a class with no syllabus", async () => {
+    setUrl("/?stream=Secondary IP&syllabus=RGS&view=list");
+    render(<Page />);
+    await screen.findByText("RgsOnly");
+    for (const subject of ["HciOnly", "RjcOnly", "NoTrackNA", "NoTrackField"]) {
+      expect(shown(subject)).not.toBeInTheDocument();
+    }
+  });
+
+  it("matches whole names only", async () => {
+    setUrl("/?stream=Secondary IP&syllabus=RI&view=list");
+    render(<Page />);
+    expect(await screen.findByText("RgsGroup")).toBeInTheDocument();
+    expect(shown("AnySchool")).toBeInTheDocument();
+    expect(shown("RjcOnly")).not.toBeInTheDocument();
+    expect(shown("RgsOnly")).not.toBeInTheDocument();
+  });
+
+  describe("when one school name contains another", () => {
+    beforeEach(() => {
+      global.fetch = jest.fn(() =>
+        Promise.resolve({
+          json: () =>
+            Promise.resolve({
+              data: [...SYLLABUS_SLOTS, ip(9, "CatOnly", "Cat Aligned")],
+            }),
+        }),
+      ) as unknown as typeof fetch;
+    });
+
+    it("Cat does not match Cat High", async () => {
+      setUrl("/?stream=Secondary IP&syllabus=Cat&view=list");
+      render(<Page />);
+      expect(await screen.findByText("CatOnly")).toBeInTheDocument();
+      expect(shown("RgsGroup")).not.toBeInTheDocument();
+    });
+
+    it("Cat High does not match Cat", async () => {
+      setUrl("/?stream=Secondary IP&syllabus=Cat High&view=list");
+      render(<Page />);
+      expect(await screen.findByText("RgsGroup")).toBeInTheDocument();
+      expect(shown("CatOnly")).not.toBeInTheDocument();
+    });
+  });
+
+  it("counts a syllabus pick in the collapsed filters badge", async () => {
+    setUrl("/?stream=Secondary IP&syllabus=RGS&view=list");
+    render(<Page />);
+    await screen.findByText("RgsOnly");
+    fireEvent.click(screen.getByRole("button", { name: "Hide filters" }));
+    const badge = within(screen.getByRole("button", { name: "Show filters" }));
+    expect(badge.getByText("2")).toBeInTheDocument();
+  });
+
+  it("shows a lower-case URL pick as the option's own text", async () => {
+    setUrl("/?stream=Secondary IP&syllabus=rgs&view=list");
+    render(<Page />);
+    expect(await screen.findByText("RgsOnly")).toBeInTheDocument();
+    expect(shown("HciOnly")).not.toBeInTheDocument();
+    await waitFor(() => expect(window.location.search).toContain("syllabus=RGS"));
+  });
+
+  it("keeps both picks of a URL list with a stray space", async () => {
+    setUrl("/?stream=Secondary IP&syllabus=RGS,%20RI&view=list");
+    render(<Page />);
+    await screen.findByText("RgsOnly");
+    await waitFor(() => expect(window.location.search).toContain("syllabus=RGS%2CRI"));
+  });
+
+  it("shows every class of the stream when no school is picked", async () => {
+    setUrl("/?stream=Secondary IP&view=list");
+    render(<Page />);
+    await screen.findByText("RgsOnly");
+    for (const subject of IP_SUBJECTS) {
+      expect(shown(subject)).toBeInTheDocument();
+    }
+    expect(shown("ExpressClass")).not.toBeInTheDocument();
+  });
+
+  it("offers single schools and never NA or All Schools", async () => {
+    setUrl("/?stream=Secondary IP&view=list");
+    render(<Page />);
+    await screen.findByText("RgsOnly");
+    await userEvent.setup().click(screen.getByRole("button", { name: /Syllabus/ }));
+    const options = within(screen.getByRole("listbox"));
+    for (const school of ["Cat High", "CHIJ St Nicholas", "HCI", "RGS", "RI", "RJC"]) {
+      expect(options.getByText(school)).toBeInTheDocument();
+    }
+    for (const bad of ["NA", "All Schools", "RGS Aligned"]) {
+      expect(options.queryByText(bad)).not.toBeInTheDocument();
+    }
+  });
+
+  it("hides the Syllabus filter for a stream with no syllabus values", async () => {
+    setUrl("/?stream=Secondary Exp&view=list");
+    render(<Page />);
+    await screen.findByText("ExpressClass");
+    expect(screen.queryByRole("button", { name: /Syllabus/ })).not.toBeInTheDocument();
+  });
+
+  it("ignores an unknown school in the URL", async () => {
+    setUrl("/?stream=Secondary IP&syllabus=Hogwarts&view=list");
+    render(<Page />);
+    await screen.findByText("RgsOnly");
+    for (const subject of IP_SUBJECTS) {
+      expect(shown(subject)).toBeInTheDocument();
+    }
+    await waitFor(() => expect(window.location.search).not.toContain("syllabus="));
+  });
+
+  it("ignores a syllabus pick on a stream that has no such school", async () => {
+    setUrl("/?stream=Secondary Exp&syllabus=RGS&view=list");
+    render(<Page />);
+    expect(await screen.findByText("ExpressClass")).toBeInTheDocument();
+    await waitFor(() => expect(window.location.search).not.toContain("syllabus="));
+  });
+
+  it("clears the pick when the stream changes", async () => {
+    // The JC slot names RGS too, so the prune effect would keep the pick.
+    // Only the stream-change reset can clear it.
+    const jcSlot = {
+      ...ip(9, "JcRgsClass", "RGS Aligned"),
+      stream: "H2", level: "J2",
+    };
+    global.fetch = jest.fn(() =>
+      Promise.resolve({ json: () => Promise.resolve({ data: [...SYLLABUS_SLOTS, jcSlot] }) }),
+    ) as unknown as typeof fetch;
+    setUrl("/?stream=Secondary IP&syllabus=RGS&view=list");
+    render(<Page />);
+    await screen.findByText("RgsOnly");
+    expect(window.location.search).toContain("syllabus=RGS");
+    const streamRow = screen.getByText("Stream").parentElement!;
+    fireEvent.click(within(streamRow).getByRole("button", { name: /^JC/ }));
+    expect(await screen.findByText("JcRgsClass")).toBeInTheDocument();
+    await waitFor(() => expect(window.location.search).toContain("stream=JC"));
+    expect(window.location.search).not.toContain("syllabus=");
+  });
+
+  it("keeps the pick in the URL", async () => {
+    setUrl("/?stream=Secondary IP&view=list");
+    render(<Page />);
+    await screen.findByText("RgsOnly");
+    const user = userEvent.setup();
+    await user.click(screen.getByRole("button", { name: /Syllabus/ }));
+    await user.click(within(screen.getByRole("listbox")).getByText("HCI"));
+    await waitFor(() => expect(window.location.search).toContain("syllabus=HCI"));
+    expect(shown("HciOnly")).toBeInTheDocument();
+    expect(shown("AnySchool")).toBeInTheDocument();
+    for (const subject of ["RgsOnly", "RgsGroup", "RjcOnly", "NoTrackNA", "NoTrackField"]) {
+      expect(shown(subject)).not.toBeInTheDocument();
+    }
+  });
+});
+
+describe("JC next-year note", () => {
+  const NOTE = "JC 2027 classes open on 1 Jan 2027";
+  const jc = (year: number) => ({
+    classSlotId: `${year}-Class0001`,
+    title: `Bishan | Sat 9AM - 11AM | T (J2 Economics ${year})`,
+    day: 6, startTime: "09:00", endTime: "11:00",
+    subjects: ["Economics"], tutor: "T", centre: "Bishan",
+    stream: "H2", level: "J2",
+    prefillTrialLink: "https://example.com/t", prefillRegistrationLink: "https://example.com/r",
+    trialOpen: true, registrationOpen: true,
+  });
+  const feed = (slots: unknown[]) => {
+    global.fetch = jest.fn(() =>
+      Promise.resolve({ json: () => Promise.resolve({ data: slots }) }),
+    ) as unknown as typeof fetch;
+  };
+
+  it("shows when JC is picked and JC still shows 2026 slots", async () => {
+    feed([jc(2026)]);
+    setUrl("/?stream=JC&view=list");
+    render(<Page />);
+    expect(await screen.findByText(NOTE)).toBeInTheDocument();
+  });
+
+  it("hides once JC shows 2027 slots", async () => {
+    feed([jc(2027)]);
+    setUrl("/?stream=JC&view=list");
+    render(<Page />);
+    await screen.findByText("Economics");
+    expect(screen.queryByText(NOTE)).toBeNull();
+  });
+
+  it("hides for another stream", async () => {
+    feed([jc(2026), ...SYLLABUS_SLOTS]);
+    setUrl("/?stream=Secondary IP&view=list");
+    render(<Page />);
+    await screen.findByText("RgsOnly");
+    expect(screen.queryByText(NOTE)).toBeNull();
+  });
+
+  it("hides in a pinned view", async () => {
+    feed([jc(2026)]);
+    setUrl("/?tutor=T&stream=JC&view=list");
+    render(<Page />);
+    await screen.findByText("Economics");
+    expect(screen.queryByText(NOTE)).toBeNull();
   });
 });
